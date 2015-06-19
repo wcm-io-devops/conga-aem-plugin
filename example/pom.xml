@@ -25,7 +25,7 @@
   
   <groupId>io.wcm.devops.conga.plugins</groupId>
   <artifactId>io.wcm.devops.conga.plugins.aem.example</artifactId>
-  <packaging>conga-configuration</packaging>
+  <packaging>config</packaging>
   <version>1</version>
 
   <name>CONGA Example</name>
