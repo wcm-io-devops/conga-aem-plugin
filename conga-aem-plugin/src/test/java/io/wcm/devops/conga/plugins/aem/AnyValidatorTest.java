@@ -44,14 +44,14 @@ public class AnyValidatorTest {
   public void testValidProvisioning() throws Exception {
     File file = new File(getClass().getResource("/validAny.any").toURI());
     assertTrue(underTest.accepts(file, CharEncoding.ISO_8859_1));
-    underTest.validate(file, CharEncoding.UTF_8);
+    underTest.validate(file, CharEncoding.UTF_8, null);
   }
 
   @Test(expected = ValidationException.class)
   public void testInvalidProvisioning() throws Exception {
     File file = new File(getClass().getResource("/invalidAny.any").toURI());
     assertTrue(underTest.accepts(file, CharEncoding.ISO_8859_1));
-    underTest.validate(file, CharEncoding.UTF_8);
+    underTest.validate(file, CharEncoding.UTF_8, null);
   }
 
   @Test

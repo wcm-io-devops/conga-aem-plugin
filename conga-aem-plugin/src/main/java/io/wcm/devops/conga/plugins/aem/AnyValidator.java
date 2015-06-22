@@ -25,15 +25,14 @@ import io.wcm.devops.conga.generator.util.FileUtil;
 
 import java.io.File;
 import java.io.FileInputStream;
-import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.Reader;
+import java.util.Map;
 
 import org.xml.sax.InputSource;
 
 import com.day.any.BaseHandler;
-import com.day.any.ParseException;
 import com.day.any.Parser;
 
 /**
@@ -59,7 +58,7 @@ public class AnyValidator implements ValidatorPlugin {
   }
 
   @Override
-  public void validate(File file, String charset) throws ValidationException {
+  public void validate(File file, String charset, Map<String, Object> options) throws ValidationException {
     Parser parser = new Parser(new BaseHandler());
     try (InputStream is = new FileInputStream(file);
         Reader reader = new InputStreamReader(is, charset)) {

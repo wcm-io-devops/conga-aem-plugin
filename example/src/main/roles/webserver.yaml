@@ -2,6 +2,10 @@ templateDir: webserver
 
 files:
 
+# Dispatcher configuration
+- file: "dispatcher.any"
+  template: dispatcher.any.hbs
+
 # Define a file to be generated per tenant
 - file: "${tenant}_vhost.conf"
   dir: vhosts
