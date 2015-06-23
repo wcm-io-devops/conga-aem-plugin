@@ -17,21 +17,21 @@
  * limitations under the License.
  * #L%
  */
-package io.wcm.devops.conga.plugins.aem;
+package io.wcm.devops.conga.plugins.aem.postprocessor;
 
-import static io.wcm.devops.conga.plugins.aem.ContentPackageOsgiConfigPostProcessor.PROPERTY_PACKAGE_GROUP;
-import static io.wcm.devops.conga.plugins.aem.ContentPackageOsgiConfigPostProcessor.PROPERTY_PACKAGE_NAME;
-import static io.wcm.devops.conga.plugins.aem.ContentPackageOsgiConfigPostProcessor.PROPERTY_PACKAGE_ROOT_PATH;
+import static io.wcm.devops.conga.plugins.aem.postprocessor.ContentPackageOsgiConfigPostProcessor.PROPERTY_PACKAGE_GROUP;
+import static io.wcm.devops.conga.plugins.aem.postprocessor.ContentPackageOsgiConfigPostProcessor.PROPERTY_PACKAGE_NAME;
+import static io.wcm.devops.conga.plugins.aem.postprocessor.ContentPackageOsgiConfigPostProcessor.PROPERTY_PACKAGE_ROOT_PATH;
 import static org.custommonkey.xmlunit.XMLAssert.assertXpathEvaluatesTo;
 import static org.junit.Assert.assertArrayEquals;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
-import io.wcm.devops.conga.generator.context.PostProcessorContextImpl;
 import io.wcm.devops.conga.generator.spi.PostProcessorPlugin;
+import io.wcm.devops.conga.generator.spi.context.FileContext;
 import io.wcm.devops.conga.generator.spi.context.PostProcessorContext;
 import io.wcm.devops.conga.generator.util.PluginManager;
-import io.wcm.devops.conga.plugins.sling.ProvisioningOsgiConfigPostProcessor;
+import io.wcm.devops.conga.plugins.sling.postprocessor.ProvisioningOsgiConfigPostProcessor;
 
 import java.io.ByteArrayInputStream;
 import java.io.File;
@@ -84,14 +84,15 @@ public class ContentPackageOsgiConfigPostProcessorTest {
     FileUtils.copyFile(new File(getClass().getResource("/validProvisioning.txt").toURI()), provisioningFile);
 
     // post-process
-    PostProcessorContext context = new PostProcessorContextImpl()
+    FileContext fileContext = new FileContext()
     .file(provisioningFile)
-    .charset(CharEncoding.UTF_8)
+    .charset(CharEncoding.UTF_8);
+    PostProcessorContext context = new PostProcessorContext()
     .options(options)
     .logger(LoggerFactory.getLogger(ProvisioningOsgiConfigPostProcessor.class));
 
-    assertTrue(underTest.accepts(context));
-    underTest.postProcess(context);
+    assertTrue(underTest.accepts(fileContext, context));
+    underTest.apply(fileContext, context);
 
     // validate
     assertFalse(provisioningFile.exists());

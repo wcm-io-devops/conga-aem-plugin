@@ -17,13 +17,14 @@
  * limitations under the License.
  * #L%
  */
-package io.wcm.devops.conga.plugins.aem;
+package io.wcm.devops.conga.plugins.aem.postprocessor;
 
 import io.wcm.devops.conga.generator.GeneratorException;
 import io.wcm.devops.conga.generator.spi.PostProcessorPlugin;
+import io.wcm.devops.conga.generator.spi.context.FileContext;
 import io.wcm.devops.conga.generator.spi.context.PostProcessorContext;
-import io.wcm.devops.conga.plugins.sling.ConfigConsumer;
-import io.wcm.devops.conga.plugins.sling.ProvisioningUtil;
+import io.wcm.devops.conga.plugins.sling.util.ConfigConsumer;
+import io.wcm.devops.conga.plugins.sling.util.ProvisioningUtil;
 import io.wcm.tooling.commons.contentpackagebuilder.ContentPackage;
 import io.wcm.tooling.commons.contentpackagebuilder.ContentPackageBuilder;
 
@@ -32,6 +33,7 @@ import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.IOException;
 import java.util.Dictionary;
+import java.util.List;
 import java.util.Map;
 
 import org.apache.commons.io.FilenameUtils;
@@ -39,6 +41,8 @@ import org.apache.commons.lang3.CharEncoding;
 import org.apache.felix.cm.file.ConfigurationHandler;
 import org.apache.sling.provisioning.model.Model;
 import org.slf4j.Logger;
+
+import com.google.common.collect.ImmutableList;
 
 /**
  * Transforms a Sling Provisioning file into OSGi configurations (ignoring all other provisioning contents).
@@ -71,20 +75,19 @@ public class ContentPackageOsgiConfigPostProcessor implements PostProcessorPlugi
   }
 
   @Override
-  public boolean accepts(PostProcessorContext context) {
-    return ProvisioningUtil.isProvisioningFile(context.getFile(), context.getCharset());
+  public boolean accepts(FileContext file, PostProcessorContext context) {
+    return ProvisioningUtil.isProvisioningFile(file);
   }
 
   @Override
-  public void postProcess(PostProcessorContext context) {
-    File file = context.getFile();
-    String charset = context.getCharset();
+  public List<FileContext> apply(FileContext fileContext, PostProcessorContext context) {
+    File file = fileContext.getFile();
     Logger logger = context.getLogger();
     Map<String, Object> options = context.getOptions();
 
     try {
       // generate OSGi configurations
-      Model model = ProvisioningUtil.getModel(file, charset);
+      Model model = ProvisioningUtil.getModel(fileContext);
 
       // create AEM content package with configurations
       File zipFile = new File(file.getParentFile(), FilenameUtils.getBaseName(file.getName()) + ".zip");
@@ -101,6 +104,8 @@ public class ContentPackageOsgiConfigPostProcessor implements PostProcessorPlugi
 
       // delete provisioning file after transformation
       file.delete();
+
+      return ImmutableList.of(new FileContext().file(zipFile));
     }
     catch (IOException ex) {
       throw new GeneratorException("Unable to post-process sling provisioning OSGi configurations.", ex);
@@ -123,9 +128,9 @@ public class ContentPackageOsgiConfigPostProcessor implements PostProcessorPlugi
    * @throws IOException
    */
   private void generateOsgiConfigurations(Model model, ContentPackage contentPackage, Logger logger) throws IOException {
-    ProvisioningUtil.visitOsgiConfigurations(model, new ConfigConsumer() {
+    ProvisioningUtil.visitOsgiConfigurations(model, new ConfigConsumer<Void>() {
       @Override
-      public void accept(String path, Dictionary<String, Object> properties) throws IOException {
+      public Void accept(String path, Dictionary<String, Object> properties) throws IOException {
         String contentPath = contentPackage.getRootPath() + "/" + path;
         logger.info("  Include " + contentPath);
 
@@ -140,6 +145,7 @@ public class ContentPackageOsgiConfigPostProcessor implements PostProcessorPlugi
         try (ByteArrayInputStream is = new ByteArrayInputStream(configData)) {
           contentPackage.addFile(contentPath, is, "text/plain;charset=" + CharEncoding.UTF_8);
         }
+        return null;
       }
     });
   }
