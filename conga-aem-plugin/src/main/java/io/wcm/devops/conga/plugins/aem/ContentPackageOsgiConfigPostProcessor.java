@@ -82,13 +82,12 @@ public class ContentPackageOsgiConfigPostProcessor implements PostProcessorPlugi
   @Override
   public List<FileContext> apply(FileContext fileContext, PostProcessorContext context) {
     File file = fileContext.getFile();
-    String charset = fileContext.getCharset();
     Logger logger = context.getLogger();
     Map<String, Object> options = context.getOptions();
 
     try {
       // generate OSGi configurations
-      Model model = ProvisioningUtil.getModel(file, charset);
+      Model model = ProvisioningUtil.getModel(fileContext);
 
       // create AEM content package with configurations
       File zipFile = new File(file.getParentFile(), FilenameUtils.getBaseName(file.getName()) + ".zip");
@@ -129,9 +128,9 @@ public class ContentPackageOsgiConfigPostProcessor implements PostProcessorPlugi
    * @throws IOException
    */
   private void generateOsgiConfigurations(Model model, ContentPackage contentPackage, Logger logger) throws IOException {
-    ProvisioningUtil.visitOsgiConfigurations(model, new ConfigConsumer() {
+    ProvisioningUtil.visitOsgiConfigurations(model, new ConfigConsumer<Void>() {
       @Override
-      public void accept(String path, Dictionary<String, Object> properties) throws IOException {
+      public Void accept(String path, Dictionary<String, Object> properties) throws IOException {
         String contentPath = contentPackage.getRootPath() + "/" + path;
         logger.info("  Include " + contentPath);
 
@@ -146,6 +145,7 @@ public class ContentPackageOsgiConfigPostProcessor implements PostProcessorPlugi
         try (ByteArrayInputStream is = new ByteArrayInputStream(configData)) {
           contentPackage.addFile(contentPath, is, "text/plain;charset=" + CharEncoding.UTF_8);
         }
+        return null;
       }
     });
   }
