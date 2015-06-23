@@ -45,7 +45,8 @@ import org.slf4j.Logger;
 import com.google.common.collect.ImmutableList;
 
 /**
- * Transforms a Sling Provisioning file into OSGi configurations (ignoring all other provisioning contents).
+ * Transforms a Sling Provisioning file into OSGi configurations (ignoring all other provisioning contents)
+ * and then packages them up in an AEM content package to be deployed via CRX package manager.
  */
 public class ContentPackageOsgiConfigPostProcessor implements PostProcessorPlugin {
 
