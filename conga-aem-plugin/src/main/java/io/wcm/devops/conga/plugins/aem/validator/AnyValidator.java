@@ -17,7 +17,7 @@
  * limitations under the License.
  * #L%
  */
-package io.wcm.devops.conga.plugins.aem;
+package io.wcm.devops.conga.plugins.aem.validator;
 
 import io.wcm.devops.conga.generator.spi.ValidationException;
 import io.wcm.devops.conga.generator.spi.ValidatorPlugin;

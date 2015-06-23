@@ -17,14 +17,14 @@
  * limitations under the License.
  * #L%
  */
-package io.wcm.devops.conga.plugins.aem;
+package io.wcm.devops.conga.plugins.aem.postprocessor;
 
 import io.wcm.devops.conga.generator.GeneratorException;
 import io.wcm.devops.conga.generator.spi.PostProcessorPlugin;
 import io.wcm.devops.conga.generator.spi.context.FileContext;
 import io.wcm.devops.conga.generator.spi.context.PostProcessorContext;
-import io.wcm.devops.conga.plugins.sling.ConfigConsumer;
-import io.wcm.devops.conga.plugins.sling.ProvisioningUtil;
+import io.wcm.devops.conga.plugins.sling.util.ConfigConsumer;
+import io.wcm.devops.conga.plugins.sling.util.ProvisioningUtil;
 import io.wcm.tooling.commons.contentpackagebuilder.ContentPackage;
 import io.wcm.tooling.commons.contentpackagebuilder.ContentPackageBuilder;
 

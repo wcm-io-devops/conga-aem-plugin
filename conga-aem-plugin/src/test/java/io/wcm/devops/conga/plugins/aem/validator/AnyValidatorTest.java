@@ -17,7 +17,7 @@
  * limitations under the License.
  * #L%
  */
-package io.wcm.devops.conga.plugins.aem;
+package io.wcm.devops.conga.plugins.aem.validator;
 
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
