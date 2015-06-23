@@ -21,6 +21,7 @@ package io.wcm.devops.conga.plugins.aem;
 
 import io.wcm.devops.conga.generator.spi.ValidationException;
 import io.wcm.devops.conga.generator.spi.ValidatorPlugin;
+import io.wcm.devops.conga.generator.spi.context.FileContext;
 import io.wcm.devops.conga.generator.spi.context.ValidatorContext;
 import io.wcm.devops.conga.generator.util.FileUtil;
 
@@ -52,20 +53,21 @@ public class AnyValidator implements ValidatorPlugin {
   }
 
   @Override
-  public boolean accepts(ValidatorContext context) {
-    return FileUtil.matchesExtension(context.getFile(), FILE_EXTENSION);
+  public boolean accepts(FileContext file, ValidatorContext context) {
+    return FileUtil.matchesExtension(file, FILE_EXTENSION);
   }
 
   @Override
-  public void validate(ValidatorContext context) throws ValidationException {
+  public Void apply(FileContext file, ValidatorContext context) throws ValidationException {
     Parser parser = new Parser(new BaseHandler());
-    try (InputStream is = new FileInputStream(context.getFile());
-        Reader reader = new InputStreamReader(is, context.getCharset())) {
+    try (InputStream is = new FileInputStream(file.getFile());
+        Reader reader = new InputStreamReader(is, file.getCharset())) {
       parser.parse(new InputSource(reader));
     }
     catch (Throwable ex) {
       throw new ValidationException("ANY file is not valid: " + ex.getMessage(), ex);
     }
+    return null;
   }
 
 }
