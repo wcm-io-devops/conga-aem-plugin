@@ -21,8 +21,10 @@ package io.wcm.devops.conga.plugins.aem;
 
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
+import io.wcm.devops.conga.generator.context.ValidatorContextImpl;
 import io.wcm.devops.conga.generator.spi.ValidationException;
 import io.wcm.devops.conga.generator.spi.ValidatorPlugin;
+import io.wcm.devops.conga.generator.spi.context.ValidatorContext;
 import io.wcm.devops.conga.generator.util.PluginManager;
 
 import java.io.File;
@@ -43,21 +45,24 @@ public class AnyValidatorTest {
   @Test
   public void testValidProvisioning() throws Exception {
     File file = new File(getClass().getResource("/validAny.any").toURI());
-    assertTrue(underTest.accepts(file, CharEncoding.ISO_8859_1));
-    underTest.validate(file, CharEncoding.UTF_8, null);
+    ValidatorContext context = new ValidatorContextImpl().file(file).charset(CharEncoding.ISO_8859_1);
+    assertTrue(underTest.accepts(context));
+    underTest.validate(context);
   }
 
   @Test(expected = ValidationException.class)
   public void testInvalidProvisioning() throws Exception {
     File file = new File(getClass().getResource("/invalidAny.any").toURI());
-    assertTrue(underTest.accepts(file, CharEncoding.ISO_8859_1));
-    underTest.validate(file, CharEncoding.UTF_8, null);
+    ValidatorContext context = new ValidatorContextImpl().file(file).charset(CharEncoding.ISO_8859_1);
+    assertTrue(underTest.accepts(context));
+    underTest.validate(context);
   }
 
   @Test
   public void testNoProvisioning() throws Exception {
     File file = new File(getClass().getResource("/noAny.txt").toURI());
-    assertFalse(underTest.accepts(file, CharEncoding.ISO_8859_1));
+    ValidatorContext context = new ValidatorContextImpl().file(file).charset(CharEncoding.ISO_8859_1);
+    assertFalse(underTest.accepts(context));
   }
 
 }

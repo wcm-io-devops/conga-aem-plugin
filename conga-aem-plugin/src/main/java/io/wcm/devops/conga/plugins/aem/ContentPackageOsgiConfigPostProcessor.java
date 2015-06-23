@@ -21,6 +21,7 @@ package io.wcm.devops.conga.plugins.aem;
 
 import io.wcm.devops.conga.generator.GeneratorException;
 import io.wcm.devops.conga.generator.spi.PostProcessorPlugin;
+import io.wcm.devops.conga.generator.spi.context.PostProcessorContext;
 import io.wcm.devops.conga.plugins.sling.ConfigConsumer;
 import io.wcm.devops.conga.plugins.sling.ProvisioningUtil;
 import io.wcm.tooling.commons.contentpackagebuilder.ContentPackage;
@@ -70,12 +71,17 @@ public class ContentPackageOsgiConfigPostProcessor implements PostProcessorPlugi
   }
 
   @Override
-  public boolean accepts(File file, String charset) {
-    return ProvisioningUtil.isProvisioningFile(file, charset);
+  public boolean accepts(PostProcessorContext context) {
+    return ProvisioningUtil.isProvisioningFile(context.getFile(), context.getCharset());
   }
 
   @Override
-  public void postProcess(File file, String charset, Map<String, Object> options, Logger logger) {
+  public void postProcess(PostProcessorContext context) {
+    File file = context.getFile();
+    String charset = context.getCharset();
+    Logger logger = context.getLogger();
+    Map<String, Object> options = context.getOptions();
+
     try {
       // generate OSGi configurations
       Model model = ProvisioningUtil.getModel(file, charset);
