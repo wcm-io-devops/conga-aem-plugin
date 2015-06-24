@@ -27,7 +27,16 @@ files:
   postProcessorOptions:
     contentPackageGroup: sample
     contentPackageName: mapping-sample
-    contentPackageRootPath: /etc/map/http/mysite
+    contentPackageRootPath: /etc/map/http
+    contentPackageFilters:
+    - filter: /etc/map/http
+      rules:
+      - rule: exclude
+        pattern: /etc/map/http
+      - rule: include
+        pattern: /etc/map/http/.*
+      - rule: exclude
+        pattern: /etc/map/http/AppMeasurementBridge
 
 
 # Defines configuration parameters and default values
