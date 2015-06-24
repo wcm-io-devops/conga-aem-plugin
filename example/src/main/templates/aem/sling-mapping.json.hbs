@@ -1,0 +1,11 @@
+{
+  "jcr:primaryType": "sling:Mapping",
+  "sling:internalRedirect": ["/content/mysite","/"],
+
+  "deeplink": {
+    "jcr:primaryType": "sling:Mapping",
+    "sling:match": "deeplink(/)?",
+    "sling:redirect": "/content/mysite/en.html#deeplink"
+  }
+
+}
