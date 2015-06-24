@@ -42,15 +42,23 @@ public class AnyValidatorTest {
   }
 
   @Test
-  public void testValidProvisioning() throws Exception {
-    File file = new File(getClass().getResource("/validAny.any").toURI());
+  public void testValidPublish() throws Exception {
+    File file = new File(getClass().getResource("/dispatcher.any").toURI());
+    FileContext fileContext = new FileContext().file(file).charset(CharEncoding.ISO_8859_1);
+    assertTrue(underTest.accepts(fileContext, null));
+    underTest.apply(fileContext, null);
+  }
+
+  @Test
+  public void testValidAuthor() throws Exception {
+    File file = new File(getClass().getResource("/author_dispatcher.any").toURI());
     FileContext fileContext = new FileContext().file(file).charset(CharEncoding.ISO_8859_1);
     assertTrue(underTest.accepts(fileContext, null));
     underTest.apply(fileContext, null);
   }
 
   @Test(expected = ValidationException.class)
-  public void testInvalidProvisioning() throws Exception {
+  public void testInvalid() throws Exception {
     File file = new File(getClass().getResource("/invalidAny.any").toURI());
     FileContext fileContext = new FileContext().file(file).charset(CharEncoding.ISO_8859_1);
     assertTrue(underTest.accepts(fileContext, null));
@@ -58,7 +66,7 @@ public class AnyValidatorTest {
   }
 
   @Test
-  public void testNoProvisioning() throws Exception {
+  public void testNonExisting() throws Exception {
     File file = new File(getClass().getResource("/noAny.txt").toURI());
     FileContext fileContext = new FileContext().file(file).charset(CharEncoding.ISO_8859_1);
     assertFalse(underTest.accepts(fileContext, null));
