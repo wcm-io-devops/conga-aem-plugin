@@ -22,6 +22,7 @@ package io.wcm.devops.conga.plugins.aem.postprocessor;
 import static io.wcm.devops.conga.plugins.aem.postprocessor.ContentPackageOptions.PROPERTY_PACKAGE_GROUP;
 import static io.wcm.devops.conga.plugins.aem.postprocessor.ContentPackageOptions.PROPERTY_PACKAGE_NAME;
 import static io.wcm.devops.conga.plugins.aem.postprocessor.ContentPackageOptions.PROPERTY_PACKAGE_ROOT_PATH;
+import static io.wcm.devops.conga.plugins.aem.postprocessor.ContentPackageOptions.getFilters;
 import static io.wcm.devops.conga.plugins.aem.postprocessor.ContentPackageOptions.getMandatoryProp;
 import io.wcm.devops.conga.generator.GeneratorException;
 import io.wcm.devops.conga.generator.spi.PostProcessorPlugin;
@@ -79,14 +80,16 @@ public class ContentPackagePostProcessor implements PostProcessorPlugin {
       File zipFile = new File(file.getParentFile(), FilenameUtils.getBaseName(file.getName()) + ".zip");
       logger.info("Generate " + zipFile.getCanonicalPath());
 
+      String rootPath = getMandatoryProp(options, PROPERTY_PACKAGE_ROOT_PATH);
+
       ContentPackageBuilder builder = new ContentPackageBuilder()
-      .rootPath(getMandatoryProp(options, PROPERTY_PACKAGE_ROOT_PATH))
       .group(getMandatoryProp(options, PROPERTY_PACKAGE_GROUP))
       .name(getMandatoryProp(options, PROPERTY_PACKAGE_NAME));
+      getFilters(options).forEach(builder::filter);
 
       try (ContentPackage contentPackage = builder.build(zipFile)) {
         Map<String, Object> content = jsonContentLoader.load(fileContext.getFile());
-        contentPackage.addContent(contentPackage.getRootPath(), content);
+        contentPackage.addContent(rootPath, content);
       }
 
       // delete provisioning file after transformation

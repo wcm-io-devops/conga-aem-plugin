@@ -22,6 +22,7 @@ package io.wcm.devops.conga.plugins.aem.postprocessor;
 import static io.wcm.devops.conga.plugins.aem.postprocessor.ContentPackageOptions.PROPERTY_PACKAGE_GROUP;
 import static io.wcm.devops.conga.plugins.aem.postprocessor.ContentPackageOptions.PROPERTY_PACKAGE_NAME;
 import static io.wcm.devops.conga.plugins.aem.postprocessor.ContentPackageOptions.PROPERTY_PACKAGE_ROOT_PATH;
+import static io.wcm.devops.conga.plugins.aem.postprocessor.ContentPackageOptions.getFilters;
 import static io.wcm.devops.conga.plugins.aem.postprocessor.ContentPackageOptions.getMandatoryProp;
 import io.wcm.devops.conga.generator.GeneratorException;
 import io.wcm.devops.conga.generator.spi.PostProcessorPlugin;
@@ -83,13 +84,15 @@ public class ContentPackageOsgiConfigPostProcessor implements PostProcessorPlugi
       File zipFile = new File(file.getParentFile(), FilenameUtils.getBaseName(file.getName()) + ".zip");
       logger.info("Generate " + zipFile.getCanonicalPath());
 
+      String rootPath = getMandatoryProp(options, PROPERTY_PACKAGE_ROOT_PATH);
+
       ContentPackageBuilder builder = new ContentPackageBuilder()
-          .rootPath(getMandatoryProp(options, PROPERTY_PACKAGE_ROOT_PATH))
-          .group(getMandatoryProp(options, PROPERTY_PACKAGE_GROUP))
-          .name(getMandatoryProp(options, PROPERTY_PACKAGE_NAME));
+      .group(getMandatoryProp(options, PROPERTY_PACKAGE_GROUP))
+      .name(getMandatoryProp(options, PROPERTY_PACKAGE_NAME));
+      getFilters(options).forEach(builder::filter);
 
       try (ContentPackage contentPackage = builder.build(zipFile)) {
-        generateOsgiConfigurations(model, contentPackage, logger);
+        generateOsgiConfigurations(model, contentPackage, rootPath, logger);
       }
 
       // delete provisioning file after transformation
@@ -106,14 +109,16 @@ public class ContentPackageOsgiConfigPostProcessor implements PostProcessorPlugi
    * Generate OSGi configuration for all feature and run modes.
    * @param model Provisioning Model
    * @param contentPackage Content package
+   * @param rootPath Root path
    * @param logger Logger
    * @throws IOException
    */
-  private void generateOsgiConfigurations(Model model, ContentPackage contentPackage, Logger logger) throws IOException {
+  private void generateOsgiConfigurations(Model model, ContentPackage contentPackage,
+      String rootPath, Logger logger) throws IOException {
     ProvisioningUtil.visitOsgiConfigurations(model, new ConfigConsumer<Void>() {
       @Override
       public Void accept(String path, Dictionary<String, Object> properties) throws IOException {
-        String contentPath = contentPackage.getRootPath() + "/" + path;
+        String contentPath = rootPath + "/" + path;
         logger.info("  Include " + contentPath);
 
         // write configuration to byte array

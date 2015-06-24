@@ -19,6 +19,7 @@
  */
 package io.wcm.devops.conga.plugins.aem.postprocessor;
 
+import static io.wcm.devops.conga.plugins.aem.postprocessor.ContentPackageOptions.PROPERTY_PACKAGE_FILTERS;
 import static io.wcm.devops.conga.plugins.aem.postprocessor.ContentPackageOptions.PROPERTY_PACKAGE_GROUP;
 import static io.wcm.devops.conga.plugins.aem.postprocessor.ContentPackageOptions.PROPERTY_PACKAGE_NAME;
 import static io.wcm.devops.conga.plugins.aem.postprocessor.ContentPackageOptions.PROPERTY_PACKAGE_ROOT_PATH;
@@ -42,6 +43,7 @@ import org.junit.Test;
 import org.slf4j.LoggerFactory;
 import org.w3c.dom.Document;
 
+import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableMap;
 
 public class ContentPackagePostProcessorTest {
@@ -58,7 +60,13 @@ public class ContentPackagePostProcessorTest {
     Map<String, Object> options = ImmutableMap.<String, Object>of(
         PROPERTY_PACKAGE_GROUP, "myGroup",
         PROPERTY_PACKAGE_NAME, "myName",
-        PROPERTY_PACKAGE_ROOT_PATH, "/content/test");
+        PROPERTY_PACKAGE_ROOT_PATH, "/content/test",
+        PROPERTY_PACKAGE_FILTERS, ImmutableList.of(
+            ImmutableMap.<String, Object>of("filter", "/content/test/1"),
+            ImmutableMap.<String, Object>of("filter", "/content/test/2",
+                "rules", ImmutableList.of(ImmutableMap.<String, Object>of("rule", "include", "pattern", "pattern1"),
+                    ImmutableMap.<String, Object>of("rule", "exclude", "pattern", "pattern2")))
+            ));
 
     // prepare JSON file
     File target = new File("target/" + ContentPackagePostProcessor.NAME + "-test");
@@ -87,6 +95,13 @@ public class ContentPackagePostProcessorTest {
 
     Document contentXml = getXmlFromZip(zipFile, "jcr_root/content/test/.content.xml");
     assertXpathEvaluatesTo("cq:Page", "/jcr:root/@jcr:primaryType", contentXml);
+
+    Document filterXml = getXmlFromZip(zipFile, "META-INF/vault/filter.xml");
+    assertXpathEvaluatesTo("2", "count(/workspaceFilter/filter)", filterXml);
+    assertXpathEvaluatesTo("/content/test/1", "/workspaceFilter/filter[1]/@root", filterXml);
+    assertXpathEvaluatesTo("/content/test/2", "/workspaceFilter/filter[2]/@root", filterXml);
+    assertXpathEvaluatesTo("pattern1", "/workspaceFilter/filter[2]/include[1]/@pattern", filterXml);
+    assertXpathEvaluatesTo("pattern2", "/workspaceFilter/filter[2]/exclude[1]/@pattern", filterXml);
   }
 
 }
