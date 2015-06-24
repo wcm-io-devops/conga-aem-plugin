@@ -22,6 +22,8 @@ package io.wcm.devops.conga.plugins.aem.postprocessor;
 import static io.wcm.devops.conga.plugins.aem.postprocessor.ContentPackageOptions.PROPERTY_PACKAGE_GROUP;
 import static io.wcm.devops.conga.plugins.aem.postprocessor.ContentPackageOptions.PROPERTY_PACKAGE_NAME;
 import static io.wcm.devops.conga.plugins.aem.postprocessor.ContentPackageOptions.PROPERTY_PACKAGE_ROOT_PATH;
+import static io.wcm.devops.conga.plugins.aem.postprocessor.ContentPackageTestUtil.getDataFromZip;
+import static io.wcm.devops.conga.plugins.aem.postprocessor.ContentPackageTestUtil.getXmlFromZip;
 import static org.custommonkey.xmlunit.XMLAssert.assertXpathEvaluatesTo;
 import static org.junit.Assert.assertArrayEquals;
 import static org.junit.Assert.assertEquals;
@@ -35,13 +37,9 @@ import io.wcm.devops.conga.plugins.sling.postprocessor.ProvisioningOsgiConfigPos
 
 import java.io.ByteArrayInputStream;
 import java.io.File;
-import java.io.FileNotFoundException;
 import java.io.InputStream;
 import java.util.Dictionary;
 import java.util.Map;
-
-import javax.xml.parsers.DocumentBuilder;
-import javax.xml.parsers.DocumentBuilderFactory;
 
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.lang3.CharEncoding;
@@ -55,11 +53,6 @@ import org.zeroturnaround.zip.ZipUtil;
 import com.google.common.collect.ImmutableMap;
 
 public class ContentPackageOsgiConfigPostProcessorTest {
-
-  private static final DocumentBuilderFactory DOCUMENT_BUILDER_FACTORY = DocumentBuilderFactory.newInstance();
-  static {
-    DOCUMENT_BUILDER_FACTORY.setNamespaceAware(true);
-  }
 
   private PostProcessorPlugin underTest;
 
@@ -120,20 +113,6 @@ public class ContentPackageOsgiConfigPostProcessorTest {
     Document propsXml = getXmlFromZip(zipFile, "META-INF/vault/properties.xml");
     assertXpathEvaluatesTo("myGroup", "/properties/entry[@key='group']", propsXml);
     assertXpathEvaluatesTo("myName", "/properties/entry[@key='name']", propsXml);
-  }
-
-  private byte[] getDataFromZip(File file, String path) throws Exception {
-    byte[] data = ZipUtil.unpackEntry(file, path);
-    if (data == null) {
-      throw new FileNotFoundException("File not found in ZIP: " + path);
-    }
-    return data;
-  }
-
-  private Document getXmlFromZip(File file, String path) throws Exception {
-    byte[] data = getDataFromZip(file, path);
-    DocumentBuilder documentBuilder = DOCUMENT_BUILDER_FACTORY.newDocumentBuilder();
-    return documentBuilder.parse(new ByteArrayInputStream(data));
   }
 
 }

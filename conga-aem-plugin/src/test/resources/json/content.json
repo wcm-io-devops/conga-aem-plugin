@@ -1,19 +1,19 @@
 {
-  "jcr:primaryType": "app:Page",
+  "jcr:primaryType": "cq:Page",
   "jcr:createdBy": "admin",
   "jcr:created": "Thu Aug 07 2014 16:32:59 GMT+0200",
   "jcr:content": {
-    "jcr:primaryType": "app:PageContent",
+    "jcr:primaryType": "cq:PageContent",
     "jcr:createdBy": "admin",
     "jcr:title": "English",
-    "app:template": "/apps/sample/templates/homepage",
+    "cq:template": "/apps/sample/templates/homepage",
     "jcr:created": "Thu Aug 07 2014 16:32:59 GMT+0200",
-    "app:lastModified": "Tue Apr 22 2014 15:11:24 GMT+0200",
+    "cq:lastModified": "Tue Apr 22 2014 15:11:24 GMT+0200",
     "dateISO8601String": "2014-04-22T15:11:24.000+02:00",
     "pageTitle": "Sample Homepage",
     "sling:resourceType": "sample/components/homepage",
-    "app:designPath": "/etc/designs/sample",
-    "app:lastModifiedBy": "admin",
+    "cq:designPath": "/etc/designs/sample",
+    "cq:lastModifiedBy": "admin",
     "utf8Property": "äöüß€",
     "par": {
       "jcr:primaryType": "nt:unstructured",
@@ -35,20 +35,7 @@
         "jcr:created": "Mon Aug 23 2010 22:03:39 GMT+0200",
         "width": "340",
         "jcr:lastModified": "Sun Oct 31 2010 21:39:50 GMT+0100",
-        "sling:resourceType": "foundation/components/image",
-        "file": {
-          "jcr:primaryType": "nt:file",
-          "jcr:createdBy": "admin",
-          "jcr:created": "Thu Aug 07 2014 16:32:59 GMT+0200",
-          "jcr:content": {
-            "jcr:primaryType": "nt:resource",
-            "jcr:lastModifiedBy": "anonymous",
-            "jcr:mimeType": "image/jpeg",
-            "jcr:lastModified": "Thu Aug 07 2014 16:32:59 GMT+0200",
-            ":jcr:data": 24377,
-            "jcr:uuid": "eda76d00-b2cd-4b59-878f-c33f71ceaddc"
-          }
-        }
+        "sling:resourceType": "foundation/components/image"
       },
       "title_1": {
         "jcr:primaryType": "nt:unstructured",
@@ -83,20 +70,7 @@
         "jcr:created": "Mon Aug 23 2010 22:04:46 GMT+0200",
         "jcr:lastModified": "Fri Nov 05 2010 10:38:15 GMT+0100",
         "sling:resourceType": "foundation/components/image",
-        "imageRotate": "0",
-        "file": {
-          "jcr:primaryType": "nt:file",
-          "jcr:createdBy": "admin",
-          "jcr:created": "Thu Aug 07 2014 16:32:59 GMT+0200",
-          "jcr:content": {
-            "jcr:primaryType": "nt:resource",
-            "jcr:lastModifiedBy": "anonymous",
-            "jcr:mimeType": "image/jpeg",
-            "jcr:lastModified": "Thu Aug 07 2014 16:32:59 GMT+0200",
-            ":jcr:data": 21142,
-            "jcr:uuid": "6139077f-191f-4337-aaef-55456ebe6784"
-          }
-        }
+        "imageRotate": "0"
       },
       "title_2": {
         "jcr:primaryType": "nt:unstructured",
@@ -146,7 +120,7 @@
       "jcr:description": "Sample has been selling and servicing shapes for over 2000 years. From our beginnings as a small vendor of squares and rectangles we have grown our business into a leading global provider of platonic solids and fractals. Join us as we lead geometry into the future.",
       "jcr:lastModified": "Wed Jan 19 2011 14:35:29 GMT+0100",
       "sling:resourceType": "sample/components/lead",
-      "app:annotations": {"jcr:primaryType": "nt:unstructured"}
+      "cq:annotations": {"jcr:primaryType": "nt:unstructured"}
     },
     "image": {
       "jcr:primaryType": "nt:unstructured",
@@ -184,20 +158,20 @@
     }
   },
   "toolbar": {
-    "jcr:primaryType": "app:Page",
+    "jcr:primaryType": "cq:Page",
     "jcr:createdBy": "admin",
     "jcr:created": "Thu Aug 07 2014 16:33:00 GMT+0200",
     "jcr:content": {
-      "jcr:primaryType": "app:PageContent",
+      "jcr:primaryType": "cq:PageContent",
       "subtitle": "Contains the toolbar",
       "jcr:createdBy": "admin",
       "jcr:title": "Toolbar",
-      "app:template": "/apps/sample/templates/contentpage",
+      "cq:template": "/apps/sample/templates/contentpage",
       "jcr:created": "Thu Aug 07 2014 16:33:00 GMT+0200",
-      "app:lastModified": "Wed Aug 25 2010 22:51:02 GMT+0200",
+      "cq:lastModified": "Wed Aug 25 2010 22:51:02 GMT+0200",
       "hideInNav": "true",
       "sling:resourceType": "sample/components/contentpage",
-      "app:lastModifiedBy": "admin",
+      "cq:lastModifiedBy": "admin",
       "par": {
         "jcr:primaryType": "nt:unstructured",
         "sling:resourceType": "foundation/components/parsys"
@@ -212,19 +186,19 @@
       }
     },
     "profiles": {
-      "jcr:primaryType": "app:Page",
+      "jcr:primaryType": "cq:Page",
       "jcr:createdBy": "admin",
       "jcr:created": "Thu Aug 07 2014 16:33:00 GMT+0200",
       "jcr:content": {
-        "jcr:primaryType": "app:PageContent",
+        "jcr:primaryType": "cq:PageContent",
         "jcr:createdBy": "admin",
         "jcr:title": "Profiles",
-        "app:template": "/apps/sample/templates/contentpage",
+        "cq:template": "/apps/sample/templates/contentpage",
         "jcr:created": "Thu Aug 07 2014 16:33:00 GMT+0200",
-        "app:lastModified": "Thu Nov 05 2009 20:27:13 GMT+0100",
+        "cq:lastModified": "Thu Nov 05 2009 20:27:13 GMT+0100",
         "hideInNav": true,
         "sling:resourceType": "sample/components/contentpage",
-        "app:lastModifiedBy": "admin",
+        "cq:lastModifiedBy": "admin",
         "longProp": 1234567890123,
         "decimalProp": 1.2345,
         "booleanProp": true,

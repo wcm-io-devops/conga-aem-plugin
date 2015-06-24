@@ -28,6 +28,7 @@ import io.wcm.devops.conga.generator.spi.PostProcessorPlugin;
 import io.wcm.devops.conga.generator.spi.context.FileContext;
 import io.wcm.devops.conga.generator.spi.context.PostProcessorContext;
 import io.wcm.devops.conga.generator.util.FileUtil;
+import io.wcm.devops.conga.plugins.aem.util.JsonContentLoader;
 import io.wcm.tooling.commons.contentpackagebuilder.ContentPackage;
 import io.wcm.tooling.commons.contentpackagebuilder.ContentPackageBuilder;
 
@@ -53,6 +54,8 @@ public class ContentPackagePostProcessor implements PostProcessorPlugin {
   public static final String NAME = "aem-contentpackage";
 
   private static final String FILE_EXTENSION = "json";
+
+  private final JsonContentLoader jsonContentLoader = new JsonContentLoader();
 
   @Override
   public String getName() {
@@ -81,9 +84,9 @@ public class ContentPackagePostProcessor implements PostProcessorPlugin {
       .group(getMandatoryProp(options, PROPERTY_PACKAGE_GROUP))
       .name(getMandatoryProp(options, PROPERTY_PACKAGE_NAME));
 
-
       try (ContentPackage contentPackage = builder.build(zipFile)) {
-        // TODO: transform JSON to concent package...
+        Map<String, Object> content = jsonContentLoader.load(fileContext.getFile());
+        contentPackage.addContent(contentPackage.getRootPath(), content);
       }
 
       // delete provisioning file after transformation
@@ -92,7 +95,7 @@ public class ContentPackagePostProcessor implements PostProcessorPlugin {
       return ImmutableList.of(new FileContext().file(zipFile));
     }
     catch (IOException ex) {
-      throw new GeneratorException("Unable to post-process JSON data file.", ex);
+      throw new GeneratorException("Unable to post-process JSON data file: " + FileUtil.getCanonicalPath(file), ex);
     }
   }
 
