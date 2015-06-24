@@ -19,6 +19,10 @@
  */
 package io.wcm.devops.conga.plugins.aem.postprocessor;
 
+import io.wcm.devops.conga.generator.GeneratorException;
+
+import java.util.Map;
+
 /**
  * Option property names for content package post processors {@link ContentPackagePostProcessor} and
  * {@link ContentPackageOsgiConfigPostProcessor}.
@@ -44,5 +48,18 @@ public final class ContentPackageOptions {
    */
   public static final String PROPERTY_PACKAGE_NAME = "contentPackageName";
 
+  /**
+   * Get property from options and throw exception if it is not set.
+   * @param options Options
+   * @param key Key
+   * @return Option value
+   */
+  static String getMandatoryProp(Map<String, Object> options, String key) {
+    Object value = options.get(key);
+    if (value instanceof String) {
+      return (String)value;
+    }
+    throw new GeneratorException("Missing post processor option '" + key + "'.");
+  }
 
 }
