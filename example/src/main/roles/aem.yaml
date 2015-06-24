@@ -2,20 +2,32 @@ templateDir: aem
 
 files:
 
-# Define a single file to be generated for all role variants
+# Define a AEM content package containing OSGi configurations from a Sling Provisioning file
 - file: sling-provisioning.txt
-  dir: osgi-config
+  dir: packages
   template: sling-provisioning.txt.hbs
   validators:
   - sling-provisioning
   # Post-processors apply further actions after generation the file
-  # In this case the provisionig file is transformed to single OSGi config files
   postProcessors:
   - aem-contentpackage-osgiconfig
   postProcessorOptions:
     contentPackageGroup: sample
-    contentPackageName: sample
+    contentPackageName: config-sample
     contentPackageRootPath: /apps/sample/config
+
+
+# Define a AEM content package with some JCR content (Sling Mapping Example)
+- file: sling-mapping.json
+  dir: packages
+  template: sling-mapping.json.hbs
+  # Post-processors apply further actions after generation the file
+  postProcessors:
+  - aem-contentpackage
+  postProcessorOptions:
+    contentPackageGroup: sample
+    contentPackageName: mapping-sample
+    contentPackageRootPath: /etc/map/http/mysite
 
 
 # Defines configuration parameters and default values
