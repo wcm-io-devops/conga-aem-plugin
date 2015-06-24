@@ -19,9 +19,9 @@
  */
 package io.wcm.devops.conga.plugins.aem.postprocessor;
 
-import static io.wcm.devops.conga.plugins.aem.postprocessor.ContentPackageOsgiConfigPostProcessor.PROPERTY_PACKAGE_GROUP;
-import static io.wcm.devops.conga.plugins.aem.postprocessor.ContentPackageOsgiConfigPostProcessor.PROPERTY_PACKAGE_NAME;
-import static io.wcm.devops.conga.plugins.aem.postprocessor.ContentPackageOsgiConfigPostProcessor.PROPERTY_PACKAGE_ROOT_PATH;
+import static io.wcm.devops.conga.plugins.aem.postprocessor.ContentPackageOptions.PROPERTY_PACKAGE_GROUP;
+import static io.wcm.devops.conga.plugins.aem.postprocessor.ContentPackageOptions.PROPERTY_PACKAGE_NAME;
+import static io.wcm.devops.conga.plugins.aem.postprocessor.ContentPackageOptions.PROPERTY_PACKAGE_ROOT_PATH;
 import static org.custommonkey.xmlunit.XMLAssert.assertXpathEvaluatesTo;
 import static org.junit.Assert.assertArrayEquals;
 import static org.junit.Assert.assertEquals;
@@ -81,7 +81,7 @@ public class ContentPackageOsgiConfigPostProcessorTest {
       FileUtils.deleteDirectory(target);
     }
     File provisioningFile = new File(target, "test.txt");
-    FileUtils.copyFile(new File(getClass().getResource("/validProvisioning.txt").toURI()), provisioningFile);
+    FileUtils.copyFile(new File(getClass().getResource("/provisioning/validProvisioning.txt").toURI()), provisioningFile);
 
     // post-process
     FileContext fileContext = new FileContext()

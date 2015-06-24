@@ -43,7 +43,7 @@ public class AnyValidatorTest {
 
   @Test
   public void testValidPublish() throws Exception {
-    File file = new File(getClass().getResource("/dispatcher.any").toURI());
+    File file = new File(getClass().getResource("/any/dispatcher.any").toURI());
     FileContext fileContext = new FileContext().file(file).charset(CharEncoding.ISO_8859_1);
     assertTrue(underTest.accepts(fileContext, null));
     underTest.apply(fileContext, null);
@@ -51,7 +51,7 @@ public class AnyValidatorTest {
 
   @Test
   public void testValidAuthor() throws Exception {
-    File file = new File(getClass().getResource("/author_dispatcher.any").toURI());
+    File file = new File(getClass().getResource("/any/author_dispatcher.any").toURI());
     FileContext fileContext = new FileContext().file(file).charset(CharEncoding.ISO_8859_1);
     assertTrue(underTest.accepts(fileContext, null));
     underTest.apply(fileContext, null);
@@ -59,15 +59,15 @@ public class AnyValidatorTest {
 
   @Test(expected = ValidationException.class)
   public void testInvalid() throws Exception {
-    File file = new File(getClass().getResource("/invalidAny.any").toURI());
+    File file = new File(getClass().getResource("/any/invalidAny.any").toURI());
     FileContext fileContext = new FileContext().file(file).charset(CharEncoding.ISO_8859_1);
     assertTrue(underTest.accepts(fileContext, null));
     underTest.apply(fileContext, null);
   }
 
   @Test
-  public void testNonExisting() throws Exception {
-    File file = new File(getClass().getResource("/noAny.txt").toURI());
+  public void testInvalidFileExtension() throws Exception {
+    File file = new File(getClass().getResource("/any/noAny.txt").toURI());
     FileContext fileContext = new FileContext().file(file).charset(CharEncoding.ISO_8859_1);
     assertFalse(underTest.accepts(fileContext, null));
   }

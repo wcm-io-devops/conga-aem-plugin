@@ -19,6 +19,9 @@
  */
 package io.wcm.devops.conga.plugins.aem.postprocessor;
 
+import static io.wcm.devops.conga.plugins.aem.postprocessor.ContentPackageOptions.PROPERTY_PACKAGE_GROUP;
+import static io.wcm.devops.conga.plugins.aem.postprocessor.ContentPackageOptions.PROPERTY_PACKAGE_NAME;
+import static io.wcm.devops.conga.plugins.aem.postprocessor.ContentPackageOptions.PROPERTY_PACKAGE_ROOT_PATH;
 import io.wcm.devops.conga.generator.GeneratorException;
 import io.wcm.devops.conga.generator.spi.PostProcessorPlugin;
 import io.wcm.devops.conga.generator.spi.context.FileContext;
@@ -54,21 +57,6 @@ public class ContentPackageOsgiConfigPostProcessor implements PostProcessorPlugi
    * Plugin name
    */
   public static final String NAME = "aem-contentpackage-osgiconfig";
-
-  /**
-   * Root path for content package
-   */
-  public static final String PROPERTY_PACKAGE_ROOT_PATH = "contentPackageRootPath";
-
-  /**
-   * Group name for content package
-   */
-  public static final String PROPERTY_PACKAGE_GROUP = "contentPackageGroup";
-
-  /**
-   * Package name for content package
-   */
-  public static final String PROPERTY_PACKAGE_NAME = "contentPackageName";
 
   @Override
   public String getName() {
