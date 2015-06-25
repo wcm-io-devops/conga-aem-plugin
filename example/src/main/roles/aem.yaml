@@ -15,7 +15,7 @@ files:
     contentPackageGroup: sample
     contentPackageName: config-sample
     contentPackageDescription: The description of the sample package.
-    contentPackageVersion: 1.2.3
+    contentPackageVersion: "${version}"
     contentPackageRootPath: /apps/sample/config
 
 
