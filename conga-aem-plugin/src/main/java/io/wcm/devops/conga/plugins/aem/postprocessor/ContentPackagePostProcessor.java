@@ -19,16 +19,13 @@
  */
 package io.wcm.devops.conga.plugins.aem.postprocessor;
 
-import static io.wcm.devops.conga.plugins.aem.postprocessor.ContentPackageOptions.PROPERTY_PACKAGE_GROUP;
-import static io.wcm.devops.conga.plugins.aem.postprocessor.ContentPackageOptions.PROPERTY_PACKAGE_NAME;
 import static io.wcm.devops.conga.plugins.aem.postprocessor.ContentPackageOptions.PROPERTY_PACKAGE_ROOT_PATH;
-import static io.wcm.devops.conga.plugins.aem.postprocessor.ContentPackageOptions.getFilters;
-import static io.wcm.devops.conga.plugins.aem.postprocessor.ContentPackageOptions.getMandatoryProp;
 import io.wcm.devops.conga.generator.GeneratorException;
 import io.wcm.devops.conga.generator.spi.PostProcessorPlugin;
 import io.wcm.devops.conga.generator.spi.context.FileContext;
 import io.wcm.devops.conga.generator.spi.context.PostProcessorContext;
 import io.wcm.devops.conga.generator.util.FileUtil;
+import io.wcm.devops.conga.plugins.aem.util.ContentPackageUtil;
 import io.wcm.devops.conga.plugins.aem.util.JsonContentLoader;
 import io.wcm.tooling.commons.contentpackagebuilder.ContentPackage;
 import io.wcm.tooling.commons.contentpackagebuilder.ContentPackageBuilder;
@@ -80,13 +77,9 @@ public class ContentPackagePostProcessor implements PostProcessorPlugin {
       File zipFile = new File(file.getParentFile(), FilenameUtils.getBaseName(file.getName()) + ".zip");
       logger.info("Generate " + zipFile.getCanonicalPath());
 
-      String rootPath = getMandatoryProp(options, PROPERTY_PACKAGE_ROOT_PATH);
+      String rootPath = ContentPackageUtil.getMandatoryProp(options, PROPERTY_PACKAGE_ROOT_PATH);
 
-      ContentPackageBuilder builder = new ContentPackageBuilder()
-      .group(getMandatoryProp(options, PROPERTY_PACKAGE_GROUP))
-      .name(getMandatoryProp(options, PROPERTY_PACKAGE_NAME));
-      getFilters(options).forEach(builder::filter);
-
+      ContentPackageBuilder builder = ContentPackageUtil.getContentPackageBuilder(options);
       try (ContentPackage contentPackage = builder.build(zipFile)) {
         Map<String, Object> content = jsonContentLoader.load(fileContext.getFile());
         contentPackage.addContent(rootPath, content);

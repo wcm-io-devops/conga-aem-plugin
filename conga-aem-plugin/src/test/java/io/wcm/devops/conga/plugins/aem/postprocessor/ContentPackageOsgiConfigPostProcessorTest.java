@@ -19,9 +19,11 @@
  */
 package io.wcm.devops.conga.plugins.aem.postprocessor;
 
+import static io.wcm.devops.conga.plugins.aem.postprocessor.ContentPackageOptions.PROPERTY_PACKAGE_DESCRIPTION;
 import static io.wcm.devops.conga.plugins.aem.postprocessor.ContentPackageOptions.PROPERTY_PACKAGE_GROUP;
 import static io.wcm.devops.conga.plugins.aem.postprocessor.ContentPackageOptions.PROPERTY_PACKAGE_NAME;
 import static io.wcm.devops.conga.plugins.aem.postprocessor.ContentPackageOptions.PROPERTY_PACKAGE_ROOT_PATH;
+import static io.wcm.devops.conga.plugins.aem.postprocessor.ContentPackageOptions.PROPERTY_PACKAGE_VERSION;
 import static io.wcm.devops.conga.plugins.aem.postprocessor.ContentPackageTestUtil.getDataFromZip;
 import static io.wcm.devops.conga.plugins.aem.postprocessor.ContentPackageTestUtil.getXmlFromZip;
 import static org.custommonkey.xmlunit.XMLAssert.assertXpathEvaluatesTo;
@@ -66,6 +68,8 @@ public class ContentPackageOsgiConfigPostProcessorTest {
     Map<String, Object> options = ImmutableMap.<String, Object>of(
         PROPERTY_PACKAGE_GROUP, "myGroup",
         PROPERTY_PACKAGE_NAME, "myName",
+        PROPERTY_PACKAGE_DESCRIPTION, "myDesc",
+        PROPERTY_PACKAGE_VERSION, "1.5",
         PROPERTY_PACKAGE_ROOT_PATH, "/apps/test/config");
 
     // prepare provisioning file
@@ -113,6 +117,8 @@ public class ContentPackageOsgiConfigPostProcessorTest {
     Document propsXml = getXmlFromZip(zipFile, "META-INF/vault/properties.xml");
     assertXpathEvaluatesTo("myGroup", "/properties/entry[@key='group']", propsXml);
     assertXpathEvaluatesTo("myName", "/properties/entry[@key='name']", propsXml);
+    assertXpathEvaluatesTo("myDesc", "/properties/entry[@key='description']", propsXml);
+    assertXpathEvaluatesTo("1.5", "/properties/entry[@key='version']", propsXml);
   }
 
 }

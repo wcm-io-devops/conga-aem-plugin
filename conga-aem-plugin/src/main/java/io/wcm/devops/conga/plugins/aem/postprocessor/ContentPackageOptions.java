@@ -19,14 +19,6 @@
  */
 package io.wcm.devops.conga.plugins.aem.postprocessor;
 
-import io.wcm.devops.conga.generator.GeneratorException;
-import io.wcm.tooling.commons.contentpackagebuilder.PackageFilter;
-
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
-
-import org.apache.commons.lang3.StringUtils;
 
 /**
  * Option property names for content package post processors {@link ContentPackagePostProcessor} and
@@ -59,78 +51,13 @@ public final class ContentPackageOptions {
   public static final String PROPERTY_PACKAGE_NAME = "contentPackageName";
 
   /**
-   * Get property from options and throw exception if it is not set.
-   * @param options Options
-   * @param key Key
-   * @return Option value
+   * Description for content package
    */
-  static String getMandatoryProp(Map<String, Object> options, String key) {
-    Object value = options.get(key);
-    if (value instanceof String) {
-      return (String)value;
-    }
-    throw new GeneratorException("Missing post processor option '" + key + "'.");
-  }
+  public static final String PROPERTY_PACKAGE_DESCRIPTION = "contentPackageDescription";
 
   /**
-   * Get property from options and throw exception if it is not set.
-   * @param options Options
-   * @param key Key
-   * @return Option value
+   * Version for content package
    */
-  @SuppressWarnings("unchecked")
-  static List<Map<String, Object>> getOptionalPropMapList(Map<String, Object> options, String key) {
-    Object value = options.get(key);
-    if (value instanceof List || value == null) {
-      return (List<Map<String, Object>>)value;
-    }
-    throw new GeneratorException("Missing post processor option '" + key + "'.");
-  }
-
-  /**
-   * Get filter definitions either from contentPackageRootPath or from contentPackageFilters property.
-   * @param options Options
-   * @return Filters list
-   */
-  static List<PackageFilter> getFilters(Map<String, Object> options) {
-    List<PackageFilter> filters = new ArrayList<>();
-
-    String rootPath = getMandatoryProp(options, PROPERTY_PACKAGE_ROOT_PATH);
-    List<Map<String, Object>> filterDefinitions = getOptionalPropMapList(options, PROPERTY_PACKAGE_FILTERS);
-
-    if (filterDefinitions != null) {
-      for (Map<String, Object> filterDefinition : filterDefinitions) {
-        String filterRoot = getMandatoryProp(filterDefinition, "filter");
-        PackageFilter filter = new PackageFilter(filterRoot);
-        filters.add(filter);
-
-        List<Map<String, Object>> ruleDefinitions = getOptionalPropMapList(filterDefinition, "rules");
-        if (ruleDefinitions != null) {
-          for (Map<String, Object> ruleDefinition : ruleDefinitions) {
-            String rule = getMandatoryProp(ruleDefinition, "rule");
-            String pattern = getMandatoryProp(ruleDefinition, "pattern");
-            if (StringUtils.equals(rule, "include")) {
-              filter.addIncludeRule(pattern);
-            }
-            else if (StringUtils.equals(rule, "exclude")) {
-              filter.addExcludeRule(pattern);
-            }
-            else {
-              throw new GeneratorException("Invalude rule '" + rule + "' in post processor options.");
-            }
-          }
-        }
-      }
-    }
-    else if (rootPath != null) {
-      filters.add(new PackageFilter(rootPath));
-    }
-
-    if (filters.isEmpty()) {
-      throw new GeneratorException("No content package filters defines in post processor options.");
-    }
-
-    return filters;
-  }
+  public static final String PROPERTY_PACKAGE_VERSION = "contentPackageVersion";
 
 }

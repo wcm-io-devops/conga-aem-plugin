@@ -14,6 +14,8 @@ files:
   postProcessorOptions:
     contentPackageGroup: sample
     contentPackageName: config-sample
+    contentPackageDescription: The description of the sample package.
+    contentPackageVersion: 1.2.3
     contentPackageRootPath: /apps/sample/config
 
 
