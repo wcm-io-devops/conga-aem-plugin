@@ -3,9 +3,9 @@ templateDir: aem
 files:
 
 # Define a AEM content package containing OSGi configurations from a Sling Provisioning file
-- file: sling-provisioning.txt
+- file: sling-provisioning.provisioning
   dir: packages
-  template: sling-provisioning.txt.hbs
+  template: sling-provisioning.provisioning.hbs
   validators:
   - sling-provisioning
   # Post-processors apply further actions after generation the file
@@ -49,3 +49,5 @@ config:
       max: 2048m
     permgenspace:
       max: 256m
+
+  var1: Value 1
