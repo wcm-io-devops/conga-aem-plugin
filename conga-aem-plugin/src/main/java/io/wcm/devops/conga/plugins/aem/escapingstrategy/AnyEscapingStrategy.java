@@ -26,8 +26,6 @@ import org.apache.commons.lang3.text.translate.AggregateTranslator;
 import org.apache.commons.lang3.text.translate.CharSequenceTranslator;
 import org.apache.commons.lang3.text.translate.LookupTranslator;
 
-import com.github.jknack.handlebars.EscapingStrategy;
-
 /**
  * Escapes for ANY files.
  */
@@ -56,13 +54,6 @@ public class AnyEscapingStrategy implements EscapingStrategyPlugin {
               })
           );
 
-  static final EscapingStrategy ESCAPING_STRATEGY = new EscapingStrategy() {
-    @Override
-    public String escape(CharSequence value) {
-      return value == null ? null : ESCAPE_ANY.translate(value);
-    }
-  };
-
   @Override
   public String getName() {
     return NAME;
@@ -74,8 +65,8 @@ public class AnyEscapingStrategy implements EscapingStrategyPlugin {
   }
 
   @Override
-  public EscapingStrategy getEscapingStrategy() {
-    return ESCAPING_STRATEGY;
+  public String escape(CharSequence value) {
+    return value == null ? null : ESCAPE_ANY.translate(value);
   }
 
 }
