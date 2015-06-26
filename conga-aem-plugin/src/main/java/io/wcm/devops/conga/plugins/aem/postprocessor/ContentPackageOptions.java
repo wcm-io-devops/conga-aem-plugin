@@ -31,33 +31,33 @@ public final class ContentPackageOptions {
   }
 
   /**
-   * Root path for content package (simplified version for setting just one filter)
-   */
-  public static final String PROPERTY_PACKAGE_ROOT_PATH = "contentPackageRootPath";
-
-  /**
-   * Contains list with filter definitions, optionally with include/exclude rules
-   */
-  public static final String PROPERTY_PACKAGE_FILTERS = "contentPackageFilters";
-
-  /**
    * Group name for content package
    */
-  public static final String PROPERTY_PACKAGE_GROUP = "contentPackageGroup";
+  public static final String PROPERTY_PACKAGE_GROUP = "contentPackage.group";
 
   /**
    * Package name for content package
    */
-  public static final String PROPERTY_PACKAGE_NAME = "contentPackageName";
+  public static final String PROPERTY_PACKAGE_NAME = "contentPackage.name";
 
   /**
    * Description for content package
    */
-  public static final String PROPERTY_PACKAGE_DESCRIPTION = "contentPackageDescription";
+  public static final String PROPERTY_PACKAGE_DESCRIPTION = "contentPackage.description";
 
   /**
    * Version for content package
    */
-  public static final String PROPERTY_PACKAGE_VERSION = "contentPackageVersion";
+  public static final String PROPERTY_PACKAGE_VERSION = "contentPackage.version";
+
+  /**
+   * Root path for content package (simplified version for setting just one filter)
+   */
+  public static final String PROPERTY_PACKAGE_ROOT_PATH = "contentPackage.rootPath";
+
+  /**
+   * Contains list with filter definitions, optionally with include/exclude rules
+   */
+  public static final String PROPERTY_PACKAGE_FILTERS = "contentPackage.filters";
 
 }

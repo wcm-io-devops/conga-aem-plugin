@@ -26,6 +26,7 @@ import static io.wcm.devops.conga.plugins.aem.postprocessor.ContentPackageOption
 import static io.wcm.devops.conga.plugins.aem.postprocessor.ContentPackageOptions.PROPERTY_PACKAGE_ROOT_PATH;
 import static io.wcm.devops.conga.plugins.aem.postprocessor.ContentPackageOptions.PROPERTY_PACKAGE_VERSION;
 import io.wcm.devops.conga.generator.GeneratorException;
+import io.wcm.devops.conga.model.util.MapExpander;
 import io.wcm.devops.conga.plugins.aem.postprocessor.ContentPackageOsgiConfigPostProcessor;
 import io.wcm.devops.conga.plugins.aem.postprocessor.ContentPackagePostProcessor;
 import io.wcm.tooling.commons.contentpackagebuilder.ContentPackageBuilder;
@@ -117,7 +118,7 @@ public final class ContentPackageUtil {
    * @return Option value
    */
   public static String getMandatoryProp(Map<String, Object> options, String key) {
-    Object value = options.get(key);
+    Object value = MapExpander.getDeep(options, key);
     if (value instanceof String) {
       return (String)value;
     }
@@ -131,7 +132,7 @@ public final class ContentPackageUtil {
    * @return Option value or null
    */
   public static String getOptionalProp(Map<String, Object> options, String key) {
-    Object value = options.get(key);
+    Object value = MapExpander.getDeep(options, key);
     if (value instanceof String) {
       return (String)value;
     }
@@ -146,7 +147,7 @@ public final class ContentPackageUtil {
    */
   @SuppressWarnings("unchecked")
   public static List<Map<String, Object>> getOptionalPropMapList(Map<String, Object> options, String key) {
-    Object value = options.get(key);
+    Object value = MapExpander.getDeep(options, key);
     if (value instanceof List || value == null) {
       return (List<Map<String, Object>>)value;
     }

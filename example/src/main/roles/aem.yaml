@@ -12,11 +12,11 @@ files:
   postProcessors:
   - aem-contentpackage-osgiconfig
   postProcessorOptions:
-    contentPackageGroup: sample
-    contentPackageName: config-sample
-    contentPackageDescription: The description of the sample package.
-    contentPackageVersion: "${version}"
-    contentPackageRootPath: /apps/sample/config
+    contentPackage:
+      name: config-sample
+      description: The description of the sample package.
+      version: "${version}"
+      rootPath: /apps/sample/config
 
 
 # Define a AEM content package with some JCR content (Sling Mapping Example)
@@ -27,22 +27,26 @@ files:
   postProcessors:
   - aem-contentpackage
   postProcessorOptions:
-    contentPackageGroup: sample
-    contentPackageName: mapping-sample
-    contentPackageRootPath: /etc/map/http
-    contentPackageFilters:
-    - filter: /etc/map/http
-      rules:
-      - rule: exclude
-        pattern: /etc/map/http
-      - rule: include
-        pattern: /etc/map/http/.*
-      - rule: exclude
-        pattern: /etc/map/http/AppMeasurementBridge
+    contentPackage:
+      name: mapping-sample
+      rootPath: /etc/map/http
+      filters:
+      - filter: /etc/map/http
+        rules:
+        - rule: exclude
+          pattern: /etc/map/http
+        - rule: include
+          pattern: /etc/map/http/.*
+        - rule: exclude
+          pattern: /etc/map/http/AppMeasurementBridge
 
 
 # Defines configuration parameters and default values
 config:
+
+  contentPackage:
+    group: sample
+    version: "${version}"
 
   jvm:
     path: /path/to/java
