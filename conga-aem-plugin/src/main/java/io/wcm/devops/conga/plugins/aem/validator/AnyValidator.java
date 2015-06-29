@@ -26,14 +26,18 @@ import io.wcm.devops.conga.generator.spi.context.ValidatorContext;
 import io.wcm.devops.conga.generator.util.FileUtil;
 
 import java.io.FileInputStream;
+import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.Reader;
 
+import org.xml.sax.EntityResolver;
 import org.xml.sax.InputSource;
+import org.xml.sax.SAXException;
 
 import com.day.any.BaseHandler;
 import com.day.any.Parser;
+import com.day.any.ResourceExpander;
 
 /**
  * Validates Day ANY files.
@@ -60,6 +64,22 @@ public class AnyValidator implements ValidatorPlugin {
   @Override
   public Void apply(FileContext file, ValidatorContext context) throws ValidationException {
     Parser parser = new Parser(new BaseHandler());
+
+    // set resource expander and entity resolver that do not resolve anything
+    // just make sure they are in place to allow any parser parsing files with include directives
+    parser.setResourceExpander(new ResourceExpander() {
+      @Override
+      public String[] expand(String arg0) {
+        return new String[0];
+      }
+    });
+    parser.setEnitiyResolver(new EntityResolver() {
+      @Override
+      public InputSource resolveEntity(String publicId, String systemId) throws SAXException, IOException {
+        return null;
+      }
+    });
+
     try (InputStream is = new FileInputStream(file.getFile());
         Reader reader = new InputStreamReader(is, file.getCharset())) {
       parser.parse(new InputSource(reader));
