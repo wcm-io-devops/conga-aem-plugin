@@ -40,6 +40,7 @@ import java.util.Map;
 
 import org.apache.commons.io.FilenameUtils;
 import org.apache.commons.lang3.CharEncoding;
+import org.apache.commons.lang3.StringUtils;
 import org.apache.felix.cm.file.ConfigurationHandler;
 import org.apache.sling.provisioning.model.Model;
 import org.slf4j.Logger;
@@ -111,7 +112,7 @@ public class ContentPackageOsgiConfigPostProcessor implements PostProcessorPlugi
     ProvisioningUtil.visitOsgiConfigurations(model, new ConfigConsumer<Void>() {
       @Override
       public Void accept(String path, Dictionary<String, Object> properties) throws IOException {
-        String contentPath = rootPath + "/" + path;
+        String contentPath = rootPath + (StringUtils.contains(path, "/") ? "." : "/") + path;
         logger.info("  Include " + contentPath);
 
         // write configuration to byte array

@@ -108,8 +108,8 @@ public class ContentPackageOsgiConfigPostProcessorTest {
     }
 
     assertTrue(ZipUtil.containsEntry(zipFile, "jcr_root/apps/test/config/my.factory-my.pid.config"));
-    assertTrue(ZipUtil.containsEntry(zipFile, "jcr_root/apps/test/config/mode1/my.factory-my.pid2.config"));
-    assertTrue(ZipUtil.containsEntry(zipFile, "jcr_root/apps/test/config/mode2/my.pid2.config"));
+    assertTrue(ZipUtil.containsEntry(zipFile, "jcr_root/apps/test/config.mode1/my.factory-my.pid2.config"));
+    assertTrue(ZipUtil.containsEntry(zipFile, "jcr_root/apps/test/config.mode2/my.pid2.config"));
 
     Document filterXml = getXmlFromZip(zipFile, "META-INF/vault/filter.xml");
     assertXpathEvaluatesTo("/apps/test/config", "/workspaceFilter/filter[1]/@root", filterXml);
