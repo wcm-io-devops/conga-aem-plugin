@@ -35,7 +35,7 @@
   <packaging>jar</packaging>
 
   <name>CONGA AEM Plugin</name>
-  <description>CONfiguration GenerAtor Plugin for Adobe Experience Manager (AEM)</description>
+  <description>wcm.io DevOps CONfiguration GenerAtor Plugin for Adobe Experience Manager (AEM).</description>
 
   <scm>
     <connection>scm:git:https://github.com/wcm-io-devops/wcm-io-devops-conga-aem-plugin.git</connection>
