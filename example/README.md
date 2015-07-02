@@ -1,10 +1,10 @@
-CONGA Example
-=============
+CONGA AEM Plugin Example
+========================
 
 You can generate the sample configuration by executing
 
 ```
-example> mvn clean generate-resources
+example> mvn clean package
 ```
 
 on the command line.
