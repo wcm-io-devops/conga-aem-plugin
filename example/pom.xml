@@ -23,12 +23,19 @@
     xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
   <modelVersion>4.0.0</modelVersion>
   
+  <parent>
+    <groupId>io.wcm.maven</groupId>
+    <artifactId>io.wcm.maven.global-parent</artifactId>
+    <version>8</version>
+    <relativePath/>
+  </parent>
+
   <groupId>io.wcm.devops.conga.plugins</groupId>
   <artifactId>io.wcm.devops.conga.plugins.aem.example</artifactId>
   <packaging>config</packaging>
   <version>1</version>
 
-  <name>CONGA Example</name>
+  <name>CONGA AEM Plugin Example</name>
   <description>Example definitions and templates.</description>
   
   <build>
@@ -38,7 +45,7 @@
       <plugin>
         <groupId>io.wcm.devops.conga</groupId>
         <artifactId>conga-maven-plugin</artifactId>
-        <version>1.0.0-SNAPSHOT</version>
+        <version>1.0.0</version>
         <extensions>true</extensions>
         <dependencies>
 
@@ -46,7 +53,7 @@
           <dependency>
             <groupId>io.wcm.devops.conga.plugins</groupId>
             <artifactId>io.wcm.devops.conga.plugins.aem</artifactId>            
-            <version>1.0.0-SNAPSHOT</version>
+            <version>1.0.0</version>
           </dependency>
 
         </dependencies>

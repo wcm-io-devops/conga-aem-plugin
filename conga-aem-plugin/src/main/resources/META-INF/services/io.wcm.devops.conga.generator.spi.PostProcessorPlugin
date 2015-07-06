@@ -1,0 +1,2 @@
+io.wcm.devops.conga.plugins.aem.postprocessor.ContentPackageOsgiConfigPostProcessor
+io.wcm.devops.conga.plugins.aem.postprocessor.ContentPackagePostProcessor

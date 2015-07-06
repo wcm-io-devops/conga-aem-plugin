@@ -2,7 +2,10 @@
 
 nodes:
 
-# Example node
+# Example nodes
+- node: aem
+  roles:
+  - role: aem
 - node: webserver
   roles:
   - role: webserver

@@ -1,0 +1,59 @@
+templateDir: aem
+
+files:
+
+# Define a AEM content package containing OSGi configurations from a Sling Provisioning file
+- file: sling-provisioning.provisioning
+  dir: packages
+  template: sling-provisioning.provisioning.hbs
+  validators:
+  - sling-provisioning
+  # Post-processors apply further actions after generation the file
+  postProcessors:
+  - aem-contentpackage-osgiconfig
+  postProcessorOptions:
+    contentPackage:
+      name: config-sample
+      description: The description of the sample package.
+      version: "${version}"
+      rootPath: /apps/sample/config
+
+
+# Define a AEM content package with some JCR content (Sling Mapping Example)
+- file: sling-mapping.json
+  dir: packages
+  template: sling-mapping.json.hbs
+  # Post-processors apply further actions after generation the file
+  postProcessors:
+  - aem-contentpackage
+  postProcessorOptions:
+    contentPackage:
+      name: mapping-sample
+      rootPath: /etc/map/http
+      filters:
+      - filter: /etc/map/http
+        rules:
+        - rule: exclude
+          pattern: /etc/map/http
+        - rule: include
+          pattern: /etc/map/http/.*
+        - rule: exclude
+          pattern: /etc/map/http/AppMeasurementBridge
+
+
+# Defines configuration parameters and default values
+config:
+
+  contentPackage:
+    group: sample
+    version: "${version}"
+
+  jvm:
+    path: /path/to/java
+    heapspace:
+      min: 512m
+      max: 2048m
+    permgenspace:
+      max: 256m
+
+  var1: Value 1

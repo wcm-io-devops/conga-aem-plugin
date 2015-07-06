@@ -1,5 +1,5 @@
 # name of the dispatcher
-/name "internet-server"
+/name "{{node}}"
  
 # each farm configures a set off (loadbalanced) renders
 /farms
@@ -26,10 +26,6 @@
      /filter
        {
        # List of filters
-       }
-     /vanityUrls
-       {
-       # List of vanity URLs
        }
      /cache
        {
@@ -61,3 +57,4 @@
      /failover "1"
      }
  }
+ 
