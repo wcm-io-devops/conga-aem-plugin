@@ -37,6 +37,8 @@
 
   <modules>
     <module>conga-aem-plugin</module>
+    <!-- This is not included in main build due to conga-maven-plugin plugin dependency -->
+    <!--module>example</module-->
   </modules>
 
   <build>

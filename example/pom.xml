@@ -33,7 +33,7 @@
   <groupId>io.wcm.devops.conga.plugins</groupId>
   <artifactId>io.wcm.devops.conga.plugins.aem.example</artifactId>
   <packaging>config</packaging>
-  <version>1</version>
+  <version>1-SNAPSHOT</version>
 
   <name>CONGA AEM Plugin Example</name>
   <description>Example definitions and templates.</description>
@@ -53,10 +53,20 @@
           <dependency>
             <groupId>io.wcm.devops.conga.plugins</groupId>
             <artifactId>io.wcm.devops.conga.plugins.aem</artifactId>            
-            <version>1.0.0</version>
+            <version>1.0.1-SNAPSHOT</version>
           </dependency>
 
         </dependencies>
+      </plugin>
+
+      <!-- do not deploy this example into maven repository -->
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-deploy-plugin</artifactId>
+        <inherited>false</inherited>
+        <configuration>
+          <skip>true</skip>
+        </configuration>
       </plugin>
 
     </plugins>
