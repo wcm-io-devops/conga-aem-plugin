@@ -38,9 +38,9 @@
   <description>wcm.io DevOps CONfiguration GenerAtor Plugin for Adobe Experience Manager (AEM).</description>
 
   <scm>
-    <connection>scm:git:https://github.com/wcm-io-devops/wcm-io-devops-conga-aem-plugin.git</connection>
-    <developerConnection>scm:git:https://github.com/wcm-io-devops/wcm-io-devops-conga-aem-plugin.git</developerConnection>
-    <url>https://github.com/wcm-io-devops/wcm-io-devops-conga-aem-plugin</url>
+    <connection>scm:git:https://github.com/wcm-io-devops/conga-aem-plugin.git</connection>
+    <developerConnection>scm:git:https://github.com/wcm-io-devops/conga-aem-plugin.git</developerConnection>
+    <url>https://github.com/wcm-io-devops/conga-aem-plugin</url>
     <tag>HEAD</tag>
   </scm>
 
