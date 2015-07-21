@@ -1,6 +1,6 @@
 ## About CONGA AEM Plugin
 
-wcm.io DevOps CONfiguration GenerAtor Plugin for [Adobe Experience Manager (AEM)](http://www.adobe.com/solutions/web-experience-management.html).
+wcm.io DevOps CONfiguration GenerAtor Plugin for [Adobe Experience Manager (AEM)][aem].
 
 
 ### Maven Dependency
@@ -32,3 +32,4 @@ wcm.io DevOps CONfiguration GenerAtor Plugin for [Adobe Experience Manager (AEM)
 [extensions]: extensions.html
 [apidocs]: conga-aem-plugin/apidocs/
 [changelog]: changes-report.html
+[aem]: http://www.adobe.com/solutions/web-experience-management.html

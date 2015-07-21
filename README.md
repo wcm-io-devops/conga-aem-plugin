@@ -2,22 +2,20 @@
 ======
 [![Build Status](https://travis-ci.org/wcm-io-devops/conga-aem-plugin.png?branch=develop)](https://travis-ci.org/wcm-io-devops/conga-aem-plugin)
 
-
-## Overview
-
-This repository contains a plugin for the [CONGA - CONfiguration GenerAtor][conga] for [Adobe Experience Manager (AEM)][aem].
-
-
-## Examples
-
-See [example/](example/) for a commented example with role, environment definitions and template specific for this plugins.
+Documentation: http://devops.wcm.io/conga/plugins/aem/<br/>
+Issues: https://wcm-io.atlassian.net/projects/WDCONGA<br/>
+Wiki: https://wcm-io.atlassian.net/wiki/<br/>
+Continuous Integration: https://travis-ci.org/conga-aem-plugin
 
 
-## Issue Tracking
+## Build from sources
 
-Issue tracking in wcm.io JIRA: https://wcm-io.atlassian.net/projects/WDCONGA
+If you want to build from sources make sure you have configured all [Maven Repositories](http://devops.wcm.io/maven.html) in your settings.xml.
 
+See [Travis Maven settings.xml](https://github.com/conga-aem-plugin/blob/master/.travis.maven-settings.xml) for an example with a full configuration.
 
+Then you can build using
 
-[conga]: https://github.com/wcm-io-devops/wcm-io-devops-conga
-[aem]: http://www.adobe.com/de/marketing-cloud/enterprise-content-management.html
+```
+mvn clean install
+```
