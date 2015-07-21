@@ -22,9 +22,13 @@ wcm.io DevOps CONfiguration GenerAtor Plugin for [Adobe Experience Manager (AEM)
 
 ### Documentation
 
+* [Usage][usage]
+* [CONGA Extensions][extensions]
 * [API documentation][apidocs]
 * [Changelog][changelog]
 
 
+[usage]: usage.html
+[extensions]: extensions.html
 [apidocs]: conga-aem-plugin/apidocs/
 [changelog]: changes-report.html
