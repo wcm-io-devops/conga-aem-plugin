@@ -28,7 +28,7 @@
         aem-contentpackage post processor: Add support for "acHandling" parameter in content package metadata.
       </action>
       <action type="update" dev="sseifert">
-        JsonContentLoader: Do not filter out nodes/properties 'jcr:mixinTypes' and 'rep:policy'.
+        JsonContentLoader: Do not filter out properties/nodes 'jcr:uuid', 'jcr:mixinTypes' and 'rep:policy'.
       </action>
     </release>
 
