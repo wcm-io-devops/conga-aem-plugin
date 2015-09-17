@@ -19,7 +19,6 @@
  */
 package io.wcm.devops.conga.plugins.aem.postprocessor;
 
-
 /**
  * Option property names for content package post processors {@link ContentPackagePostProcessor} and
  * {@link ContentPackageOsgiConfigPostProcessor}.
@@ -59,5 +58,10 @@ public final class ContentPackageOptions {
    * Contains list with filter definitions, optionally with include/exclude rules
    */
   public static final String PROPERTY_PACKAGE_FILTERS = "contentPackage.filters";
+
+  /**
+   * Access control handling for content package.
+   */
+  public static final String PROPERTY_PACKAGE_AC_HANDLING = "contentPackage.acHandling";
 
 }

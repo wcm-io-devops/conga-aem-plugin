@@ -19,6 +19,7 @@
  */
 package io.wcm.devops.conga.plugins.aem.util;
 
+import static io.wcm.devops.conga.plugins.aem.postprocessor.ContentPackageOptions.PROPERTY_PACKAGE_AC_HANDLING;
 import static io.wcm.devops.conga.plugins.aem.postprocessor.ContentPackageOptions.PROPERTY_PACKAGE_DESCRIPTION;
 import static io.wcm.devops.conga.plugins.aem.postprocessor.ContentPackageOptions.PROPERTY_PACKAGE_FILTERS;
 import static io.wcm.devops.conga.plugins.aem.postprocessor.ContentPackageOptions.PROPERTY_PACKAGE_GROUP;
@@ -29,6 +30,7 @@ import io.wcm.devops.conga.generator.GeneratorException;
 import io.wcm.devops.conga.model.util.MapExpander;
 import io.wcm.devops.conga.plugins.aem.postprocessor.ContentPackageOsgiConfigPostProcessor;
 import io.wcm.devops.conga.plugins.aem.postprocessor.ContentPackagePostProcessor;
+import io.wcm.tooling.commons.contentpackagebuilder.AcHandling;
 import io.wcm.tooling.commons.contentpackagebuilder.ContentPackageBuilder;
 import io.wcm.tooling.commons.contentpackagebuilder.PackageFilter;
 
@@ -59,6 +61,11 @@ public final class ContentPackageUtil {
     .name(getMandatoryProp(options, PROPERTY_PACKAGE_NAME))
     .description(getOptionalProp(options, PROPERTY_PACKAGE_DESCRIPTION))
     .version(getOptionalProp(options, PROPERTY_PACKAGE_VERSION));
+
+    AcHandling acHandling = getAcHandling(options);
+    if (acHandling != null) {
+      builder.acHandling(acHandling);
+    }
 
     getFilters(options).forEach(builder::filter);
 
@@ -110,6 +117,25 @@ public final class ContentPackageUtil {
 
     return filters;
   }
+
+  /**
+   * Get and validate AC handling value.
+   * @param options
+   * @return AC handling value or null if not set.
+   */
+  private static AcHandling getAcHandling(Map<String, Object> options) {
+    String acHandlingString = getOptionalProp(options, PROPERTY_PACKAGE_AC_HANDLING);
+    if (StringUtils.isBlank(acHandlingString)) {
+      return null;
+    }
+    for (AcHandling acHandling : AcHandling.values()) {
+      if (StringUtils.equals(acHandling.getMode(), acHandlingString)) {
+        return acHandling;
+      }
+    }
+    throw new GeneratorException("Invalid content package acHandling value: " + acHandlingString);
+  }
+
 
   /**
    * Get property from options and throw exception if it is not set.
