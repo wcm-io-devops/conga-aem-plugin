@@ -53,7 +53,7 @@
           <dependency>
             <groupId>io.wcm.devops.conga.plugins</groupId>
             <artifactId>io.wcm.devops.conga.plugins.aem</artifactId>            
-            <version>1.0.1-SNAPSHOT</version>
+            <version>1.1.0</version>
           </dependency>
 
         </dependencies>

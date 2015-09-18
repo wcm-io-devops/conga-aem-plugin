@@ -14,7 +14,7 @@ wcm.io DevOps CONfiguration GenerAtor Plugin for [Adobe Experience Manager (AEM)
     <dependency>
       <groupId>io.wcm.devops.conga.plugins</groupId>
       <artifactId>io.wcm.devops.conga.plugins.aem</artifactId>
-      <version>1.0.0</version>
+      <version>1.1.0</version>
     </dependency>
   </dependencies>
 </plugin>
