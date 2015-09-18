@@ -1,0 +1,50 @@
+{{!--
+  Create system user "sampleSystemUser" and grant read/write/replicate access to everything below /content.
+--}}
+{
+  "jcr:primaryType": "rep:root",
+
+  "content": {
+    "jcr:primaryType": "sling:OrderedFolder",
+
+    "rep:policy": {
+      "jcr:primaryType": "rep:ACL",
+      "allow-sampleSystemUser": {
+        "jcr:primaryType": "rep:GrantACE",
+        "rep:principalName": "sampleSystemUser",
+        "rep:privileges": [ "rep:write", "crx:replicate" ]
+      }
+    }
+  },
+
+  "home": {
+    "jcr:primaryType": "rep:AuthorizableFolder",
+
+    "users": {
+      "jcr:primaryType": "rep:AuthorizableFolder",
+
+      "system": {
+        "jcr:primaryType": "rep:AuthorizableFolder",
+
+        "sample": {
+          "jcr:primaryType": "rep:AuthorizableFolder",
+
+          "sampleSystemUser": {
+            "jcr:primaryType": "rep:SystemUser",
+            /* The UUID is important - create a system user with the defined path and principalName via CRX user administration, 
+               and then paste the UUID here. There seems to be some relation from UUID to principalName.
+               Otherwise import of package may fail with NPE in org.apache.jackrabbit.oak.security.user.UserImporter. */
+            "jcr:uuid": "75f14915-36fc-3311-9260-3b4c41bd861f",
+            "rep:authorizableId": "sampleSystemUser",
+            "rep:principalName": "sampleSystemUser"
+          }
+
+        }
+
+      }
+
+    }
+
+  }
+
+}

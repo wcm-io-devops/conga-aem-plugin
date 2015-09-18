@@ -19,6 +19,7 @@
  */
 package io.wcm.devops.conga.plugins.aem.postprocessor;
 
+import static io.wcm.devops.conga.plugins.aem.postprocessor.ContentPackageOptions.PROPERTY_PACKAGE_AC_HANDLING;
 import static io.wcm.devops.conga.plugins.aem.postprocessor.ContentPackageOptions.PROPERTY_PACKAGE_FILTERS;
 import static io.wcm.devops.conga.plugins.aem.postprocessor.ContentPackageOptions.PROPERTY_PACKAGE_GROUP;
 import static io.wcm.devops.conga.plugins.aem.postprocessor.ContentPackageOptions.PROPERTY_PACKAGE_NAME;
@@ -61,6 +62,7 @@ public class ContentPackagePostProcessorTest {
         PROPERTY_PACKAGE_GROUP, "myGroup",
         PROPERTY_PACKAGE_NAME, "myName",
         PROPERTY_PACKAGE_ROOT_PATH, "/content/test",
+        PROPERTY_PACKAGE_AC_HANDLING, "ignore",
         PROPERTY_PACKAGE_FILTERS, ImmutableList.of(
             ImmutableMap.<String, Object>of("filter", "/content/test/1"),
             ImmutableMap.<String, Object>of("filter", "/content/test/2",
@@ -102,6 +104,9 @@ public class ContentPackagePostProcessorTest {
     assertXpathEvaluatesTo("/content/test/2", "/workspaceFilter/filter[2]/@root", filterXml);
     assertXpathEvaluatesTo("pattern1", "/workspaceFilter/filter[2]/include[1]/@pattern", filterXml);
     assertXpathEvaluatesTo("pattern2", "/workspaceFilter/filter[2]/exclude[1]/@pattern", filterXml);
+
+    Document propertiesXml = getXmlFromZip(zipFile, "META-INF/vault/properties.xml");
+    assertXpathEvaluatesTo("ignore", "/properties/entry[@key='acHandling']", propertiesXml);
   }
 
 }

@@ -23,6 +23,15 @@
     xsi:schemaLocation="http://maven.apache.org/changes/1.0.0 http://maven.apache.org/plugins/maven-changes-plugin/xsd/changes-1.0.0.xsd">
   <body>
 
+    <release version="1.1.0" date="2015-09-18">
+      <action type="add" dev="sseifert">
+        aem-contentpackage post processor: Add support for "acHandling" parameter in content package metadata.
+      </action>
+      <action type="update" dev="sseifert">
+        JsonContentLoader: Do not filter out properties/nodes 'jcr:uuid', 'jcr:mixinTypes' and 'rep:policy'.
+      </action>
+    </release>
+
     <release version="1.0.0" date="2015-07-06">
       <action type="add" dev="sseifert">
         Initial release.

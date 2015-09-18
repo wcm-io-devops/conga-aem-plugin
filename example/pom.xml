@@ -26,14 +26,14 @@
   <parent>
     <groupId>io.wcm.maven</groupId>
     <artifactId>io.wcm.maven.global-parent</artifactId>
-    <version>8</version>
+    <version>9</version>
     <relativePath/>
   </parent>
 
   <groupId>io.wcm.devops.conga.plugins</groupId>
   <artifactId>io.wcm.devops.conga.plugins.aem.example</artifactId>
   <packaging>config</packaging>
-  <version>1</version>
+  <version>1-SNAPSHOT</version>
 
   <name>CONGA AEM Plugin Example</name>
   <description>Example definitions and templates.</description>
@@ -45,7 +45,7 @@
       <plugin>
         <groupId>io.wcm.devops.conga</groupId>
         <artifactId>conga-maven-plugin</artifactId>
-        <version>1.0.0</version>
+        <version>1.1.2</version>
         <extensions>true</extensions>
         <dependencies>
 
@@ -53,10 +53,29 @@
           <dependency>
             <groupId>io.wcm.devops.conga.plugins</groupId>
             <artifactId>io.wcm.devops.conga.plugins.aem</artifactId>            
-            <version>1.0.0</version>
+            <version>1.1.0</version>
           </dependency>
 
         </dependencies>
+      </plugin>
+
+      <!-- do not deploy this example into maven repository -->
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-deploy-plugin</artifactId>
+        <inherited>false</inherited>
+        <configuration>
+          <skip>true</skip>
+        </configuration>
+      </plugin>
+
+      <!-- do not generate site for this project -->
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-site-plugin</artifactId>
+        <configuration>
+          <skipDeploy>true</skipDeploy>
+        </configuration>
       </plugin>
 
     </plugins>

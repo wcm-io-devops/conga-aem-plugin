@@ -56,8 +56,6 @@ public final class JsonContentLoader {
 
   private static final Set<String> IGNORED_NAMES = ImmutableSet.of(
       JcrConstants.JCR_PRIMARYTYPE,
-      JcrConstants.JCR_MIXINTYPES,
-      JcrConstants.JCR_UUID,
       JcrConstants.JCR_BASEVERSION,
       JcrConstants.JCR_PREDECESSORS,
       JcrConstants.JCR_SUCCESSORS,
@@ -65,7 +63,6 @@ public final class JsonContentLoader {
       JcrConstants.JCR_VERSIONHISTORY,
       "jcr:checkedOut",
       "jcr:isCheckedOut",
-      "rep:policy",
       ":jcr:data");
 
   private final DateFormat calendarFormat;
