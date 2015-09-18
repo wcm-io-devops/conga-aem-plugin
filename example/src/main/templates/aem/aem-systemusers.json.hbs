@@ -1,0 +1,47 @@
+{{!--
+  Create system user "sampleSystemUser" and grant read/write/replicate access to everything below /content.
+--}}
+{
+  "jcr:primaryType": "rep:root",
+
+  "content": {
+    "jcr:primaryType": "sling:OrderedFolder",
+
+    "rep:policy": {
+      "jcr:primaryType": "rep:ACL",
+      "allow-sampleSystemUser": {
+        "jcr:primaryType": "rep:GrantACE",
+        "rep:principalName": "sampleSystemUser",
+        "rep:privileges": [ "rep:write", "crx:replicate" ]
+      }
+    }
+  },
+
+  "home": {
+    "jcr:primaryType": "rep:AuthorizableFolder",
+
+    "users": {
+      "jcr:primaryType": "rep:AuthorizableFolder",
+
+      "system": {
+        "jcr:primaryType": "rep:AuthorizableFolder",
+
+        "sample": {
+          "jcr:primaryType": "rep:AuthorizableFolder",
+
+          "sampleSystemUser": {
+            "jcr:primaryType": "rep:SystemUser",
+            "jcr:uuid": "098f6bcd-4621-3373-8ade-4e832627b4f6",
+            "rep:authorizableId": "sampleSystemUser",
+            "rep:principalName": "sampleSystemUser"
+          }
+
+        }
+
+      }
+
+    }
+
+  }
+
+}

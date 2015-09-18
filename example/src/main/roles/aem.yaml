@@ -40,6 +40,21 @@ files:
         - rule: exclude
           pattern: /etc/map/http/AppMeasurementBridge
 
+# AEM Systems users with ACLs (Author)
+- file: aem-systemusers.json
+  dir: packages
+  template: aem-systemusers.json.hbs
+  postProcessors:
+  - aem-contentpackage
+  postProcessorOptions:
+    contentPackage:
+      name: aem-systemusers
+      acHandling: merge
+      rootPath: /
+      filters:
+      - filter: /content/rep:policy
+      - filter: /home/users/system/sample/sampleSystemUser
+
 
 # Defines configuration parameters and default values
 config:
