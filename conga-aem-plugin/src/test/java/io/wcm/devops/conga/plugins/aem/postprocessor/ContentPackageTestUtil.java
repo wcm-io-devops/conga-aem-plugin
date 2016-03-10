@@ -19,8 +19,6 @@
  */
 package io.wcm.devops.conga.plugins.aem.postprocessor;
 
-import io.wcm.tooling.commons.contentpackagebuilder.XmlNamespaces;
-
 import java.io.ByteArrayInputStream;
 import java.io.File;
 import java.io.FileNotFoundException;
@@ -32,6 +30,8 @@ import org.custommonkey.xmlunit.SimpleNamespaceContext;
 import org.custommonkey.xmlunit.XMLUnit;
 import org.w3c.dom.Document;
 import org.zeroturnaround.zip.ZipUtil;
+
+import io.wcm.tooling.commons.contentpackagebuilder.XmlNamespaces;
 
 public final class ContentPackageTestUtil {
 

@@ -19,12 +19,6 @@
  */
 package io.wcm.devops.conga.plugins.aem.validator;
 
-import io.wcm.devops.conga.generator.spi.ValidationException;
-import io.wcm.devops.conga.generator.spi.ValidatorPlugin;
-import io.wcm.devops.conga.generator.spi.context.FileContext;
-import io.wcm.devops.conga.generator.spi.context.ValidatorContext;
-import io.wcm.devops.conga.generator.util.FileUtil;
-
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
@@ -38,6 +32,12 @@ import org.xml.sax.SAXException;
 import com.day.any.BaseHandler;
 import com.day.any.Parser;
 import com.day.any.ResourceExpander;
+
+import io.wcm.devops.conga.generator.spi.ValidationException;
+import io.wcm.devops.conga.generator.spi.ValidatorPlugin;
+import io.wcm.devops.conga.generator.spi.context.FileContext;
+import io.wcm.devops.conga.generator.spi.context.ValidatorContext;
+import io.wcm.devops.conga.generator.util.FileUtil;
 
 /**
  * Validates Day ANY files.

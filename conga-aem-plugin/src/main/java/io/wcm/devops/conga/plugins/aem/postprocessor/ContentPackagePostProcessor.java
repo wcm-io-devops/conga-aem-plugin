@@ -20,15 +20,6 @@
 package io.wcm.devops.conga.plugins.aem.postprocessor;
 
 import static io.wcm.devops.conga.plugins.aem.postprocessor.ContentPackageOptions.PROPERTY_PACKAGE_ROOT_PATH;
-import io.wcm.devops.conga.generator.GeneratorException;
-import io.wcm.devops.conga.generator.spi.PostProcessorPlugin;
-import io.wcm.devops.conga.generator.spi.context.FileContext;
-import io.wcm.devops.conga.generator.spi.context.PostProcessorContext;
-import io.wcm.devops.conga.generator.util.FileUtil;
-import io.wcm.devops.conga.plugins.aem.util.ContentPackageUtil;
-import io.wcm.devops.conga.plugins.aem.util.JsonContentLoader;
-import io.wcm.tooling.commons.contentpackagebuilder.ContentPackage;
-import io.wcm.tooling.commons.contentpackagebuilder.ContentPackageBuilder;
 
 import java.io.File;
 import java.io.IOException;
@@ -39,6 +30,16 @@ import org.apache.commons.io.FilenameUtils;
 import org.slf4j.Logger;
 
 import com.google.common.collect.ImmutableList;
+
+import io.wcm.devops.conga.generator.GeneratorException;
+import io.wcm.devops.conga.generator.spi.PostProcessorPlugin;
+import io.wcm.devops.conga.generator.spi.context.FileContext;
+import io.wcm.devops.conga.generator.spi.context.PostProcessorContext;
+import io.wcm.devops.conga.generator.util.FileUtil;
+import io.wcm.devops.conga.plugins.aem.util.ContentPackageUtil;
+import io.wcm.devops.conga.plugins.aem.util.JsonContentLoader;
+import io.wcm.tooling.commons.contentpackagebuilder.ContentPackage;
+import io.wcm.tooling.commons.contentpackagebuilder.ContentPackageBuilder;
 
 /**
  * Transforms a JSON file describing a JCR content structure to an AEM content package
