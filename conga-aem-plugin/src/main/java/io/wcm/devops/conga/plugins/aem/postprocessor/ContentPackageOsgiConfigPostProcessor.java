@@ -21,10 +21,12 @@ package io.wcm.devops.conga.plugins.aem.postprocessor;
 
 import static io.wcm.devops.conga.plugins.aem.postprocessor.ContentPackageOptions.PROPERTY_PACKAGE_ROOT_PATH;
 
-import java.io.ByteArrayInputStream;
-import java.io.ByteArrayOutputStream;
 import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
 import java.io.IOException;
+import java.io.InputStream;
+import java.io.OutputStream;
 import java.util.Dictionary;
 import java.util.List;
 import java.util.Map;
@@ -39,8 +41,9 @@ import org.slf4j.Logger;
 import com.google.common.collect.ImmutableList;
 
 import io.wcm.devops.conga.generator.GeneratorException;
-import io.wcm.devops.conga.generator.spi.PostProcessorPlugin;
+import io.wcm.devops.conga.generator.plugins.postprocessor.AbstractPostProcessor;
 import io.wcm.devops.conga.generator.spi.context.FileContext;
+import io.wcm.devops.conga.generator.spi.context.FileHeaderContext;
 import io.wcm.devops.conga.generator.spi.context.PostProcessorContext;
 import io.wcm.devops.conga.plugins.aem.util.ContentPackageUtil;
 import io.wcm.devops.conga.plugins.sling.util.ConfigConsumer;
@@ -52,7 +55,7 @@ import io.wcm.tooling.commons.contentpackagebuilder.ContentPackageBuilder;
  * Transforms a Sling Provisioning file into OSGi configurations (ignoring all other provisioning contents)
  * and then packages them up in an AEM content package to be deployed via CRX package manager.
  */
-public class ContentPackageOsgiConfigPostProcessor implements PostProcessorPlugin {
+public class ContentPackageOsgiConfigPostProcessor extends AbstractPostProcessor {
 
   /**
    * Plugin name
@@ -76,6 +79,9 @@ public class ContentPackageOsgiConfigPostProcessor implements PostProcessorPlugi
     Map<String, Object> options = context.getOptions();
 
     try {
+      // extract file header
+      FileHeaderContext fileHeader = extractFileHeader(fileContext, context);
+
       // generate OSGi configurations
       Model model = ProvisioningUtil.getModel(fileContext);
 
@@ -85,9 +91,9 @@ public class ContentPackageOsgiConfigPostProcessor implements PostProcessorPlugi
 
       String rootPath = ContentPackageUtil.getMandatoryProp(options, PROPERTY_PACKAGE_ROOT_PATH);
 
-      ContentPackageBuilder builder = ContentPackageUtil.getContentPackageBuilder(options);
+      ContentPackageBuilder builder = ContentPackageUtil.getContentPackageBuilder(options, fileHeader);
       try (ContentPackage contentPackage = builder.build(zipFile)) {
-        generateOsgiConfigurations(model, contentPackage, rootPath, logger);
+        generateOsgiConfigurations(model, contentPackage, rootPath, fileHeader, context);
       }
 
       // delete provisioning file after transformation
@@ -105,27 +111,37 @@ public class ContentPackageOsgiConfigPostProcessor implements PostProcessorPlugi
    * @param model Provisioning Model
    * @param contentPackage Content package
    * @param rootPath Root path
-   * @param logger Logger
+   * @param fileHeader File header
+   * @param context Post processor context
    * @throws IOException
    */
   private void generateOsgiConfigurations(Model model, ContentPackage contentPackage,
-      String rootPath, Logger logger) throws IOException {
+      String rootPath, FileHeaderContext fileHeader, PostProcessorContext context) throws IOException {
     ProvisioningUtil.visitOsgiConfigurations(model, new ConfigConsumer<Void>() {
       @Override
       public Void accept(String path, Dictionary<String, Object> properties) throws IOException {
         String contentPath = rootPath + (StringUtils.contains(path, "/") ? "." : "/") + path;
-        logger.info("  Include " + contentPath);
+        context.getLogger().info("  Include " + contentPath);
 
-        // write configuration to byte array
-        byte[] configData;
-        try (ByteArrayOutputStream os = new ByteArrayOutputStream()) {
+        // write configuration to temporary file
+        File tempFile = File.createTempFile(NAME, ".config");
+        try (OutputStream os = new FileOutputStream(tempFile)) {
           ConfigurationHandler.write(os, properties);
-          configData = os.toByteArray();
         }
+        try {
+          FileContext tempFileContext = new FileContext().file(tempFile).charset(CharEncoding.UTF_8);
 
-        // write configuration to content package
-        try (ByteArrayInputStream is = new ByteArrayInputStream(configData)) {
-          contentPackage.addFile(contentPath, is, "text/plain;charset=" + CharEncoding.UTF_8);
+          // apply file header
+          applyFileHeader(tempFileContext, fileHeader, context);
+
+          // write configuration to content package
+          try (InputStream is = new FileInputStream(tempFile)) {
+            contentPackage.addFile(contentPath, is, "text/plain;charset=" + CharEncoding.UTF_8);
+          }
+        }
+        finally {
+          // remove temporary file
+          tempFile.delete();
         }
         return null;
       }

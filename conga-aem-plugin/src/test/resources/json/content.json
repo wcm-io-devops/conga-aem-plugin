@@ -1,3 +1,8 @@
+/*
+********************
+  Sample comment in content.json
+*********************
+*/
 {
   "jcr:primaryType": "cq:Page",
   "jcr:createdBy": "admin",

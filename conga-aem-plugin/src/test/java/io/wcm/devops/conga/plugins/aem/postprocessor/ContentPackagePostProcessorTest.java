@@ -81,11 +81,12 @@ public class ContentPackagePostProcessorTest {
 
     // post-process
     FileContext fileContext = new FileContext()
-    .file(contentPackageFile)
-    .charset(CharEncoding.UTF_8);
+        .file(contentPackageFile)
+        .charset(CharEncoding.UTF_8);
     PostProcessorContext context = new PostProcessorContext()
-    .options(options)
-    .logger(LoggerFactory.getLogger(ProvisioningOsgiConfigPostProcessor.class));
+        .options(options)
+        .pluginManager(new PluginManager())
+        .logger(LoggerFactory.getLogger(ProvisioningOsgiConfigPostProcessor.class));
 
     assertTrue(underTest.accepts(fileContext, context));
     underTest.apply(fileContext, context);
@@ -108,6 +109,7 @@ public class ContentPackagePostProcessorTest {
 
     Document propertiesXml = getXmlFromZip(zipFile, "META-INF/vault/properties.xml");
     assertXpathEvaluatesTo("ignore", "/properties/entry[@key='acHandling']", propertiesXml);
+    assertXpathEvaluatesTo("Sample comment in content.json", "/properties/entry[@key='description']", propertiesXml);
   }
 
 }

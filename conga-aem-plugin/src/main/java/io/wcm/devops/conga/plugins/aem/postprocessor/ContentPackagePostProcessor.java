@@ -32,8 +32,9 @@ import org.slf4j.Logger;
 import com.google.common.collect.ImmutableList;
 
 import io.wcm.devops.conga.generator.GeneratorException;
-import io.wcm.devops.conga.generator.spi.PostProcessorPlugin;
+import io.wcm.devops.conga.generator.plugins.postprocessor.AbstractPostProcessor;
 import io.wcm.devops.conga.generator.spi.context.FileContext;
+import io.wcm.devops.conga.generator.spi.context.FileHeaderContext;
 import io.wcm.devops.conga.generator.spi.context.PostProcessorContext;
 import io.wcm.devops.conga.generator.util.FileUtil;
 import io.wcm.devops.conga.plugins.aem.util.ContentPackageUtil;
@@ -45,7 +46,7 @@ import io.wcm.tooling.commons.contentpackagebuilder.ContentPackageBuilder;
  * Transforms a JSON file describing a JCR content structure to an AEM content package
  * to be deployed via CRX package manager.
  */
-public class ContentPackagePostProcessor implements PostProcessorPlugin {
+public class ContentPackagePostProcessor extends AbstractPostProcessor {
 
   /**
    * Plugin name
@@ -73,6 +74,8 @@ public class ContentPackagePostProcessor implements PostProcessorPlugin {
     Map<String, Object> options = context.getOptions();
 
     try {
+      // extract file header
+      FileHeaderContext fileHeader = extractFileHeader(fileContext, context);
 
       // create AEM content package with configurations
       File zipFile = new File(file.getParentFile(), FilenameUtils.getBaseName(file.getName()) + ".zip");
@@ -80,7 +83,7 @@ public class ContentPackagePostProcessor implements PostProcessorPlugin {
 
       String rootPath = ContentPackageUtil.getMandatoryProp(options, PROPERTY_PACKAGE_ROOT_PATH);
 
-      ContentPackageBuilder builder = ContentPackageUtil.getContentPackageBuilder(options);
+      ContentPackageBuilder builder = ContentPackageUtil.getContentPackageBuilder(options, fileHeader);
       try (ContentPackage contentPackage = builder.build(zipFile)) {
         Map<String, Object> content = jsonContentLoader.load(fileContext.getFile());
         contentPackage.addContent(rootPath, content);
