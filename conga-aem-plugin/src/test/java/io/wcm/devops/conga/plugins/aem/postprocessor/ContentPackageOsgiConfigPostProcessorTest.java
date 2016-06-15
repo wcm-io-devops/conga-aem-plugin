@@ -31,14 +31,10 @@ import static org.junit.Assert.assertArrayEquals;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
-import io.wcm.devops.conga.generator.spi.PostProcessorPlugin;
-import io.wcm.devops.conga.generator.spi.context.FileContext;
-import io.wcm.devops.conga.generator.spi.context.PostProcessorContext;
-import io.wcm.devops.conga.generator.util.PluginManager;
-import io.wcm.devops.conga.plugins.sling.postprocessor.ProvisioningOsgiConfigPostProcessor;
 
 import java.io.ByteArrayInputStream;
 import java.io.File;
+import java.io.IOException;
 import java.io.InputStream;
 import java.util.Dictionary;
 import java.util.Map;
@@ -53,6 +49,12 @@ import org.w3c.dom.Document;
 import org.zeroturnaround.zip.ZipUtil;
 
 import com.google.common.collect.ImmutableMap;
+
+import io.wcm.devops.conga.generator.spi.PostProcessorPlugin;
+import io.wcm.devops.conga.generator.spi.context.FileContext;
+import io.wcm.devops.conga.generator.spi.context.PostProcessorContext;
+import io.wcm.devops.conga.generator.util.PluginManager;
+import io.wcm.devops.conga.plugins.sling.postprocessor.ProvisioningOsgiConfigPostProcessor;
 
 public class ContentPackageOsgiConfigPostProcessorTest {
 
@@ -78,15 +80,16 @@ public class ContentPackageOsgiConfigPostProcessorTest {
       FileUtils.deleteDirectory(target);
     }
     File contentPackageFile = new File(target, "test.txt");
-    FileUtils.copyFile(new File(getClass().getResource("/provisioning/validProvisioning.txt").toURI()), contentPackageFile);
+    FileUtils.copyFile(new File(getClass().getResource("/provisioning/provisioning.txt").toURI()), contentPackageFile);
 
     // post-process
     FileContext fileContext = new FileContext()
-    .file(contentPackageFile)
-    .charset(CharEncoding.UTF_8);
+        .file(contentPackageFile)
+        .charset(CharEncoding.UTF_8);
     PostProcessorContext context = new PostProcessorContext()
-    .options(options)
-    .logger(LoggerFactory.getLogger(ProvisioningOsgiConfigPostProcessor.class));
+        .options(options)
+        .pluginManager(new PluginManager())
+        .logger(LoggerFactory.getLogger(ProvisioningOsgiConfigPostProcessor.class));
 
     assertTrue(underTest.accepts(fileContext, context));
     underTest.apply(fileContext, context);
@@ -98,6 +101,22 @@ public class ContentPackageOsgiConfigPostProcessorTest {
     assertTrue(zipFile.exists());
 
     try (InputStream is = new ByteArrayInputStream(getDataFromZip(zipFile, "jcr_root/apps/test/config/my.pid.config"))) {
+
+      // check for initial comment line
+      is.mark(256);
+      final int firstChar = is.read();
+      if (firstChar == '#') {
+        int b;
+        while ((b = is.read()) != '\n') {
+          if (b == -1) {
+            throw new IOException("Unable to read configuration.");
+          }
+        }
+      }
+      else {
+        is.reset();
+      }
+
       Dictionary<?, ?> config = ConfigurationHandler.read(is);
       assertEquals("value1", config.get("stringProperty"));
       assertArrayEquals(new String[] {
@@ -117,7 +136,7 @@ public class ContentPackageOsgiConfigPostProcessorTest {
     Document propsXml = getXmlFromZip(zipFile, "META-INF/vault/properties.xml");
     assertXpathEvaluatesTo("myGroup", "/properties/entry[@key='group']", propsXml);
     assertXpathEvaluatesTo("myName", "/properties/entry[@key='name']", propsXml);
-    assertXpathEvaluatesTo("myDesc", "/properties/entry[@key='description']", propsXml);
+    assertXpathEvaluatesTo("myDesc\n---\nSample comment in provisioning.txt", "/properties/entry[@key='description']", propsXml);
     assertXpathEvaluatesTo("1.5", "/properties/entry[@key='version']", propsXml);
   }
 

@@ -17,6 +17,8 @@ files:
       description: The description of the sample package.
       version: "${version}"
       rootPath: /apps/sample/config
+      filters:
+      - filter: /apps/sample
 
 
 # Define a AEM content package with some JCR content (Sling Mapping Example)

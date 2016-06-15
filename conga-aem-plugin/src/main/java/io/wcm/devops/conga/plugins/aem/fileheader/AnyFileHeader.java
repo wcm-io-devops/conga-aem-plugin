@@ -56,4 +56,9 @@ public final class AnyFileHeader extends AbstractFileHeader {
     return getLineBreak();
   }
 
+  @Override
+  public FileHeaderContext extract(FileContext file) {
+    return extractFileHeaderWithLinePrefixes(file);
+  }
+
 }

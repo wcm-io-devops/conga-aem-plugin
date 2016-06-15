@@ -19,9 +19,6 @@
  */
 package io.wcm.devops.conga.plugins.aem.util;
 
-import io.wcm.devops.conga.generator.GeneratorException;
-import io.wcm.devops.conga.generator.util.FileUtil;
-
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
@@ -45,6 +42,9 @@ import org.apache.sling.commons.json.JSONObject;
 import org.apache.sling.commons.json.jcr.JsonItemWriter;
 
 import com.google.common.collect.ImmutableSet;
+
+import io.wcm.devops.conga.generator.GeneratorException;
+import io.wcm.devops.conga.generator.util.FileUtil;
 
 /**
  * Imports JSON data and binary data into Sling resource hierarchy.

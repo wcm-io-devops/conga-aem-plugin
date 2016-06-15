@@ -21,16 +21,17 @@ package io.wcm.devops.conga.plugins.aem.validator;
 
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
-import io.wcm.devops.conga.generator.spi.ValidationException;
-import io.wcm.devops.conga.generator.spi.ValidatorPlugin;
-import io.wcm.devops.conga.generator.spi.context.FileContext;
-import io.wcm.devops.conga.generator.util.PluginManager;
 
 import java.io.File;
 
 import org.apache.commons.lang3.CharEncoding;
 import org.junit.Before;
 import org.junit.Test;
+
+import io.wcm.devops.conga.generator.spi.ValidationException;
+import io.wcm.devops.conga.generator.spi.ValidatorPlugin;
+import io.wcm.devops.conga.generator.spi.context.FileContext;
+import io.wcm.devops.conga.generator.util.PluginManager;
 
 public class AnyValidatorTest {
 

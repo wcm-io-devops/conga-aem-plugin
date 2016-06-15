@@ -28,11 +28,6 @@ import static io.wcm.devops.conga.plugins.aem.postprocessor.ContentPackageTestUt
 import static org.custommonkey.xmlunit.XMLAssert.assertXpathEvaluatesTo;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
-import io.wcm.devops.conga.generator.spi.PostProcessorPlugin;
-import io.wcm.devops.conga.generator.spi.context.FileContext;
-import io.wcm.devops.conga.generator.spi.context.PostProcessorContext;
-import io.wcm.devops.conga.generator.util.PluginManager;
-import io.wcm.devops.conga.plugins.sling.postprocessor.ProvisioningOsgiConfigPostProcessor;
 
 import java.io.File;
 import java.util.Map;
@@ -46,6 +41,12 @@ import org.w3c.dom.Document;
 
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableMap;
+
+import io.wcm.devops.conga.generator.spi.PostProcessorPlugin;
+import io.wcm.devops.conga.generator.spi.context.FileContext;
+import io.wcm.devops.conga.generator.spi.context.PostProcessorContext;
+import io.wcm.devops.conga.generator.util.PluginManager;
+import io.wcm.devops.conga.plugins.sling.postprocessor.ProvisioningOsgiConfigPostProcessor;
 
 public class ContentPackagePostProcessorTest {
 
@@ -80,11 +81,12 @@ public class ContentPackagePostProcessorTest {
 
     // post-process
     FileContext fileContext = new FileContext()
-    .file(contentPackageFile)
-    .charset(CharEncoding.UTF_8);
+        .file(contentPackageFile)
+        .charset(CharEncoding.UTF_8);
     PostProcessorContext context = new PostProcessorContext()
-    .options(options)
-    .logger(LoggerFactory.getLogger(ProvisioningOsgiConfigPostProcessor.class));
+        .options(options)
+        .pluginManager(new PluginManager())
+        .logger(LoggerFactory.getLogger(ProvisioningOsgiConfigPostProcessor.class));
 
     assertTrue(underTest.accepts(fileContext, context));
     underTest.apply(fileContext, context);
@@ -107,6 +109,7 @@ public class ContentPackagePostProcessorTest {
 
     Document propertiesXml = getXmlFromZip(zipFile, "META-INF/vault/properties.xml");
     assertXpathEvaluatesTo("ignore", "/properties/entry[@key='acHandling']", propertiesXml);
+    assertXpathEvaluatesTo("Sample comment in content.json", "/properties/entry[@key='description']", propertiesXml);
   }
 
 }

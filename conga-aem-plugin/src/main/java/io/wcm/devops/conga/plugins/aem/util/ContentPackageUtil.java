@@ -26,19 +26,22 @@ import static io.wcm.devops.conga.plugins.aem.postprocessor.ContentPackageOption
 import static io.wcm.devops.conga.plugins.aem.postprocessor.ContentPackageOptions.PROPERTY_PACKAGE_NAME;
 import static io.wcm.devops.conga.plugins.aem.postprocessor.ContentPackageOptions.PROPERTY_PACKAGE_ROOT_PATH;
 import static io.wcm.devops.conga.plugins.aem.postprocessor.ContentPackageOptions.PROPERTY_PACKAGE_VERSION;
+
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Map;
+import java.util.stream.Collectors;
+
+import org.apache.commons.lang3.StringUtils;
+
 import io.wcm.devops.conga.generator.GeneratorException;
+import io.wcm.devops.conga.generator.spi.context.FileHeaderContext;
 import io.wcm.devops.conga.model.util.MapExpander;
 import io.wcm.devops.conga.plugins.aem.postprocessor.ContentPackageOsgiConfigPostProcessor;
 import io.wcm.devops.conga.plugins.aem.postprocessor.ContentPackagePostProcessor;
 import io.wcm.tooling.commons.contentpackagebuilder.AcHandling;
 import io.wcm.tooling.commons.contentpackagebuilder.ContentPackageBuilder;
 import io.wcm.tooling.commons.contentpackagebuilder.PackageFilter;
-
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
-
-import org.apache.commons.lang3.StringUtils;
 
 /**
  * Option property names for content package post processors {@link ContentPackagePostProcessor} and
@@ -55,12 +58,12 @@ public final class ContentPackageUtil {
    * @param options Options
    * @return Content package builder
    */
-  public static ContentPackageBuilder getContentPackageBuilder(Map<String, Object> options) {
+  public static ContentPackageBuilder getContentPackageBuilder(Map<String, Object> options, FileHeaderContext fileHeader) {
     ContentPackageBuilder builder = new ContentPackageBuilder()
-    .group(getMandatoryProp(options, PROPERTY_PACKAGE_GROUP))
-    .name(getMandatoryProp(options, PROPERTY_PACKAGE_NAME))
-    .description(getOptionalProp(options, PROPERTY_PACKAGE_DESCRIPTION))
-    .version(getOptionalProp(options, PROPERTY_PACKAGE_VERSION));
+        .group(getMandatoryProp(options, PROPERTY_PACKAGE_GROUP))
+        .name(getMandatoryProp(options, PROPERTY_PACKAGE_NAME))
+        .description(mergeDescriptionFileHeader(getOptionalProp(options, PROPERTY_PACKAGE_DESCRIPTION), fileHeader))
+        .version(getOptionalProp(options, PROPERTY_PACKAGE_VERSION));
 
     AcHandling acHandling = getAcHandling(options);
     if (acHandling != null) {
@@ -70,6 +73,42 @@ public final class ContentPackageUtil {
     getFilters(options).forEach(builder::filter);
 
     return builder;
+  }
+
+  /**
+   * Merges description and file header to a single string.
+   * @param description Description from configuration - may be null
+   * @param fileHeader File header from file - may be null
+   * @return Merged description or null if all input is null
+   */
+  private static String mergeDescriptionFileHeader(String description, FileHeaderContext fileHeader) {
+    boolean hasDescription = StringUtils.isNotBlank(description);
+    boolean hasFileHeader = fileHeader != null && !fileHeader.getCommentLines().isEmpty();
+
+    if (!hasDescription && !hasFileHeader) {
+      return null;
+    }
+
+    StringBuilder result = new StringBuilder();
+
+    if (hasDescription) {
+      result.append(description);
+    }
+
+    if (hasDescription && hasFileHeader) {
+      result.append("\n---\n");
+    }
+
+    if (hasFileHeader) {
+      @SuppressWarnings("null")
+      String fileHeaderString = StringUtils.trim(fileHeader.getCommentLines().stream()
+          .filter(line -> !StringUtils.contains(line, "*****"))
+          .map(line -> StringUtils.trim(line))
+          .collect(Collectors.joining("\n")));
+      result.append(fileHeaderString);
+    }
+
+    return result.toString();
   }
 
   /**
