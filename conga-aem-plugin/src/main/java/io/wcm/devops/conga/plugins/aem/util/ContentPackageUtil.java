@@ -27,12 +27,25 @@ import static io.wcm.devops.conga.plugins.aem.postprocessor.ContentPackageOption
 import static io.wcm.devops.conga.plugins.aem.postprocessor.ContentPackageOptions.PROPERTY_PACKAGE_ROOT_PATH;
 import static io.wcm.devops.conga.plugins.aem.postprocessor.ContentPackageOptions.PROPERTY_PACKAGE_VERSION;
 
+import java.io.File;
+import java.io.IOException;
+import java.io.InputStream;
 import java.util.ArrayList;
+import java.util.Enumeration;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Properties;
 import java.util.stream.Collectors;
 
+import org.apache.commons.compress.archivers.zip.ZipArchiveEntry;
+import org.apache.commons.compress.archivers.zip.ZipFile;
+import org.apache.commons.io.IOUtils;
+import org.apache.commons.lang3.BooleanUtils;
 import org.apache.commons.lang3.StringUtils;
+import org.apache.commons.lang3.math.NumberUtils;
+
+import com.google.common.collect.ImmutableMap;
 
 import io.wcm.devops.conga.generator.GeneratorException;
 import io.wcm.devops.conga.generator.spi.context.FileHeaderContext;
@@ -48,6 +61,8 @@ import io.wcm.tooling.commons.contentpackagebuilder.PackageFilter;
  * {@link ContentPackageOsgiConfigPostProcessor}.
  */
 public final class ContentPackageUtil {
+
+  private static final String ZIP_ENTRY_PROPERTIES = "META-INF/vault/properties.xml";
 
   private ContentPackageUtil() {
     // constants only
@@ -217,6 +232,78 @@ public final class ContentPackageUtil {
       return (List<Map<String, Object>>)value;
     }
     throw new GeneratorException("Missing post processor option '" + key + "'.");
+  }
+
+  /**
+   * Get properties of AEM package.
+   * @param packageFile AEM package file.
+   * @return Map with properties or empty map if none found.
+   * @throws IOException
+   */
+  public static Map<String, Object> getPackageProperties(File packageFile) throws IOException {
+    ZipFile zipFile = null;
+    try {
+      zipFile = new ZipFile(packageFile);
+      Enumeration<ZipArchiveEntry> entries = zipFile.getEntries();
+      while (entries.hasMoreElements()) {
+        ZipArchiveEntry entry = entries.nextElement();
+        if (StringUtils.equals(entry.getName(), ZIP_ENTRY_PROPERTIES) && !entry.isDirectory()) {
+          return transformPropertyTypes(getPackageProperties(zipFile, entry));
+        }
+      }
+      return ImmutableMap.of();
+    }
+    finally {
+      IOUtils.closeQuietly(zipFile);
+    }
+  }
+
+  @SuppressWarnings("unchecked")
+  private static Map<String, Object> getPackageProperties(ZipFile zipFile, ZipArchiveEntry entry) throws IOException {
+    InputStream entryStream = null;
+    try {
+      entryStream = zipFile.getInputStream(entry);
+      Properties props = new Properties();
+      props.loadFromXML(entryStream);
+      return (Map)props;
+    }
+    finally {
+      IOUtils.closeQuietly(entryStream);
+    }
+  }
+
+  private static Map<String, Object> transformPropertyTypes(Map<String, Object> props) {
+    Map<String, Object> transformedProps = new HashMap<>();
+    for (Map.Entry<String, Object> entry : props.entrySet()) {
+      transformedProps.put(entry.getKey(), transformType(entry.getValue()));
+    }
+    return transformedProps;
+  }
+
+  /**
+   * Detects if string values are boolean or integer and transforms them to correct types.
+   * @param value Value
+   * @return Transformed value
+   */
+  private static Object transformType(Object value) {
+    if (value == null) {
+      return null;
+    }
+    String valueString = value.toString();
+
+    // check for boolean
+    boolean boolValue = BooleanUtils.toBoolean(valueString);
+    if (StringUtils.equals(valueString, Boolean.toString(boolValue))) {
+      return boolValue;
+    }
+
+    // check for integer
+    int intValue = NumberUtils.toInt(valueString);
+    if (StringUtils.equals(valueString, Integer.toString(intValue))) {
+      return intValue;
+    }
+
+    return value;
   }
 
 }

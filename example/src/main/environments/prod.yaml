@@ -29,3 +29,8 @@ tenants:
   config:
     domain: mysite.fr
     website.hostname: www.${domain}
+
+
+# Export definitions
+exportModel:
+- node: yaml

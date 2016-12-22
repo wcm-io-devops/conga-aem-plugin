@@ -57,6 +57,12 @@ files:
       - filter: /content/rep:policy
       - filter: /home/users/system/sample/sampleSystemUser
 
+# Download AEM content package and extract properties
+- url: mvn:io.wcm/io.wcm.caconfig.editor.package//zip
+  dir: packages
+  postProcessors:
+  - aem-contentpackage-properties
+
 
 # Defines configuration parameters and default values
 config:
