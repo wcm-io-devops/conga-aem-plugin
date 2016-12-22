@@ -36,6 +36,8 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Properties;
+import java.util.SortedMap;
+import java.util.TreeMap;
 import java.util.stream.Collectors;
 
 import org.apache.commons.compress.archivers.zip.ZipArchiveEntry;
@@ -45,7 +47,7 @@ import org.apache.commons.lang3.BooleanUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.math.NumberUtils;
 
-import com.google.common.collect.ImmutableMap;
+import com.google.common.collect.ImmutableSortedMap;
 
 import io.wcm.devops.conga.generator.GeneratorException;
 import io.wcm.devops.conga.generator.spi.context.FileHeaderContext;
@@ -241,7 +243,7 @@ public final class ContentPackageUtil {
    * @return Map with properties or empty map if none found.
    * @throws IOException I/O exception
    */
-  public static Map<String, Object> getPackageProperties(File packageFile) throws IOException {
+  public static SortedMap<String, Object> getPackageProperties(File packageFile) throws IOException {
     ZipFile zipFile = null;
     try {
       zipFile = new ZipFile(packageFile);
@@ -249,10 +251,11 @@ public final class ContentPackageUtil {
       while (entries.hasMoreElements()) {
         ZipArchiveEntry entry = entries.nextElement();
         if (StringUtils.equals(entry.getName(), ZIP_ENTRY_PROPERTIES) && !entry.isDirectory()) {
-          return transformPropertyTypes(getPackageProperties(zipFile, entry));
+          Map<String, Object> props = getPackageProperties(zipFile, entry);
+          return new TreeMap<>(transformPropertyTypes(props));
         }
       }
-      return ImmutableMap.of();
+      return ImmutableSortedMap.of();
     }
     finally {
       IOUtils.closeQuietly(zipFile);
