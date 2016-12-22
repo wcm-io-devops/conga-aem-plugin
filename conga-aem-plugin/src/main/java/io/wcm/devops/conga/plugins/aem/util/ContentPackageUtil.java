@@ -71,6 +71,7 @@ public final class ContentPackageUtil {
   /**
    * Builds content package builder populated with options from options map.
    * @param options Options
+   * @param fileHeader File header
    * @return Content package builder
    */
   public static ContentPackageBuilder getContentPackageBuilder(Map<String, Object> options, FileHeaderContext fileHeader) {
@@ -238,7 +239,7 @@ public final class ContentPackageUtil {
    * Get properties of AEM package.
    * @param packageFile AEM package file.
    * @return Map with properties or empty map if none found.
-   * @throws IOException
+   * @throws IOException I/O exception
    */
   public static Map<String, Object> getPackageProperties(File packageFile) throws IOException {
     ZipFile zipFile = null;

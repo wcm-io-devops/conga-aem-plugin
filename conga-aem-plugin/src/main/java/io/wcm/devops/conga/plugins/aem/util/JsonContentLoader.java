@@ -94,7 +94,7 @@ public final class JsonContentLoader {
    * {@link io.wcm.tooling.commons.contentpackagebuilder.ContentPackageBuilder}.
    * @param inputStream JSON input stream
    * @return Nested map with content data
-   * @throws IOException
+   * @throws IOException I/O exception
    */
   public Map<String, Object> load(InputStream inputStream) throws IOException {
     try {
