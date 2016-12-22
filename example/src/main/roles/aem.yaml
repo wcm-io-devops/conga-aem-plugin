@@ -11,6 +11,7 @@ files:
   # Post-processors apply further actions after generation the file
   postProcessors:
   - aem-contentpackage-osgiconfig
+  - aem-contentpackage-properties
   postProcessorOptions:
     contentPackage:
       name: config-sample
@@ -28,6 +29,7 @@ files:
   # Post-processors apply further actions after generation the file
   postProcessors:
   - aem-contentpackage
+  - aem-contentpackage-properties
   postProcessorOptions:
     contentPackage:
       name: mapping-sample
