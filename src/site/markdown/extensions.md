@@ -12,9 +12,10 @@ File plugins:
 | `any`                           | .any                | X           | X         | X        |                |
 | `aem-contentpackage`            | .json               |             |           |          | X              |
 | `aem-contentpackage-osgiconfig` | .provisioning, .txt |             |           |          | X              |
+| `aem-contentpackage-properties` | .zip                |             |           |          | X              |
 
 
-### AEM Content Packages
+### Generating AEM Content Packages
 
 The CONGA AEM Plugin provides two post processor plugins that generate AEM Content Packages (ZIP files with JCR XML files describing a JCR content structure). These content packages can be imported into a AEM instance using the CRX Package Manager.
 
@@ -60,6 +61,11 @@ Example for defining package properties with a set of filters:
         - rule: exclude
           pattern: /etc/map/http/AppMeasurementBridge
 ```
+
+
+### Post-processing AEM Content Packages
+
+With the post-processor plugin `aem-contentpackage-properties` the properties contained in the AEM package are extracted and included in the model YAML file that can be exported during CONGA generation and used by deployment tools like Ansible.
 
 
 [conga-extensibility]: http://devops.wcm.io/conga/extensibility.html
