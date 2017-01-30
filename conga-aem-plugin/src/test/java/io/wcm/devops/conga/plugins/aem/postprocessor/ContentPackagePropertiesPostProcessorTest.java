@@ -20,12 +20,12 @@
 package io.wcm.devops.conga.plugins.aem.postprocessor;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
 
 import java.io.File;
 import java.util.Map;
 
-import org.apache.commons.lang3.CharEncoding;
 import org.junit.Before;
 import org.junit.Test;
 import org.slf4j.LoggerFactory;
@@ -47,26 +47,41 @@ public class ContentPackagePropertiesPostProcessorTest {
 
   @SuppressWarnings("unchecked")
   @Test
-  public void testPostProcess() throws Exception {
+  public void testContentPackage() throws Exception {
 
-    File contentPackageFile = new File("src/test/resources/package/example.zip");
+    FileContext fileContext = new FileContext()
+        .file(new File("src/test/resources/package/example.zip"));
 
     // post-process
+    applyPlugin(fileContext);
+
+    // validate
+    Map<String, Object> props = (Map<String, Object>)fileContext.getModelOptions().get(ContentPackagePropertiesPostProcessor.MODEL_OPTIONS_PROPERTY);
+    assertEquals("mapping-sample", props.get("name"));
+    assertEquals(false, props.get("requiresRoot"));
+    assertEquals(2, props.get("packageFormatVersion"));
+  }
+
+  @Test
+  public void testNonContentPackage() throws Exception {
+
     FileContext fileContext = new FileContext()
-        .file(contentPackageFile)
-        .charset(CharEncoding.UTF_8);
+        .file(new File("src/test/resources/package/no-content-package.zip"));
+
+    // post-process
+    applyPlugin(fileContext);
+
+    // validate
+    assertNull(fileContext.getModelOptions().get(ContentPackagePropertiesPostProcessor.MODEL_OPTIONS_PROPERTY));
+  }
+
+  private void applyPlugin(FileContext fileContext) {
     PostProcessorContext context = new PostProcessorContext()
         .pluginManager(new PluginManager())
         .logger(LoggerFactory.getLogger(ProvisioningOsgiConfigPostProcessor.class));
 
     assertTrue(underTest.accepts(fileContext, context));
     underTest.apply(fileContext, context);
-
-    // validate
-    Map<String, Object> props = (Map<String, Object>)fileContext.getModelOptions().get("packageProperties");
-    assertEquals("mapping-sample", props.get("name"));
-    assertEquals(false, props.get("requiresRoot"));
-    assertEquals(2, props.get("packageFormatVersion"));
   }
 
 }

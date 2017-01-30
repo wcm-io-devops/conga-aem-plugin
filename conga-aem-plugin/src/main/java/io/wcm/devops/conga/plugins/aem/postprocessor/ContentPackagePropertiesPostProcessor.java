@@ -45,6 +45,11 @@ public class ContentPackagePropertiesPostProcessor extends AbstractPostProcessor
    */
   public static final String NAME = "aem-contentpackage-properties";
 
+  /**
+   * Holds map containing the content package properties.
+   */
+  public static final String MODEL_OPTIONS_PROPERTY = "aemContentPackageProperties";
+
   private static final String FILE_EXTENSION = "zip";
 
   @Override
@@ -64,7 +69,7 @@ public class ContentPackagePropertiesPostProcessor extends AbstractPostProcessor
     try {
       Map<String, Object> properties = ContentPackageUtil.getPackageProperties(fileContext.getFile());
       if (!properties.isEmpty()) {
-        fileContext.getModelOptions().put("packageProperties", properties);
+        fileContext.getModelOptions().put(MODEL_OPTIONS_PROPERTY, properties);
         logger.info("Extracted properties from {}", fileContext.getCanonicalPath());
       }
     }
