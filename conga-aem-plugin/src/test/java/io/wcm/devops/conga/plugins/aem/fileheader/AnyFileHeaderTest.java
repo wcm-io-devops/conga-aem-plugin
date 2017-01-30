@@ -35,7 +35,7 @@ import com.google.common.collect.ImmutableList;
 import io.wcm.devops.conga.generator.spi.FileHeaderPlugin;
 import io.wcm.devops.conga.generator.spi.context.FileContext;
 import io.wcm.devops.conga.generator.spi.context.FileHeaderContext;
-import io.wcm.devops.conga.generator.util.PluginManager;
+import io.wcm.devops.conga.generator.util.PluginManagerImpl;
 
 public class AnyFileHeaderTest {
 
@@ -43,7 +43,7 @@ public class AnyFileHeaderTest {
 
   @Before
   public void setUp() {
-    underTest = new PluginManager().get(AnyFileHeader.NAME, FileHeaderPlugin.class);
+    underTest = new PluginManagerImpl().get(AnyFileHeader.NAME, FileHeaderPlugin.class);
   }
 
   @Test

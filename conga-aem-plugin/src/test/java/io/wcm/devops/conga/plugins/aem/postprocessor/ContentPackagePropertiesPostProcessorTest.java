@@ -33,7 +33,7 @@ import org.slf4j.LoggerFactory;
 import io.wcm.devops.conga.generator.spi.PostProcessorPlugin;
 import io.wcm.devops.conga.generator.spi.context.FileContext;
 import io.wcm.devops.conga.generator.spi.context.PostProcessorContext;
-import io.wcm.devops.conga.generator.util.PluginManager;
+import io.wcm.devops.conga.generator.util.PluginManagerImpl;
 import io.wcm.devops.conga.plugins.sling.postprocessor.ProvisioningOsgiConfigPostProcessor;
 
 public class ContentPackagePropertiesPostProcessorTest {
@@ -42,7 +42,7 @@ public class ContentPackagePropertiesPostProcessorTest {
 
   @Before
   public void setUp() {
-    underTest = new PluginManager().get(ContentPackagePropertiesPostProcessor.NAME, PostProcessorPlugin.class);
+    underTest = new PluginManagerImpl().get(ContentPackagePropertiesPostProcessor.NAME, PostProcessorPlugin.class);
   }
 
   @SuppressWarnings("unchecked")
@@ -77,7 +77,7 @@ public class ContentPackagePropertiesPostProcessorTest {
 
   private void applyPlugin(FileContext fileContext) {
     PostProcessorContext context = new PostProcessorContext()
-        .pluginManager(new PluginManager())
+        .pluginManager(new PluginManagerImpl())
         .logger(LoggerFactory.getLogger(ProvisioningOsgiConfigPostProcessor.class));
 
     assertTrue(underTest.accepts(fileContext, context));
