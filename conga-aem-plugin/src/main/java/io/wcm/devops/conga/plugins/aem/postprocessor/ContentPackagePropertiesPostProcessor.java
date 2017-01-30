@@ -70,7 +70,7 @@ public class ContentPackagePropertiesPostProcessor extends AbstractPostProcessor
       Map<String, Object> properties = ContentPackageUtil.getPackageProperties(fileContext.getFile());
       if (!properties.isEmpty()) {
         fileContext.getModelOptions().put(MODEL_OPTIONS_PROPERTY, properties);
-        logger.info("Extracted properties from {}", fileContext.getCanonicalPath());
+        logger.info("Extracted properties from AEM content package.");
       }
     }
     catch (IOException ex) {

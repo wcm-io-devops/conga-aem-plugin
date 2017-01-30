@@ -23,6 +23,8 @@ import java.io.IOException;
 import java.util.List;
 import java.util.Map;
 
+import org.slf4j.Logger;
+
 import com.google.common.collect.ImmutableList;
 
 import io.wcm.devops.conga.generator.GeneratorException;
@@ -34,7 +36,7 @@ import io.wcm.devops.conga.generator.util.FileUtil;
 import io.wcm.devops.conga.plugins.aem.util.ContentPackageUtil;
 
 /**
- * Checks all ZIP files and sets a flag "aemPackage" if the given ZIP file contains AEM content package properties.
+ * Checks all ZIP files and sets a flag if the given ZIP file contains AEM content package properties.
  */
 public class ContentPackageDetectPostProcessor extends AbstractPostProcessor {
 
@@ -68,10 +70,13 @@ public class ContentPackageDetectPostProcessor extends AbstractPostProcessor {
 
   @Override
   public List<FileContext> apply(FileContext fileContext, PostProcessorContext context) {
+    Logger logger = context.getLogger();
+
     try {
       Map<String, Object> properties = ContentPackageUtil.getPackageProperties(fileContext.getFile());
       if (!properties.isEmpty()) {
         fileContext.getModelOptions().put(MODEL_OPTIONS_PROPERTY, true);
+        logger.info("Detected AEM content package.");
       }
     }
     catch (IOException ex) {
