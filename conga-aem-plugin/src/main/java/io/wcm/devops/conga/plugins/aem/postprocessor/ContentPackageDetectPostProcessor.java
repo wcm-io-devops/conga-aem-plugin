@@ -2,7 +2,7 @@
  * #%L
  * wcm.io
  * %%
- * Copyright (C) 2016 wcm.io
+ * Copyright (C) 2017 wcm.io
  * %%
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -29,26 +29,26 @@ import com.google.common.collect.ImmutableList;
 
 import io.wcm.devops.conga.generator.GeneratorException;
 import io.wcm.devops.conga.generator.plugins.postprocessor.AbstractPostProcessor;
+import io.wcm.devops.conga.generator.spi.ImplicitApplyOptions;
 import io.wcm.devops.conga.generator.spi.context.FileContext;
 import io.wcm.devops.conga.generator.spi.context.PostProcessorContext;
 import io.wcm.devops.conga.generator.util.FileUtil;
 import io.wcm.devops.conga.plugins.aem.util.ContentPackageUtil;
 
 /**
- * Extracts properties from a given AEM content package and stores them as additional
- * model options in the file context.
+ * Checks all ZIP files and sets a flag if the given ZIP file contains AEM content package properties.
  */
-public class ContentPackagePropertiesPostProcessor extends AbstractPostProcessor {
+public class ContentPackageDetectPostProcessor extends AbstractPostProcessor {
 
   /**
    * Plugin name
    */
-  public static final String NAME = "aem-contentpackage-properties";
+  public static final String NAME = "aem-contentpackage-detect";
 
   /**
-   * Holds map containing the content package properties.
+   * Holds flag which is set to true when the given ZIP file is an AEM package.
    */
-  public static final String MODEL_OPTIONS_PROPERTY = "aemContentPackageProperties";
+  public static final String MODEL_OPTIONS_PROPERTY = "aemContentPackage";
 
   private static final String FILE_EXTENSION = "zip";
 
@@ -62,6 +62,12 @@ public class ContentPackagePropertiesPostProcessor extends AbstractPostProcessor
     return FileUtil.matchesExtension(file, FILE_EXTENSION);
   }
 
+
+  @Override
+  public ImplicitApplyOptions implicitApply(FileContext file, PostProcessorContext context) {
+    return ImplicitApplyOptions.ALWAYS;
+  }
+
   @Override
   public List<FileContext> apply(FileContext fileContext, PostProcessorContext context) {
     Logger logger = context.getLogger();
@@ -69,8 +75,8 @@ public class ContentPackagePropertiesPostProcessor extends AbstractPostProcessor
     try {
       Map<String, Object> properties = ContentPackageUtil.getPackageProperties(fileContext.getFile());
       if (!properties.isEmpty()) {
-        fileContext.getModelOptions().put(MODEL_OPTIONS_PROPERTY, properties);
-        logger.info("Extracted properties from AEM content package.");
+        fileContext.getModelOptions().put(MODEL_OPTIONS_PROPERTY, true);
+        logger.info("Detected AEM content package.");
       }
     }
     catch (IOException ex) {

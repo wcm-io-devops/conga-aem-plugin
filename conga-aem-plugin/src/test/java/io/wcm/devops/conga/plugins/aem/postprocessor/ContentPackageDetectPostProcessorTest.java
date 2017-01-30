@@ -2,7 +2,7 @@
  * #%L
  * wcm.io
  * %%
- * Copyright (C) 2015 wcm.io
+ * Copyright (C) 2017 wcm.io
  * %%
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -19,12 +19,10 @@
  */
 package io.wcm.devops.conga.plugins.aem.postprocessor;
 
-import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
 
 import java.io.File;
-import java.util.Map;
 
 import org.junit.Before;
 import org.junit.Test;
@@ -36,16 +34,15 @@ import io.wcm.devops.conga.generator.spi.context.PostProcessorContext;
 import io.wcm.devops.conga.generator.util.PluginManagerImpl;
 import io.wcm.devops.conga.plugins.sling.postprocessor.ProvisioningOsgiConfigPostProcessor;
 
-public class ContentPackagePropertiesPostProcessorTest {
+public class ContentPackageDetectPostProcessorTest {
 
   private PostProcessorPlugin underTest;
 
   @Before
   public void setUp() {
-    underTest = new PluginManagerImpl().get(ContentPackagePropertiesPostProcessor.NAME, PostProcessorPlugin.class);
+    underTest = new PluginManagerImpl().get(ContentPackageDetectPostProcessor.NAME, PostProcessorPlugin.class);
   }
 
-  @SuppressWarnings("unchecked")
   @Test
   public void testContentPackage() throws Exception {
 
@@ -56,10 +53,7 @@ public class ContentPackagePropertiesPostProcessorTest {
     applyPlugin(fileContext);
 
     // validate
-    Map<String, Object> props = (Map<String, Object>)fileContext.getModelOptions().get(ContentPackagePropertiesPostProcessor.MODEL_OPTIONS_PROPERTY);
-    assertEquals("mapping-sample", props.get("name"));
-    assertEquals(false, props.get("requiresRoot"));
-    assertEquals(2, props.get("packageFormatVersion"));
+    assertTrue((Boolean)fileContext.getModelOptions().get(ContentPackageDetectPostProcessor.MODEL_OPTIONS_PROPERTY));
   }
 
   @Test
@@ -72,7 +66,7 @@ public class ContentPackagePropertiesPostProcessorTest {
     applyPlugin(fileContext);
 
     // validate
-    assertNull(fileContext.getModelOptions().get(ContentPackagePropertiesPostProcessor.MODEL_OPTIONS_PROPERTY));
+    assertNull(fileContext.getModelOptions().get(ContentPackageDetectPostProcessor.MODEL_OPTIONS_PROPERTY));
   }
 
   private void applyPlugin(FileContext fileContext) {

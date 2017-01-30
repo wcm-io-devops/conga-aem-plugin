@@ -53,7 +53,7 @@ import com.google.common.collect.ImmutableMap;
 import io.wcm.devops.conga.generator.spi.PostProcessorPlugin;
 import io.wcm.devops.conga.generator.spi.context.FileContext;
 import io.wcm.devops.conga.generator.spi.context.PostProcessorContext;
-import io.wcm.devops.conga.generator.util.PluginManager;
+import io.wcm.devops.conga.generator.util.PluginManagerImpl;
 import io.wcm.devops.conga.plugins.sling.postprocessor.ProvisioningOsgiConfigPostProcessor;
 
 public class ContentPackageOsgiConfigPostProcessorTest {
@@ -62,7 +62,7 @@ public class ContentPackageOsgiConfigPostProcessorTest {
 
   @Before
   public void setUp() {
-    underTest = new PluginManager().get(ContentPackageOsgiConfigPostProcessor.NAME, PostProcessorPlugin.class);
+    underTest = new PluginManagerImpl().get(ContentPackageOsgiConfigPostProcessor.NAME, PostProcessorPlugin.class);
   }
 
   @Test
@@ -88,7 +88,7 @@ public class ContentPackageOsgiConfigPostProcessorTest {
         .charset(CharEncoding.UTF_8);
     PostProcessorContext context = new PostProcessorContext()
         .options(options)
-        .pluginManager(new PluginManager())
+        .pluginManager(new PluginManagerImpl())
         .logger(LoggerFactory.getLogger(ProvisioningOsgiConfigPostProcessor.class));
 
     assertTrue(underTest.accepts(fileContext, context));
