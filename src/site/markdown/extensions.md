@@ -23,7 +23,7 @@ The plugin `aem-contentpackage` generates a content package out of a JSON file. 
 
 The plugin `aem-contentpackage-osgiconfig` generates a content package containing OSGI configurations out of a Sling Provisioning file.
 
-The Sling Provisioning Model file format is described on the [Sling Website][sling-slingstart]. It is a compact format that allows to define features with bundles and configurations for a Sling-based distribution. The CONGA AEM Plugin uses only the configurations and ignores all other part of the file.
+The Sling Provisioning Model file format is described on the [Sling Website][sling-provisioning]. It is a compact format that allows to define features with bundles and configurations for a Sling-based distribution. The CONGA AEM Plugin uses only the configurations and ignores all other parts of the file.
 
 Both post processor plugins support a set of options that allow further configuration of the generated content package:
 
@@ -71,4 +71,4 @@ The model YAML file can be exported during CONGA generation and provides the nec
 
 
 [conga-extensibility]: http://devops.wcm.io/conga/extensibility.html
-[sling-slingstart]: https://sling.apache.org/documentation/development/slingstart.html
+[sling-provisioning]: https://sling.apache.org/documentation/development/slingstart.html
