@@ -3,6 +3,7 @@
 wcm.io DevOps CONGA Plugin for [Adobe Experience Manager (AEM)][aem].
 
 This extends [CONGA][conga] with:
+
 * Generate AEM content packages for OSGi configurations and from JSON content fragments
 * Extract package properties from AEM content packages
 * Manage ANY files for dispatcher configuration
