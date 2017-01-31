@@ -14,6 +14,8 @@ File plugins:
 | `aem-contentpackage-osgiconfig` | .provisioning, .txt |             |           |          | X              |
 | `aem-contentpackage-properties` | .zip                |             |           |          | X              |
 
+Please note: Files with the extension `txt` are only managed as provisioning files if the contain the string `[feature `.
+
 
 ### Generating AEM Content Packages
 
