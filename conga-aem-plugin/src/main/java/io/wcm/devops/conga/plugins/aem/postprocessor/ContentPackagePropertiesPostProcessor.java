@@ -29,6 +29,7 @@ import com.google.common.collect.ImmutableList;
 
 import io.wcm.devops.conga.generator.GeneratorException;
 import io.wcm.devops.conga.generator.plugins.postprocessor.AbstractPostProcessor;
+import io.wcm.devops.conga.generator.spi.ImplicitApplyOptions;
 import io.wcm.devops.conga.generator.spi.context.FileContext;
 import io.wcm.devops.conga.generator.spi.context.PostProcessorContext;
 import io.wcm.devops.conga.generator.util.FileUtil;
@@ -60,6 +61,11 @@ public class ContentPackagePropertiesPostProcessor extends AbstractPostProcessor
   @Override
   public boolean accepts(FileContext file, PostProcessorContext context) {
     return FileUtil.matchesExtension(file, FILE_EXTENSION);
+  }
+
+  @Override
+  public ImplicitApplyOptions implicitApply(FileContext file, PostProcessorContext context) {
+    return ImplicitApplyOptions.ALWAYS;
   }
 
   @Override

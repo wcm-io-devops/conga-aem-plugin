@@ -13,7 +13,6 @@ File plugins:
 | `aem-contentpackage`            | .json               |             |           |          | X              |
 | `aem-contentpackage-osgiconfig` | .provisioning, .txt |             |           |          | X              |
 | `aem-contentpackage-properties` | .zip                |             |           |          | X              |
-| `aem-contentpackage-detect`     | .zip                |             |           |          | X              |
 
 
 ### Generating AEM Content Packages
@@ -66,9 +65,7 @@ Example for defining package properties with a set of filters:
 
 ### Post-processing AEM Content Packages
 
-The post-processor plugin `aem-contentpackage-detect` is applied automatically to all ZIP files manged by CONGA. If a ZIP file is an AEM content package the flag `aemContentPackage` is set to true for the generated file in the model YAML.
-
-With the post-processor plugin `aem-contentpackage-properties` the properties contained in the AEM package are extracted and included per file in a property `aemContentPackageProperties` in the model YAML.
+With the post-processor plugin `aem-contentpackage-properties` is applied automatically to all ZIP files manged by CONGA. The properties contained in the AEM package are extracted and included per file in a property `aemContentPackageProperties` in the model YAML.
 
 The model YAML file can be exported during CONGA generation and provides the necessary runtime information for deployment tools like Ansible.
 

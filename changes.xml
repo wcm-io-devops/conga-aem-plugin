@@ -25,10 +25,7 @@
 
     <release version="1.3.0" date="not released">
       <action type="add" dev="sseifert">
-        Add 'aem-contentpackage-detect' post processor (always implicitely applied) that marks ZIP files that are AEM content packages with a flag in the model YAML.
-      </action>
-      <action type="add" dev="sseifert">
-        Add 'aem-contentpackage-properties' post processor that extracts AEM content package properties.
+        Add 'aem-contentpackage-properties' post processor (always implicitely applied) that extracts AEM content package properties.
       </action>
       <action type="update" dev="sseifert">
         Update to latest handlebars 4.x version.

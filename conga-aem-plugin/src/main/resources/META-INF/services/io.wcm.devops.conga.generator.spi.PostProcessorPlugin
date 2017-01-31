@@ -1,4 +1,3 @@
-io.wcm.devops.conga.plugins.aem.postprocessor.ContentPackageDetectPostProcessor
 io.wcm.devops.conga.plugins.aem.postprocessor.ContentPackageOsgiConfigPostProcessor
 io.wcm.devops.conga.plugins.aem.postprocessor.ContentPackagePostProcessor
 io.wcm.devops.conga.plugins.aem.postprocessor.ContentPackagePropertiesPostProcessor
