@@ -6,12 +6,9 @@ files:
 - file: sling-provisioning.provisioning
   dir: packages
   template: sling-provisioning.provisioning.hbs
-  validators:
-  - sling-provisioning
-  # Post-processors apply further actions after generation the file
+  # Transform OSGi configs from provisoning file to AEM content package
   postProcessors:
   - aem-contentpackage-osgiconfig
-  - aem-contentpackage-properties
   postProcessorOptions:
     contentPackage:
       name: config-sample
@@ -26,10 +23,9 @@ files:
 - file: sling-mapping.json
   dir: packages
   template: sling-mapping.json.hbs
-  # Post-processors apply further actions after generation the file
+  # Transform JSON file to AEM content package
   postProcessors:
   - aem-contentpackage
-  - aem-contentpackage-properties
   postProcessorOptions:
     contentPackage:
       name: mapping-sample
@@ -44,10 +40,11 @@ files:
         - rule: exclude
           pattern: /etc/map/http/AppMeasurementBridge
 
-# AEM Systems users with ACLs (Author)
+# AEM Systems users with ACLs
 - file: aem-systemusers.json
   dir: packages
   template: aem-systemusers.json.hbs
+  # Transform JSON file to AEM content package
   postProcessors:
   - aem-contentpackage
   postProcessorOptions:
@@ -62,8 +59,6 @@ files:
 # Download AEM content package and extract properties
 - url: mvn:io.wcm/io.wcm.caconfig.editor.package//zip
   dir: packages
-  postProcessors:
-  - aem-contentpackage-properties
 
 
 # Defines configuration parameters and default values

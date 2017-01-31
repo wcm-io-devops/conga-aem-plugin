@@ -14,7 +14,7 @@ File plugins:
 | `aem-contentpackage-osgiconfig` | .provisioning, .txt |             |           |          | X              |
 | `aem-contentpackage-properties` | .zip                |             |           |          | X              |
 
-Please note: Files with the extension `txt` are only managed as provisioning files if the contain the string `[feature `.
+Please note: Files with the extension `txt` are only managed as provisioning files if the contain the string "[feature " (heuristic).
 
 
 ### Generating AEM Content Packages
@@ -35,8 +35,9 @@ Both post processor plugins support a set of options that allow further configur
 | `contentPackage.name`        | Package name for content package
 | `contentPackage.description` | Description for content package
 | `contentPackage.version`     | Version for content package
-| `contentPackage.rootPath`    | Root path for content package (simplified version for setting just one filter)
-| `contentPackage.filters`     | Contains list with filter definitions, optionally with include/exclude rules
+| `contentPackage.rootPath`    | Root path for the content package
+| `contentPackage.filters`     | Contains list with filter definitions, optionally with include/exclude rules. If not defined a simple filter rule is derived from the `contentPackage.rootPath` property.
+| `contentPackage.acHandling`  | How to apply ACLs that are contained in the content package. Possible values: `ignore` (default), `overwrite`, `merge`, `merge_preserve`, `clear`.
 
 
 Example for defining package properties with a set of filters:
