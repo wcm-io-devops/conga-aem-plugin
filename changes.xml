@@ -27,6 +27,9 @@
       <action type="add" dev="sseifert">
         Add 'aem-contentpackage-properties' post processor (always implicitely applied) that extracts AEM content package properties.
       </action>
+      <action type="add" dev="sseifert">
+        Add 'CONGA AEM Maven Plugin' which allows to deploy AEM content packages to AEM referenced in a node's model.yaml file.
+      </action>
       <action type="update" dev="sseifert">
         Update to latest handlebars 4.x version.
       </action>
