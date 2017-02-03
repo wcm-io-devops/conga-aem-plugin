@@ -2,10 +2,42 @@
 
 For basic CONGA usage see [CONGA documentation][conga-usage].
 
+
+### CONGA AEM Plugin
+
 An example using the CONGA AEM plugin-specific features is in this GIT repository:<br/>
 https://github.com/wcm-io-devops/conga-aem-plugin
 
 In a subdirectory `example`.
 
 
+### CONGA Maven AEM Plugin
+
+The CONGA AEM Maven plugin is provided which allows to deploy a bunch of AEM packages processed by CONGA to an AEM instance. To operate the configuration has to be generated via the CONGA Maven plugin before, and a `model.yaml` needs to be located in each node's root folder (this is activated by default).
+
+Example for configuration the plugin in your POM:
+
+```xml
+<build>
+  <plugins>
+    <plugin>
+      <groupId>io.wcm.devops.conga.plugins</groupId>
+      <artifactId>conga-aem-maven-plugin</artifactId>
+      <configuration>
+        <nodeDirectory>target/configuration/env1/node1</nodeDirectory>
+        <serviceURL>http://localhost:4502/crx/packmgr/service</serviceURL>
+        <userId>admin</userId>
+        <password>admin</password>
+      </configuration>
+    </plugin>
+  </plugins>
+</build>
+```
+
+This looks for a file `target/configuration/env1/node1/model.yaml`, identifies all ZIP files that are AEM content packages and uploads them to an AEM instance when you execute `mvn conga-aem:package-install`.
+
+The plugin uses the same resilience logic for package uploading as the [wcm.io Content Package Maven Plugin][wcmio-content-package-maven-plugin].
+
+
 [conga-usage]: http://devops.wcm.io/conga/usage.html
+[wcmio-content-package-maven-plugin]: http://wcm.io/tooling/maven/plugins/wcmio-content-package-maven-plugin/

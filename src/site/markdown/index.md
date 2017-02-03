@@ -10,6 +10,7 @@ wcm.io DevOps CONGA Plugin for [Adobe Experience Manager (AEM)][aem].
 * [Usage][usage]
 * [CONGA Extensions][extensions]
 * [API documentation][apidocs]
+* [CONGA AEM Maven Plugin Documentation][plugindocs]
 * [Changelog][changelog]
 
 
@@ -23,10 +24,13 @@ This plugin extends [CONGA][conga] with:
 
 This plugin depends on the [CONGA Sling Plugin][conga-sling].
 
+Additionally the CONGA AEM Maven plugin is provided which allows to deploy a bunch of AEM packages processed by CONGA to an AEM instance. See [Usage][usage] for an example.
+
 
 [usage]: usage.html
 [extensions]: extensions.html
 [apidocs]: conga-aem-plugin/apidocs/
+[plugindocs]: conga-aem-maven-plugin/plugin-info.html
 [changelog]: changes-report.html
 [aem]: http://www.adobe.com/solutions/web-experience-management.html
 [conga]: http://devops.wcm.io/conga/
