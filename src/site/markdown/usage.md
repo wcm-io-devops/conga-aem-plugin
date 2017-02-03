@@ -13,7 +13,9 @@ In a subdirectory `example`.
 
 ### CONGA Maven AEM Plugin
 
-The CONGA AEM Maven plugin is provided which allows to deploy a bunch of AEM packages processed by CONGA to an AEM instance. To operate the configuration has to be generated via the CONGA Maven plugin before, and a `model.yaml` needs to be located in each node's root folder (this is activated by default).
+This is an AEM-specific CONGA plugin for Maven, not to be mixed up with the generic CONGA plugin for Maven which is used to generate the configuration.
+
+The CONGA AEM Maven plugin allows to deploy a bunch of AEM packages processed by CONGA to an AEM instance. It requires the CONGA configuration to be generated before, and a `model.yaml` needs to be located in each node's root folder (this is activated by default).
 
 Example for configuration the plugin in your POM:
 
