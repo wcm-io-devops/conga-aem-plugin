@@ -129,11 +129,13 @@ public final class InstallPackagesMojo extends AbstractContentPackageMojo {
       for (Map<String, Object> file : files) {
         if (file.get("aemContentPackageProperties") != null) {
           String path = (String)file.get("path");
-          Integer itemDelayAfterInstallSec = (Integer)file.get("delayAfterInstallSec");
+          Boolean itemInstall = (Boolean)file.get("install");
           Boolean itemForce = (Boolean)file.get("force");
+          Boolean itemRecursive = (Boolean)file.get("recursive");
+          Integer itemDelayAfterInstallSec = (Integer)file.get("delayAfterInstallSec");
 
           File packageFile = new File(parentDir, path);
-          items.add(toPackageFile(packageFile, itemDelayAfterInstallSec, itemForce));
+          items.add(toPackageFile(packageFile, itemInstall, itemForce, itemRecursive, itemDelayAfterInstallSec));
         }
       }
     }
@@ -141,18 +143,30 @@ public final class InstallPackagesMojo extends AbstractContentPackageMojo {
     return items;
   }
 
-  private PackageFile toPackageFile(File file, Integer itemDelayAfterInstallSec, Boolean itemForce) {
+  private PackageFile toPackageFile(File file,
+      Boolean itemInstall, Boolean itemForce, Boolean itemRecursive,
+      Integer itemDelayAfterInstallSec) {
     PackageFile output = new PackageFile();
 
     output.setFile(file);
-    output.setInstall(this.install);
+    if (itemInstall != null) {
+      output.setInstall(itemInstall);
+    }
+    else {
+      output.setInstall(this.install);
+    }
     if (itemForce != null) {
       output.setForce(itemForce);
     }
     else {
       output.setForce(this.force);
     }
-    output.setRecursive(this.recursive);
+    if (itemRecursive != null) {
+      output.setRecursive(itemRecursive);
+    }
+    else {
+      output.setRecursive(this.recursive);
+    }
     if (itemDelayAfterInstallSec != null) {
       output.setDelayAfterInstallSec(itemDelayAfterInstallSec);
     }
