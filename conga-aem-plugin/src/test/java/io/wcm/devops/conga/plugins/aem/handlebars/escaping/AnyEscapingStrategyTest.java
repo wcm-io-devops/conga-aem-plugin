@@ -27,7 +27,7 @@ import org.junit.Before;
 import org.junit.Test;
 
 import io.wcm.devops.conga.generator.spi.handlebars.EscapingStrategyPlugin;
-import io.wcm.devops.conga.generator.util.PluginManager;
+import io.wcm.devops.conga.generator.util.PluginManagerImpl;
 
 public class AnyEscapingStrategyTest {
 
@@ -35,7 +35,7 @@ public class AnyEscapingStrategyTest {
 
   @Before
   public void setUp() {
-    underTest = new PluginManager().get(AnyEscapingStrategy.NAME, EscapingStrategyPlugin.class);
+    underTest = new PluginManagerImpl().get(AnyEscapingStrategy.NAME, EscapingStrategyPlugin.class);
   }
 
   @Test

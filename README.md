@@ -1,6 +1,7 @@
 <img src="http://wcm.io/images/favicon-16@2x.png"/> CONGA Plugin for AEM
 ======
 [![Build Status](https://travis-ci.org/wcm-io-devops/conga-aem-plugin.png?branch=develop)](https://travis-ci.org/wcm-io-devops/conga-aem-plugin)
+[![Code Coverage](https://codecov.io/gh/wcm-io-devops/conga-aem-plugin/branch/develop/graph/badge.svg)](https://codecov.io/gh/wcm-io-devops/conga-aem-plugin)
 
 Documentation: http://devops.wcm.io/conga/plugins/aem/<br/>
 Issues: https://wcm-io.atlassian.net/projects/WDCONGA<br/>

@@ -23,6 +23,21 @@
     xsi:schemaLocation="http://maven.apache.org/changes/1.0.0 http://maven.apache.org/plugins/maven-changes-plugin/xsd/changes-1.0.0.xsd">
   <body>
 
+    <release version="1.3.0" date="2017-02-09">
+      <action type="add" dev="sseifert">
+        Add 'aem-contentpackage-properties' post processor (always implicitely applied) that extracts AEM content package properties.
+      </action>
+      <action type="add" dev="sseifert">
+        Add 'CONGA AEM Maven Plugin' which allows to deploy AEM content packages to AEM referenced in a node's model.yaml file.
+      </action>
+      <action type="update" dev="sseifert">
+        Skip generation of content package for OSGi configuration when no configurations are defined.
+      </action>
+      <action type="update" dev="sseifert">
+        Update to latest handlebars 4.x version.
+      </action>
+    </release>
+
     <release version="1.2.0" date="2016-06-15">
       <action type="update" dev="sseifert">
         Add support to extract file headers to all file header plugins.

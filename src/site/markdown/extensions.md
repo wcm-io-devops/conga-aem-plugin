@@ -12,9 +12,12 @@ File plugins:
 | `any`                           | .any                | X           | X         | X        |                |
 | `aem-contentpackage`            | .json               |             |           |          | X              |
 | `aem-contentpackage-osgiconfig` | .provisioning, .txt |             |           |          | X              |
+| `aem-contentpackage-properties` | .zip                |             |           |          | X              |
+
+Please note: Files with the extension `txt` are only managed as provisioning files if the contain the string "[feature " (heuristic).
 
 
-### AEM Content Packages
+### Generating AEM Content Packages
 
 The CONGA AEM Plugin provides two post processor plugins that generate AEM Content Packages (ZIP files with JCR XML files describing a JCR content structure). These content packages can be imported into a AEM instance using the CRX Package Manager.
 
@@ -22,9 +25,9 @@ The plugin `aem-contentpackage` generates a content package out of a JSON file. 
 
 The plugin `aem-contentpackage-osgiconfig` generates a content package containing OSGI configurations out of a Sling Provisioning file.
 
-The Sling Provisioning Model file format is described on the [Sling Website][sling-slingstart]. It is a compact format that allows to define features with bundles and configurations for a Sling-based distribution. The CONGA AEM Plugin uses only the configurations and ignores all other part of the file.
+The Sling Provisioning Model file format is described on the [Sling Website][sling-provisioning]. It is a compact format that allows to define features with bundles and configurations for a Sling-based distribution. The CONGA AEM Plugin uses only the configurations and ignores all other parts of the file.
 
-Both post proccesor plugins support a set of options that allow further configuration of the generated content package:
+Both post processor plugins support a set of options that allow further configuration of the generated content package:
 
 | Property                     | Description
 |------------------------------|-------------
@@ -32,8 +35,9 @@ Both post proccesor plugins support a set of options that allow further configur
 | `contentPackage.name`        | Package name for content package
 | `contentPackage.description` | Description for content package
 | `contentPackage.version`     | Version for content package
-| `contentPackage.rootPath`    | Root path for content package (simplified version for setting just one filter)
-| `contentPackage.filters`     | Contains list with filter definitions, optionally with include/exclude rules
+| `contentPackage.rootPath`    | Root path for the content package
+| `contentPackage.filters`     | Contains list with filter definitions, optionally with include/exclude rules. If not defined a simple filter rule is derived from the `contentPackage.rootPath` property.
+| `contentPackage.acHandling`  | How to apply ACLs that are contained in the content package. Possible values: `ignore` (default), `overwrite`, `merge`, `merge_preserve`, `clear`.
 
 
 Example for defining package properties with a set of filters:
@@ -62,5 +66,12 @@ Example for defining package properties with a set of filters:
 ```
 
 
+### Post-processing AEM Content Packages
+
+With the post-processor plugin `aem-contentpackage-properties` is applied automatically to all ZIP files manged by CONGA. The properties contained in the AEM package are extracted and included per file in a property `aemContentPackageProperties` in the model YAML.
+
+The model YAML file can be exported during CONGA generation and provides the necessary runtime information for deployment tools like Ansible.
+
+
 [conga-extensibility]: http://devops.wcm.io/conga/extensibility.html
-[sling-slingstart]: https://sling.apache.org/documentation/development/slingstart.html
+[sling-provisioning]: https://sling.apache.org/documentation/development/slingstart.html
