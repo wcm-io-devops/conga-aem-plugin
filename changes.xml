@@ -31,6 +31,9 @@
         Add 'CONGA AEM Maven Plugin' which allows to deploy AEM content packages to AEM referenced in a node's model.yaml file.
       </action>
       <action type="update" dev="sseifert">
+        Skip generation of content package for OSGi configuration when no configurations are defined.
+      </action>
+      <action type="update" dev="sseifert">
         Update to latest handlebars 4.x version.
       </action>
     </release>
