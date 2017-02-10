@@ -39,6 +39,7 @@ import org.apache.sling.provisioning.model.Model;
 import org.slf4j.Logger;
 
 import com.google.common.collect.ImmutableList;
+import com.google.common.collect.ImmutableMap;
 
 import io.wcm.devops.conga.generator.GeneratorException;
 import io.wcm.devops.conga.generator.plugins.postprocessor.AbstractPostProcessor;
@@ -85,14 +86,6 @@ public class ContentPackageOsgiConfigPostProcessor extends AbstractPostProcessor
       // generate OSGi configurations
       Model model = ProvisioningUtil.getModel(fileContext);
 
-      // skip generation of package when no osgi configuration exist
-      if (!hasOsgiConfigurations(model)) {
-        context.getLogger().info("No OSGi configurations found - skipping package generation.");
-        // delete empty provisioning file
-        file.delete();
-        return ImmutableList.of();
-      }
-
       // create AEM content package with configurations
       File zipFile = new File(file.getParentFile(), FilenameUtils.getBaseName(file.getName()) + ".zip");
       logger.info("Generate " + zipFile.getCanonicalPath());
@@ -100,7 +93,12 @@ public class ContentPackageOsgiConfigPostProcessor extends AbstractPostProcessor
       String rootPath = ContentPackageUtil.getMandatoryProp(options, PROPERTY_PACKAGE_ROOT_PATH);
 
       ContentPackageBuilder builder = ContentPackageUtil.getContentPackageBuilder(options, fileHeader);
+
       try (ContentPackage contentPackage = builder.build(zipFile)) {
+
+        // always create folder for root path
+        contentPackage.addContent(rootPath, ImmutableMap.of("jcr:primaryType", "nt:folder"));
+
         generateOsgiConfigurations(model, contentPackage, rootPath, fileHeader, context);
       }
 
@@ -112,22 +110,6 @@ public class ContentPackageOsgiConfigPostProcessor extends AbstractPostProcessor
     catch (IOException ex) {
       throw new GeneratorException("Unable to post-process sling provisioning OSGi configurations.", ex);
     }
-  }
-
-  /**
-   * Checks if any OSGi configurations are present.
-   * @param model Provisioning Model
-   * @return true if any configuration is present
-   * @throws IOException
-   */
-  private boolean hasOsgiConfigurations(Model model) throws IOException {
-    List<Integer> result = ProvisioningUtil.visitOsgiConfigurations(model, new ConfigConsumer<Integer>() {
-      @Override
-      public Integer accept(String path, Dictionary<String, Object> properties) throws IOException {
-        return 1;
-      }
-    });
-    return !result.isEmpty();
   }
 
   /**
