@@ -52,17 +52,10 @@ public final class JsonContentLoader {
       "jcr:isCheckedOut",
       ":jcr:data");
 
-  private final ContentFileParser parser;
-
-  /**
-   * Constructor
-   */
-  public JsonContentLoader() {
-    this.parser = ContentFileParserFactory.create(ContentFileExtension.JSON, new ParserOptions()
-        .detectCalendarValues(true)
-        .ignorePropertyNames(IGNORED_NAMES)
-        .ignoreResourceNames(IGNORED_NAMES));
-  }
+  private static final ContentFileParser JSON_PARSER = ContentFileParserFactory.create(ContentFileExtension.JSON, new ParserOptions()
+      .detectCalendarValues(true)
+      .ignorePropertyNames(IGNORED_NAMES)
+      .ignoreResourceNames(IGNORED_NAMES));
 
   /**
    * Load a JSON file and transform the contained data structured in nested maps, as supported by the
@@ -72,7 +65,7 @@ public final class JsonContentLoader {
    */
   public Map<String, Object> load(File jsonFile) {
     try (InputStream is = new FileInputStream(jsonFile)) {
-      return parser.parse(is);
+      return JSON_PARSER.parse(is);
     }
     catch (Throwable ex) {
       throw new GeneratorException("Unable to parse JSON file: " + FileUtil.getCanonicalPath(jsonFile), ex);
@@ -88,7 +81,7 @@ public final class JsonContentLoader {
    */
   public Map<String, Object> load(InputStream inputStream) throws IOException {
     try {
-      return parser.parse(inputStream);
+      return JSON_PARSER.parse(inputStream);
     }
     catch (Throwable ex) {
       throw new GeneratorException("Unable to parse JSON stream.", ex);
