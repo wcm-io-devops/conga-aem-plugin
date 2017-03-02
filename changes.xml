@@ -30,6 +30,9 @@
       <action type="fix" dev="sseifert">
         Update to latest content-package-builder dependency (fixes some issues in generated content packages).
       </action>
+      <action type="update" dev="sseifert">
+        Switch to org.apache.sling.fscontentparser for parsing JSON content files.
+      </action>
     </release>
 
     <release version="1.3.0" date="2017-02-09">

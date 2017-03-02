@@ -23,23 +23,14 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
-import java.text.DateFormat;
-import java.text.ParseException;
-import java.text.SimpleDateFormat;
-import java.util.Calendar;
-import java.util.Date;
-import java.util.HashMap;
 import java.util.Map;
 import java.util.Set;
 
-import org.apache.commons.io.IOUtils;
-import org.apache.commons.lang3.CharEncoding;
-import org.apache.commons.lang3.StringUtils;
 import org.apache.jackrabbit.JcrConstants;
-import org.apache.sling.commons.json.JSONArray;
-import org.apache.sling.commons.json.JSONException;
-import org.apache.sling.commons.json.JSONObject;
-import org.apache.sling.commons.json.jcr.JsonItemWriter;
+import org.apache.sling.fscontentparser.ContentFileExtension;
+import org.apache.sling.fscontentparser.ContentFileParser;
+import org.apache.sling.fscontentparser.ContentFileParserFactory;
+import org.apache.sling.fscontentparser.ParserOptions;
 
 import com.google.common.collect.ImmutableSet;
 
@@ -51,11 +42,7 @@ import io.wcm.devops.conga.generator.util.FileUtil;
  */
 public final class JsonContentLoader {
 
-  private static final String REFERENCE = "jcr:reference:";
-  private static final String PATH = "jcr:path:";
-
   private static final Set<String> IGNORED_NAMES = ImmutableSet.of(
-      JcrConstants.JCR_PRIMARYTYPE,
       JcrConstants.JCR_BASEVERSION,
       JcrConstants.JCR_PREDECESSORS,
       JcrConstants.JCR_SUCCESSORS,
@@ -65,13 +52,16 @@ public final class JsonContentLoader {
       "jcr:isCheckedOut",
       ":jcr:data");
 
-  private final DateFormat calendarFormat;
+  private final ContentFileParser parser;
 
   /**
    * Constructor
    */
   public JsonContentLoader() {
-    this.calendarFormat = new SimpleDateFormat(JsonItemWriter.ECMA_DATE_FORMAT, JsonItemWriter.DATE_FORMAT_LOCALE);
+    this.parser = ContentFileParserFactory.create(ContentFileExtension.JSON, new ParserOptions()
+        .detectCalendarValues(true)
+        .ignorePropertyNames(IGNORED_NAMES)
+        .ignoreResourceNames(IGNORED_NAMES));
   }
 
   /**
@@ -82,9 +72,9 @@ public final class JsonContentLoader {
    */
   public Map<String, Object> load(File jsonFile) {
     try (InputStream is = new FileInputStream(jsonFile)) {
-      return load(is);
+      return parser.parse(is);
     }
-    catch (IOException ex) {
+    catch (Throwable ex) {
       throw new GeneratorException("Unable to parse JSON file: " + FileUtil.getCanonicalPath(jsonFile), ex);
     }
   }
@@ -98,149 +88,11 @@ public final class JsonContentLoader {
    */
   public Map<String, Object> load(InputStream inputStream) throws IOException {
     try {
-      String jsonString = IOUtils.toString(inputStream, CharEncoding.UTF_8);
-      return toMap(new JSONObject(jsonString));
+      return parser.parse(inputStream);
     }
-    catch (JSONException ex) {
-      throw new IOException(ex.getMessage(), ex);
+    catch (Throwable ex) {
+      throw new GeneratorException("Unable to parse JSON stream.", ex);
     }
-  }
-
-  private Map<String, Object> toMap(JSONObject jsonObject) throws JSONException {
-    Map<String, Object> map = new HashMap<>();
-
-    // collect all properties first
-    JSONArray names = jsonObject.names();
-    for (int i = 0; names != null && i < names.length(); i++) {
-      final String name = names.getString(i);
-      if (!IGNORED_NAMES.contains(name)) {
-        Object obj = jsonObject.get(name);
-        if (!(obj instanceof JSONObject)) {
-          setProperty(map, name, obj);
-        }
-      }
-    }
-
-    // validate JCR primary type
-    Object primaryTypeObj = jsonObject.opt(JcrConstants.JCR_PRIMARYTYPE);
-    String primaryType = null;
-    if (primaryTypeObj != null) {
-      primaryType = String.valueOf(primaryTypeObj);
-    }
-    if (primaryType == null) {
-      primaryType = JcrConstants.NT_UNSTRUCTURED;
-    }
-    map.put(JcrConstants.JCR_PRIMARYTYPE, primaryType);
-
-    // add child resources
-    for (int i = 0; names != null && i < names.length(); i++) {
-      final String name = names.getString(i);
-      if (!IGNORED_NAMES.contains(name)) {
-        Object obj = jsonObject.get(name);
-        if (obj instanceof JSONObject) {
-          map.put(name, toMap((JSONObject)obj));
-        }
-      }
-    }
-
-    return map;
-  }
-
-  private void setProperty(Map<String, Object> props, String name, Object value) throws JSONException {
-    if (value instanceof JSONArray) {
-
-      // multivalue
-      final JSONArray array = (JSONArray)value;
-      if (array.length() > 0) {
-        final Object[] values = new Object[array.length()];
-        for (int i = 0; i < array.length(); i++) {
-          values[i] = array.get(i);
-        }
-
-        if (values[0] instanceof Double || values[0] instanceof Float) {
-          Double[] arrayValues = new Double[values.length];
-          for (int i = 0; i < values.length; i++) {
-            arrayValues[i] = (Double)values[i];
-          }
-          props.put(cleanupJsonName(name), arrayValues);
-        }
-        else if (values[0] instanceof Number) {
-          Long[] arrayValues = new Long[values.length];
-          for (int i = 0; i < values.length; i++) {
-            arrayValues[i] = ((Number)values[i]).longValue();
-          }
-          props.put(cleanupJsonName(name), arrayValues);
-        }
-        else if (values[0] instanceof Boolean) {
-          Boolean[] arrayValues = new Boolean[values.length];
-          for (int i = 0; i < values.length; i++) {
-            arrayValues[i] = (Boolean)values[i];
-          }
-          props.put(cleanupJsonName(name), arrayValues);
-        }
-        else {
-          String[] arrayValues = new String[values.length];
-          for (int i = 0; i < values.length; i++) {
-            arrayValues[i] = values[i].toString();
-          }
-          props.put(cleanupJsonName(name), arrayValues);
-        }
-      }
-      else {
-        props.put(cleanupJsonName(name), new String[0]);
-      }
-
-    }
-    else {
-
-      // single value
-      if (value instanceof Double || value instanceof Float) {
-        props.put(cleanupJsonName(name), value);
-      }
-      else if (value instanceof Number) {
-        props.put(cleanupJsonName(name), ((Number)value).longValue());
-      }
-      else if (value instanceof Boolean) {
-        props.put(cleanupJsonName(name), value);
-      } else {
-        String stringValue = value.toString();
-
-        // check if value is a Calendar object
-        Calendar calendar = tryParseCalendarValue(stringValue);
-        if (calendar != null) {
-          props.put(cleanupJsonName(name), calendar);
-        } else {
-          props.put(cleanupJsonName(name), stringValue);
-        }
-
-      }
-    }
-  }
-
-  private String cleanupJsonName(String name) {
-    if (name.startsWith(REFERENCE)) {
-      return name.substring(REFERENCE.length());
-    }
-    if (name.startsWith(PATH)) {
-      return name.substring(PATH.length());
-    }
-    return name;
-  }
-
-  private Calendar tryParseCalendarValue(String value) {
-    if (StringUtils.isNotBlank(value)) {
-      synchronized (calendarFormat) {
-        try {
-          Date date = calendarFormat.parse(value);
-          Calendar calendar = Calendar.getInstance();
-          calendar.setTime(date);
-          return calendar;
-        } catch (ParseException ex) {
-          // ignore
-        }
-      }
-    }
-    return null;
   }
 
 }
