@@ -34,7 +34,7 @@
         Always use BufferedInputStream to wrap FileInputStream.
       </action>
       <action type="update" dev="sseifert">
-        Switch to org.apache.sling.fscontentparser for parsing JSON content files.
+        Switch to org.apache.sling.jcr.contentparser for parsing JSON content files.
       </action>
     </release>
 

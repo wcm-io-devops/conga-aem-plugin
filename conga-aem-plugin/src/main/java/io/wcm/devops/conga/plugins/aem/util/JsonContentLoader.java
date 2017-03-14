@@ -28,10 +28,10 @@ import java.util.Map;
 import java.util.Set;
 
 import org.apache.jackrabbit.JcrConstants;
-import org.apache.sling.fscontentparser.ContentFileParser;
-import org.apache.sling.fscontentparser.ContentFileParserFactory;
-import org.apache.sling.fscontentparser.ContentFileType;
-import org.apache.sling.fscontentparser.ParserOptions;
+import org.apache.sling.jcr.contentparser.ContentParser;
+import org.apache.sling.jcr.contentparser.ContentParserFactory;
+import org.apache.sling.jcr.contentparser.ContentType;
+import org.apache.sling.jcr.contentparser.ParserOptions;
 
 import com.google.common.collect.ImmutableSet;
 
@@ -53,7 +53,7 @@ public final class JsonContentLoader {
       "jcr:isCheckedOut",
       ":jcr:data");
 
-  private static final ContentFileParser JSON_PARSER = ContentFileParserFactory.create(ContentFileType.JSON, new ParserOptions()
+  private static final ContentParser JSON_PARSER = ContentParserFactory.create(ContentType.JSON, new ParserOptions()
       .detectCalendarValues(true)
       .ignorePropertyNames(IGNORED_NAMES)
       .ignoreResourceNames(IGNORED_NAMES));
