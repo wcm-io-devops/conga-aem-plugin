@@ -19,6 +19,7 @@
  */
 package io.wcm.devops.conga.plugins.aem.util;
 
+import java.io.BufferedInputStream;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
@@ -81,7 +82,7 @@ public final class JsonContentLoader {
    * @return Nested map with content data
    */
   public Map<String, Object> load(File jsonFile) {
-    try (InputStream is = new FileInputStream(jsonFile)) {
+    try (InputStream is = new BufferedInputStream(new FileInputStream(jsonFile))) {
       return load(is);
     }
     catch (IOException ex) {
