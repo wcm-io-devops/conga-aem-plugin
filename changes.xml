@@ -31,6 +31,9 @@
         Update to latest content-package-builder dependency (fixes some issues in generated content packages).
       </action>
       <action type="update" dev="sseifert">
+        Always use BufferedInputStream to wrap FileInputStream.
+      </action>
+      <action type="update" dev="sseifert">
         Switch to org.apache.sling.fscontentparser for parsing JSON content files.
       </action>
     </release>

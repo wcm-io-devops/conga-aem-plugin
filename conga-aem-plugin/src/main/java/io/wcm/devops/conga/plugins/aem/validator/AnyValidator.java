@@ -19,6 +19,7 @@
  */
 package io.wcm.devops.conga.plugins.aem.validator;
 
+import java.io.BufferedInputStream;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
@@ -80,7 +81,7 @@ public class AnyValidator implements ValidatorPlugin {
       }
     });
 
-    try (InputStream is = new FileInputStream(file.getFile());
+    try (InputStream is = new BufferedInputStream(new FileInputStream(file.getFile()));
         Reader reader = new InputStreamReader(is, file.getCharset())) {
       parser.parse(new InputSource(reader));
     }

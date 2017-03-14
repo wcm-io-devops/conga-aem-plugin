@@ -21,6 +21,7 @@ package io.wcm.devops.conga.plugins.aem.postprocessor;
 
 import static io.wcm.devops.conga.plugins.aem.postprocessor.ContentPackageOptions.PROPERTY_PACKAGE_ROOT_PATH;
 
+import java.io.BufferedInputStream;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
@@ -141,7 +142,7 @@ public class ContentPackageOsgiConfigPostProcessor extends AbstractPostProcessor
           applyFileHeader(tempFileContext, fileHeader, context);
 
           // write configuration to content package
-          try (InputStream is = new FileInputStream(tempFile)) {
+          try (InputStream is = new BufferedInputStream(new FileInputStream(tempFile))) {
             contentPackage.addFile(contentPath, is, "text/plain;charset=" + CharEncoding.UTF_8);
           }
         }
