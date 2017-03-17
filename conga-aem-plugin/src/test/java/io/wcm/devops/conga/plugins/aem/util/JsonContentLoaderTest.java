@@ -29,14 +29,15 @@ import java.util.Calendar;
 import java.util.Map;
 import java.util.TimeZone;
 
-import org.apache.commons.lang3.StringUtils;
 import org.junit.Before;
 import org.junit.Test;
+
+import io.wcm.tooling.commons.contentpackagebuilder.element.ContentElement;
 
 public class JsonContentLoaderTest {
 
   private JsonContentLoader underTest;
-  private Map<String, Object> content;
+  private ContentElement content;
 
   @Before
   public void setUp() throws Exception {
@@ -48,12 +49,13 @@ public class JsonContentLoaderTest {
 
   @Test
   public void testPageJcrPrimaryType() {
-    assertEquals("cq:Page", content.get("jcr:primaryType"));
+    assertEquals("cq:Page", content.getProperties().get("jcr:primaryType"));
   }
 
   @Test
   public void testPageContentProperties() {
-    Map<String, Object> props = getDeep(content, "toolbar/profiles/jcr:content");
+    ContentElement element = content.getChild("toolbar/profiles/jcr:content");
+    Map<String, Object> props = element.getProperties();
     assertEquals(true, props.get("hideInNav"));
 
     assertEquals(1234567890123L, props.get("longProp"));
@@ -73,15 +75,15 @@ public class JsonContentLoaderTest {
 
   @Test
   public void testContentProperties() {
-    Map<String, Object> props = getDeep(content, "jcr:content/header");
-    assertEquals("/content/dam/sample/header.png", props.get("imageReference"));
+    ContentElement element = content.getChild("jcr:content/header");
+    assertEquals("/content/dam/sample/header.png", element.getProperties().get("imageReference"));
   }
 
   @Test
   public void testCalendarEcmaFormat() {
-    Map<String, Object> props = getDeep(content, "jcr:content");
+    ContentElement element = content.getChild("jcr:content");
 
-    Calendar calendar = (Calendar)props.get("cq:lastModified");
+    Calendar calendar = (Calendar)element.getProperties().get("cq:lastModified");
     assertNotNull(calendar);
 
     calendar.setTimeZone(TimeZone.getTimeZone("GMT+2"));
@@ -97,26 +99,9 @@ public class JsonContentLoaderTest {
 
   @Test
   public void testUTF8Chars() {
-    Map<String, Object> props = getDeep(content, "jcr:content");
+    ContentElement element = content.getChild("jcr:content");
 
-    assertEquals("äöüß€", props.get("utf8Property"));
-  }
-
-  @SuppressWarnings("unchecked")
-  private static Map<String, Object> getDeep(Map<String, Object> map, String path) {
-    String name = StringUtils.substringBefore(path, "/");
-    Object object = map.get(name);
-    if (object == null || !(object instanceof Map)) {
-      return null;
-    }
-    String remainingPath = StringUtils.substringAfter(path, "/");
-    Map<String, Object> childMap = (Map<String, Object>)object;
-    if (StringUtils.isEmpty(remainingPath)) {
-      return childMap;
-    }
-    else {
-      return getDeep(childMap, remainingPath);
-    }
+    assertEquals("äöüß€", element.getProperties().get("utf8Property"));
   }
 
 }

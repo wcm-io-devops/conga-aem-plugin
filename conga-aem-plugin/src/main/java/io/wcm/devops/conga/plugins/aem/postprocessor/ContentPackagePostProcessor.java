@@ -41,6 +41,7 @@ import io.wcm.devops.conga.plugins.aem.util.ContentPackageUtil;
 import io.wcm.devops.conga.plugins.aem.util.JsonContentLoader;
 import io.wcm.tooling.commons.contentpackagebuilder.ContentPackage;
 import io.wcm.tooling.commons.contentpackagebuilder.ContentPackageBuilder;
+import io.wcm.tooling.commons.contentpackagebuilder.element.ContentElement;
 
 /**
  * Transforms a JSON file describing a JCR content structure to an AEM content package
@@ -85,7 +86,7 @@ public class ContentPackagePostProcessor extends AbstractPostProcessor {
 
       ContentPackageBuilder builder = ContentPackageUtil.getContentPackageBuilder(options, fileHeader);
       try (ContentPackage contentPackage = builder.build(zipFile)) {
-        Map<String, Object> content = jsonContentLoader.load(fileContext.getFile());
+        ContentElement content = jsonContentLoader.load(fileContext.getFile());
         contentPackage.addContent(rootPath, content);
       }
 

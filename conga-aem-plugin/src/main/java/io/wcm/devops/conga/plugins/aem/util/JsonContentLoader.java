@@ -24,7 +24,6 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
-import java.util.Map;
 import java.util.Set;
 
 import org.apache.jackrabbit.JcrConstants;
@@ -37,6 +36,7 @@ import com.google.common.collect.ImmutableSet;
 
 import io.wcm.devops.conga.generator.GeneratorException;
 import io.wcm.devops.conga.generator.util.FileUtil;
+import io.wcm.tooling.commons.contentpackagebuilder.element.ContentElement;
 
 /**
  * Imports JSON data and binary data into Sling resource hierarchy.
@@ -64,9 +64,11 @@ public final class JsonContentLoader {
    * @param jsonFile JSON file
    * @return Nested map with content data
    */
-  public Map<String, Object> load(File jsonFile) {
+  public ContentElement load(File jsonFile) {
     try (InputStream is = new BufferedInputStream(new FileInputStream(jsonFile))) {
-      return JSON_PARSER.parse(is);
+      ContentElementHandler contentHandler = new ContentElementHandler();
+      JSON_PARSER.parse(contentHandler, is);
+      return contentHandler.getRoot();
     }
     catch (Throwable ex) {
       throw new GeneratorException("Unable to parse JSON file: " + FileUtil.getCanonicalPath(jsonFile), ex);
@@ -80,9 +82,11 @@ public final class JsonContentLoader {
    * @return Nested map with content data
    * @throws IOException I/O exception
    */
-  public Map<String, Object> load(InputStream inputStream) throws IOException {
+  public ContentElement load(InputStream inputStream) throws IOException {
     try {
-      return JSON_PARSER.parse(inputStream);
+      ContentElementHandler contentHandler = new ContentElementHandler();
+      JSON_PARSER.parse(contentHandler, inputStream);
+      return contentHandler.getRoot();
     }
     catch (Throwable ex) {
       throw new GeneratorException("Unable to parse JSON stream.", ex);
