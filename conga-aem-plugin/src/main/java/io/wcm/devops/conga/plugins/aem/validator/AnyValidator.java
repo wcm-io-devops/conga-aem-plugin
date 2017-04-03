@@ -85,7 +85,7 @@ public class AnyValidator implements ValidatorPlugin {
         Reader reader = new InputStreamReader(is, file.getCharset())) {
       parser.parse(new InputSource(reader));
     }
-    catch (Throwable ex) {
+    /*CHECKSTYLE:OFF*/ catch (Exception ex) { /*CHECKSTYLE:ON*/
       throw new ValidationException("ANY file is not valid: " + ex.getMessage(), ex);
     }
     return null;

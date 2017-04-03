@@ -70,7 +70,7 @@ public final class JsonContentLoader {
       JSON_PARSER.parse(contentHandler, is);
       return contentHandler.getRoot();
     }
-    catch (Throwable ex) {
+    /*CHECKSTYLE:OFF*/ catch (Exception ex) { /*CHECKSTYLE:ON*/
       throw new GeneratorException("Unable to parse JSON file: " + FileUtil.getCanonicalPath(jsonFile), ex);
     }
   }
@@ -88,7 +88,7 @@ public final class JsonContentLoader {
       JSON_PARSER.parse(contentHandler, inputStream);
       return contentHandler.getRoot();
     }
-    catch (Throwable ex) {
+    /*CHECKSTYLE:OFF*/ catch (Exception ex) { /*CHECKSTYLE:ON*/
       throw new GeneratorException("Unable to parse JSON stream.", ex);
     }
   }
