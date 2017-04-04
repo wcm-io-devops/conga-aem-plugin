@@ -1,0 +1,8 @@
+# ********************************************
+#   Sample comment in provisioning_empty.txt
+# ********************************************
+
+[feature name=test]
+
+[configurations]
+

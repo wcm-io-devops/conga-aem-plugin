@@ -60,6 +60,13 @@ public class ContentPackageOsgiConfigPostProcessorTest {
 
   private PostProcessorPlugin underTest;
 
+  private static final Map<String, Object> PACKAGE_OPTIONS = ImmutableMap.<String, Object>of(
+      PROPERTY_PACKAGE_GROUP, "myGroup",
+      PROPERTY_PACKAGE_NAME, "myName",
+      PROPERTY_PACKAGE_DESCRIPTION, "myDesc",
+      PROPERTY_PACKAGE_VERSION, "1.5",
+      PROPERTY_PACKAGE_ROOT_PATH, "/apps/test/config");
+
   @Before
   public void setUp() {
     underTest = new PluginManagerImpl().get(ContentPackageOsgiConfigPostProcessor.NAME, PostProcessorPlugin.class);
@@ -67,13 +74,6 @@ public class ContentPackageOsgiConfigPostProcessorTest {
 
   @Test
   public void testPostProcess() throws Exception {
-    Map<String, Object> options = ImmutableMap.<String, Object>of(
-        PROPERTY_PACKAGE_GROUP, "myGroup",
-        PROPERTY_PACKAGE_NAME, "myName",
-        PROPERTY_PACKAGE_DESCRIPTION, "myDesc",
-        PROPERTY_PACKAGE_VERSION, "1.5",
-        PROPERTY_PACKAGE_ROOT_PATH, "/apps/test/config");
-
     // prepare provisioning file
     File target = new File("target/" + ContentPackageOsgiConfigPostProcessor.NAME + "-test");
     if (target.exists()) {
@@ -87,7 +87,7 @@ public class ContentPackageOsgiConfigPostProcessorTest {
         .file(contentPackageFile)
         .charset(CharEncoding.UTF_8);
     PostProcessorContext context = new PostProcessorContext()
-        .options(options)
+        .options(PACKAGE_OPTIONS)
         .pluginManager(new PluginManagerImpl())
         .logger(LoggerFactory.getLogger(ProvisioningOsgiConfigPostProcessor.class));
 
@@ -138,6 +138,37 @@ public class ContentPackageOsgiConfigPostProcessorTest {
     assertXpathEvaluatesTo("myName", "/properties/entry[@key='name']", propsXml);
     assertXpathEvaluatesTo("myDesc\n---\nSample comment in provisioning.txt", "/properties/entry[@key='description']", propsXml);
     assertXpathEvaluatesTo("1.5", "/properties/entry[@key='version']", propsXml);
+  }
+
+  @Test
+  public void testPostProcess_EmptyProvisioning() throws Exception {
+    // prepare provisioning file
+    File target = new File("target/" + ContentPackageOsgiConfigPostProcessor.NAME + "-test-empty");
+    if (target.exists()) {
+      FileUtils.deleteDirectory(target);
+    }
+    File contentPackageFile = new File(target, "test.txt");
+    FileUtils.copyFile(new File(getClass().getResource("/provisioning/provisioning_empty.txt").toURI()), contentPackageFile);
+
+    // post-process
+    FileContext fileContext = new FileContext()
+        .file(contentPackageFile)
+        .charset(CharEncoding.UTF_8);
+    PostProcessorContext context = new PostProcessorContext()
+        .options(PACKAGE_OPTIONS)
+        .pluginManager(new PluginManagerImpl())
+        .logger(LoggerFactory.getLogger(ProvisioningOsgiConfigPostProcessor.class));
+
+    assertTrue(underTest.accepts(fileContext, context));
+    underTest.apply(fileContext, context);
+
+    // validate
+    assertFalse(contentPackageFile.exists());
+
+    File zipFile = new File(target, "test.zip");
+    assertTrue(zipFile.exists());
+
+    assertTrue(ZipUtil.containsEntry(zipFile, "jcr_root/apps/test/config/.content.xml"));
   }
 
 }
