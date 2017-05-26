@@ -67,6 +67,7 @@ import io.wcm.tooling.commons.contentpackagebuilder.PackageFilter;
 public final class ContentPackageUtil {
 
   private static final String ZIP_ENTRY_PROPERTIES = "META-INF/vault/properties.xml";
+  private static final String THUMBNAIL_IMAGE_DEFAULT = "/default-package-thumbnail.png";
 
   private ContentPackageUtil() {
     // constants only
@@ -98,6 +99,14 @@ public final class ContentPackageUtil {
       }
       catch (IOException ex) {
         throw new GeneratorException("Unable to set package thumbnail to " + thumbnailImageUrl, ex);
+      }
+    }
+    else {
+      try (InputStream is = ContentPackageUtil.class.getResourceAsStream(THUMBNAIL_IMAGE_DEFAULT)) {
+        builder.thumbnailImage(is);
+      }
+      catch (IOException ex) {
+        throw new GeneratorException("Unable to set package thumbnail to default " + THUMBNAIL_IMAGE_DEFAULT, ex);
       }
     }
 

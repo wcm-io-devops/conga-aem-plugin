@@ -25,7 +25,7 @@
 
     <release version="1.4.0" date="not released">
       <action type="add" dev="sseifert">
-        Add support for setting PNG thumbnail image on content packages.
+        Add support for setting PNG thumbnail image on content packages, and add CONGA logo as default thumbnail.
       </action>
       <action type="add" dev="sseifert" issue="WTOOL-29">
         conga-aem-maven-plugin: Add support for the package installation through Composum.
