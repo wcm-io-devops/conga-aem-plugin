@@ -29,15 +29,16 @@ The Sling Provisioning Model file format is described on the [Sling Website][sli
 
 Both post processor plugins support a set of options that allow further configuration of the generated content package:
 
-| Property                     | Description
-|------------------------------|-------------
-| `contentPackage.group`       | Group name for content package
-| `contentPackage.name`        | Package name for content package
-| `contentPackage.description` | Description for content package
-| `contentPackage.version`     | Version for content package
-| `contentPackage.rootPath`    | Root path for the content package
-| `contentPackage.filters`     | Contains list with filter definitions, optionally with include/exclude rules. If not defined a simple filter rule is derived from the `contentPackage.rootPath` property.
-| `contentPackage.acHandling`  | How to apply ACLs that are contained in the content package. Possible values: `ignore` (default), `overwrite`, `merge`, `merge_preserve`, `clear`.
+| Property                        | Description
+|---------------------------------|-------------
+| `contentPackage.group`          | Group name for content package
+| `contentPackage.name`           | Package name for content package
+| `contentPackage.description`    | Description for content package
+| `contentPackage.version`        | Version for content package
+| `contentPackage.rootPath`       | Root path for the content package
+| `contentPackage.filters`        | Contains list with filter definitions, optionally with include/exclude rules. If not defined a simple filter rule is derived from the `contentPackage.rootPath` property.
+| `contentPackage.acHandling`     | How to apply ACLs that are contained in the content package. Possible values: `ignore` (default), `overwrite`, `merge`, `merge_preserve`, `clear`.
+| `contentPackage.thumbnailImage` | URL to thumbnail PNG image to be used for the content package. URL file plugin prefixes can be used (e.g. classpath:).
 
 
 Example for defining package properties with a set of filters:

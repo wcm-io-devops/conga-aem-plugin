@@ -25,6 +25,7 @@ import static io.wcm.devops.conga.plugins.aem.postprocessor.ContentPackageOption
 import static io.wcm.devops.conga.plugins.aem.postprocessor.ContentPackageOptions.PROPERTY_PACKAGE_GROUP;
 import static io.wcm.devops.conga.plugins.aem.postprocessor.ContentPackageOptions.PROPERTY_PACKAGE_NAME;
 import static io.wcm.devops.conga.plugins.aem.postprocessor.ContentPackageOptions.PROPERTY_PACKAGE_ROOT_PATH;
+import static io.wcm.devops.conga.plugins.aem.postprocessor.ContentPackageOptions.PROPERTY_PACKAGE_THUMBNAIL_IMAGE;
 import static io.wcm.devops.conga.plugins.aem.postprocessor.ContentPackageOptions.PROPERTY_PACKAGE_VERSION;
 
 import java.io.File;
@@ -50,6 +51,7 @@ import org.apache.commons.lang3.math.NumberUtils;
 import com.google.common.collect.ImmutableSortedMap;
 
 import io.wcm.devops.conga.generator.GeneratorException;
+import io.wcm.devops.conga.generator.UrlFileManager;
 import io.wcm.devops.conga.generator.spi.context.FileHeaderContext;
 import io.wcm.devops.conga.model.util.MapExpander;
 import io.wcm.devops.conga.plugins.aem.postprocessor.ContentPackageOsgiConfigPostProcessor;
@@ -86,6 +88,17 @@ public final class ContentPackageUtil {
     AcHandling acHandling = getAcHandling(options);
     if (acHandling != null) {
       builder.acHandling(acHandling);
+    }
+
+    String thumbnailImageUrl = getOptionalProp(options, PROPERTY_PACKAGE_THUMBNAIL_IMAGE);
+    if (StringUtils.isNotBlank(thumbnailImageUrl)) {
+      UrlFileManager urlFileManager = fileHeader.getUrlFileManager();
+      try {
+        builder.thumbnailImage(urlFileManager.getFile(thumbnailImageUrl));
+      }
+      catch (IOException ex) {
+        throw new GeneratorException("Unable to set package thumbnail to " + thumbnailImageUrl, ex);
+      }
     }
 
     getFilters(options).forEach(builder::filter);

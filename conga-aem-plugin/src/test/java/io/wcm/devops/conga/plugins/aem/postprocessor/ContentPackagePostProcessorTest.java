@@ -24,12 +24,16 @@ import static io.wcm.devops.conga.plugins.aem.postprocessor.ContentPackageOption
 import static io.wcm.devops.conga.plugins.aem.postprocessor.ContentPackageOptions.PROPERTY_PACKAGE_GROUP;
 import static io.wcm.devops.conga.plugins.aem.postprocessor.ContentPackageOptions.PROPERTY_PACKAGE_NAME;
 import static io.wcm.devops.conga.plugins.aem.postprocessor.ContentPackageOptions.PROPERTY_PACKAGE_ROOT_PATH;
+import static io.wcm.devops.conga.plugins.aem.postprocessor.ContentPackageOptions.PROPERTY_PACKAGE_THUMBNAIL_IMAGE;
+import static io.wcm.devops.conga.plugins.aem.postprocessor.ContentPackageTestUtil.getDataFromZip;
 import static io.wcm.devops.conga.plugins.aem.postprocessor.ContentPackageTestUtil.getXmlFromZip;
 import static org.custommonkey.xmlunit.XMLAssert.assertXpathEvaluatesTo;
 import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
 
 import java.io.File;
+import java.util.HashMap;
 import java.util.Map;
 
 import org.apache.commons.io.FileUtils;
@@ -42,9 +46,12 @@ import org.w3c.dom.Document;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableMap;
 
+import io.wcm.devops.conga.generator.UrlFileManager;
 import io.wcm.devops.conga.generator.spi.PostProcessorPlugin;
 import io.wcm.devops.conga.generator.spi.context.FileContext;
 import io.wcm.devops.conga.generator.spi.context.PostProcessorContext;
+import io.wcm.devops.conga.generator.spi.context.UrlFilePluginContext;
+import io.wcm.devops.conga.generator.util.PluginManager;
 import io.wcm.devops.conga.generator.util.PluginManagerImpl;
 import io.wcm.devops.conga.plugins.sling.postprocessor.ProvisioningOsgiConfigPostProcessor;
 
@@ -59,12 +66,13 @@ public class ContentPackagePostProcessorTest {
 
   @Test
   public void testPostProcess() throws Exception {
-    Map<String, Object> options = ImmutableMap.<String, Object>of(
-        PROPERTY_PACKAGE_GROUP, "myGroup",
-        PROPERTY_PACKAGE_NAME, "myName",
-        PROPERTY_PACKAGE_ROOT_PATH, "/content/test",
-        PROPERTY_PACKAGE_AC_HANDLING, "ignore",
-        PROPERTY_PACKAGE_FILTERS, ImmutableList.of(
+    Map<String, Object> options = new HashMap<String, Object>();
+    options.put(PROPERTY_PACKAGE_GROUP, "myGroup");
+    options.put(PROPERTY_PACKAGE_NAME, "myName");
+    options.put(PROPERTY_PACKAGE_ROOT_PATH, "/content/test");
+    options.put(PROPERTY_PACKAGE_AC_HANDLING, "ignore");
+    options.put(PROPERTY_PACKAGE_THUMBNAIL_IMAGE, "classpath:/package/thumbnail.png");
+    options.put(PROPERTY_PACKAGE_FILTERS, ImmutableList.of(
             ImmutableMap.<String, Object>of("filter", "/content/test/1"),
             ImmutableMap.<String, Object>of("filter", "/content/test/2",
                 "rules", ImmutableList.of(ImmutableMap.<String, Object>of("rule", "include", "pattern", "pattern1"),
@@ -83,9 +91,11 @@ public class ContentPackagePostProcessorTest {
     FileContext fileContext = new FileContext()
         .file(contentPackageFile)
         .charset(CharEncoding.UTF_8);
+    PluginManager pluginManager = new PluginManagerImpl();
     PostProcessorContext context = new PostProcessorContext()
         .options(options)
-        .pluginManager(new PluginManagerImpl())
+        .pluginManager(pluginManager)
+        .urlFileManager(new UrlFileManager(pluginManager, new UrlFilePluginContext()))
         .logger(LoggerFactory.getLogger(ProvisioningOsgiConfigPostProcessor.class));
 
     assertTrue(underTest.accepts(fileContext, context));
@@ -110,6 +120,9 @@ public class ContentPackagePostProcessorTest {
     Document propertiesXml = getXmlFromZip(zipFile, "META-INF/vault/properties.xml");
     assertXpathEvaluatesTo("ignore", "/properties/entry[@key='acHandling']", propertiesXml);
     assertXpathEvaluatesTo("Sample comment in content.json", "/properties/entry[@key='description']", propertiesXml);
+
+    byte[] thumbnailImage = getDataFromZip(zipFile, "META-INF/vault/definition/thumbnail.png");
+    assertNotNull(thumbnailImage);
   }
 
 }

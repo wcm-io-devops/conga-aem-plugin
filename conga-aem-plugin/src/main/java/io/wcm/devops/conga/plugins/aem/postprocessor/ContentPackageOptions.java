@@ -64,4 +64,10 @@ public final class ContentPackageOptions {
    */
   public static final String PROPERTY_PACKAGE_AC_HANDLING = "contentPackage.acHandling";
 
+  /**
+   * URL to thumbnail PNG image to be used for the content package.
+   * URL file plugin prefixes can be used (e.g. classpath:).
+   */
+  public static final String PROPERTY_PACKAGE_THUMBNAIL_IMAGE = "contentPackage.thumbnailImage";
+
 }
