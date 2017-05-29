@@ -67,6 +67,7 @@ config:
   contentPackage:
     group: sample
     version: "${version}"
+    thumbnailImage: classpath:/wcm-io-package-thumbnail.png
 
   jvm:
     path: /path/to/java
