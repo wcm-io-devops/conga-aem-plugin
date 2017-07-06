@@ -29,6 +29,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.util.Dictionary;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -106,7 +107,12 @@ public class ContentPackageOsgiConfigPostProcessor extends AbstractPostProcessor
       // delete provisioning file after transformation
       file.delete();
 
-      return ImmutableList.of(new FileContext().file(zipFile));
+      // set force to true by default for CONGA-generated packages (but allow override from role definition)
+      Map<String, Object> modelOptions = new HashMap<>();
+      modelOptions.put("force", true);
+      modelOptions.putAll(fileContext.getModelOptions());
+
+      return ImmutableList.of(new FileContext().file(zipFile).modelOptions(modelOptions));
     }
     catch (IOException ex) {
       throw new GeneratorException("Unable to post-process sling provisioning OSGi configurations.", ex);
