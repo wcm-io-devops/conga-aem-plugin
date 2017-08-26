@@ -50,7 +50,7 @@ public final class InstallPackagesMojo extends AbstractContentPackageMojo {
   /**
    * Directory with the generated CONGA configuration containing the model.yaml.
    */
-  @Parameter(required = true)
+  @Parameter(required = true, property = "conga.nodeDirectory")
   private File nodeDirectory;
 
   /**
