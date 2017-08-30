@@ -33,7 +33,7 @@ import io.wcm.devops.conga.generator.spi.ImplicitApplyOptions;
 import io.wcm.devops.conga.generator.spi.context.FileContext;
 import io.wcm.devops.conga.generator.spi.context.PostProcessorContext;
 import io.wcm.devops.conga.generator.util.FileUtil;
-import io.wcm.devops.conga.plugins.aem.util.ContentPackageUtil;
+import io.wcm.tooling.commons.packmgr.util.ContentPackageProperties;
 
 /**
  * Extracts properties from a given AEM content package and stores them as additional
@@ -73,7 +73,7 @@ public class ContentPackagePropertiesPostProcessor extends AbstractPostProcessor
     Logger logger = context.getLogger();
 
     try {
-      Map<String, Object> properties = ContentPackageUtil.getPackageProperties(fileContext.getFile());
+      Map<String, Object> properties = ContentPackageProperties.get(fileContext.getFile());
       if (!properties.isEmpty()) {
         fileContext.getModelOptions().put(MODEL_OPTIONS_PROPERTY, properties);
         logger.info("Extracted properties from AEM content package.");
