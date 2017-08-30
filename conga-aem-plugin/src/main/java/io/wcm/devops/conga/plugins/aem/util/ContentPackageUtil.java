@@ -32,7 +32,6 @@ import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.ArrayList;
-import java.util.Enumeration;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -269,13 +268,10 @@ public final class ContentPackageUtil {
     ZipFile zipFile = null;
     try {
       zipFile = new ZipFile(packageFile);
-      Enumeration<ZipArchiveEntry> entries = zipFile.getEntries();
-      while (entries.hasMoreElements()) {
-        ZipArchiveEntry entry = entries.nextElement();
-        if (StringUtils.equals(entry.getName(), ZIP_ENTRY_PROPERTIES) && !entry.isDirectory()) {
-          Map<String, Object> props = getPackageProperties(zipFile, entry);
-          return new TreeMap<>(transformPropertyTypes(props));
-        }
+      ZipArchiveEntry entry = zipFile.getEntry(ZIP_ENTRY_PROPERTIES);
+      if (entry != null && !entry.isDirectory()) {
+        Map<String, Object> props = getPackageProperties(zipFile, entry);
+        return new TreeMap<>(transformPropertyTypes(props));
       }
       return ImmutableSortedMap.of();
     }
