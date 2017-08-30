@@ -27,6 +27,9 @@
       <action type="update" dev="sseifert" issue="WTOOL-34">
         conga-aem-maven-plugin: Allow to define nodeDirectory parameter via command line.
       </action>
+      <action type="update" dev="sseifert">
+        Update to latest AEM Content Package Builder.
+      </action>
     </release>
 
     <release version="1.4.4" date="2017-07-19">
