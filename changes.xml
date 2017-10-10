@@ -23,6 +23,12 @@
     xsi:schemaLocation="http://maven.apache.org/changes/1.0.0 http://maven.apache.org/plugins/maven-changes-plugin/xsd/changes-1.0.0.xsd">
   <body>
 
+    <release version="1.5.0" date="not released">
+      <action type="add" dev="sseifert" issue="WDCONGA-12">
+        Add 'aemHttpdDispatcherFilter' handlebars helper to generate HTTPd access restrictions from AEM dispatcher filter definitions.
+      </action>
+    </release>
+
     <release version="1.4.6" date="2017-09-12">
       <action type="update" dev="sseifert" issue="WTOOL-34">
         conga-aem-maven-plugin: Allow to define nodeDirectory parameter via command line.
