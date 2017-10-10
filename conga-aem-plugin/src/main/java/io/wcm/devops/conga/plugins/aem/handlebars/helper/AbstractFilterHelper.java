@@ -27,32 +27,39 @@ import com.github.jknack.handlebars.Options;
 import io.wcm.devops.conga.generator.spi.handlebars.HelperPlugin;
 
 /**
- * Handlebars helper that generates HTTPd access rules from a given object structure as defined by
- * https://docs.adobe.com/docs/en/dispatcher/disp-config.html#par_134_32_0009
+ * Handlebars helper that generates a filter rule.
  */
-public final class AemHttpdDispatcherFilterHelper implements HelperPlugin<Object> {
-
-  /**
-   * Plugin/Helper name
-   */
-  public static final String NAME = "aemHttpdDispatcherFilter";
-
-  private final FilterRuleGenerator filterRuleGenerator = new FilterRuleGenerator();
+abstract class AbstractFilterHelper implements HelperPlugin<Object> {
 
   @Override
-  public String getName() {
-    return NAME;
-  }
-
-  @Override
-  public Object apply(Object context, Options options) throws IOException {
+  public final Object apply(Object context, Options options) throws IOException {
     if (!(context instanceof Map)) {
       throw new IllegalArgumentException("Excpected map object for filter rule.");
     }
     @SuppressWarnings("unchecked")
     Map<String, Object> map = (Map<String, Object>)context;
-    FilterRule filter = new FilterRule(map);
-    return filterRuleGenerator.generate(filter);
+    try {
+      return generateFilter(map);
+    }
+    catch (IllegalArgumentException ex) {
+      throw new IllegalArgumentException("Invalid filter rule: " + ex.getMessage() + "\n" + toYaml(map));
+    }
   }
+
+  private String toYaml(Map<String, Object> filterMap) {
+    StringBuilder sb = new StringBuilder();
+    filterMap.entrySet().forEach(entry -> {
+      if (sb.length() == 0) {
+        sb.append("- ");
+      }
+      else {
+        sb.append("\n  ");
+      }
+      sb.append(entry.getKey()).append(": ").append(entry.getValue());
+    });
+    return sb.toString();
+  }
+
+  protected abstract String generateFilter(Map<String, Object> filterMap);
 
 }

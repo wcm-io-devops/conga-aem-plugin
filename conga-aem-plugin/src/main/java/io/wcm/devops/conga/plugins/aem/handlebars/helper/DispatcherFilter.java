@@ -19,25 +19,20 @@
  */
 package io.wcm.devops.conga.plugins.aem.handlebars.helper;
 
+import java.util.HashMap;
 import java.util.Map;
-import java.util.regex.Pattern;
-import java.util.regex.PatternSyntaxException;
-
-import org.apache.commons.lang3.StringUtils;
-import org.apache.commons.lang3.builder.ToStringBuilder;
-import org.apache.commons.lang3.builder.ToStringStyle;
 
 /**
  * Java bean that describes a AEM dispatcher filter rule as defined in
  * https://docs.adobe.com/docs/en/dispatcher/disp-config.html#par_134_32_0009
  */
-class FilterRule {
+class DispatcherFilter extends AbstractFilter {
 
   /*
    * The /type indicates whether to allow or deny access for the requests that match the pattern.
    * The value can be either allow or deny.
    */
-  private final FilterType type;
+  private final DispatcherFilterType type;
 
   /*
    * Include /method, /url, /query, or /protocol and a pattern for filtering requests according
@@ -71,54 +66,29 @@ class FilterRule {
    * Construct filter rule from map
    * @param map Map with filter definition
    */
-  FilterRule(Map<String, Object> map) {
-    this.type = getFilterType(map);
-    this.method = getValue(map, "method");
-    this.url = getValue(map, "url");
-    this.query = getValue(map, "query");
-    this.protocol = getValue(map, "protocol");
-    this.path = getValue(map, "path");
-    this.selectors = getValue(map, "selectors");
-    this.extension = getValue(map, "extension");
-    this.suffix = getValue(map, "suffix");
-    this.glob = getValue(map, "glob");
+  DispatcherFilter(Map<String, Object> map) {
+    Map<String, Object> mapCopy = new HashMap<>(map);
+    this.type = getFilterType(mapCopy, DispatcherFilterType.class);
+    this.method = getRegexValue(mapCopy, "method");
+    this.url = getRegexValue(mapCopy, "url");
+    this.query = getRegexValue(mapCopy, "query");
+    this.protocol = getRegexValue(mapCopy, "protocol");
+    this.path = getRegexValue(mapCopy, "path");
+    this.selectors = getRegexValue(mapCopy, "selectors");
+    this.extension = getRegexValue(mapCopy, "extension");
+    this.suffix = getRegexValue(mapCopy, "suffix");
+    this.glob = getRegexValue(mapCopy, "glob");
 
+    // validate
+    ensureNoMoreParams(mapCopy);
     if (method == null && url == null && query == null && protocol == null
         && path == null && selectors == null && extension == null && suffix == null
         && glob == null) {
-      throw new IllegalArgumentException("Require any definition of: method, url, query, protocol, path, selectors, extension, suffix, glob.");
+      throw new IllegalArgumentException("Require any definition of: method, url, query, protocol, path, selectors, extension, suffix, glob");
     }
   }
 
-  private String getValue(Map<String, Object> map, String key) {
-    Object value = map.get(key);
-    if (value instanceof String) {
-      String stringValue = (String)value;
-
-      // compile value to regex to validate it
-      try {
-        Pattern.compile(stringValue);
-      }
-      catch (PatternSyntaxException ex) {
-        throw new IllegalArgumentException("Invalid regex for '" + key + "': " + ex.getMessage());
-      }
-
-      return stringValue;
-    }
-    else {
-      return null;
-    }
-  }
-
-  private FilterType getFilterType(Map<String, Object> map) {
-    String typeValue = getValue(map, "type");
-    if (typeValue == null) {
-      throw new IllegalArgumentException("Type expression missing.");
-    }
-    return FilterType.valueOf(StringUtils.upperCase(typeValue));
-  }
-
-  public FilterType getType() {
+  public DispatcherFilterType getType() {
     return this.type;
   }
 
@@ -156,36 +126,6 @@ class FilterRule {
 
   public String getGlob() {
     return this.glob;
-  }
-
-  public boolean isOnlyUrl() {
-    return (method == null && query == null && protocol == null
-        && path == null && selectors == null && extension == null && suffix == null
-        && glob == null);
-
-  }
-
-  private static final ToStringStyle NO_CLASS_NAME_OMIT_NULLS_STYLE = new ToStringStyle() {
-    private static final long serialVersionUID = 1L;
-    {
-      this.setUseClassName(false);
-      this.setUseIdentityHashCode(false);
-      this.setContentStart("");
-      this.setContentEnd("");
-      this.setFieldSeparator(", ");
-    }
-    @Override
-    public void append(final StringBuffer buffer, final String fieldName, final Object value, final Boolean fullDetail) {
-      // omit null values
-      if (value != null) {
-        super.append(buffer, fieldName, value, fullDetail);
-      }
-    }
-  };
-
-  @Override
-  public String toString() {
-    return ToStringBuilder.reflectionToString(this, NO_CLASS_NAME_OMIT_NULLS_STYLE);
   }
 
 }

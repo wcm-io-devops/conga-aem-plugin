@@ -24,7 +24,7 @@ import org.apache.commons.lang3.StringUtils;
 /**
  * Filter types
  */
-enum FilterType {
+enum HttpdFilterType {
 
   /**
    * Allow access
@@ -34,7 +34,12 @@ enum FilterType {
   /**
    * Deny access
    */
-  DENY;
+  DENY,
+
+  /**
+   * Deny access, but allow administrative access from defined sources
+   */
+  DENY_ALLOW_ADMIN;
 
   @Override
   public String toString() {

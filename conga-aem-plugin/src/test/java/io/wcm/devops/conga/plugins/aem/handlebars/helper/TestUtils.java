@@ -19,33 +19,27 @@
  */
 package io.wcm.devops.conga.plugins.aem.handlebars.helper;
 
-/**
- * Generates httpd a configuration snippet for a filter rule.
- */
-public class FilterRuleGenerator {
+import static org.junit.Assert.assertEquals;
 
-  /**
-   * Generate httpd configuration snippet.
-   * @param filter Filter
-   * @return configuration snippet
-   */
-  public String generate(FilterRule filter) {
-    if (filter.isOnlyUrl()) {
-      return generateUrlFilter(filter.getType(), filter.getUrl());
-    }
-    else {
-      return generateComplexFilter(filter);
-    }
+import java.io.IOException;
+
+import com.github.jknack.handlebars.Helper;
+import com.github.jknack.handlebars.Options;
+import com.github.jknack.handlebars.Options.Buffer;
+
+final class TestUtils {
+
+  private TestUtils() {
+    // static methods only
   }
 
-  private String generateUrlFilter(FilterType type, String url) {
-    // TODO: implement
-    return null;
-  }
-
-  private String generateComplexFilter(FilterRule filter) {
-    // TODO: implement
-    return null;
+  public static void assertHelper(String expected, Helper<Object> helper, Object context, Options options) throws IOException {
+    Object result = helper.apply(context, options);
+    if (result instanceof Buffer) {
+      Buffer buffer = (Buffer)result;
+      result = buffer.subSequence(0, buffer.length());
+    }
+    assertEquals(expected, result);
   }
 
 }

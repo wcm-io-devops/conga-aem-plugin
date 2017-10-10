@@ -1,1 +1,2 @@
-io.wcm.devops.conga.plugins.aem.handlebars.helper.AemHttpdDispatcherFilterHelper
+io.wcm.devops.conga.plugins.aem.handlebars.helper.AemDispatcherFilterHelper
+io.wcm.devops.conga.plugins.aem.handlebars.helper.AemHttpdFilterHelper

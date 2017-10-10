@@ -20,9 +20,7 @@
 package io.wcm.devops.conga.plugins.aem.handlebars.helper;
 
 import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNull;
-import static org.junit.Assert.assertTrue;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -31,37 +29,42 @@ import org.junit.Test;
 
 import com.google.common.collect.ImmutableMap;
 
-public class FilterRuleTest {
+public class DispatcherFilterTest {
 
   @Test(expected = IllegalArgumentException.class)
   public void testEmpty() {
-    new FilterRule(ImmutableMap.of());
+    new DispatcherFilter(ImmutableMap.of());
   }
 
   @Test(expected = IllegalArgumentException.class)
   public void testOnlyType() {
-    new FilterRule(ImmutableMap.of("type", "allow"));
+    new DispatcherFilter(ImmutableMap.of("type", "allow"));
   }
 
   @Test(expected = IllegalArgumentException.class)
   public void testTypeMissing() {
-    new FilterRule(ImmutableMap.of("glob", "abc"));
+    new DispatcherFilter(ImmutableMap.of("glob", "abc"));
   }
 
   @Test(expected = IllegalArgumentException.class)
   public void testIllegalType() {
-    new FilterRule(ImmutableMap.of("glob", "abc", "type", "this_is_not_a_valid_value"));
+    new DispatcherFilter(ImmutableMap.of("glob", "abc", "type", "this_is_not_a_valid_value"));
   }
 
   @Test(expected = IllegalArgumentException.class)
   public void testIllegalRegexp() {
-    new FilterRule(ImmutableMap.of("glob", "(abc", "type", "allow"));
+    new DispatcherFilter(ImmutableMap.of("glob", "(abc", "type", "allow"));
+  }
+
+  @Test(expected = IllegalArgumentException.class)
+  public void testInvalidParam() {
+    new DispatcherFilter(ImmutableMap.of("glob", "abc", "type", "allow", "invalidParam", "value"));
   }
 
   @Test
-  public void testOnlyUrl() {
-    FilterRule underTest = new FilterRule(ImmutableMap.of("url", "/abc", "type", "allow"));
-    assertEquals(FilterType.ALLOW, underTest.getType());
+  public void testUrl() {
+    DispatcherFilter underTest = new DispatcherFilter(ImmutableMap.of("url", "/abc", "type", "allow"));
+    assertEquals(DispatcherFilterType.ALLOW, underTest.getType());
     assertNull(underTest.getMethod());
     assertEquals("/abc", underTest.getUrl());
     assertNull(underTest.getQuery());
@@ -71,14 +74,13 @@ public class FilterRuleTest {
     assertNull(underTest.getExtension());
     assertNull(underTest.getSuffix());
     assertNull(underTest.getGlob());
-    assertTrue(underTest.isOnlyUrl());
     assertEquals("type=allow, url=/abc", underTest.toString());
   }
 
   @Test
   public void testAll() {
     Map<String, Object> map = new HashMap<>();
-    map.put("type", "allow");
+    map.put("type", "deny");
     map.put("method", "method1");
     map.put("url", "url1");
     map.put("query", "query1");
@@ -88,8 +90,8 @@ public class FilterRuleTest {
     map.put("extension", "extension1");
     map.put("suffix", "suffix1");
     map.put("glob", "glob1");
-    FilterRule underTest = new FilterRule(map);
-    assertEquals(FilterType.ALLOW, underTest.getType());
+    DispatcherFilter underTest = new DispatcherFilter(map);
+    assertEquals(DispatcherFilterType.DENY, underTest.getType());
     assertEquals("method1", underTest.getMethod());
     assertEquals("url1", underTest.getUrl());
     assertEquals("query1", underTest.getQuery());
@@ -99,7 +101,6 @@ public class FilterRuleTest {
     assertEquals("extension1", underTest.getExtension());
     assertEquals("suffix1", underTest.getSuffix());
     assertEquals("glob1", underTest.getGlob());
-    assertFalse(underTest.isOnlyUrl());
   }
 
 }
