@@ -19,26 +19,33 @@
  */
 package io.wcm.devops.conga.plugins.aem.handlebars.helper;
 
-import org.apache.commons.lang3.StringUtils;
-
 /**
- * Filter types
+ * Generates httpd a configuration snippet for a filter rule.
  */
-enum FilterType {
+public class FilterRuleGenerator {
 
   /**
-   * Allow access
+   * Generate httpd configuration snippet.
+   * @param filter Filter
+   * @return configuration snippet
    */
-  ALLOW,
+  public String generate(FilterRule filter) {
+    if (filter.isOnlyUrl()) {
+      return generateUrlFilter(filter.getType(), filter.getUrl());
+    }
+    else {
+      return generateComplexFilter(filter);
+    }
+  }
 
-  /**
-   * Deny access
-   */
-  DENY;
+  private String generateUrlFilter(FilterType type, String url) {
+    // TODO: implement
+    return null;
+  }
 
-  @Override
-  public String toString() {
-    return StringUtils.lowerCase(name());
+  private String generateComplexFilter(FilterRule filter) {
+    // TODO: implement
+    return null;
   }
 
 }

@@ -20,7 +20,9 @@
 package io.wcm.devops.conga.plugins.aem.handlebars.helper;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNull;
+import static org.junit.Assert.assertTrue;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -57,18 +59,20 @@ public class FilterRuleTest {
   }
 
   @Test
-  public void testSimple() {
-    FilterRule underTest = new FilterRule(ImmutableMap.of("glob", "abc", "type", "allow"));
+  public void testOnlyUrl() {
+    FilterRule underTest = new FilterRule(ImmutableMap.of("url", "/abc", "type", "allow"));
     assertEquals(FilterType.ALLOW, underTest.getType());
     assertNull(underTest.getMethod());
-    assertNull(underTest.getUrl());
+    assertEquals("/abc", underTest.getUrl());
     assertNull(underTest.getQuery());
     assertNull(underTest.getProtocol());
     assertNull(underTest.getPath());
     assertNull(underTest.getSelectors());
     assertNull(underTest.getExtension());
     assertNull(underTest.getSuffix());
-    assertEquals("abc", underTest.getGlob());
+    assertNull(underTest.getGlob());
+    assertTrue(underTest.isOnlyUrl());
+    assertEquals("type=allow, url=/abc", underTest.toString());
   }
 
   @Test
@@ -95,6 +99,7 @@ public class FilterRuleTest {
     assertEquals("extension1", underTest.getExtension());
     assertEquals("suffix1", underTest.getSuffix());
     assertEquals("glob1", underTest.getGlob());
+    assertFalse(underTest.isOnlyUrl());
   }
 
 }

@@ -24,6 +24,8 @@ import java.util.regex.Pattern;
 import java.util.regex.PatternSyntaxException;
 
 import org.apache.commons.lang3.StringUtils;
+import org.apache.commons.lang3.builder.ToStringBuilder;
+import org.apache.commons.lang3.builder.ToStringStyle;
 
 /**
  * Java bean that describes a AEM dispatcher filter rule as defined in
@@ -154,6 +156,36 @@ class FilterRule {
 
   public String getGlob() {
     return this.glob;
+  }
+
+  public boolean isOnlyUrl() {
+    return (method == null && query == null && protocol == null
+        && path == null && selectors == null && extension == null && suffix == null
+        && glob == null);
+
+  }
+
+  private static final ToStringStyle NO_CLASS_NAME_OMIT_NULLS_STYLE = new ToStringStyle() {
+    private static final long serialVersionUID = 1L;
+    {
+      this.setUseClassName(false);
+      this.setUseIdentityHashCode(false);
+      this.setContentStart("");
+      this.setContentEnd("");
+      this.setFieldSeparator(", ");
+    }
+    @Override
+    public void append(final StringBuffer buffer, final String fieldName, final Object value, final Boolean fullDetail) {
+      // omit null values
+      if (value != null) {
+        super.append(buffer, fieldName, value, fullDetail);
+      }
+    }
+  };
+
+  @Override
+  public String toString() {
+    return ToStringBuilder.reflectionToString(this, NO_CLASS_NAME_OMIT_NULLS_STYLE);
   }
 
 }

@@ -20,6 +20,7 @@
 package io.wcm.devops.conga.plugins.aem.handlebars.helper;
 
 import java.io.IOException;
+import java.util.Map;
 
 import com.github.jknack.handlebars.Options;
 
@@ -36,6 +37,8 @@ public final class AemHttpdDispatcherFilterHelper implements HelperPlugin<Object
    */
   public static final String NAME = "aemHttpdDispatcherFilter";
 
+  private final FilterRuleGenerator filterRuleGenerator = new FilterRuleGenerator();
+
   @Override
   public String getName() {
     return NAME;
@@ -43,8 +46,13 @@ public final class AemHttpdDispatcherFilterHelper implements HelperPlugin<Object
 
   @Override
   public Object apply(Object context, Options options) throws IOException {
-    // TODO: implement
-    return null;
+    if (!(context instanceof Map)) {
+      throw new IllegalArgumentException("Excpected map object for filter rule.");
+    }
+    @SuppressWarnings("unchecked")
+    Map<String, Object> map = (Map<String, Object>)context;
+    FilterRule filter = new FilterRule(map);
+    return filterRuleGenerator.generate(filter);
   }
 
 }
