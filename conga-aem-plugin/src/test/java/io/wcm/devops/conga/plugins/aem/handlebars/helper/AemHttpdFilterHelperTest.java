@@ -67,4 +67,40 @@ public class AemHttpdFilterHelperTest {
         helper, ImmutableMap.of("type", "deny", "locationMatch", "/abc(/.*)?"), new MockOptions());
   }
 
+  @Test
+  public void testLocationDenyAllowAdmin_NoHash() throws Exception {
+    assertHelper("<Location \"/abc\">\n" +
+        "  <IfVersion < 2.4>\n" +
+        "    Order Deny,Allow\n" +
+        "    Deny from all\n" +
+        "  </IfVersion>\n" +
+        "  <IfVersion >= 2.4>\n" +
+        "    Require all denied\n" +
+        "  </IfVersion>\n" +
+        "</Location>",
+        helper, ImmutableMap.of("type", "deny_allow_admin", "location", "/abc"), new MockOptions());
+  }
+
+  @Test
+  public void testLocationDenyAllowAdmin() throws Exception {
+    assertHelper("<Location \"/abc\">\n" +
+        "  <IfVersion < 2.4>\n" +
+        "    Order Deny,Allow\n" +
+        "    Deny from all\n" +
+        "    Allow from 1.2.3.4\n" +
+        "    Allow from myhost\n" +
+        "  </IfVersion>\n" +
+        "  <IfVersion >= 2.4>\n" +
+        "    Require all denied\n" +
+        "    Require ip 1.2.3.4\n" +
+        "    Require host myhost\n" +
+        "  </IfVersion>\n" +
+        "</Location>",
+        helper, ImmutableMap.of("type", "deny_allow_admin", "location", "/abc"), new MockOptions()
+            .withHash(AemHttpdFilterHelper.HASH_ALLOW_FROM_KEY, "allowFrom")
+            .withHash(AemHttpdFilterHelper.HASH_ALLOW_FROM_HOST_KEY, "allowFromHost")
+            .withProperty("allowFrom", "1.2.3.4")
+            .withProperty("allowFromHost", "myhost"));
+  }
+
 }

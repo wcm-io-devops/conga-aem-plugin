@@ -39,7 +39,7 @@ abstract class AbstractFilterHelper implements HelperPlugin<Object> {
     @SuppressWarnings("unchecked")
     Map<String, Object> map = (Map<String, Object>)context;
     try {
-      return generateFilter(map);
+      return generateFilter(map, options);
     }
     catch (IllegalArgumentException ex) {
       throw new IllegalArgumentException("Invalid filter rule: " + ex.getMessage() + "\n" + toYaml(map));
@@ -60,6 +60,6 @@ abstract class AbstractFilterHelper implements HelperPlugin<Object> {
     return sb.toString();
   }
 
-  protected abstract String generateFilter(Map<String, Object> filterMap);
+  protected abstract String generateFilter(Map<String, Object> filterMap, Options options);
 
 }

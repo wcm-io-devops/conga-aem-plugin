@@ -37,7 +37,6 @@ import com.github.jknack.handlebars.Options;
 import com.github.jknack.handlebars.TagType;
 import com.github.jknack.handlebars.Template;
 import com.google.common.collect.ImmutableList;
-import com.google.common.collect.ImmutableMap;
 
 /**
  * Subclass of {@link Options} that mocks all dependencies, but allows to set params.
@@ -54,7 +53,7 @@ final class MockOptions extends Options {
    */
   public static final String INVERSE_RETURN = "";
 
-  private Map<String, Object> properties = new HashMap<String, Object>();
+  private final Map<String, Object> properties = new HashMap<String, Object>();
 
   /**
    * Options without any param
@@ -75,7 +74,7 @@ final class MockOptions extends Options {
         getFnTemplate(),
         getInverseTemplate(),
         params,
-        ImmutableMap.of(),
+        new HashMap<>(),
         ImmutableList.of());
   }
 
@@ -142,8 +141,19 @@ final class MockOptions extends Options {
    * @param value Value
    * @return this
    */
-  public MockOptions property(String name, Object value) {
+  public MockOptions withProperty(String name, Object value) {
     properties.put(name, value);
+    return this;
+  }
+
+  /**
+   * Set hash.
+   * @param name Name
+   * @param value Value
+   * @return this
+   */
+  public MockOptions withHash(String name, Object value) {
+    hash.put(name, value);
     return this;
   }
 

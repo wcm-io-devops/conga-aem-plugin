@@ -23,6 +23,8 @@ import java.util.Map;
 
 import org.apache.commons.lang3.StringUtils;
 
+import com.github.jknack.handlebars.Options;
+
 /**
  * Handlebars helper that generates AEM dispatcher ANY access rules from a given object structure as defined by
  * https://docs.adobe.com/docs/en/dispatcher/disp-config.html#par_134_32_0009
@@ -40,7 +42,7 @@ public final class AemDispatcherFilterHelper extends AbstractFilterHelper {
   }
 
   @Override
-  protected String generateFilter(Map<String, Object> filterMap) {
+  protected String generateFilter(Map<String, Object> filterMap, Options options) {
     DispatcherFilter filter = new DispatcherFilter(filterMap);
 
     StringBuilder sb = new StringBuilder();

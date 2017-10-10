@@ -23,6 +23,8 @@ import java.util.Map;
 
 import org.apache.commons.lang3.StringUtils;
 
+import com.github.jknack.handlebars.Options;
+
 /**
  * Handlebars helper that generates HTTPd access rules.
  */
@@ -33,13 +35,16 @@ public final class AemHttpdFilterHelper extends AbstractFilterHelper {
    */
   public static final String NAME = "aemHttpdFilter";
 
+  static final String HASH_ALLOW_FROM_KEY = "allowFromKey";
+  static final String HASH_ALLOW_FROM_HOST_KEY = "allowFromHostKey";
+
   @Override
   public String getName() {
     return NAME;
   }
 
   @Override
-  protected String generateFilter(Map<String, Object> filterMap) {
+  protected String generateFilter(Map<String, Object> filterMap, Options options) {
     HttpdFilter filter = new HttpdFilter(filterMap);
 
     String ruleType;
@@ -52,10 +57,24 @@ public final class AemHttpdFilterHelper extends AbstractFilterHelper {
       ruleType = "Location";
       ruleExpression = filter.getLocation();
     }
-    return generateRule(ruleType, ruleExpression, filter.getType());
+
+    String allowFromKey = options.hash(HASH_ALLOW_FROM_KEY, null);
+    String allowFromHostKey = options.hash(HASH_ALLOW_FROM_HOST_KEY, null);
+    String allowFrom = null;
+    String allowFromHost = null;
+    if (StringUtils.isNotBlank(allowFromKey)) {
+      allowFrom = options.get(allowFromKey);
+    }
+    if (StringUtils.isNotBlank(allowFromHostKey)) {
+      allowFromHost = options.get(allowFromHostKey);
+    }
+
+    return generateRule(ruleType, ruleExpression, filter.getType(),
+        allowFrom, allowFromHost);
   }
 
-  private String generateRule(String ruleType, String ruleExpression, HttpdFilterType filterType) {
+  private String generateRule(String ruleType, String ruleExpression, HttpdFilterType filterType,
+      String allowFrom, String allowFromHost) {
     StringBuilder sb = new StringBuilder();
 
     sb.append("<").append(ruleType).append(" \"").append(ruleExpression).append("\">\n");
@@ -69,14 +88,29 @@ public final class AemHttpdFilterHelper extends AbstractFilterHelper {
           .append("  </IfVersion>\n");
     }
     else {
-      // TODO: special handling for DENY_ALLOW_ADMIN
       sb.append("  <IfVersion < 2.4>\n")
           .append("    Order Deny,Allow\n")
-          .append("    Deny from all\n")
-          .append("  </IfVersion>\n")
+          .append("    Deny from all\n");
+      if (filterType == HttpdFilterType.DENY_ALLOW_ADMIN) {
+        if (StringUtils.isNotBlank(allowFrom)) {
+          sb.append("    Allow from " + allowFrom + "\n");
+        }
+        if (StringUtils.isNotBlank(allowFromHost)) {
+          sb.append("    Allow from " + allowFromHost + "\n");
+        }
+      }
+      sb.append("  </IfVersion>\n")
           .append("  <IfVersion >= 2.4>\n")
-          .append("    Require all denied\n")
-          .append("  </IfVersion>\n");
+          .append("    Require all denied\n");
+      if (filterType == HttpdFilterType.DENY_ALLOW_ADMIN) {
+        if (StringUtils.isNotBlank(allowFrom)) {
+          sb.append("    Require ip " + allowFrom + "\n");
+        }
+        if (StringUtils.isNotBlank(allowFromHost)) {
+          sb.append("    Require host " + allowFromHost + "\n");
+        }
+      }
+      sb.append("  </IfVersion>\n");
     }
 
     sb.append("</").append(ruleType).append(">");
