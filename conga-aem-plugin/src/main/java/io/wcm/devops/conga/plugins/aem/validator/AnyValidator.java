@@ -107,7 +107,7 @@ public class AnyValidator implements ValidatorPlugin {
     StringBuffer result = new StringBuffer();
     Matcher matcher = TICK_PROPERTY.matcher(anyFileContent);
     while (matcher.find()) {
-      matcher.appendReplacement(result, "/" + matcher.group(1) + " \"" + matcher.group(2) + "\"");
+      matcher.appendReplacement(result, "/" + Matcher.quoteReplacement(matcher.group(1)) + " \"" + Matcher.quoteReplacement(matcher.group(2)) + "\"");
     }
     matcher.appendTail(result);
     return result.toString();
