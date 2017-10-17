@@ -42,38 +42,48 @@
       }
       
     # The filter section defines the requests that should be handled by the dispatcher.
-    # The globs will be compared against the request line, e.g. "GET /index.html HTTP/1.1".
+    #
+    # Entries can be either specified using globs, or elements of the request line:
+    #
+    # (1) globs will be compared against the entire request line, e.g.:
+    #
+    #       /0001 { /type "deny" /glob "* /index.html *" }
+    #
+    #     denies request "GET /index.html HTTP/1.1" but not "GET /index.html?a=b HTTP/1.1".
+    #
+    # (2) method/url/query/protocol/path/selectors/extension/suffix will be compared
+    #     againts the respective elements of  the request line, e.g.:
+    #
+    #       /0001 { /type "deny" /method "GET" /url "/index.html" }
+    #
+    #     denies both "GET /index.html" and "GET /index.html?a=b HTTP/1.1".
+    #
+    # (3) all elements of the request line can also be specified as regular expressions,
+    #     which are identified by using single quotes, e.g.
+    #
+    #       /0001 { /type "allow" /method '(GET|HEAD)' }
+    #
+    #     allows GET or HEAD requests, or:
+    #
+    #       /0002 { /type "deny" /extension '()' }
+    #
+    #     denies requests having no extension.
+    #
+    # Note: specifying elements of the request line is the preferred method.
+    #
     /filter
       {
-      /0000
-        {
-        /url "/*"
-        /type "allow"
-        }
-      # Deny external access to system console
+      /0000 { /url "/*" /type "allow" }
+
+      # Deny external access to system console and CRX web application, using a regular expression
       /0001
         {
-        /url "/system/*"
         /type "deny"
+        /url '/(system|crx|admin)(/.*)?'
         }
-      # Deny external access to CRX web application
-      /0002
-        {
-        /url "/crx*"
-        /type "deny"
-        }
-      # Deny external access to servlet engine console
-      /0003
-        {
-        /url "/admin/*"
-        /type "deny"
-        }
-      # allow  access to logout 
-      /0004
-        {
-        /url "/system/sling/logout*"
-        /type "allow"
-        }
+
+      # allow  access to logout
+      /0002 { /type "allow" /url "/system/sling/logout*" }
       }  
   
     # The cache section regulates what responses will be cached and where.

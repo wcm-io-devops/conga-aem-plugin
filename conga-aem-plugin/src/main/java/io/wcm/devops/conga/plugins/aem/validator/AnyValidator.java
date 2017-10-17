@@ -19,13 +19,13 @@
  */
 package io.wcm.devops.conga.plugins.aem.validator;
 
-import java.io.BufferedInputStream;
-import java.io.FileInputStream;
 import java.io.IOException;
-import java.io.InputStream;
-import java.io.InputStreamReader;
 import java.io.Reader;
+import java.io.StringReader;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
+import org.apache.commons.io.FileUtils;
 import org.xml.sax.EntityResolver;
 import org.xml.sax.InputSource;
 import org.xml.sax.SAXException;
@@ -51,6 +51,8 @@ public class AnyValidator implements ValidatorPlugin {
   public static final String NAME = "any";
 
   private static final String FILE_EXTENSION = "any";
+
+  private static final Pattern TICK_PROPERTY = Pattern.compile("/(\\S+)\\s+'([^']*)'");
 
   @Override
   public String getName() {
@@ -81,14 +83,34 @@ public class AnyValidator implements ValidatorPlugin {
       }
     });
 
-    try (InputStream is = new BufferedInputStream(new FileInputStream(file.getFile()));
-        Reader reader = new InputStreamReader(is, file.getCharset())) {
-      parser.parse(new InputSource(reader));
+    // read any file
+    try {
+      String anyFileContent = FileUtils.readFileToString(file.getFile(), file.getCharset());
+      anyFileContent = replaceTicks(anyFileContent);
+      try (Reader reader = new StringReader(anyFileContent)) {
+        parser.parse(new InputSource(reader));
+      }
     }
     /*CHECKSTYLE:OFF*/ catch (Exception ex) { /*CHECKSTYLE:ON*/
       throw new ValidationException("ANY file is not valid: " + ex.getMessage(), ex);
     }
     return null;
+  }
+
+  /**
+   * Replace ticks (') for properties with quotes (") because the old java ANY file parser implementation
+   * does not support them.
+   * @param anyFileContent Any file content
+   * @return Content with ticks replaces
+   */
+  static String replaceTicks(String anyFileContent) {
+    StringBuffer result = new StringBuffer();
+    Matcher matcher = TICK_PROPERTY.matcher(anyFileContent);
+    while (matcher.find()) {
+      matcher.appendReplacement(result, "/" + Matcher.quoteReplacement(matcher.group(1)) + " \"" + Matcher.quoteReplacement(matcher.group(2)) + "\"");
+    }
+    matcher.appendTail(result);
+    return result.toString();
   }
 
 }

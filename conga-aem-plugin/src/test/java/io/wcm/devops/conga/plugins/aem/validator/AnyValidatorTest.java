@@ -19,6 +19,7 @@
  */
 package io.wcm.devops.conga.plugins.aem.validator;
 
+import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 
@@ -71,6 +72,12 @@ public class AnyValidatorTest {
     File file = new File(getClass().getResource("/any/noAny.txt").toURI());
     FileContext fileContext = new FileContext().file(file).charset(CharEncoding.ISO_8859_1);
     assertFalse(underTest.accepts(fileContext, null));
+  }
+
+  @Test
+  public void testReplaceTicks() {
+    assertEquals("/prop1 \"value1\"", AnyValidator.replaceTicks("/prop1 'value1'"));
+    assertEquals("/group { /p1 \"v1\"\n/p2 \"v2\" /p3 \"v3\" }", AnyValidator.replaceTicks("/group { /p1 'v1'\n/p2 \"v2\" /p3 'v3' }"));
   }
 
 }
