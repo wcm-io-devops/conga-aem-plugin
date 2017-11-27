@@ -42,6 +42,10 @@
     <site.url.module.prefix>conga/plugins/aem/conga-aem-maven-plugin</site.url.module.prefix>
   </properties>
 
+  <prerequisites>
+    <maven>${maven.version}</maven>
+  </prerequisites>
+
   <dependencies>
     <dependency>
       <groupId>org.apache.maven</groupId>
