@@ -80,7 +80,7 @@ public final class InstallPackagesMojo extends AbstractContentPackageMojo {
    * Delay further steps after package installation by this amount of seconds
    */
   @Parameter(property = "vault.delayAfterInstallSec")
-  private int delayAfterInstallSec;
+  private Integer delayAfterInstallSec;
 
   @Override
   public void execute() throws MojoExecutionException, MojoFailureException {
@@ -174,8 +174,11 @@ public final class InstallPackagesMojo extends AbstractContentPackageMojo {
     if (itemDelayAfterInstallSec != null) {
       output.setDelayAfterInstallSec(itemDelayAfterInstallSec);
     }
-    else {
+    else if (this.delayAfterInstallSec != null) {
       output.setDelayAfterInstallSec(this.delayAfterInstallSec);
+    }
+    else {
+      output.setDelayAfterInstallSecAutoDetect();
     }
 
     return output;
