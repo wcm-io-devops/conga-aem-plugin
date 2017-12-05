@@ -35,6 +35,13 @@
   <name>CONGA AEM Plugin</name>
   <description>Root POM for wcm.io CONGA Plugin for AEM.</description>
 
+  <scm>
+    <connection>scm:git:https://github.com/wcm-io-devops/conga-aem-plugin.git</connection>
+    <developerConnection>scm:git:https://github.com/wcm-io-devops/conga-aem-plugin.git</developerConnection>
+    <url>https://github.com/wcm-io-devops/conga-aem-plugin</url>
+    <tag>HEAD</tag>
+  </scm>
+
   <properties>
     <site.url.module.prefix>conga/plugins/aem</site.url.module.prefix>
   </properties>
