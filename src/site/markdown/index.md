@@ -28,6 +28,14 @@ This plugin depends on the [CONGA Sling Plugin][conga-sling].
 Additionally the CONGA AEM Maven plugin is provided which allows to deploy a bunch of AEM packages processed by CONGA to an AEM instance. See [Usage][usage] for an example.
 
 
+### Further Resources
+
+* [wcm.io CONGA training material with exercises](http://training.wcm.io/conga/)
+* [adaptTo() 2015 Talk: CONGA - Configuration generation for Sling and AEM](https://adapt.to/2015/en/schedule/conga---configuration-generation-for-sling-and-aem.html)
+* [adaptTo() 2017 Talk: Automate AEM Deployment with Ansible and wcm.io CONGA](https://adapt.to/2017/en/schedule/automate-aem-deployment-with-ansible-and-wcm-io-conga.html)
+
+
+
 [usage]: usage.html
 [extensions]: extensions.html
 [apidocs]: conga-aem-plugin/apidocs/
