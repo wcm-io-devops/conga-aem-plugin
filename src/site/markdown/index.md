@@ -9,6 +9,7 @@ wcm.io DevOps CONGA Plugin for [Adobe Experience Manager (AEM)][aem].
 
 * [Usage][usage]
 * [CONGA Extensions][extensions]
+* [Custom Handlebars expressions for AEM][handlebars-helpers]
 * [API documentation][apidocs]
 * [CONGA AEM Maven Plugin Documentation][plugindocs]
 * [Changelog][changelog]
@@ -35,3 +36,4 @@ Additionally the CONGA AEM Maven plugin is provided which allows to deploy a bun
 [aem]: http://www.adobe.com/solutions/web-experience-management.html
 [conga]: http://devops.wcm.io/conga/
 [conga-sling]: http://devops.wcm.io/conga/plugins/sling/
+[handlebars-helpers]: handlebars-helpers.html
