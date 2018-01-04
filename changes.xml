@@ -23,6 +23,12 @@
     xsi:schemaLocation="http://maven.apache.org/changes/1.0.0 http://maven.apache.org/plugins/maven-changes-plugin/xsd/changes-1.0.0.xsd">
   <body>
 
+    <release version="1.5.4" date="not released">
+      <action type="update" dev="sseifert">
+        Update to latest CONGA dependencies.
+      </action>
+    </release>
+
     <release version="1.5.2" date="2017-12-20">
       <action type="update" dev="sseifert">
         conga-aem-maven-plugin: Apply default install delay of 3 sec for 'container' and 'mixed' package types.

@@ -28,13 +28,13 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.nio.charset.StandardCharsets;
 import java.util.Dictionary;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
 import org.apache.commons.io.FilenameUtils;
-import org.apache.commons.lang3.CharEncoding;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.felix.cm.file.ConfigurationHandler;
 import org.apache.sling.provisioning.model.Model;
@@ -142,14 +142,14 @@ public class ContentPackageOsgiConfigPostProcessor extends AbstractPostProcessor
           ConfigurationHandler.write(os, properties);
         }
         try {
-          FileContext tempFileContext = new FileContext().file(tempFile).charset(CharEncoding.UTF_8);
+          FileContext tempFileContext = new FileContext().file(tempFile).charset(StandardCharsets.UTF_8);
 
           // apply file header
           applyFileHeader(tempFileContext, fileHeader, context);
 
           // write configuration to content package
           try (InputStream is = new BufferedInputStream(new FileInputStream(tempFile))) {
-            contentPackage.addFile(contentPath, is, "text/plain;charset=" + CharEncoding.UTF_8);
+            contentPackage.addFile(contentPath, is, "text/plain;charset=" + StandardCharsets.UTF_8.name());
           }
         }
         finally {

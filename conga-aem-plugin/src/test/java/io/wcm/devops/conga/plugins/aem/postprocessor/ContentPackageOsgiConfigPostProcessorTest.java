@@ -36,11 +36,11 @@ import java.io.ByteArrayInputStream;
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
+import java.nio.charset.StandardCharsets;
 import java.util.Dictionary;
 import java.util.Map;
 
 import org.apache.commons.io.FileUtils;
-import org.apache.commons.lang3.CharEncoding;
 import org.apache.felix.cm.file.ConfigurationHandler;
 import org.junit.Before;
 import org.junit.Test;
@@ -85,7 +85,7 @@ public class ContentPackageOsgiConfigPostProcessorTest {
     // post-process
     FileContext fileContext = new FileContext()
         .file(contentPackageFile)
-        .charset(CharEncoding.UTF_8);
+        .charset(StandardCharsets.UTF_8);
     PostProcessorContext context = new PostProcessorContext()
         .options(PACKAGE_OPTIONS)
         .pluginManager(new PluginManagerImpl())
@@ -153,7 +153,7 @@ public class ContentPackageOsgiConfigPostProcessorTest {
     // post-process
     FileContext fileContext = new FileContext()
         .file(contentPackageFile)
-        .charset(CharEncoding.UTF_8);
+        .charset(StandardCharsets.UTF_8);
     PostProcessorContext context = new PostProcessorContext()
         .options(PACKAGE_OPTIONS)
         .pluginManager(new PluginManagerImpl())

@@ -19,8 +19,10 @@
  */
 package io.wcm.devops.conga.plugins.aem.handlebars.escaping;
 
-import org.apache.commons.lang3.text.translate.CharSequenceTranslator;
-import org.apache.commons.lang3.text.translate.LookupTranslator;
+import org.apache.commons.text.translate.CharSequenceTranslator;
+import org.apache.commons.text.translate.LookupTranslator;
+
+import com.google.common.collect.ImmutableMap;
 
 import io.wcm.devops.conga.generator.spi.handlebars.EscapingStrategyPlugin;
 import io.wcm.devops.conga.generator.util.FileUtil;
@@ -41,15 +43,9 @@ public class AnyEscapingStrategy implements EscapingStrategyPlugin {
    * Defines translations for strings in ANY files.
    */
   private static final CharSequenceTranslator ESCAPE_ANY =
-      new LookupTranslator(
-          new String[][] {
-              {
-                "\"", "\\\""
-              },
-              {
-                "\\", "\\\\"
-              }
-          });
+      new LookupTranslator(ImmutableMap.of(
+          "\"", "\\\"",
+          "\\", "\\\\"));
 
   @Override
   public String getName() {

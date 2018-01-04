@@ -53,14 +53,14 @@
     <dependency>
       <groupId>io.wcm.devops.conga</groupId>
       <artifactId>io.wcm.devops.conga.generator</artifactId>
-      <version>1.4.2</version>
+      <version>1.4.5-SNAPSHOT</version>
       <scope>compile</scope>
     </dependency>
 
     <dependency>
       <groupId>io.wcm.devops.conga.plugins</groupId>
       <artifactId>io.wcm.devops.conga.plugins.sling</artifactId>
-      <version>1.2.2</version>
+      <version>1.2.3-SNAPSHOT</version>
       <scope>compile</scope>
     </dependency>
     
@@ -80,7 +80,7 @@
     <dependency>
       <groupId>org.apache.commons</groupId>
       <artifactId>commons-lang3</artifactId>
-      <version>3.5</version>
+      <version>3.7</version>
       <scope>compile</scope>
     </dependency>
     <dependency>
