@@ -1,3 +1,4 @@
 io.wcm.devops.conga.plugins.aem.handlebars.helper.AemDispatcherFilterHelper
 io.wcm.devops.conga.plugins.aem.handlebars.helper.AemHttpdFilterHelper
+io.wcm.devops.conga.plugins.aem.handlebars.helper.OakAuthorizableUuidHelper
 io.wcm.devops.conga.plugins.aem.handlebars.helper.OakPasswordHashHelper
