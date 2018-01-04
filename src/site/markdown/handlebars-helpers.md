@@ -2,7 +2,7 @@
 
 By using CONGA handlebars helper plugins it is possible to extend handlebars by registering custom expressions. Out of the box CONGA AEM plugin ships with a set of built-in custom expressions documented in this chapter.
 
-The basic handlebars expressions are documented in the [Handlebars quickstart][handlebars-quickstart]. CONGA itself also ships with a set of [Custom Handlebars expressions][conga-handlebars-helper].
+The basic handlebars expressions are documented in the [Handlebars quickstart][handlebars-quickstart]. CONGA itself also ships with a set of [Custom Handlebars expressions][conga-handlebars-helpers].
 
 
 ### oakPasswordHash
@@ -52,5 +52,5 @@ Generates AEM dispatcher filter rules for a filter expression. See [CONGA AEM De
 
 
 [handlebars-quickstart]: ../../handlebars-quickstart.html
-[conga-handlebars-helper]: ../../handlebars-helper.html
+[conga-handlebars-helpers]: ../../handlebars-helpers.html
 [aem-definitions]: ../../definitions/aem/
