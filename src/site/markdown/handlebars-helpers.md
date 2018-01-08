@@ -5,6 +5,38 @@ By using CONGA handlebars helper plugins it is possible to extend handlebars by 
 The basic handlebars expressions are documented in the [Handlebars quickstart][handlebars-quickstart]. CONGA itself also ships with a set of [Custom Handlebars expressions][conga-handlebars-helpers].
 
 
+### aemCryptoEncrypt
+
+Encrypts a password or other secret with the AEM crypto AES key.
+
+```
+{{aemCryptoEncrypt passwordVariable}}
+```
+
+This requires a plugin configuration that defines the path to the AEM crypto key to use (which has to be deployed to the target instances as well):
+
+```xml
+<plugin>
+  <groupId>io.wcm.devops.conga</groupId>
+  <artifactId>conga-maven-plugin</artifactId>
+  <extensions>true</extensions>
+  <configuration>
+    <pluginConfig>
+      aem-plugin;cryptoAesKeyUrl=classpath:/crypto/master
+    </pluginConfig>
+  </configuration>
+</plugin>
+```
+
+It is recommended to not encrypt the key in your SCM using Ansible Vault and reference it like this: `aem-plugin;cryptoAesKeyUrl=ansible-vault:classpath:/crypto/master`. You can store it on other locations as well (filesystem, Maven, HTTP etc.).
+
+If you want to write a generic template that runs with and without having a crypto key available you can add a `ignoreMissingKey` parameter - but in this case the password or secret is inserted unencrypted if the key is missing!
+
+```
+{{aemCryptoEncrypt passwordVariable ignoreMissingKey=true}}
+```
+
+
 ### oakPasswordHash
 
 Generates a password hash for an Oak JCR user from a plain text password.
