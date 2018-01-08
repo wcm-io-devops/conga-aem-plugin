@@ -46,3 +46,4 @@ Additionally the CONGA AEM Maven plugin is provided which allows to deploy a bun
 [conga]: http://devops.wcm.io/conga/
 [conga-sling]: http://devops.wcm.io/conga/plugins/sling/
 [handlebars-helpers]: handlebars-helpers.html
+[crypto-cli]: crypto-cli.html
