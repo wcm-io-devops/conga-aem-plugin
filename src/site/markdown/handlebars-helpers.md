@@ -28,7 +28,7 @@ This requires a plugin configuration that defines the path to the AEM crypto key
 </plugin>
 ```
 
-It is recommended to not encrypt the key in your SCM using Ansible Vault and reference it like this: `aem-plugin;cryptoAesKeyUrl=ansible-vault:classpath:/crypto/master`. You can store it on other locations as well (filesystem, Maven, HTTP etc.).
+It is recommended to encrypt the key in your SCM using Ansible Vault and reference it like this: `aem-plugin;cryptoAesKeyUrl=ansible-vault:classpath:/crypto/master`. You can store it on other locations as well (filesystem, Maven, HTTP etc.).
 
 If you want to write a generic template that runs with and without having a crypto key available you can add a `ignoreMissingKey` parameter - but in this case the password or secret is inserted unencrypted if the key is missing!
 
