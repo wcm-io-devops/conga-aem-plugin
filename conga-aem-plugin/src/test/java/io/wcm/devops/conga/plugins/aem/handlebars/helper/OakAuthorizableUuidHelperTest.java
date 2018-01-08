@@ -26,8 +26,6 @@ import static org.junit.Assert.assertNull;
 import org.junit.Before;
 import org.junit.Test;
 
-import com.github.jknack.handlebars.Helper;
-
 import io.wcm.devops.conga.generator.spi.handlebars.HelperPlugin;
 import io.wcm.devops.conga.generator.util.PluginManagerImpl;
 
@@ -36,7 +34,7 @@ public class OakAuthorizableUuidHelperTest {
   private static final String AUTHORIZABLE_ID = "myuser";
   private static final String AUHORZIZABLE_UUID = "5d5a582e-5adf-396e-96e1-474c700b481a";
 
-  private Helper<Object> helper;
+  private HelperPlugin<Object> helper;
 
   @SuppressWarnings("unchecked")
   @Before

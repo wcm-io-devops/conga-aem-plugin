@@ -28,6 +28,7 @@ import org.apache.jackrabbit.oak.spi.security.user.UserConstants;
 import com.github.jknack.handlebars.Options;
 
 import io.wcm.devops.conga.generator.spi.handlebars.HelperPlugin;
+import io.wcm.devops.conga.generator.spi.handlebars.context.HelperContext;
 
 /**
  * Handlebars helper that builds a password hash for a given password string of an Oak JCR user.
@@ -45,7 +46,7 @@ public final class OakAuthorizableUuidHelper implements HelperPlugin<Object> {
   }
 
   @Override
-  public Object apply(Object context, Options options) throws IOException {
+  public Object apply(Object context, Options options, HelperContext pluginContext) throws IOException {
     if (context == null) {
       return null;
     }
