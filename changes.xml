@@ -27,8 +27,8 @@
       <action type="add" dev="sseifert">
         Add handlebars helper oakPasswordHash and oakAuthorizableUuid.
       </action>
-      <action type="update" dev="sseifert">
-        Update to latest CONGA dependencies.
+      <action type="add" dev="sseifert">
+        Add conga-aem-crypto-cli tool.
       </action>
     </release>
 
