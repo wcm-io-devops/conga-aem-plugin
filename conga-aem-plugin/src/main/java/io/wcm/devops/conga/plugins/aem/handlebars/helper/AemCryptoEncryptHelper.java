@@ -81,7 +81,7 @@ public final class AemCryptoEncryptHelper implements HelperPlugin<Object> {
       }
       if (StringUtils.isBlank(cryptoAesKeyUrl)) {
         throw new IOException("Unable to encrypto string with AEM crypto keys: "
-            + "Please specify '" + PLUGIN_NAME + "' parameter '" + PARAMETER_CRYPTO_AES_KEY_URL + "'.");
+            + "Please add plugin configuration: '" + PLUGIN_NAME + ";" + PARAMETER_CRYPTO_AES_KEY_URL + "=/path/to/master");
       }
 
       // get crypto key

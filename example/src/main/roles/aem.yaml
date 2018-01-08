@@ -56,6 +56,19 @@ files:
       - filter: /content/rep:policy
       - filter: /home/users/system/sample/sampleSystemUser
 
+# AEM Replication (Author)
+- file: aem-replicationagents.json
+  dir: packages
+  template: aem-replicationagents.json.hbs
+  postProcessors:
+  - aem-contentpackage
+  postProcessorOptions:
+    contentPackage:
+      name: aem-cms-author-replicationagents
+      rootPath: /etc/replication
+      filters:
+      - filter: /etc/replication/agents.author
+
 # Download AEM content package and extract properties
 - url: mvn:io.wcm/io.wcm.caconfig.editor.package//zip
   dir: packages
@@ -76,5 +89,13 @@ config:
       max: 2048m
     permgenspace:
       max: 256m
+
+  replication:
+    author:
+      publishTargets:
+      #- name: publish1
+      #  url: http://localhost:4503
+      #  transportUser: admin
+      #  transportPassword: admin
 
   var1: Value 1
