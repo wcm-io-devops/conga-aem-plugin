@@ -49,6 +49,7 @@ import com.google.common.collect.ImmutableMap;
 import io.wcm.devops.conga.generator.UrlFileManager;
 import io.wcm.devops.conga.generator.spi.PostProcessorPlugin;
 import io.wcm.devops.conga.generator.spi.context.FileContext;
+import io.wcm.devops.conga.generator.spi.context.PluginContextOptions;
 import io.wcm.devops.conga.generator.spi.context.PostProcessorContext;
 import io.wcm.devops.conga.generator.spi.context.UrlFilePluginContext;
 import io.wcm.devops.conga.generator.util.PluginManager;
@@ -92,11 +93,13 @@ public class ContentPackagePostProcessorTest {
         .file(contentPackageFile)
         .charset(StandardCharsets.UTF_8);
     PluginManager pluginManager = new PluginManagerImpl();
-    PostProcessorContext context = new PostProcessorContext()
-        .options(options)
+    PluginContextOptions pluginContextOptions = new PluginContextOptions()
         .pluginManager(pluginManager)
         .urlFileManager(new UrlFileManager(pluginManager, new UrlFilePluginContext()))
         .logger(LoggerFactory.getLogger(ProvisioningOsgiConfigPostProcessor.class));
+    PostProcessorContext context = new PostProcessorContext()
+        .pluginContextOptions(pluginContextOptions)
+        .options(options);
 
     assertTrue(underTest.accepts(fileContext, context));
     underTest.apply(fileContext, context);

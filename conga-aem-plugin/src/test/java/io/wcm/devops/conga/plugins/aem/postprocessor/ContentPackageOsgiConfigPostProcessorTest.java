@@ -52,6 +52,7 @@ import com.google.common.collect.ImmutableMap;
 
 import io.wcm.devops.conga.generator.spi.PostProcessorPlugin;
 import io.wcm.devops.conga.generator.spi.context.FileContext;
+import io.wcm.devops.conga.generator.spi.context.PluginContextOptions;
 import io.wcm.devops.conga.generator.spi.context.PostProcessorContext;
 import io.wcm.devops.conga.generator.util.PluginManagerImpl;
 import io.wcm.devops.conga.plugins.sling.postprocessor.ProvisioningOsgiConfigPostProcessor;
@@ -86,10 +87,12 @@ public class ContentPackageOsgiConfigPostProcessorTest {
     FileContext fileContext = new FileContext()
         .file(contentPackageFile)
         .charset(StandardCharsets.UTF_8);
-    PostProcessorContext context = new PostProcessorContext()
-        .options(PACKAGE_OPTIONS)
+    PluginContextOptions pluginContextOptions = new PluginContextOptions()
         .pluginManager(new PluginManagerImpl())
         .logger(LoggerFactory.getLogger(ProvisioningOsgiConfigPostProcessor.class));
+    PostProcessorContext context = new PostProcessorContext()
+        .pluginContextOptions(pluginContextOptions)
+        .options(PACKAGE_OPTIONS);
 
     assertTrue(underTest.accepts(fileContext, context));
     underTest.apply(fileContext, context);
@@ -154,10 +157,12 @@ public class ContentPackageOsgiConfigPostProcessorTest {
     FileContext fileContext = new FileContext()
         .file(contentPackageFile)
         .charset(StandardCharsets.UTF_8);
-    PostProcessorContext context = new PostProcessorContext()
-        .options(PACKAGE_OPTIONS)
+    PluginContextOptions pluginContextOptions = new PluginContextOptions()
         .pluginManager(new PluginManagerImpl())
         .logger(LoggerFactory.getLogger(ProvisioningOsgiConfigPostProcessor.class));
+    PostProcessorContext context = new PostProcessorContext()
+        .pluginContextOptions(pluginContextOptions)
+        .options(PACKAGE_OPTIONS);
 
     assertTrue(underTest.accepts(fileContext, context));
     underTest.apply(fileContext, context);
