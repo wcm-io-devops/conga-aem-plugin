@@ -1,0 +1,37 @@
+{
+  "jcr:primaryType": "sling:OrderedFolder",
+  "jcr:title": "Replication",
+  "sling:resourceType": "cq/replication/components/home",
+
+  "agents.author": {
+    "jcr:primaryType": "cq:Page",
+    "jcr:content": {
+      "jcr:primaryType": "nt:unstructured",
+      "jcr:title": "Agents on author",
+      "cq:template": "/libs/cq/replication/templates/agents",
+      "sling:resourceType": "cq/replication/components/agents"
+    }
+
+{{#each replication.author.publishTargets}},
+    "publish_{{this.name}}": {
+      "jcr:primaryType": "cq:Page",
+      "jcr:content": {
+        "jcr:primaryType": "nt:unstructured",
+        "jcr:title": "Publish Agent",
+        "jcr:description": "Agent that replicates to the {{this.name}} publish instance.",
+        "cq:template": "/libs/cq/replication/templates/agent",
+        "sling:resourceType": "cq/replication/components/agent",
+        "enabled": "true",
+        "transportUri": "{{this.url}}/bin/receive?sling:authRequestLogin=1",
+        "transportUser": "{{this.transportUser}}",
+        "transportPassword": "{{aemCryptoEncrypt this.transportPassword ignoreMissingKey=true}}",
+        "serializationType": "durbo",
+        "retryDelay": "60000",
+        "logLevel": "error"
+      }
+    }
+{{/each}}
+
+  }
+
+}

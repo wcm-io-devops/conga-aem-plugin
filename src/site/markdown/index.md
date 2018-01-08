@@ -12,6 +12,7 @@ wcm.io DevOps CONGA Plugin for [Adobe Experience Manager (AEM)][aem].
 * [Custom Handlebars expressions for AEM][handlebars-helpers]
 * [API documentation][apidocs]
 * [CONGA AEM Maven Plugin Documentation][plugindocs]
+* [AEM Crypto CLI tool][crypto-cli]
 * [Changelog][changelog]
 
 
