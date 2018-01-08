@@ -7,6 +7,8 @@ The basic handlebars expressions are documented in the [Handlebars quickstart][h
 
 ### aemCryptoEncrypt
 
+_This works only with (unobfuscated) crypto keys for AEM 6.3 an up._
+
 Encrypts a password or other secret with the AEM crypto AES key.
 
 ```
