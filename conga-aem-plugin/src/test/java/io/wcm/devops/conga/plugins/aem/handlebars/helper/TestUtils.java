@@ -23,9 +23,10 @@ import static org.junit.Assert.assertEquals;
 
 import java.io.IOException;
 
-import com.github.jknack.handlebars.Helper;
 import com.github.jknack.handlebars.Options;
 import com.github.jknack.handlebars.Options.Buffer;
+
+import io.wcm.devops.conga.generator.spi.handlebars.HelperPlugin;
 
 final class TestUtils {
 
@@ -33,13 +34,13 @@ final class TestUtils {
     // static methods only
   }
 
-  public static void assertHelper(String expected, Helper<Object> helper, Object context, Options options) throws IOException {
+  public static void assertHelper(String expected, HelperPlugin<Object> helper, Object context, Options options) throws IOException {
     Object result = executeHelper(helper, context, options);
     assertEquals(expected, result);
   }
 
-  public static Object executeHelper(Helper<Object> helper, Object context, Options options) throws IOException {
-    Object result = helper.apply(context, options);
+  public static Object executeHelper(HelperPlugin<Object> helper, Object context, Options options) throws IOException {
+    Object result = helper.apply(context, options, null);
     if (result instanceof Buffer) {
       Buffer buffer = (Buffer)result;
       result = buffer.subSequence(0, buffer.length());

@@ -25,6 +25,7 @@ import java.util.Map;
 import com.github.jknack.handlebars.Options;
 
 import io.wcm.devops.conga.generator.spi.handlebars.HelperPlugin;
+import io.wcm.devops.conga.generator.spi.handlebars.context.HelperContext;
 
 /**
  * Handlebars helper that generates a filter rule.
@@ -32,7 +33,7 @@ import io.wcm.devops.conga.generator.spi.handlebars.HelperPlugin;
 abstract class AbstractFilterHelper implements HelperPlugin<Object> {
 
   @Override
-  public final Object apply(Object context, Options options) throws IOException {
+  public final Object apply(Object context, Options options, HelperContext pluginContext) throws IOException {
     if (!(context instanceof Map)) {
       throw new IllegalArgumentException("Excpected map object for filter rule.");
     }

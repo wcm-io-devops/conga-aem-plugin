@@ -28,8 +28,6 @@ import org.apache.jackrabbit.oak.spi.security.user.util.PasswordUtil;
 import org.junit.Before;
 import org.junit.Test;
 
-import com.github.jknack.handlebars.Helper;
-
 import io.wcm.devops.conga.generator.spi.handlebars.HelperPlugin;
 import io.wcm.devops.conga.generator.util.PluginManagerImpl;
 
@@ -38,7 +36,7 @@ public class OakPasswordHashHelperTest {
   private static final String PASSWORD_PLAIN = "mypassword";
   private static final String PASSWORD_HASH = "{SHA-256}c274ffe336bfc0dd-1000-f7673915a3cf354742c70e5aa11744589c0e22d66861ce4f65e84592ea67f7f1";
 
-  private Helper<Object> helper;
+  private HelperPlugin<Object> helper;
 
   @SuppressWarnings("unchecked")
   @Before
