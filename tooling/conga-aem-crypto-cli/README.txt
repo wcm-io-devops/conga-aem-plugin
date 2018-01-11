@@ -14,7 +14,7 @@ Generate AEM crypto keys
 
 Generate a set of crypto keys:
 
-java -jar conga-aem-crypto-cli-${project.version}.jar -cryptoKeysGenerate 
+java -jar conga-aem-crypto-cli-${project.version}.jar -cryptoKeysGenerate
 
 
 Generate a set of crypto keys and encrypt them using Ansible Vault with the given password:

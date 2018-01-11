@@ -20,8 +20,6 @@
 package io.wcm.devops.conga.plugins.aem.tooling.crypto.cli;
 
 import java.io.File;
-import java.util.Arrays;
-import java.util.List;
 
 import org.apache.commons.cli.CommandLine;
 import org.apache.commons.cli.DefaultParser;
@@ -53,12 +51,6 @@ public final class AemCryptoCli {
     CLI_OPTIONS.addOption("?", false, "Print usage help.");
   }
 
-  private static final List<String> MANDATORY_OPTIONS = Arrays.asList(new String[] {
-      CRYPTO_KEYS_GENERATE,
-      ANSIBLE_VAULT_ENCRYPT,
-      ANSIBLE_VAULT_DECRYPT
-  });
-
   private AemCryptoCli() {
     // static methods only
   }
@@ -73,13 +65,6 @@ public final class AemCryptoCli {
     //CHECKSTYLE:ON
     CommandLine commandLine = new DefaultParser().parse(CLI_OPTIONS, args, true);
 
-    if (commandLine.hasOption("?")) {
-      HelpFormatter formatter = new HelpFormatter();
-      formatter.setWidth(150);
-      formatter.printHelp("java -jar conga-aem-crypto-cli-<version>.jar <arguments>", CLI_OPTIONS);
-      return;
-    }
-
     boolean generateCryptoKeys = commandLine.hasOption(CRYPTO_KEYS_GENERATE);
     boolean ansibleVaultEncrypt = commandLine.hasOption(CRYPTO_KEYS_ANSIBLE_VAULT_ENCRYPT);
     File targetDir = new File(commandLine.getOptionValue(TARGET, "target"));
@@ -89,17 +74,21 @@ public final class AemCryptoCli {
     if (generateCryptoKeys) {
       CryptoKeys.generate(targetDir, ansibleVaultEncrypt)
         .forEach(file -> System.out.println("Generated: " + file.getPath()));
+      return;
     }
     else if (StringUtils.isNotBlank(ansibleVaultEncryptPath)) {
       AnsibleVault.encrypt(new File(ansibleVaultEncryptPath));
+      return;
     }
     else if (StringUtils.isNotBlank(ansibleVaultDecryptPath)) {
       AnsibleVault.decrypt(new File(ansibleVaultDecryptPath));
-    }
-    else {
-      throw new IllegalArgumentException("Mandatory parameter missing - one of " + MANDATORY_OPTIONS + " expected.");
+      return;
     }
 
+    // print usage help
+    HelpFormatter formatter = new HelpFormatter();
+    formatter.setWidth(150);
+    formatter.printHelp("java -jar conga-aem-crypto-cli-<version>.jar <arguments>", CLI_OPTIONS);
   }
 
 }
