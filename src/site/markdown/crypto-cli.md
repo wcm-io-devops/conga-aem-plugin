@@ -26,7 +26,7 @@ java -jar conga-aem-crypto-cli-<version>.jar -cryptoKeysGenerate
 Generate a set of crypto keys and encrypt them using Ansible Vault with the given password:
 
 ```
-java -Dansible.password=mypassword -jar conga-aem-crypto-cli-<version>.jar \
+java -Dansible.vault.password=mypassword -jar conga-aem-crypto-cli-<version>.jar \
     -cryptoKeysGenerate -cryptoKeysAnsibleVaultEncrypt
 ```
 
@@ -36,7 +36,7 @@ java -Dansible.password=mypassword -jar conga-aem-crypto-cli-<version>.jar \
 Encrypt a file with Ansible Vault:
 
 ```
-java -Dansible.password=mypassword -jar conga-aem-crypto-cli-<version>.jar \
+java -Dansible.vault.password=mypassword -jar conga-aem-crypto-cli-<version>.jar \
     -ansibleVaultEncrypt <file>
 ```
 
@@ -44,7 +44,7 @@ java -Dansible.password=mypassword -jar conga-aem-crypto-cli-<version>.jar \
 Decrypt a file with Ansible Vault:
 
 ```
-java -Dansible.password=mypassword -jar conga-aem-crypto-cli-<version>.jar \
+java -Dansible.vault.password=mypassword -jar conga-aem-crypto-cli-<version>.jar \
     -ansibleVaultDecrypt <file>
 ```
 

@@ -32,6 +32,8 @@ import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 
+import io.wcm.devops.conga.plugins.ansible.util.AnsibleVaultPassword;
+
 public class CryptoKeysTest {
 
   private File targetFolder;
@@ -42,7 +44,7 @@ public class CryptoKeysTest {
     targetFolder = File.createTempFile(getClass().getName(), null);
     targetFolder.delete();
 
-    System.setProperty("ansible.password", "test123");
+    System.setProperty(AnsibleVaultPassword.SYSTEM_PROPERTY_PASSWORD, "test123");
   }
 
   @After
