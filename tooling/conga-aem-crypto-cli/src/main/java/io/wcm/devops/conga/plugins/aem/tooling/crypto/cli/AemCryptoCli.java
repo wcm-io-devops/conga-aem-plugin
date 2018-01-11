@@ -19,39 +19,45 @@
  */
 package io.wcm.devops.conga.plugins.aem.tooling.crypto.cli;
 
-import java.io.BufferedOutputStream;
 import java.io.File;
-import java.io.FileOutputStream;
-import java.io.IOException;
-import java.io.OutputStream;
-import java.security.GeneralSecurityException;
-import java.util.stream.Stream;
+import java.util.Arrays;
+import java.util.List;
 
 import org.apache.commons.cli.CommandLine;
 import org.apache.commons.cli.DefaultParser;
 import org.apache.commons.cli.HelpFormatter;
 import org.apache.commons.cli.Options;
-
-import io.wcm.devops.conga.plugins.aem.crypto.impl.AesCryptoSupport;
-import io.wcm.devops.conga.plugins.aem.crypto.impl.HmacCryptoKeySupport;
-import io.wcm.devops.conga.plugins.ansible.util.AnsibleVaultPassword;
-import net.wedjaa.ansible.vault.crypto.VaultHandler;
+import org.apache.commons.lang3.StringUtils;
 
 /**
  * CONGA command line interface.
  */
 public final class AemCryptoCli {
 
+  private static final String CRYPTO_KEYS_GENERATE = "cryptoKeysGenerate";
+  private static final String CRYPTO_KEYS_ANSIBLE_VAULT_ENCRYPT = "cryptoKeysAnsibleVaultEncrypt";
+  private static final String TARGET = "target";
+  private static final String ANSIBLE_VAULT_ENCRYPT = "ansibleVaultEncrypt";
+  private static final String ANSIBLE_VAULT_DECRYPT = "ansibleVaultDecrypt";
+
   /**
    * Command line options
    */
   public static final Options CLI_OPTIONS = new Options();
   static {
-    CLI_OPTIONS.addOption("generateCryptoKeys", false, "Generates Crypto keys for AEM 6.3 and up.");
-    CLI_OPTIONS.addOption("ansibleVaultEncrypt", false, "Encrypts the keys with Ansible Vault after generation.");
-    CLI_OPTIONS.addOption("target", true, "Target path for the generated keys.");
+    CLI_OPTIONS.addOption(CRYPTO_KEYS_GENERATE, false, "Generates Crypto keys for AEM 6.3 and up.");
+    CLI_OPTIONS.addOption(CRYPTO_KEYS_ANSIBLE_VAULT_ENCRYPT, false, "Encrypts the keys with Ansible Vault after generation.");
+    CLI_OPTIONS.addOption(TARGET, true, "Target path for the generated keys.");
+    CLI_OPTIONS.addOption(ANSIBLE_VAULT_ENCRYPT, true, "Encrypts the given file with Ansible Vault.");
+    CLI_OPTIONS.addOption(ANSIBLE_VAULT_DECRYPT, true, "Decrypts the given file with Ansible Vault.");
     CLI_OPTIONS.addOption("?", false, "Print usage help.");
   }
+
+  private static final List<String> MANDATORY_OPTIONS = Arrays.asList(new String[] {
+      CRYPTO_KEYS_GENERATE,
+      ANSIBLE_VAULT_ENCRYPT,
+      ANSIBLE_VAULT_DECRYPT
+  });
 
   private AemCryptoCli() {
     // static methods only
@@ -74,58 +80,26 @@ public final class AemCryptoCli {
       return;
     }
 
-    boolean generateCryptoKeys = commandLine.hasOption("generateCryptoKeys");
-    boolean ansibleVaultEncrypt = commandLine.hasOption("ansibleVaultEncrypt");
-    File targetDir = new File(commandLine.getOptionValue("target", "target"));
+    boolean generateCryptoKeys = commandLine.hasOption(CRYPTO_KEYS_GENERATE);
+    boolean ansibleVaultEncrypt = commandLine.hasOption(CRYPTO_KEYS_ANSIBLE_VAULT_ENCRYPT);
+    File targetDir = new File(commandLine.getOptionValue(TARGET, "target"));
+    String ansibleVaultEncryptPath = commandLine.getOptionValue(ANSIBLE_VAULT_ENCRYPT);
+    String ansibleVaultDecryptPath = commandLine.getOptionValue(ANSIBLE_VAULT_DECRYPT);
 
     if (generateCryptoKeys) {
-      Stream<CryptoKey> keys = generateCryptoKeys();
-      if (ansibleVaultEncrypt) {
-        keys = encryptKeys(keys);
-      }
-      writeKeys(keys, targetDir);
+      CryptoKeys.generate(targetDir, ansibleVaultEncrypt)
+        .forEach(file -> System.out.println("Generated: " + file.getPath()));
+    }
+    else if (StringUtils.isNotBlank(ansibleVaultEncryptPath)) {
+      AnsibleVault.encrypt(new File(ansibleVaultEncryptPath));
+    }
+    else if (StringUtils.isNotBlank(ansibleVaultDecryptPath)) {
+      AnsibleVault.decrypt(new File(ansibleVaultDecryptPath));
     }
     else {
-      throw new IllegalArgumentException("generateCryptoKeys option is mandatory.");
+      throw new IllegalArgumentException("Mandatory parameter missing - one of " + MANDATORY_OPTIONS + " expected.");
     }
 
-  }
-
-  private static Stream<CryptoKey> generateCryptoKeys() throws GeneralSecurityException {
-    return Stream.of(
-        new CryptoKey("master", new AesCryptoSupport().generateKey().getEncoded()),
-        new CryptoKey("hmac", new HmacCryptoKeySupport().generateKey().getEncoded()));
-  }
-
-  private static Stream<CryptoKey> encryptKeys(Stream<CryptoKey> keys) {
-    String password = AnsibleVaultPassword.get();
-    return keys.map(key -> {
-      try {
-        return new CryptoKey(key.getName(), VaultHandler.encrypt(key.getData(), password));
-      }
-      catch (IOException ex) {
-        throw new RuntimeException("Unable to encrypt key '" + key.getName() + "'.", ex);
-      }
-    });
-  }
-
-  private static void writeKeys(Stream<CryptoKey> keys, File targetDir) {
-    if (!targetDir.exists()) {
-      targetDir.mkdirs();
-    }
-    keys.forEach(key -> {
-      File outputFile = new File(targetDir, key.getName());
-      if (outputFile.exists()) {
-        outputFile.delete();
-      }
-      try (OutputStream os = new BufferedOutputStream(new FileOutputStream(outputFile))) {
-        os.write(key.getData());
-        System.out.println("Generated: " + outputFile.getPath());
-      }
-      catch (IOException ex) {
-        throw new RuntimeException("Unable to write key '" + key.getName() + "' to " + targetDir.getPath(), ex);
-      }
-    });
   }
 
 }
