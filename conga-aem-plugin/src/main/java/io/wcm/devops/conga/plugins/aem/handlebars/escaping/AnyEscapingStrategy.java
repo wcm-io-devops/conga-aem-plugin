@@ -19,10 +19,13 @@
  */
 package io.wcm.devops.conga.plugins.aem.handlebars.escaping;
 
-import org.apache.commons.lang3.text.translate.CharSequenceTranslator;
-import org.apache.commons.lang3.text.translate.LookupTranslator;
+import org.apache.commons.text.translate.CharSequenceTranslator;
+import org.apache.commons.text.translate.LookupTranslator;
+
+import com.google.common.collect.ImmutableMap;
 
 import io.wcm.devops.conga.generator.spi.handlebars.EscapingStrategyPlugin;
+import io.wcm.devops.conga.generator.spi.handlebars.context.EscapingStrategyContext;
 import io.wcm.devops.conga.generator.util.FileUtil;
 
 /**
@@ -41,15 +44,9 @@ public class AnyEscapingStrategy implements EscapingStrategyPlugin {
    * Defines translations for strings in ANY files.
    */
   private static final CharSequenceTranslator ESCAPE_ANY =
-      new LookupTranslator(
-          new String[][] {
-              {
-                "\"", "\\\""
-              },
-              {
-                "\\", "\\\\"
-              }
-          });
+      new LookupTranslator(ImmutableMap.of(
+          "\"", "\\\"",
+          "\\", "\\\\"));
 
   @Override
   public String getName() {
@@ -57,12 +54,12 @@ public class AnyEscapingStrategy implements EscapingStrategyPlugin {
   }
 
   @Override
-  public boolean accepts(String fileExtension) {
+  public boolean accepts(String fileExtension, EscapingStrategyContext pluginContext) {
     return FileUtil.matchesExtension(fileExtension, FILE_EXTENSION);
   }
 
   @Override
-  public String escape(CharSequence value) {
+  public String escape(CharSequence value, EscapingStrategyContext pluginContext) {
     return value == null ? null : ESCAPE_ANY.translate(value);
   }
 

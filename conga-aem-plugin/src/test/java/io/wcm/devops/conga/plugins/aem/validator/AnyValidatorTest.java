@@ -24,8 +24,8 @@ import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 
 import java.io.File;
+import java.nio.charset.StandardCharsets;
 
-import org.apache.commons.lang3.CharEncoding;
 import org.junit.Before;
 import org.junit.Test;
 
@@ -46,7 +46,7 @@ public class AnyValidatorTest {
   @Test
   public void testValidPublish() throws Exception {
     File file = new File(getClass().getResource("/any/dispatcher.any").toURI());
-    FileContext fileContext = new FileContext().file(file).charset(CharEncoding.ISO_8859_1);
+    FileContext fileContext = new FileContext().file(file).charset(StandardCharsets.ISO_8859_1);
     assertTrue(underTest.accepts(fileContext, null));
     underTest.apply(fileContext, null);
   }
@@ -54,7 +54,7 @@ public class AnyValidatorTest {
   @Test
   public void testValidAuthor() throws Exception {
     File file = new File(getClass().getResource("/any/author_dispatcher.any").toURI());
-    FileContext fileContext = new FileContext().file(file).charset(CharEncoding.ISO_8859_1);
+    FileContext fileContext = new FileContext().file(file).charset(StandardCharsets.ISO_8859_1);
     assertTrue(underTest.accepts(fileContext, null));
     underTest.apply(fileContext, null);
   }
@@ -62,7 +62,7 @@ public class AnyValidatorTest {
   @Test(expected = ValidationException.class)
   public void testInvalid() throws Exception {
     File file = new File(getClass().getResource("/any/invalidAny.any").toURI());
-    FileContext fileContext = new FileContext().file(file).charset(CharEncoding.ISO_8859_1);
+    FileContext fileContext = new FileContext().file(file).charset(StandardCharsets.ISO_8859_1);
     assertTrue(underTest.accepts(fileContext, null));
     underTest.apply(fileContext, null);
   }
@@ -70,7 +70,7 @@ public class AnyValidatorTest {
   @Test
   public void testInvalidFileExtension() throws Exception {
     File file = new File(getClass().getResource("/any/noAny.txt").toURI());
-    FileContext fileContext = new FileContext().file(file).charset(CharEncoding.ISO_8859_1);
+    FileContext fileContext = new FileContext().file(file).charset(StandardCharsets.ISO_8859_1);
     assertFalse(underTest.accepts(fileContext, null));
   }
 

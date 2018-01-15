@@ -33,11 +33,11 @@ import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
 
 import java.io.File;
+import java.nio.charset.StandardCharsets;
 import java.util.HashMap;
 import java.util.Map;
 
 import org.apache.commons.io.FileUtils;
-import org.apache.commons.lang3.CharEncoding;
 import org.junit.Before;
 import org.junit.Test;
 import org.slf4j.LoggerFactory;
@@ -49,6 +49,7 @@ import com.google.common.collect.ImmutableMap;
 import io.wcm.devops.conga.generator.UrlFileManager;
 import io.wcm.devops.conga.generator.spi.PostProcessorPlugin;
 import io.wcm.devops.conga.generator.spi.context.FileContext;
+import io.wcm.devops.conga.generator.spi.context.PluginContextOptions;
 import io.wcm.devops.conga.generator.spi.context.PostProcessorContext;
 import io.wcm.devops.conga.generator.spi.context.UrlFilePluginContext;
 import io.wcm.devops.conga.generator.util.PluginManager;
@@ -90,13 +91,15 @@ public class ContentPackagePostProcessorTest {
     // post-process
     FileContext fileContext = new FileContext()
         .file(contentPackageFile)
-        .charset(CharEncoding.UTF_8);
+        .charset(StandardCharsets.UTF_8);
     PluginManager pluginManager = new PluginManagerImpl();
-    PostProcessorContext context = new PostProcessorContext()
-        .options(options)
+    PluginContextOptions pluginContextOptions = new PluginContextOptions()
         .pluginManager(pluginManager)
         .urlFileManager(new UrlFileManager(pluginManager, new UrlFilePluginContext()))
         .logger(LoggerFactory.getLogger(ProvisioningOsgiConfigPostProcessor.class));
+    PostProcessorContext context = new PostProcessorContext()
+        .pluginContextOptions(pluginContextOptions)
+        .options(options);
 
     assertTrue(underTest.accepts(fileContext, context));
     underTest.apply(fileContext, context);

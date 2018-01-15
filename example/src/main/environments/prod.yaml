@@ -29,3 +29,12 @@ tenants:
   config:
     domain: mysite.fr
     website.hostname: www.${domain}
+
+config:
+  replication:
+    author:
+      publishTargets:
+      - name: publish1
+        url: http://localhost:4503
+        transportUser: myuser
+        transportPassword: mypassword
