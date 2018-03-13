@@ -24,7 +24,7 @@
   <body>
 
     <release version="1.6.4" date="not-released">
-      <action type="fix" dev="trichter">
+      <action type="add" dev="trichter">
         Add handlebars helper webconsolePasswordHash
       </action>
     </release>
