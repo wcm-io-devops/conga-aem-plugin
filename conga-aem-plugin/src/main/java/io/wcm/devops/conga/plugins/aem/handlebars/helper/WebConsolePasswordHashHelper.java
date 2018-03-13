@@ -24,12 +24,23 @@ public class WebConsolePasswordHashHelper implements HelperPlugin<Object> {
   /**
    * hash algorithm
    */
-  private static final String HASH_ALGO = "SHA-256";
+  private static final String DEFAULT_HASH_ALGORITHM = "SHA-256";
 
   /**
    * encoding
    */
-  private static final String ENCODING = "UTF-8";
+  private static final String DEFAULT_ENCODING = "UTF-8";
+
+  /**
+   * Key for setting algorithm from external
+   */
+  public static final String HASH_OPTION_ALGORITHM = "digest";
+
+  /**
+   * Key for setting encoding from external
+   */
+  public static final String HASH_OPTION_ENCODING = "encoding";
+
 
   @Override
   public String getName() {
@@ -49,37 +60,50 @@ public class WebConsolePasswordHashHelper implements HelperPlugin<Object> {
       return password;
     }
 
-    return hashPassword(password.getBytes("UTF-8") );
+    String encoding = options.hash(HASH_OPTION_ENCODING, DEFAULT_ENCODING);
+    String algorithm = options.hash(HASH_OPTION_ALGORITHM, DEFAULT_HASH_ALGORITHM);
+
+    return hashPassword(password, algorithm, encoding);
   }
 
   /**
-   * Hashes the given password and Base64 encodes the result
+   * Hashes a password for the Apache Felix Webconsole
    *
-   * @param password The password to be hashed
-   *
-   * @return The hashed password
+   * @param password The password to hash
+   * @param hashAlgorithm The hash algorithm to use
+   * @param encoding The encoding to use
+   * @return The hashed password (hashed + encoded as Base64)
+   * @throws IOException
    */
-  private String hashPassword( final byte[] password )
-  {
+  private String hashPassword(String password, final String hashAlgorithm, final String encoding) throws IOException {
+    byte[] bytePassword;
     byte[] hashedPassword;
     String hashedPasswordBase64;
 
+    try {
+      bytePassword = password.getBytes(encoding);
+    }
+    catch (UnsupportedEncodingException e) {
+      throw new IOException("Cannot hash the password: " + e);
+    }
+
     // create password hash
     try {
-      final MessageDigest md = MessageDigest.getInstance(HASH_ALGO);
-      hashedPassword = md.digest(password);
+      final MessageDigest md = MessageDigest.getInstance(hashAlgorithm);
+      hashedPassword = md.digest(bytePassword);
     }
     catch (NoSuchAlgorithmException e) {
-      throw new IllegalStateException("Cannot hash the password: " + e);
+      throw new IOException("Cannot hash the password: " + e);
     }
 
     // encode hashed password to utf8
     try {
-      hashedPasswordBase64 = new String(Base64.getEncoder().encode(hashedPassword),ENCODING);
-    } catch (UnsupportedEncodingException e) {
-      throw new IllegalStateException("Invalid Encoding: "+e);
+      hashedPasswordBase64 = new String(Base64.getEncoder().encode(hashedPassword), encoding);
+    }
+    catch (UnsupportedEncodingException e) {
+      throw new IOException("Invalid Encoding: " + e);
     }
 
-    return String.format("{%s}%s",HASH_ALGO.toLowerCase(),hashedPasswordBase64);
+    return String.format("{%s}%s", hashAlgorithm.toLowerCase(), hashedPasswordBase64);
   }
 }
