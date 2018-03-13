@@ -25,7 +25,7 @@
 
     <release version="1.6.4" date="not-released">
       <action type="fix" dev="trichter">
-        Add handlebars helper WebConsolePasswordHashHelper
+        Add handlebars helper webconsolePasswordHash
       </action>
     </release>
 
