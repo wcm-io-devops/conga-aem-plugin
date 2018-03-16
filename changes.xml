@@ -27,6 +27,9 @@
       <action type="add" dev="trichter">
         Add handlebars helper webconsolePasswordHash.
       </action>
+      <action type="update" dev="sseifert">
+        conga-aem-maven-plugin: Use Maven HTTP proxy settings.
+      </action>
     </release>
 
     <release version="1.6.2" date="2018-02-08">
