@@ -23,6 +23,7 @@ import static io.wcm.devops.conga.plugins.aem.postprocessor.ContentPackageOption
 
 import java.io.File;
 import java.io.IOException;
+import java.io.InputStream;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -38,6 +39,7 @@ import io.wcm.devops.conga.generator.spi.context.FileContext;
 import io.wcm.devops.conga.generator.spi.context.FileHeaderContext;
 import io.wcm.devops.conga.generator.spi.context.PostProcessorContext;
 import io.wcm.devops.conga.generator.util.FileUtil;
+import io.wcm.devops.conga.plugins.aem.util.ContentPackageBinaryFile;
 import io.wcm.devops.conga.plugins.aem.util.ContentPackageUtil;
 import io.wcm.devops.conga.plugins.aem.util.JsonContentLoader;
 import io.wcm.tooling.commons.contentpackagebuilder.ContentPackage;
@@ -87,8 +89,20 @@ public class ContentPackagePostProcessor extends AbstractPostProcessor {
 
       ContentPackageBuilder builder = ContentPackageUtil.getContentPackageBuilder(options, fileHeader);
       try (ContentPackage contentPackage = builder.build(zipFile)) {
+
+        // add content from JSON file
         ContentElement content = jsonContentLoader.load(fileContext.getFile());
         contentPackage.addContent(rootPath, content);
+
+        // add additional binary files
+        for (ContentPackageBinaryFile binaryFile : ContentPackageUtil.getFiles(options)) {
+          String path = binaryFile.getPath();
+          try (InputStream is = binaryFile.getInputStream(context.getUrlFileManager(), fileContext.getTargetDir())) {
+            contentPackage.addFile(path, is);
+          }
+          binaryFile.deleteIfRequired(context.getUrlFileManager(), fileContext.getTargetDir());
+        }
+
       }
 
       // delete provisioning file after transformation

@@ -21,9 +21,11 @@ package io.wcm.devops.conga.plugins.aem.util;
 
 import static io.wcm.devops.conga.plugins.aem.postprocessor.ContentPackageOptions.PROPERTY_PACKAGE_AC_HANDLING;
 import static io.wcm.devops.conga.plugins.aem.postprocessor.ContentPackageOptions.PROPERTY_PACKAGE_DESCRIPTION;
+import static io.wcm.devops.conga.plugins.aem.postprocessor.ContentPackageOptions.PROPERTY_PACKAGE_FILES;
 import static io.wcm.devops.conga.plugins.aem.postprocessor.ContentPackageOptions.PROPERTY_PACKAGE_FILTERS;
 import static io.wcm.devops.conga.plugins.aem.postprocessor.ContentPackageOptions.PROPERTY_PACKAGE_GROUP;
 import static io.wcm.devops.conga.plugins.aem.postprocessor.ContentPackageOptions.PROPERTY_PACKAGE_NAME;
+import static io.wcm.devops.conga.plugins.aem.postprocessor.ContentPackageOptions.PROPERTY_PACKAGE_PROPERTIES;
 import static io.wcm.devops.conga.plugins.aem.postprocessor.ContentPackageOptions.PROPERTY_PACKAGE_ROOT_PATH;
 import static io.wcm.devops.conga.plugins.aem.postprocessor.ContentPackageOptions.PROPERTY_PACKAGE_THUMBNAIL_IMAGE;
 import static io.wcm.devops.conga.plugins.aem.postprocessor.ContentPackageOptions.PROPERTY_PACKAGE_VERSION;
@@ -35,7 +37,10 @@ import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 
+import org.apache.commons.lang3.BooleanUtils;
 import org.apache.commons.lang3.StringUtils;
+
+import com.google.common.collect.ImmutableMap;
 
 import io.wcm.devops.conga.generator.GeneratorException;
 import io.wcm.devops.conga.generator.UrlFileManager;
@@ -72,11 +77,13 @@ public final class ContentPackageUtil {
         .description(mergeDescriptionFileHeader(getOptionalProp(options, PROPERTY_PACKAGE_DESCRIPTION), fileHeader))
         .version(getOptionalProp(options, PROPERTY_PACKAGE_VERSION));
 
+    // AC handling
     AcHandling acHandling = getAcHandling(options);
     if (acHandling != null) {
       builder.acHandling(acHandling);
     }
 
+    // thumbnail image
     String thumbnailImageUrl = getOptionalProp(options, PROPERTY_PACKAGE_THUMBNAIL_IMAGE);
     if (StringUtils.isNotBlank(thumbnailImageUrl)) {
       UrlFileManager urlFileManager = fileHeader.getUrlFileManager();
@@ -96,7 +103,11 @@ public final class ContentPackageUtil {
       }
     }
 
+    // filters
     getFilters(options).forEach(builder::filter);
+
+    // additional properties
+    putFlattenedProperties(builder, getAdditionalyProperties(options), "");
 
     return builder;
   }
@@ -183,6 +194,31 @@ public final class ContentPackageUtil {
     return filters;
   }
 
+  private static Map<String,Object> getAdditionalyProperties(Map<String, Object> options) {
+    Map<String, Object> props = getOptionalPropMap(options, PROPERTY_PACKAGE_PROPERTIES);
+    if (props == null) {
+      props = ImmutableMap.of();
+    }
+    return props;
+  }
+
+  @SuppressWarnings("unchecked")
+  private static void putFlattenedProperties(ContentPackageBuilder builder, Map<String, Object> props, String prefix) {
+    for (Map.Entry<String, Object> entry : props.entrySet()) {
+      String key = prefix + entry.getKey();
+      Object value = entry.getValue();
+      if (value instanceof Map) {
+        putFlattenedProperties(builder, (Map<String, Object>)value, key + ".");
+      }
+      else if (value instanceof List) {
+        throw new IllegalArgumentException("List value not allowed in package properties.");
+      }
+      else {
+        builder.property(key, value);
+      }
+    }
+  }
+
   /**
    * Get and validate AC handling value.
    * @param options
@@ -203,7 +239,7 @@ public final class ContentPackageUtil {
 
 
   /**
-   * Get property from options and throw exception if it is not set.
+   * Get property from options or throw exception if it is not set.
    * @param options Options
    * @param key Key
    * @return Option value
@@ -213,36 +249,81 @@ public final class ContentPackageUtil {
     if (value instanceof String) {
       return (String)value;
     }
+    else if (value != null) {
+      return value.toString();
+    }
     throw new GeneratorException("Missing post processor option '" + key + "'.");
   }
 
   /**
-   * Get property from options and returns null if not set.
+   * Get property from options or return null if not set.
    * @param options Options
    * @param key Key
    * @return Option value or null
    */
-  public static String getOptionalProp(Map<String, Object> options, String key) {
+  private static String getOptionalProp(Map<String, Object> options, String key) {
     Object value = MapExpander.getDeep(options, key);
     if (value instanceof String) {
       return (String)value;
+    }
+    else if (value != null) {
+      return value.toString();
     }
     return null;
   }
 
   /**
-   * Get property from options and throw exception if it is not set.
+   * Get property from options or return null if not set.
    * @param options Options
    * @param key Key
    * @return Option value
    */
   @SuppressWarnings("unchecked")
-  public static List<Map<String, Object>> getOptionalPropMapList(Map<String, Object> options, String key) {
+  private static List<Map<String, Object>> getOptionalPropMapList(Map<String, Object> options, String key) {
     Object value = MapExpander.getDeep(options, key);
     if (value instanceof List || value == null) {
       return (List<Map<String, Object>>)value;
     }
-    throw new GeneratorException("Missing post processor option '" + key + "'.");
+    throw new GeneratorException("Invalid post processor option '" + key + "'.");
+  }
+
+  /**
+   * Get property from options or return null if not set.
+   * @param options Options
+   * @param key Key
+   * @return Option value
+   */
+  @SuppressWarnings("unchecked")
+  private static Map<String, Object> getOptionalPropMap(Map<String, Object> options, String key) {
+    Object value = MapExpander.getDeep(options, key);
+    if (value instanceof Map || value == null) {
+      return (Map<String, Object>)value;
+    }
+    throw new GeneratorException("Invalid post processor option '" + key + "'.");
+  }
+
+  /**
+   * Get binary files to be added to package.
+   * @param options Options
+   * @return File list
+   * @throws IOException I/O exception
+   */
+  public static List<ContentPackageBinaryFile> getFiles(Map<String, Object> options) throws IOException {
+    List<ContentPackageBinaryFile> files = new ArrayList<>();
+
+    List<Map<String, Object>> fileDefinitions = getOptionalPropMapList(options, PROPERTY_PACKAGE_FILES);
+    if (fileDefinitions != null) {
+      for (Map<String, Object> fileDefinition : fileDefinitions) {
+        String file = getOptionalProp(fileDefinition, "file");
+        String dir = getOptionalProp(fileDefinition, "dir");
+        String url = getOptionalProp(fileDefinition, "url");
+        String path = getMandatoryProp(fileDefinition, "path");
+        boolean delete = BooleanUtils.toBoolean(getOptionalProp(fileDefinition, "delete"));
+        files.add(new ContentPackageBinaryFile(file, dir, url, path, delete));
+      }
+    }
+
+    return files;
   }
 
 }

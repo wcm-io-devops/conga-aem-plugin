@@ -20,9 +20,11 @@
 package io.wcm.devops.conga.plugins.aem.postprocessor;
 
 import static io.wcm.devops.conga.plugins.aem.postprocessor.ContentPackageOptions.PROPERTY_PACKAGE_AC_HANDLING;
+import static io.wcm.devops.conga.plugins.aem.postprocessor.ContentPackageOptions.PROPERTY_PACKAGE_FILES;
 import static io.wcm.devops.conga.plugins.aem.postprocessor.ContentPackageOptions.PROPERTY_PACKAGE_FILTERS;
 import static io.wcm.devops.conga.plugins.aem.postprocessor.ContentPackageOptions.PROPERTY_PACKAGE_GROUP;
 import static io.wcm.devops.conga.plugins.aem.postprocessor.ContentPackageOptions.PROPERTY_PACKAGE_NAME;
+import static io.wcm.devops.conga.plugins.aem.postprocessor.ContentPackageOptions.PROPERTY_PACKAGE_PROPERTIES;
 import static io.wcm.devops.conga.plugins.aem.postprocessor.ContentPackageOptions.PROPERTY_PACKAGE_ROOT_PATH;
 import static io.wcm.devops.conga.plugins.aem.postprocessor.ContentPackageOptions.PROPERTY_PACKAGE_THUMBNAIL_IMAGE;
 import static io.wcm.devops.conga.plugins.aem.postprocessor.ContentPackageTestUtil.getDataFromZip;
@@ -79,6 +81,12 @@ public class ContentPackagePostProcessorTest {
                 "rules", ImmutableList.of(ImmutableMap.<String, Object>of("rule", "include", "pattern", "pattern1"),
                     ImmutableMap.<String, Object>of("rule", "exclude", "pattern", "pattern2")))
             ));
+    options.put(PROPERTY_PACKAGE_PROPERTIES, ImmutableMap.<String,Object>of(
+        "prop1", "value1",
+        "my.custom.prop2", 123));
+    options.put(PROPERTY_PACKAGE_FILES, ImmutableList.of(
+        ImmutableMap.<String, Object>of("url", "classpath:/package/thumbnail.png", "path", "/content/image.png"),
+        ImmutableMap.<String, Object>of("file", "README.txt", "dir", "readme", "path", "/content/README.txt", "delete", true)));
 
     // prepare JSON file
     File target = new File("target/" + ContentPackagePostProcessor.NAME + "-test");
@@ -88,10 +96,17 @@ public class ContentPackagePostProcessorTest {
     File contentPackageFile = new File(target, "test.json");
     FileUtils.copyFile(new File(getClass().getResource("/json/content.json").toURI()), contentPackageFile);
 
+    // pepare additionaly binary file
+    File readmeFolder = new File(target, "readme");
+    readmeFolder.mkdir();
+    File readmeFile = new File(readmeFolder, "README.txt");
+    FileUtils.write(readmeFile, "readme");
+
     // post-process
     FileContext fileContext = new FileContext()
         .file(contentPackageFile)
-        .charset(StandardCharsets.UTF_8);
+        .charset(StandardCharsets.UTF_8)
+        .targetDir(target);
     PluginManager pluginManager = new PluginManagerImpl();
     PluginContextOptions pluginContextOptions = new PluginContextOptions()
         .pluginManager(pluginManager)
@@ -123,9 +138,18 @@ public class ContentPackagePostProcessorTest {
     Document propertiesXml = getXmlFromZip(zipFile, "META-INF/vault/properties.xml");
     assertXpathEvaluatesTo("ignore", "/properties/entry[@key='acHandling']", propertiesXml);
     assertXpathEvaluatesTo("Sample comment in content.json", "/properties/entry[@key='description']", propertiesXml);
+    assertXpathEvaluatesTo("value1", "/properties/entry[@key='prop1']", propertiesXml);
+    assertXpathEvaluatesTo("123", "/properties/entry[@key='my.custom.prop2']", propertiesXml);
 
     byte[] thumbnailImage = getDataFromZip(zipFile, "META-INF/vault/definition/thumbnail.png");
     assertNotNull(thumbnailImage);
+
+    byte[] image = getDataFromZip(zipFile, "jcr_root/content/image.png");
+    assertNotNull(image);
+
+    byte[] readmeText = getDataFromZip(zipFile, "jcr_root/content/README.txt");
+    assertNotNull(readmeText);
+    assertFalse(readmeFile.exists());
   }
 
 }
