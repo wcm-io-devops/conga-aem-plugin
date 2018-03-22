@@ -18,7 +18,6 @@ files:
       filters:
       - filter: /apps/sample
 
-
 # Define a AEM content package with some JCR content (Sling Mapping Example)
 - file: sling-mapping.json
   dir: packages
@@ -72,6 +71,34 @@ files:
 # Download AEM content package and extract properties
 - url: mvn:io.wcm/io.wcm.caconfig.editor.package//zip
   dir: packages
+
+# Define a AEM content package with a generated HTML file and another copied file
+- file: index.html
+  dir: packages
+  template: index.html.hbs
+- file: content-sample.json
+  dir: packages
+  template: content-sample.json.hbs
+  # Transform JSON file to AEM content package
+  postProcessors:
+  - aem-contentpackage
+  postProcessorOptions:
+    contentPackage:
+      name: content-sample
+      rootPath: /content/sample
+      files:
+      # Include generated HTML file in content package and delete the file afterwards from filesystem
+      - file: index.html
+        dir: packages
+        path: /content/sample/index.html
+        delete: true
+      # Include file from classpath in Content package
+      - url: classpath:wcm-io-package-thumbnail.png
+        path: /content/sample/index.png
+      # Custom properties for package metadata
+      properties:
+        custom.property1: value1
+        custom.property2: 123
 
 
 # Defines configuration parameters and default values
