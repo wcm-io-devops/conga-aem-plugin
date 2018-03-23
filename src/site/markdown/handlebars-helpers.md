@@ -57,6 +57,15 @@ Generates a UUID for an authorizable node by deriving it from the authorizable I
 ```
 
 
+### webconsolePasswordHash
+
+Generates a password hash for the  Apache Felix Webconsole (felix.webconsole.password).
+
+```
+{{webconsolePasswordHash passwordVariable}}
+```
+
+
 ### aemHttpdFilter
 
 Generates HTTPd allow from/required rules for a filter expression. Supports both Apache 2.2 and 2.4. See [CONGA AEM Definitions][aem-definitions] for an usage example.
