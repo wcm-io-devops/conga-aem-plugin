@@ -2,8 +2,8 @@
 /farms
   {
   # First farm entry
-  /website 
-    {  
+  /website
+    {
     # Request headers that should be forwarded to the remote server.
     /clientheaders
       {
@@ -12,7 +12,7 @@
       # them here.
       "*"
       }
-      
+
     # Hostname globbing for farm selection (virtual domain addressing)
     /virtualhosts
       {
@@ -26,7 +26,7 @@
       #   myhost:8888/mysite
       "*"
       }
-      
+
     # The load will be balanced among these render instances
     /renders
       {
@@ -40,7 +40,7 @@
         # /timeout "0"
         }
       }
-      
+
     # The filter section defines the requests that should be handled by the dispatcher.
     #
     # Entries can be either specified using globs, or elements of the request line:
@@ -75,17 +75,17 @@
       {
       # Deny everything first and then allow specific entries
       /0001 { /type "deny" /glob "*" }
-      
+
       # Open consoles
 #     /0011 { /type "allow" /url "/admin/*"  }  # allow servlet engine admin
 #     /0012 { /type "allow" /url "/crx/*"    }  # allow content repository
 #     /0013 { /type "allow" /url "/system/*" }  # allow OSGi console
-        
+
       # Allow non-public content directories
 #     /0021 { /type "allow" /url "/apps/*"   }  # allow apps access
 #     /0022 { /type "allow" /url "/bin/*"    }
       /0023 { /type "allow" /url "/content*" }  # disable this rule to allow mapped content only
-      
+
 #     /0024 { /type "allow" /url "/libs/*"   }
 #     /0025 { /type "deny"  /url "/libs/shindig/proxy*" } # if you enable /libs close access to proxy
 
@@ -100,7 +100,7 @@
         /extension '(css|gif|ico|js|png|swf|jpe?g)'
         }
 
-      # Enable features 
+      # Enable features
       /0062 { /type "allow" /url "/libs/cq/personalization/*"  }  # enable personalization
 
       # Deny content grabbing, on all accessible pages, using regular expressions
@@ -131,20 +131,20 @@
       # to deliver them just like static files.
       /docroot "/opt/communique/dispatcher/cache"
 
-      # Sets the level upto which files named ".stat" will be created in the 
-      # document root of the webserver. When an activation request for some 
-      # page is received, only files within the same subtree are affected 
+      # Sets the level upto which files named ".stat" will be created in the
+      # document root of the webserver. When an activation request for some
+      # page is received, only files within the same subtree are affected
       # by the invalidation.
       #/statfileslevel "0"
-      
+
       # Flag indicating whether to cache responses to requests that contain
       # authorization information.
       #/allowAuthorized "0"
-      
+
       # Flag indicating whether the dispatcher should serve stale content if
       # no remote server is available.
       #/serveStaleOnError "0"
-      
+
       # The rules section defines what responses should be cached based on
       # the requested URL. Please note that only the following requests can
       # lead to cacheable responses:
@@ -167,10 +167,10 @@
           /type "allow"
           }
         }
-        
+
       # The invalidate section defines the pages that are "invalidated" after
-      # any activation. Please note that the activated page itself and all 
-      # related documents are flushed on an modification. For example: if the 
+      # any activation. Please note that the activated page itself and all
+      # related documents are flushed on an modification. For example: if the
       # page /foo/bar is activated, all /foo/bar.* files are removed from the
       # cache.
       /invalidate
@@ -216,12 +216,12 @@
         #  /type "allow"
         #  }
         }
-        
+
       # The ignoreUrlParams section contains query string parameter names that
       # should be ignored when determining whether some request's output can be
       # cached or delivered from cache.
       #
-      # In this example configuration, the "q" parameter will be ignored. 
+      # In this example configuration, the "q" parameter will be ignored.
       #/ignoreUrlParams
       #  {
       #  /0001 { /glob "*" /type "deny" }
@@ -264,9 +264,9 @@
       # /enableTTL "1"
 
       }
-      
+
     # The statistics sections dictates how the load should be balanced among the
-    # renders according to the media-type. 
+    # renders according to the media-type.
     /statistics
       {
       /categories

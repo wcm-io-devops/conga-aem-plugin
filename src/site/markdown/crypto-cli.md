@@ -20,7 +20,7 @@ Download it from Maven Central:
 Generate a set of crypto keys:
 
 ```
-java -jar conga-aem-crypto-cli-<version>.jar -cryptoKeysGenerate 
+java -jar conga-aem-crypto-cli-<version>.jar -cryptoKeysGenerate
 ```
 
 Generate a set of crypto keys and encrypt them using Ansible Vault with the given password:
