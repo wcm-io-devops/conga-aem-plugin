@@ -4,4 +4,6 @@
   DocumentRoot /www/{{tenant}}
   ServerName {{website.hostname}}
 
+  # test {{ chain "value" helpers="plugin1,plugin2" hashOption="hashValue" }}
+
 </VirtualHost> 

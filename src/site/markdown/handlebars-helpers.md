@@ -38,6 +38,69 @@ If you want to write a generic template that runs with and without having a cryp
 {{aemCryptoEncrypt passwordVariable ignoreMissingKey=true}}
 ```
 
+### chain
+
+Helper to chain 1 to n helpers together e.g.
+* call httpHost with customPort
+* call quoteRegex with the result
+
+#### Example:
+
+```
+{{ RewriteCond %{HTTP_HOST} !^{{chain localhost helpers="httpHost,regexQuote" port=8080}}$ [NC] }}
+```
+**Result:**
+```
+RewriteCond %{HTTP_HOST} !^\Qlocalhost:8080\E$ [NC]
+```
+
+### httpHost
+
+Renders the http host with port, when the port is not the default one (80)
+
+#### Example 1 (default port):
+
+```
+{{httpHost "localhost" port=80 }}
+```
+**Result:**
+```
+localhost
+```
+
+#### Example 2 (custom port):
+
+```
+{{httpHost "localhost" port=8080 }}
+```
+**Result:**
+```
+localhost:8080
+```
+
+### httpHostSsl
+
+Renders the ssl http host with port, when the port is not the default one (443)
+
+#### Example 1 (default port):
+
+```
+{{httpHost "localhost" port=443 }}
+```
+**Result:**
+```
+localhost
+```
+
+#### Example 2 (custom port):
+
+```
+{{httpHost "localhost" port=8443 }}
+```
+**Result:**
+```
+localhost:8443
+```
 
 ### oakPasswordHash
 

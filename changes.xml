@@ -27,6 +27,12 @@
       <action type="update" dev="sseifert">
         conga-aem-maven-plugin: Improve support for "feature model based service packs" by ensuring bundle "updater.aem-service-pkg" does not exist in bundle status check.
       </action>
+      <action type="add" dev="trichter">
+        Add handlebars helper chain to allow chaining of 1 to n handlebar helpers .
+      </action>
+      <action type="add" dev="trichter">
+        Add handlebars helper httpHost and httpHostSsl in order to support non standard http ports in conga-aem-definitions.
+      </action>
     </release>
 
     <release version="1.7.0" date="2018-03-23">
