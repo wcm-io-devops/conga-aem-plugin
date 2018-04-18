@@ -19,15 +19,16 @@
  */
 package io.wcm.devops.conga.plugins.aem.handlebars.helper;
 
-import io.wcm.devops.conga.generator.spi.handlebars.HelperPlugin;
-import io.wcm.devops.conga.generator.util.PluginManagerImpl;
-import org.junit.Before;
-import org.junit.Test;
-
 import static io.wcm.devops.conga.plugins.aem.handlebars.helper.TestUtils.executeHelper;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
+
+import org.junit.Before;
+import org.junit.Test;
+
+import io.wcm.devops.conga.generator.spi.handlebars.HelperPlugin;
+import io.wcm.devops.conga.generator.util.PluginManagerImpl;
 
 public class HttpHostSslHelperTest {
 
@@ -61,14 +62,14 @@ public class HttpHostSslHelperTest {
 
   @Test
   public void testWithCustomPort() throws Exception {
-    Object httpHost = executeHelper(helper, "localhost", new MockOptions().withHash(HttpHostHelperSsl.HASH_OPTION_PORT, 9443));
+    Object httpHost = executeHelper(helper, "localhost", new MockOptions().withHash(AbstractHostHelper.HASH_OPTION_PORT, 9443));
     assertTrue(httpHost instanceof String);
     assertEquals("localhost:9443", httpHost);
   }
 
   @Test
   public void testWithDefaultPort() throws Exception {
-    Object httpHost = executeHelper(helper, "localhost", new MockOptions().withHash(HttpHostHelperSsl.HASH_OPTION_PORT, HttpHostHelperSsl.DEFAULT_PORT));
+    Object httpHost = executeHelper(helper, "localhost", new MockOptions().withHash(AbstractHostHelper.HASH_OPTION_PORT, HttpHostHelperSsl.DEFAULT_PORT));
     assertTrue(httpHost instanceof String);
     assertEquals("localhost", httpHost);
   }
