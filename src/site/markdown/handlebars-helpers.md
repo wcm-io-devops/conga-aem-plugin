@@ -38,22 +38,6 @@ If you want to write a generic template that runs with and without having a cryp
 {{aemCryptoEncrypt passwordVariable ignoreMissingKey=true}}
 ```
 
-### chain
-
-Helper to chain 1 to n helpers together e.g.
-* call httpHost with customPort
-* call quoteRegex with the result
-
-#### Example:
-
-```
-{{ RewriteCond %{HTTP_HOST} !^{{chain localhost helpers="httpHost,regexQuote" port=8080}}$ [NC] }}
-```
-**Result:**
-```
-RewriteCond %{HTTP_HOST} !^\Qlocalhost:8080\E$ [NC]
-```
-
 ### httpHost
 
 Renders the http host with port, when the port is not the default one (80)

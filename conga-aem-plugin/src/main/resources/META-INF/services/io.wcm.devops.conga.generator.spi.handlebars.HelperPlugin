@@ -6,4 +6,3 @@ io.wcm.devops.conga.plugins.aem.handlebars.helper.OakPasswordHashHelper
 io.wcm.devops.conga.plugins.aem.handlebars.helper.WebConsolePasswordHashHelper
 io.wcm.devops.conga.plugins.aem.handlebars.helper.HttpHostHelper
 io.wcm.devops.conga.plugins.aem.handlebars.helper.HttpHostHelperSsl
-io.wcm.devops.conga.plugins.aem.handlebars.helper.ChainHelper
