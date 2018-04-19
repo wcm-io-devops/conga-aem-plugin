@@ -29,7 +29,7 @@ import io.wcm.devops.conga.generator.spi.handlebars.context.HelperContext;
 /**
  * Handlebars helper that adds a port to the host when it is not the default one
  */
-public class HttpHostHelperSsl extends AbstractHostHelper implements HelperPlugin<Object> {
+public class HttpHostSslHelper extends AbstractHostHelper implements HelperPlugin<Object> {
 
   /**
    * Plugin/Helper name
@@ -37,9 +37,9 @@ public class HttpHostHelperSsl extends AbstractHostHelper implements HelperPlugi
   public static final String NAME = "httpHostSsl";
 
   /**
-   * Plugin/Helper name
+   * Default port for HTTPs
    */
-  public static final Integer DEFAULT_PORT = 443;
+  static final Integer DEFAULT_PORT = 443;
 
 
   @Override

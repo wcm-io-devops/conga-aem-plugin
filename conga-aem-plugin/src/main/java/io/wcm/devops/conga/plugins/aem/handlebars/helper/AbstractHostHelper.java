@@ -7,9 +7,9 @@
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- * 
+ *
  *      http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -18,6 +18,8 @@
  * #L%
  */
 package io.wcm.devops.conga.plugins.aem.handlebars.helper;
+
+import java.util.regex.Pattern;
 
 import com.github.jknack.handlebars.Options;
 
@@ -31,14 +33,16 @@ abstract class AbstractHostHelper {
    */
   public static final String HASH_OPTION_PORT = "port";
 
+  private static final Pattern PORT_EXITS_PATTERN = Pattern.compile("^.+:\\d+$");
+
   /**
    * Helper function to detect if the host already contains a port
    *
    * @param host The host
    * @return true when the host already contains a port
    */
-  private Boolean hasPort(String host) {
-    return host.matches("^.+:\\d+$");
+  private boolean hasPort(String host) {
+    return PORT_EXITS_PATTERN.matcher(host).matches();
   }
 
   /**
@@ -49,7 +53,7 @@ abstract class AbstractHostHelper {
    * @param defaultPort The default port that should not be added
    * @return The hostname with port (when necessary)
    */
-  Object addNonDefaultPort(Object context, Options options, Integer defaultPort) {
+  Object addNonDefaultPort(Object context, Options options, int defaultPort) {
     StringBuilder sb = new StringBuilder();
     if (context == null) {
       return null;
@@ -60,11 +64,11 @@ abstract class AbstractHostHelper {
       return context;
     }
     // retrieve the port, or take default one
-    Integer port = options.hash(HASH_OPTION_PORT, defaultPort);
+    int port = options.hash(HASH_OPTION_PORT, defaultPort);
 
     // build result
     sb.append(host);
-    if (! port.equals(defaultPort)) {
+    if (port != defaultPort) {
       // add port when it is not the default one
       sb.append(":").append(port);
     }

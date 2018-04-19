@@ -37,9 +37,9 @@ public class HttpHostHelper extends AbstractHostHelper implements HelperPlugin<O
   public static final String NAME = "httpHost";
 
   /**
-   * Plugin/Helper name
+   * Default port for HTTP
    */
-  public static final Integer DEFAULT_PORT = 80;
+  static final Integer DEFAULT_PORT = 80;
 
 
   @Override

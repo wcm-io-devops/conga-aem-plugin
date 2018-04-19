@@ -37,7 +37,7 @@ public class HttpHostSslHelperTest {
   @SuppressWarnings("unchecked")
   @Before
   public void setUp() {
-    helper = new PluginManagerImpl().get(HttpHostHelperSsl.NAME, HelperPlugin.class);
+    helper = new PluginManagerImpl().get(HttpHostSslHelper.NAME, HelperPlugin.class);
   }
 
   @Test
@@ -69,7 +69,7 @@ public class HttpHostSslHelperTest {
 
   @Test
   public void testWithDefaultPort() throws Exception {
-    Object httpHost = executeHelper(helper, "localhost", new MockOptions().withHash(AbstractHostHelper.HASH_OPTION_PORT, HttpHostHelperSsl.DEFAULT_PORT));
+    Object httpHost = executeHelper(helper, "localhost", new MockOptions().withHash(AbstractHostHelper.HASH_OPTION_PORT, HttpHostSslHelper.DEFAULT_PORT));
     assertTrue(httpHost instanceof String);
     assertEquals("localhost", httpHost);
   }
