@@ -38,6 +38,41 @@ If you want to write a generic template that runs with and without having a cryp
 {{aemCryptoEncrypt passwordVariable ignoreMissingKey=true}}
 ```
 
+### httpHost
+
+Renders the HTTP host with port, when the port is not the default one (80).
+
+#### Example 1 (default port):
+
+```
+{{httpHost "localhost" port=80 }}
+```
+Result: `localhost`
+
+#### Example 2 (custom port):
+
+```
+{{httpHost "localhost" port=8080 }}
+```
+Result: `localhost:8080`
+
+### httpHostSsl
+
+Renders the SSL HTTP host with port, when the port is not the default one (443).
+
+#### Example 1 (default port):
+
+```
+{{httpHost "localhost" port=443 }}
+```
+Result: `localhost`
+
+#### Example 2 (custom port):
+
+```
+{{httpHost "localhost" port=8443 }}
+```
+Result: `localhost:8443`
 
 ### oakPasswordHash
 

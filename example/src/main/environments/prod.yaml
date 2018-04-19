@@ -21,6 +21,10 @@ tenants:
   config:
     domain: mysite.de
     website.hostname: www.${domain}
+    httpd:
+      serverPort: 8080
+      serverPortSsl: 8443
+      enforceSsl: true
 
 # Tenant with one tenant roles
 - tenant: tenant2

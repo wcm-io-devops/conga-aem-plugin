@@ -24,6 +24,9 @@
   <body>
 
     <release version="1.7.2" date="not relased">
+      <action type="add" dev="trichter">
+        Add handlebars helper httpHost and httpHostSsl in order to support non standard http ports in conga-aem-definitions.
+      </action>
       <action type="update" dev="sseifert">
         conga-aem-maven-plugin: Improve support for "feature model based service packs" by ensuring bundle "updater.aem-service-pkg" does not exist in bundle status check.
       </action>
