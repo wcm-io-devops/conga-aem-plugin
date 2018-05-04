@@ -23,7 +23,7 @@
     xsi:schemaLocation="http://maven.apache.org/changes/1.0.0 http://maven.apache.org/plugins/maven-changes-plugin/xsd/changes-1.0.0.xsd">
   <body>
 
-    <release version="1.7.2" date="not relased">
+    <release version="1.8.0" date="2018-05-04">
       <action type="add" dev="trichter">
         Add handlebars helper httpHost and httpHostSsl in order to support non standard http ports in conga-aem-definitions.
       </action>
