@@ -20,3 +20,7 @@ files:
 # Defines configuration parameters and default values
 config:
   website.hostname: host
+  httpd:
+    serverPort: 80
+    serverPortSsl: 443
+    enforceSsl: false

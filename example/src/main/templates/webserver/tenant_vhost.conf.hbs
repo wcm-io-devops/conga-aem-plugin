@@ -1,7 +1,17 @@
 # Example virtual host for {{tenant}}
 
-<VirtualHost *:80>
+<VirtualHost *:{{httpd.serverPort}}>
   DocumentRoot /www/{{tenant}}
   ServerName {{website.hostname}}
+
+
+{{# if httpd.enforceSsl }}
+  # homepage ssl redirect
+  RewriteRule ^/$ https://{{httpHostSsl website.hostname port=httpd.serverPortSsl}}/index.html [R=301,L]
+{{else}}
+  # homepage redirect
+  RewriteRule ^/$ http://{{httpHost website.hostname port=httpd.serverPort}}/index.html [R=301,L]
+{{/if}}
+
 
 </VirtualHost> 
