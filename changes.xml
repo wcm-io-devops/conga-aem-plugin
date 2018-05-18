@@ -23,7 +23,13 @@
     xsi:schemaLocation="http://maven.apache.org/changes/1.0.0 http://maven.apache.org/plugins/maven-changes-plugin/xsd/changes-1.0.0.xsd">
   <body>
 
-    <release version="1.8.2" date="2018-15-17">
+    <release version="1.8.4" date="2018-05-18">
+      <action type="update" dev="sseifert">
+        conga-aem-maven-plugin: Pass-through 'httpSocketTimeoutSec' property for package files to be installed.
+      </action>
+    </release>
+
+    <release version="1.8.2" date="2018-05-17">
       <action type="update" dev="sseifert">
         conga-aem-crypto-cli: Update to CONGA Ansible Plugin 1.1.0.
       </action>
