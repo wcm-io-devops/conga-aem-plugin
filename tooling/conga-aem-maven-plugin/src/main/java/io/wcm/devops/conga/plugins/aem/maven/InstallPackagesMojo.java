@@ -137,9 +137,10 @@ public final class InstallPackagesMojo extends AbstractContentPackageMojo {
           Boolean itemForce = (Boolean)file.get("force");
           Boolean itemRecursive = (Boolean)file.get("recursive");
           Integer itemDelayAfterInstallSec = (Integer)file.get("delayAfterInstallSec");
+          Integer httpSocketTimeoutSec = (Integer)file.get("httpSocketTimeoutSec");
 
           File packageFile = new File(parentDir, path);
-          items.add(toPackageFile(packageFile, itemInstall, itemForce, itemRecursive, itemDelayAfterInstallSec));
+          items.add(toPackageFile(packageFile, itemInstall, itemForce, itemRecursive, itemDelayAfterInstallSec, httpSocketTimeoutSec));
         }
       }
     }
@@ -149,7 +150,7 @@ public final class InstallPackagesMojo extends AbstractContentPackageMojo {
 
   private PackageFile toPackageFile(File file,
       Boolean itemInstall, Boolean itemForce, Boolean itemRecursive,
-      Integer itemDelayAfterInstallSec) {
+      Integer itemDelayAfterInstallSec, Integer httpSocketTimeoutSec) {
     PackageFile output = new PackageFile();
 
     output.setFile(file);
@@ -180,6 +181,7 @@ public final class InstallPackagesMojo extends AbstractContentPackageMojo {
     else {
       output.setDelayAfterInstallSecAutoDetect();
     }
+    output.setHttpSocketTimeoutSec(httpSocketTimeoutSec);
 
     return output;
   }
