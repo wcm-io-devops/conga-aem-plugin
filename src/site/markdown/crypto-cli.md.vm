@@ -12,7 +12,7 @@ _**Please note:** You need to install the [Java Cryptography Extension (JCE) Unl
 Download it from Maven Central:
 
 |---|---|---|
-| [CONGA AEM Crypto CLI tool](https://maven-badges.herokuapp.com/maven-central/io.wcm.devops.conga.plugins/conga-aem-crypto-cli) | [![Maven Central](https://maven-badges.herokuapp.com/maven-central/io.wcm.devops.conga.plugins/conga-aem-crypto-cli/badge.svg)](https://maven-badges.herokuapp.com/maven-central/io.wcm.devops.conga.plugins/conga-aem-crypto-cli) |
+| [CONGA AEM Crypto CLI tool](http://repo1.maven.org/maven2/io/wcm/devops/conga/plugins/conga-aem-crypto-cli/1.8.6/conga-aem-crypto-cli-${project.properties['releasedVersion.version']}-dist.zip) | [![Maven Central](https://maven-badges.herokuapp.com/maven-central/io.wcm.devops.conga.plugins/conga-aem-crypto-cli/badge.svg)](http://repo1.maven.org/maven2/io/wcm/devops/conga/plugins/conga-aem-crypto-cli/1.8.6/conga-aem-crypto-cli-${project.properties['releasedVersion.version']}-dist.zip) |
 
 
 ### Generate AEM crypto keys
