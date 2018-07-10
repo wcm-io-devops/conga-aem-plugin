@@ -24,13 +24,14 @@ import static io.wcm.devops.conga.plugins.aem.AemPluginConfig.PLUGIN_NAME;
 import static io.wcm.devops.conga.plugins.aem.handlebars.helper.AemCryptoEncryptHelper.HASH_IGNORE_MISSING_KEY;
 import static io.wcm.devops.conga.plugins.aem.handlebars.helper.TestUtils.assertHelper;
 import static io.wcm.devops.conga.plugins.aem.handlebars.helper.TestUtils.executeHelper;
-import static org.junit.Assert.assertNull;
-import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertNull;
+import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.io.IOException;
 
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 
 import com.google.common.collect.ImmutableMap;
 
@@ -52,7 +53,7 @@ public class AemCryptoEncryptHelperTest {
   private HelperContext pluginContext;
 
   @SuppressWarnings("unchecked")
-  @Before
+  @BeforeEach
   public void setUp() {
     PluginManager pluginManager = new PluginManagerImpl();
     helper = pluginManager.get(AemCryptoEncryptHelper.NAME, HelperPlugin.class);
@@ -70,9 +71,11 @@ public class AemCryptoEncryptHelperTest {
     assertNull(passwordHash);
   }
 
-  @Test(expected = IOException.class)
+  @Test
   public void testWithoutKey() throws Exception {
-    executeHelper(helper, INPUT, new MockOptions(), pluginContext);
+    assertThrows(IOException.class, () -> {
+      executeHelper(helper, INPUT, new MockOptions(), pluginContext);
+    });
   }
 
   @Test

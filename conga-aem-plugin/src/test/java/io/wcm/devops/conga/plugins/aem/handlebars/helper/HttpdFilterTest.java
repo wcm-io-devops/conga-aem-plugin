@@ -19,48 +19,63 @@
  */
 package io.wcm.devops.conga.plugins.aem.handlebars.helper;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNull;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNull;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 import com.google.common.collect.ImmutableMap;
 
 public class HttpdFilterTest {
 
-  @Test(expected = IllegalArgumentException.class)
+  @Test
   public void testEmpty() {
-    new HttpdFilter(ImmutableMap.of());
+    assertThrows(IllegalArgumentException.class, () -> {
+      new HttpdFilter(ImmutableMap.of());
+    });
   }
 
-  @Test(expected = IllegalArgumentException.class)
+  @Test
   public void testOnlyType() {
-    new HttpdFilter(ImmutableMap.of("type", "allow"));
+    assertThrows(IllegalArgumentException.class, () -> {
+      new HttpdFilter(ImmutableMap.of("type", "allow"));
+    });
   }
 
-  @Test(expected = IllegalArgumentException.class)
+  @Test
   public void testTypeMissing() {
-    new HttpdFilter(ImmutableMap.of("location", "/abc"));
+    assertThrows(IllegalArgumentException.class, () -> {
+      new HttpdFilter(ImmutableMap.of("location", "/abc"));
+    });
   }
 
-  @Test(expected = IllegalArgumentException.class)
+  @Test
   public void testIllegalType() {
-    new HttpdFilter(ImmutableMap.of("location", "/abc", "type", "this_is_not_a_valid_value"));
+    assertThrows(IllegalArgumentException.class, () -> {
+      new HttpdFilter(ImmutableMap.of("location", "/abc", "type", "this_is_not_a_valid_value"));
+    });
   }
 
-  @Test(expected = IllegalArgumentException.class)
+  @Test
   public void testIllegalRegexp() {
-    new HttpdFilter(ImmutableMap.of("locationMatch", "(abc", "type", "allow"));
+    assertThrows(IllegalArgumentException.class, () -> {
+      new HttpdFilter(ImmutableMap.of("locationMatch", "(abc", "type", "allow"));
+    });
   }
 
-  @Test(expected = IllegalArgumentException.class)
+  @Test
   public void testInvalidParam() {
-    new HttpdFilter(ImmutableMap.of("location", "/abc", "type", "allow", "invalidParam", "value"));
+    assertThrows(IllegalArgumentException.class, () -> {
+      new HttpdFilter(ImmutableMap.of("location", "/abc", "type", "allow", "invalidParam", "value"));
+    });
   }
 
-  @Test(expected = IllegalArgumentException.class)
+  @Test
   public void testMoreThanOneTargetParam() {
-    new HttpdFilter(ImmutableMap.of("location", "/abc", "locationMatch", "/abc(/.*)?", "type", "allow"));
+    assertThrows(IllegalArgumentException.class, () -> {
+      new HttpdFilter(ImmutableMap.of("location", "/abc", "locationMatch", "/abc(/.*)?", "type", "allow"));
+    });
   }
 
   @Test

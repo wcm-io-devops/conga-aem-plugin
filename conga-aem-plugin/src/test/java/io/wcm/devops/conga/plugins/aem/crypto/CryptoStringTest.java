@@ -19,14 +19,14 @@
  */
 package io.wcm.devops.conga.plugins.aem.crypto;
 
-import static org.junit.Assert.assertArrayEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertArrayEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 public class CryptoStringTest {
-
 
   @Test
   public void testIsCryptoString() {
@@ -52,24 +52,32 @@ public class CryptoStringTest {
   }
 
 
-  @Test(expected = IllegalArgumentException.class)
+  @Test
   public void testToByteArrayNull() throws Exception {
-    CryptoString.toByteArray(null);
+    assertThrows(IllegalArgumentException.class, () -> {
+      CryptoString.toByteArray(null);
+    });
   }
 
-  @Test(expected = IllegalArgumentException.class)
+  @Test
   public void testToByteArrayIllegalString() throws Exception {
-    CryptoString.toByteArray("abc");
+    assertThrows(IllegalArgumentException.class, () -> {
+      CryptoString.toByteArray("abc");
+    });
   }
 
-  @Test(expected = IllegalArgumentException.class)
+  @Test
   public void testToStringNull() throws Exception {
-    CryptoString.toString(null);
+    assertThrows(IllegalArgumentException.class, () -> {
+      CryptoString.toString(null);
+    });
   }
 
-  @Test(expected = IllegalArgumentException.class)
+  @Test
   public void testToStringEmptyArray() throws Exception {
-    CryptoString.toString(new byte[0]);
+    assertThrows(IllegalArgumentException.class, () -> {
+      CryptoString.toString(new byte[0]);
+    });
   }
 
 }

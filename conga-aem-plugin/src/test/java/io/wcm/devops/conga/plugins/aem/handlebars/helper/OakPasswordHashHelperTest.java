@@ -20,13 +20,13 @@
 package io.wcm.devops.conga.plugins.aem.handlebars.helper;
 
 import static io.wcm.devops.conga.plugins.aem.handlebars.helper.TestUtils.executeHelper;
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNull;
-import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import org.apache.jackrabbit.oak.spi.security.user.util.PasswordUtil;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 
 import io.wcm.devops.conga.generator.spi.handlebars.HelperPlugin;
 import io.wcm.devops.conga.generator.util.PluginManagerImpl;
@@ -39,7 +39,7 @@ public class OakPasswordHashHelperTest {
   private HelperPlugin<Object> helper;
 
   @SuppressWarnings("unchecked")
-  @Before
+  @BeforeEach
   public void setUp() {
     helper = new PluginManagerImpl().get(OakPasswordHashHelper.NAME, HelperPlugin.class);
   }

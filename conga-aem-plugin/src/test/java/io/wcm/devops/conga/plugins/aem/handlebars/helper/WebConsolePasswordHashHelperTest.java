@@ -20,14 +20,15 @@
 package io.wcm.devops.conga.plugins.aem.handlebars.helper;
 
 import static io.wcm.devops.conga.plugins.aem.handlebars.helper.TestUtils.executeHelper;
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNull;
-import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNull;
+import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.io.IOException;
 
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 
 import io.wcm.devops.conga.generator.spi.handlebars.HelperPlugin;
 import io.wcm.devops.conga.generator.util.PluginManagerImpl;
@@ -41,7 +42,7 @@ public class WebConsolePasswordHashHelperTest {
   private HelperPlugin<Object> helper;
 
   @SuppressWarnings("unchecked")
-  @Before
+  @BeforeEach
   public void setUp() {
     helper = new PluginManagerImpl().get(WebConsolePasswordHashHelper.NAME, HelperPlugin.class);
   }
@@ -71,16 +72,20 @@ public class WebConsolePasswordHashHelperTest {
     assertEquals(PASSWORD_HASH_SHA512, passwordHash);
   }
 
-  @Test(expected = IOException.class)
+  @Test
   public void testInvalidHashAlgorithm() throws Exception {
-    Object passwordHash = executeHelper(helper, PASSWORD_PLAIN, new MockOptions().withHash(WebConsolePasswordHashHelper.HASH_OPTION_ALGORITHM, "invalid"));
-    assertEquals(PASSWORD_HASH_SHA256, passwordHash);
+    assertThrows(IOException.class, () -> {
+      Object passwordHash = executeHelper(helper, PASSWORD_PLAIN, new MockOptions().withHash(WebConsolePasswordHashHelper.HASH_OPTION_ALGORITHM, "invalid"));
+      assertEquals(PASSWORD_HASH_SHA256, passwordHash);
+    });
   }
 
-  @Test(expected = IOException.class)
+  @Test
   public void testInvalidEncoding() throws Exception {
-    Object passwordHash = executeHelper(helper, PASSWORD_PLAIN, new MockOptions().withHash(WebConsolePasswordHashHelper.HASH_OPTION_ENCODING, "invalid"));
-    assertEquals(PASSWORD_HASH_SHA256, passwordHash);
+    assertThrows(IOException.class, () -> {
+      Object passwordHash = executeHelper(helper, PASSWORD_PLAIN, new MockOptions().withHash(WebConsolePasswordHashHelper.HASH_OPTION_ENCODING, "invalid"));
+      assertEquals(PASSWORD_HASH_SHA256, passwordHash);
+    });
   }
 
 }

@@ -19,15 +19,16 @@
  */
 package io.wcm.devops.conga.plugins.aem.validator;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.io.File;
 import java.nio.charset.StandardCharsets;
 
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 
 import io.wcm.devops.conga.generator.spi.ValidationException;
 import io.wcm.devops.conga.generator.spi.ValidatorPlugin;
@@ -38,7 +39,7 @@ public class AnyValidatorTest {
 
   private ValidatorPlugin underTest;
 
-  @Before
+  @BeforeEach
   public void setUp() {
     underTest = new PluginManagerImpl().get(AnyValidator.NAME, ValidatorPlugin.class);
   }
@@ -59,12 +60,14 @@ public class AnyValidatorTest {
     underTest.apply(fileContext, null);
   }
 
-  @Test(expected = ValidationException.class)
+  @Test
   public void testInvalid() throws Exception {
     File file = new File(getClass().getResource("/any/invalidAny.any").toURI());
     FileContext fileContext = new FileContext().file(file).charset(StandardCharsets.ISO_8859_1);
     assertTrue(underTest.accepts(fileContext, null));
-    underTest.apply(fileContext, null);
+    assertThrows(ValidationException.class, () -> {
+      underTest.apply(fileContext, null);
+    });
   }
 
   @Test

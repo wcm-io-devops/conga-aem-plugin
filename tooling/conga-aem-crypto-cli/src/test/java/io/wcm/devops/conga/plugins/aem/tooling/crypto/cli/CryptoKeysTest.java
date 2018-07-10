@@ -19,8 +19,8 @@
  */
 package io.wcm.devops.conga.plugins.aem.tooling.crypto.cli;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.io.File;
 import java.util.List;
@@ -28,9 +28,9 @@ import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 import org.apache.commons.io.FileUtils;
-import org.junit.After;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 
 import io.wcm.devops.conga.plugins.ansible.util.AnsibleVaultPassword;
 
@@ -38,7 +38,7 @@ public class CryptoKeysTest {
 
   private File targetFolder;
 
-  @Before
+  @BeforeEach
   public void setUp() throws Exception {
     // create temp directory path
     targetFolder = File.createTempFile(getClass().getName(), null);
@@ -47,7 +47,7 @@ public class CryptoKeysTest {
     System.setProperty(AnsibleVaultPassword.SYSTEM_PROPERTY_PASSWORD, "test123");
   }
 
-  @After
+  @AfterEach
   public void tearDown() throws Exception {
     FileUtils.deleteDirectory(targetFolder);
   }
