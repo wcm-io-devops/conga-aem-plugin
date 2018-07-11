@@ -27,6 +27,9 @@
       <action type="fix" dev="sseifert">
         conga-aem-maven-plugin: Fix parsing of model YAML files which contain custom tags.
       </action>
+      <action type="fix" dev="sseifert" issue="WTOOL-47">
+        conga-aem-maven-plugin: Improve error handling when call to bundle status URL fails.
+      </action>
     </release>
 
     <release version="1.8.6" date="2018-05-22">
