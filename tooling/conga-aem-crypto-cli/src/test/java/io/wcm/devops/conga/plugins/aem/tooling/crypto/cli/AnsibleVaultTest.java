@@ -26,6 +26,7 @@ import java.io.File;
 import java.nio.charset.StandardCharsets;
 
 import org.apache.commons.io.FileUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -58,6 +59,25 @@ public class AnsibleVaultTest {
     AnsibleVault.encrypt(testFile);
     String content = FileUtils.readFileToString(testFile, StandardCharsets.UTF_8);
     assertNotEquals(TEST_CONTENT, content);
+
+    // decrypt file
+    AnsibleVault.decrypt(testFile);
+    content = FileUtils.readFileToString(testFile, StandardCharsets.UTF_8);
+    assertEquals(TEST_CONTENT, content);
+  }
+
+  @Test
+  public void testEncryptDecryptWithCarriageReturns() throws Exception {
+    FileUtils.write(testFile, TEST_CONTENT, StandardCharsets.UTF_8);
+
+    // encrypt file
+    AnsibleVault.encrypt(testFile);
+    String content = FileUtils.readFileToString(testFile, StandardCharsets.UTF_8);
+    assertNotEquals(TEST_CONTENT, content);
+
+    // replace \n with \r\n to simulate new lines on windows file systems
+    content = StringUtils.replace(content, "\n", "\r\n");
+    FileUtils.write(testFile, content, StandardCharsets.UTF_8);
 
     // decrypt file
     AnsibleVault.decrypt(testFile);
