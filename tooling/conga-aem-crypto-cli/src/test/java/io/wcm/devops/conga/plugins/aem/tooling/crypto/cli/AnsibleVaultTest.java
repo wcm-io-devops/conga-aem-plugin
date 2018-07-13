@@ -19,16 +19,17 @@
  */
 package io.wcm.devops.conga.plugins.aem.tooling.crypto.cli;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotEquals;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotEquals;
 
 import java.io.File;
 import java.nio.charset.StandardCharsets;
 
 import org.apache.commons.io.FileUtils;
-import org.junit.After;
-import org.junit.Before;
-import org.junit.Test;
+import org.apache.commons.lang3.StringUtils;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 
 import io.wcm.devops.conga.plugins.ansible.util.AnsibleVaultPassword;
 
@@ -38,14 +39,14 @@ public class AnsibleVaultTest {
 
   private File testFile;
 
-  @Before
+  @BeforeEach
   public void setUp() throws Exception {
     testFile = File.createTempFile(getClass().getName(), null);
 
     System.setProperty(AnsibleVaultPassword.SYSTEM_PROPERTY_PASSWORD, "test123");
   }
 
-  @After
+  @AfterEach
   public void tearDown() {
     testFile.delete();
   }
@@ -58,6 +59,25 @@ public class AnsibleVaultTest {
     AnsibleVault.encrypt(testFile);
     String content = FileUtils.readFileToString(testFile, StandardCharsets.UTF_8);
     assertNotEquals(TEST_CONTENT, content);
+
+    // decrypt file
+    AnsibleVault.decrypt(testFile);
+    content = FileUtils.readFileToString(testFile, StandardCharsets.UTF_8);
+    assertEquals(TEST_CONTENT, content);
+  }
+
+  @Test
+  public void testEncryptDecryptWithCarriageReturns() throws Exception {
+    FileUtils.write(testFile, TEST_CONTENT, StandardCharsets.UTF_8);
+
+    // encrypt file
+    AnsibleVault.encrypt(testFile);
+    String content = FileUtils.readFileToString(testFile, StandardCharsets.UTF_8);
+    assertNotEquals(TEST_CONTENT, content);
+
+    // replace \n with \r\n to simulate new lines on windows file systems
+    content = StringUtils.replace(content, "\n", "\r\n");
+    FileUtils.write(testFile, content, StandardCharsets.UTF_8);
 
     // decrypt file
     AnsibleVault.decrypt(testFile);

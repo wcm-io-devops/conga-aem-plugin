@@ -19,9 +19,9 @@
  */
 package io.wcm.devops.conga.plugins.aem.util;
 
-import static org.junit.Assert.assertArrayEquals;
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertArrayEquals;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 import java.io.InputStream;
 import java.math.BigDecimal;
@@ -29,8 +29,8 @@ import java.util.Calendar;
 import java.util.Map;
 import java.util.TimeZone;
 
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 
 import io.wcm.tooling.commons.contentpackagebuilder.element.ContentElement;
 
@@ -39,7 +39,7 @@ public class JsonContentLoaderTest {
   private JsonContentLoader underTest;
   private ContentElement content;
 
-  @Before
+  @BeforeEach
   public void setUp() throws Exception {
     underTest = new JsonContentLoader();
     try (InputStream is = getClass().getResourceAsStream("/json/content.json")) {

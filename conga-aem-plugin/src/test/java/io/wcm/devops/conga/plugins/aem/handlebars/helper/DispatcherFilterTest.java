@@ -19,46 +19,59 @@
  */
 package io.wcm.devops.conga.plugins.aem.handlebars.helper;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNull;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNull;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
 import java.util.HashMap;
 import java.util.Map;
 
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 import com.google.common.collect.ImmutableMap;
 
 public class DispatcherFilterTest {
 
-  @Test(expected = IllegalArgumentException.class)
+  @Test
   public void testEmpty() {
-    new DispatcherFilter(ImmutableMap.of());
+    assertThrows(IllegalArgumentException.class, () -> {
+      new DispatcherFilter(ImmutableMap.of());
+    });
   }
 
-  @Test(expected = IllegalArgumentException.class)
+  @Test
   public void testOnlyType() {
-    new DispatcherFilter(ImmutableMap.of("type", "allow"));
+    assertThrows(IllegalArgumentException.class, () -> {
+      new DispatcherFilter(ImmutableMap.of("type", "allow"));
+    });
   }
 
-  @Test(expected = IllegalArgumentException.class)
+  @Test
   public void testTypeMissing() {
-    new DispatcherFilter(ImmutableMap.of("glob", "abc"));
+    assertThrows(IllegalArgumentException.class, () -> {
+      new DispatcherFilter(ImmutableMap.of("glob", "abc"));
+    });
   }
 
-  @Test(expected = IllegalArgumentException.class)
+  @Test
   public void testIllegalType() {
-    new DispatcherFilter(ImmutableMap.of("glob", "abc", "type", "this_is_not_a_valid_value"));
+    assertThrows(IllegalArgumentException.class, () -> {
+      new DispatcherFilter(ImmutableMap.of("glob", "abc", "type", "this_is_not_a_valid_value"));
+    });
   }
 
-  @Test(expected = IllegalArgumentException.class)
+  @Test
   public void testIllegalRegexp() {
-    new DispatcherFilter(ImmutableMap.of("glob", "(abc", "type", "allow"));
+    assertThrows(IllegalArgumentException.class, () -> {
+      new DispatcherFilter(ImmutableMap.of("glob", "(abc", "type", "allow"));
+    });
   }
 
-  @Test(expected = IllegalArgumentException.class)
+  @Test
   public void testInvalidParam() {
-    new DispatcherFilter(ImmutableMap.of("glob", "abc", "type", "allow", "invalidParam", "value"));
+    assertThrows(IllegalArgumentException.class, () -> {
+      new DispatcherFilter(ImmutableMap.of("glob", "abc", "type", "allow", "invalidParam", "value"));
+    });
   }
 
   @Test

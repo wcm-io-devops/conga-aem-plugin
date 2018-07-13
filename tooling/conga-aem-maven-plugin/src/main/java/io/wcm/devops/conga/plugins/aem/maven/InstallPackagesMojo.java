@@ -114,7 +114,7 @@ public final class InstallPackagesMojo extends AbstractContentPackageMojo {
     try {
       try (InputStream is = new FileInputStream(modelFile);
           Reader reader = new InputStreamReader(is, CharEncoding.UTF_8)) {
-        Yaml yaml = new Yaml();
+        Yaml yaml = YamlUtil.createYaml();
         return yaml.loadAs(reader, Map.class);
       }
     }

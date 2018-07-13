@@ -24,8 +24,8 @@ import static io.wcm.devops.conga.plugins.aem.handlebars.helper.TestUtils.assert
 import java.util.HashMap;
 import java.util.Map;
 
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 
 import com.google.common.collect.ImmutableMap;
 
@@ -37,7 +37,7 @@ public class AemDispatcherFilterHelperTest {
   private HelperPlugin<Object> helper;
 
   @SuppressWarnings("unchecked")
-  @Before
+  @BeforeEach
   public void setUp() {
     helper = new PluginManagerImpl().get(AemDispatcherFilterHelper.NAME, HelperPlugin.class);
   }

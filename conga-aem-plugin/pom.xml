@@ -25,13 +25,13 @@
   <parent>
     <groupId>io.wcm.devops</groupId>
     <artifactId>io.wcm.devops.parent_toplevel</artifactId>
-    <version>1.0.10</version>
+    <version>1.1.0</version>
     <relativePath />
   </parent>
 
   <groupId>io.wcm.devops.conga.plugins</groupId>
   <artifactId>io.wcm.devops.conga.plugins.aem</artifactId>
-  <version>1.8.6</version>
+  <version>1.8.8</version>
   <packaging>jar</packaging>
 
   <name>CONGA AEM Plugin</name>
@@ -53,7 +53,7 @@
     <dependency>
       <groupId>io.wcm.devops.conga</groupId>
       <artifactId>io.wcm.devops.conga.generator</artifactId>
-      <version>1.8.0</version>
+      <version>1.9.2</version>
       <scope>compile</scope>
     </dependency>
 
@@ -73,7 +73,7 @@
     <dependency>
       <groupId>io.wcm.tooling.commons</groupId>
       <artifactId>io.wcm.tooling.commons.crx-packmgr-helper</artifactId>
-      <version>1.5.2</version>
+      <version>1.5.4</version>
       <scope>compile</scope>
     </dependency>
 
@@ -147,9 +147,15 @@
       <scope>test</scope>
     </dependency>
     <dependency>
-      <groupId>xmlunit</groupId>
-      <artifactId>xmlunit</artifactId>
-      <version>1.6</version>
+      <groupId>org.xmlunit</groupId>
+      <artifactId>xmlunit-core</artifactId>
+      <version>2.6.0</version>
+      <scope>test</scope>
+    </dependency>
+    <dependency>
+      <groupId>org.xmlunit</groupId>
+      <artifactId>xmlunit-legacy</artifactId>
+      <version>2.6.0</version>
       <scope>test</scope>
     </dependency>
     <dependency>

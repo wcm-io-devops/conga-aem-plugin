@@ -19,18 +19,17 @@
  */
 package io.wcm.devops.conga.plugins.aem.crypto.impl;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.security.Key;
 
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 import io.wcm.devops.conga.plugins.aem.crypto.CryptoKeySupport;
 import io.wcm.devops.conga.plugins.aem.crypto.CryptoString;
 import io.wcm.devops.conga.plugins.aem.crypto.CryptoSupport;
-
 
 public class AesCryptoSupportTest {
 

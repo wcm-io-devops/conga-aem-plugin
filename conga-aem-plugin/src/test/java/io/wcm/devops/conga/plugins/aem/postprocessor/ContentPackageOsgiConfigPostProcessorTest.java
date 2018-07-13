@@ -27,10 +27,10 @@ import static io.wcm.devops.conga.plugins.aem.postprocessor.ContentPackageOption
 import static io.wcm.devops.conga.plugins.aem.postprocessor.ContentPackageTestUtil.getDataFromZip;
 import static io.wcm.devops.conga.plugins.aem.postprocessor.ContentPackageTestUtil.getXmlFromZip;
 import static org.custommonkey.xmlunit.XMLAssert.assertXpathEvaluatesTo;
-import static org.junit.Assert.assertArrayEquals;
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertArrayEquals;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.io.ByteArrayInputStream;
 import java.io.File;
@@ -42,8 +42,8 @@ import java.util.Map;
 
 import org.apache.commons.io.FileUtils;
 import org.apache.felix.cm.file.ConfigurationHandler;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import org.slf4j.LoggerFactory;
 import org.w3c.dom.Document;
 import org.zeroturnaround.zip.ZipUtil;
@@ -68,7 +68,7 @@ public class ContentPackageOsgiConfigPostProcessorTest {
       PROPERTY_PACKAGE_VERSION, "1.5",
       PROPERTY_PACKAGE_ROOT_PATH, "/apps/test/config");
 
-  @Before
+  @BeforeEach
   public void setUp() {
     underTest = new PluginManagerImpl().get(ContentPackageOsgiConfigPostProcessor.NAME, PostProcessorPlugin.class);
   }

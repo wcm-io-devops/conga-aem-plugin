@@ -19,15 +19,15 @@
  */
 package io.wcm.devops.conga.plugins.aem.postprocessor;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNull;
-import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.io.File;
 import java.util.Map;
 
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import org.slf4j.LoggerFactory;
 
 import io.wcm.devops.conga.generator.spi.PostProcessorPlugin;
@@ -41,7 +41,7 @@ public class ContentPackagePropertiesPostProcessorTest {
 
   private PostProcessorPlugin underTest;
 
-  @Before
+  @BeforeEach
   public void setUp() {
     underTest = new PluginManagerImpl().get(ContentPackagePropertiesPostProcessor.NAME, PostProcessorPlugin.class);
   }

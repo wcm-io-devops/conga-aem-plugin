@@ -23,13 +23,13 @@
   <parent>
     <groupId>io.wcm.devops</groupId>
     <artifactId>io.wcm.devops.parent_toplevel</artifactId>
-    <version>1.0.10</version>
+    <version>1.1.0</version>
     <relativePath />
   </parent>
 
   <groupId>io.wcm.devops.conga.plugins</groupId>
   <artifactId>io.wcm.devops.conga.plugins.aem.root</artifactId>
-  <version>1.8.6</version>
+  <version>1.8.8</version>
   <packaging>pom</packaging>
 
   <name>CONGA AEM Plugin</name>
@@ -65,6 +65,20 @@
         <configuration>
           <skip>true</skip>
         </configuration>
+      </plugin>
+
+      <!-- Set property ${releasedVersion.version} for current project - to be used in maven site -->
+      <plugin>
+        <groupId>org.codehaus.mojo</groupId>
+        <artifactId>build-helper-maven-plugin</artifactId>
+        <executions>
+          <execution>
+            <id>released-version</id>
+            <goals>
+              <goal>released-version</goal>
+            </goals>
+          </execution>
+        </executions>
       </plugin>
 
     </plugins>
