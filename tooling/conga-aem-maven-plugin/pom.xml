@@ -51,13 +51,13 @@
     <dependency>
       <groupId>io.wcm.devops.conga</groupId>
       <artifactId>io.wcm.devops.conga.generator</artifactId>
-      <version>1.9.1-SNAPSHOT</version>
+      <version>1.9.2</version>
       <scope>compile</scope>
     </dependency>
     <dependency>
       <groupId>io.wcm.devops.conga.plugins</groupId>
       <artifactId>io.wcm.devops.conga.plugins.ansible</artifactId>
-      <version>1.1.1-SNAPSHOT</version>
+      <version>1.2.0</version>
       <scope>compile</scope>
     </dependency>
 
@@ -99,7 +99,7 @@
     <dependency>
       <groupId>io.wcm.tooling.commons</groupId>
       <artifactId>io.wcm.tooling.commons.crx-packmgr-helper</artifactId>
-      <version>1.5.3-SNAPSHOT</version>
+      <version>1.5.4</version>
       <scope>compile</scope>
     </dependency>
   </dependencies>
