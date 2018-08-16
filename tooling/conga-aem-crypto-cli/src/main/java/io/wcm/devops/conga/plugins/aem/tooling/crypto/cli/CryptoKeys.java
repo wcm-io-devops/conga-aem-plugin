@@ -49,17 +49,29 @@ public final class CryptoKeys {
    * @throws GeneralSecurityException Security exception
    */
   public static Stream<File> generate(File targetDir, boolean ansibleVaultEncrypt) throws GeneralSecurityException {
+    return generate(targetDir, ansibleVaultEncrypt, AnsibleVaultPassword.get());
+  }
+
+  /**
+   * Generates AES and HMAC crypto keys for AEM.
+   * @param targetDir Target directory
+   * @param ansibleVaultEncrypt If true, the crypto keys are encrypted with Ansible Vault.
+   * @param ansibleVaultPassword Ansible Vault Password
+   * @return Generated files
+   * @throws GeneralSecurityException Security exception
+   */
+  public static Stream<File> generate(File targetDir, boolean ansibleVaultEncrypt,
+      String ansibleVaultPassword) throws GeneralSecurityException {
     Stream<KeyItem> keys = Stream.of(
         new KeyItem("master", new AesCryptoSupport().generateKey().getEncoded()),
         new KeyItem("hmac", new HmacCryptoKeySupport().generateKey().getEncoded()));
     if (ansibleVaultEncrypt) {
-      keys = encryptKeys(keys);
+      keys = encryptKeys(keys, ansibleVaultPassword);
     }
     return writeKeys(keys, targetDir);
   }
 
-  private static Stream<KeyItem> encryptKeys(Stream<KeyItem> keys) {
-    String password = AnsibleVaultPassword.get();
+  private static Stream<KeyItem> encryptKeys(Stream<KeyItem> keys, String password) {
     return keys.map(key -> {
       try {
         return new KeyItem(key.getName(), VaultHandler.encrypt(key.getData(), password));

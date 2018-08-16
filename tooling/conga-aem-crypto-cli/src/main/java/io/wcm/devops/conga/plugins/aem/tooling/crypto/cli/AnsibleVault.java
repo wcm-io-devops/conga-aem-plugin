@@ -44,9 +44,19 @@ public final class AnsibleVault {
    * @throws IOException I/O exception
    */
   public static void encrypt(File file) throws IOException {
+    encrypt(file, AnsibleVaultPassword.get());
+  }
+
+  /**
+   * Encrypts file with Ansible vault.
+   * @param file File to encrypt
+   * @param ansibleVaultPassword Ansible Vault Password
+   * @throws IOException I/O exception
+   */
+  public static void encrypt(File file, String ansibleVaultPassword) throws IOException {
     handleFile(file, data -> {
       try {
-        return VaultHandler.encrypt(data, AnsibleVaultPassword.get());
+        return VaultHandler.encrypt(data, ansibleVaultPassword);
       }
       catch (IOException ex) {
         throw new RuntimeException("Unable to encrypt file " + file.getPath(), ex);
@@ -60,9 +70,19 @@ public final class AnsibleVault {
    * @throws IOException I/O exception
    */
   public static void decrypt(File file) throws IOException {
+    decrypt(file, AnsibleVaultPassword.get());
+  }
+
+  /**
+   * Decrypts file with Ansible vault.
+   * @param file File to decrypt
+   * @param ansibleVaultPassword Ansible Vault Password
+   * @throws IOException I/O exception
+   */
+  public static void decrypt(File file, String ansibleVaultPassword) throws IOException {
     handleFile(file, data -> {
       try {
-        return VaultHandler.decrypt(data, AnsibleVaultPassword.get());
+        return VaultHandler.decrypt(data, ansibleVaultPassword);
       }
       catch (IOException ex) {
         throw new RuntimeException("Unable to decrypt file " + file.getPath(), ex);
