@@ -28,7 +28,7 @@
         aem-contentpackage-properties plugin: Also support "jar" file extension for AEM content packages (but only when explicitly defined as post processor).
       </action>
       <action type="update" dev="sseifert">
-        Update dependencies.
+        Read Felix ConfigAdmin configuration files with latest version (1.9.14), but write it using the old file format form ConfigAdmin 1.8.4 to support AEM 6.1 and below.
       </action>
     </release>
 
