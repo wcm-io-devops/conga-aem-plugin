@@ -25,7 +25,7 @@
   <parent>
     <groupId>io.wcm.devops</groupId>
     <artifactId>io.wcm.devops.parent_toplevel</artifactId>
-    <version>1.1.2</version>
+    <version>1.1.4</version>
     <relativePath />
   </parent>
 
@@ -60,20 +60,20 @@
     <dependency>
       <groupId>io.wcm.devops.conga.plugins</groupId>
       <artifactId>io.wcm.devops.conga.plugins.sling</artifactId>
-      <version>1.2.5-SNAPSHOT</version>
+      <version>1.2.6</version>
       <scope>compile</scope>
     </dependency>
 
     <dependency>
       <groupId>io.wcm.tooling.commons</groupId>
       <artifactId>io.wcm.tooling.commons.content-package-builder</artifactId>
-      <version>1.4.0</version>
+      <version>1.4.2</version>
       <scope>compile</scope>
     </dependency>
     <dependency>
       <groupId>io.wcm.tooling.commons</groupId>
       <artifactId>io.wcm.tooling.commons.crx-packmgr-helper</artifactId>
-      <version>1.5.9-SNAPSHOT</version>
+      <version>1.5.10</version>
       <scope>compile</scope>
     </dependency>
 
