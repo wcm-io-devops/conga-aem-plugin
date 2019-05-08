@@ -52,6 +52,7 @@ public class ContentPackagePropertiesPostProcessor extends AbstractPostProcessor
   public static final String MODEL_OPTIONS_PROPERTY = "aemContentPackageProperties";
 
   private static final String FILE_EXTENSION = "zip";
+  private static final String ALTERNATE_FILE_EXTENSION = "jar";
 
   @Override
   public String getName() {
@@ -60,12 +61,18 @@ public class ContentPackagePropertiesPostProcessor extends AbstractPostProcessor
 
   @Override
   public boolean accepts(FileContext file, PostProcessorContext context) {
-    return FileUtil.matchesExtension(file, FILE_EXTENSION);
+    return FileUtil.matchesExtension(file, FILE_EXTENSION)
+        || FileUtil.matchesExtension(file, ALTERNATE_FILE_EXTENSION);
   }
 
   @Override
   public ImplicitApplyOptions implicitApply(FileContext file, PostProcessorContext context) {
-    return ImplicitApplyOptions.ALWAYS;
+    if (FileUtil.matchesExtension(file, FILE_EXTENSION)) {
+      return ImplicitApplyOptions.ALWAYS;
+    }
+    else {
+      return ImplicitApplyOptions.NEVER;
+    }
   }
 
   @Override

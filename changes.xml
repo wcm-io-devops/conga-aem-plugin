@@ -23,6 +23,15 @@
     xsi:schemaLocation="http://maven.apache.org/changes/1.0.0 http://maven.apache.org/plugins/maven-changes-plugin/xsd/changes-1.0.0.xsd">
   <body>
 
+    <release version="1.8.14" date="2019-05-08">
+      <action type="update" dev="sseifert">
+        aem-contentpackage-properties plugin: Also support "jar" file extension for AEM content packages (but only when explicitly defined as post processor).
+      </action>
+      <action type="update" dev="sseifert">
+        Read Felix ConfigAdmin configuration files with latest version (1.9.14), but write it using the old file format form ConfigAdmin 1.8.4 to support AEM 6.1 and below.
+      </action>
+    </release>
+
     <release version="1.8.12" date="2018-10-17">
       <action type="update" dev="sseifert">
         conga-aem-maven-plugin: Fix display of active bundles when checking bundle display.

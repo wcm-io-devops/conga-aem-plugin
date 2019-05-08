@@ -36,7 +36,6 @@ import java.util.Map;
 
 import org.apache.commons.io.FilenameUtils;
 import org.apache.commons.lang3.StringUtils;
-import org.apache.felix.cm.file.ConfigurationHandler;
 import org.apache.sling.provisioning.model.Model;
 import org.slf4j.Logger;
 
@@ -50,6 +49,7 @@ import io.wcm.devops.conga.generator.spi.context.FileHeaderContext;
 import io.wcm.devops.conga.generator.spi.context.PostProcessorContext;
 import io.wcm.devops.conga.plugins.aem.util.ContentPackageUtil;
 import io.wcm.devops.conga.plugins.sling.util.ConfigConsumer;
+import io.wcm.devops.conga.plugins.sling.util.OsgiConfigUtil;
 import io.wcm.devops.conga.plugins.sling.util.ProvisioningUtil;
 import io.wcm.tooling.commons.contentpackagebuilder.ContentPackage;
 import io.wcm.tooling.commons.contentpackagebuilder.ContentPackageBuilder;
@@ -139,7 +139,7 @@ public class ContentPackageOsgiConfigPostProcessor extends AbstractPostProcessor
         // write configuration to temporary file
         File tempFile = File.createTempFile(NAME, ".config");
         try (OutputStream os = new FileOutputStream(tempFile)) {
-          ConfigurationHandler.write(os, properties);
+          OsgiConfigUtil.write(os, properties);
         }
         try {
           FileContext tempFileContext = new FileContext().file(tempFile).charset(StandardCharsets.UTF_8);
