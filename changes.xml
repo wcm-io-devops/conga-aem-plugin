@@ -23,6 +23,12 @@
     xsi:schemaLocation="http://maven.apache.org/changes/1.0.0 http://maven.apache.org/plugins/maven-changes-plugin/xsd/changes-1.0.0.xsd">
   <body>
 
+    <release version="1.9.0" date="not released">
+      <action type="add" dev="sseifert" issue="WTOOL-52">
+        conga-aem-maven-plugin: Add "Bundle Status Whitelist Bundle Names" property to define list of bundles ignored by bundle status check.
+      </action>
+    </release>
+
     <release version="1.8.14" date="2019-05-08">
       <action type="update" dev="sseifert">
         aem-contentpackage-properties plugin: Also support "jar" file extension for AEM content packages (but only when explicitly defined as post processor).
