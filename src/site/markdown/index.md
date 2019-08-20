@@ -31,7 +31,7 @@ Additionally the CONGA AEM Maven plugin is provided which allows to deploy a bun
 
 ### Further Resources
 
-* [wcm.io CONGA training material with exercises](http://training.wcm.io/conga/)
+* [wcm.io CONGA training material with exercises](https://training.wcm.io/conga/)
 * [adaptTo() 2015 Talk: CONGA - Configuration generation for Sling and AEM](https://adapt.to/2015/en/schedule/conga---configuration-generation-for-sling-and-aem.html)
 * [adaptTo() 2017 Talk: Automate AEM Deployment with Ansible and wcm.io CONGA](https://adapt.to/2017/en/schedule/automate-aem-deployment-with-ansible-and-wcm-io-conga.html)
 
@@ -43,7 +43,7 @@ Additionally the CONGA AEM Maven plugin is provided which allows to deploy a bun
 [plugindocs]: conga-aem-maven-plugin/plugin-info.html
 [changelog]: changes-report.html
 [aem]: http://www.adobe.com/solutions/web-experience-management.html
-[conga]: http://devops.wcm.io/conga/
-[conga-sling]: http://devops.wcm.io/conga/plugins/sling/
+[conga]: https://devops.wcm.io/conga/
+[conga-sling]: https://devops.wcm.io/conga/plugins/sling/
 [handlebars-helpers]: handlebars-helpers.html
 [crypto-cli]: crypto-cli.html

@@ -76,5 +76,5 @@ With the post-processor plugin `aem-contentpackage-properties` is applied automa
 The model YAML file can be exported during CONGA generation and provides the necessary runtime information for deployment tools like Ansible.
 
 
-[conga-extensibility]: http://devops.wcm.io/conga/extensibility.html
+[conga-extensibility]: https://devops.wcm.io/conga/extensibility.html
 [sling-provisioning]: https://sling.apache.org/documentation/development/slingstart.html

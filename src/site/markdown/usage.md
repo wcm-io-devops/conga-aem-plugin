@@ -41,5 +41,5 @@ This looks for a file `target/configuration/env1/node1/model.yaml`, identifies a
 The plugin uses the same resilience logic for package uploading as the [wcm.io Content Package Maven Plugin][wcmio-content-package-maven-plugin].
 
 
-[conga-usage]: http://devops.wcm.io/conga/usage.html
-[wcmio-content-package-maven-plugin]: http://wcm.io/tooling/maven/plugins/wcmio-content-package-maven-plugin/
+[conga-usage]: https://devops.wcm.io/conga/usage.html
+[wcmio-content-package-maven-plugin]: https://wcm.io/tooling/maven/plugins/wcmio-content-package-maven-plugin/
