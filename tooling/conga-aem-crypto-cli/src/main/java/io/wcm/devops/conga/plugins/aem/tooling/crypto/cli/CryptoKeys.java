@@ -49,7 +49,11 @@ public final class CryptoKeys {
    * @throws GeneralSecurityException Security exception
    */
   public static Stream<File> generate(File targetDir, boolean ansibleVaultEncrypt) throws GeneralSecurityException {
-    return generate(targetDir, ansibleVaultEncrypt, AnsibleVaultPassword.get());
+    String ansibleVaultPassword = null;
+    if (ansibleVaultEncrypt) {
+      ansibleVaultPassword = AnsibleVaultPassword.get();
+    }
+    return generate(targetDir, ansibleVaultEncrypt, ansibleVaultPassword);
   }
 
   /**
