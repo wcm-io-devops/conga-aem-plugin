@@ -1,4 +1,7 @@
-## CONGA AEM Crypto CLI tool
+#set( $symbol_pound = '#' )
+#set( $symbol_dollar = '$' )
+#set( $symbol_escape = '\' )
+${symbol_pound}${symbol_pound} CONGA AEM Crypto CLI tool
 
 The CONGA AEM plugin also provides a command-line interface tool for generating new AEM crypto keys.
 
@@ -7,7 +10,7 @@ The generated keys are supported by AEM 6.3 and upwards.
 _**Please note:** You need to install the [Java Cryptography Extension (JCE) Unlimited Strength policy files][jce-policy] from Oracle, because Ansible uses 256 bit keys to handle encryption and decryption of the vault files. If you are using Java 8u162 or higher they are already active by default._
 
 
-### Download
+${symbol_pound}${symbol_pound}${symbol_pound} Download
 
 Download it from Maven Central:
 
@@ -15,7 +18,7 @@ Download it from Maven Central:
 | [CONGA AEM Crypto CLI tool](https://repo1.maven.org/maven2/io/wcm/devops/conga/plugins/conga-aem-crypto-cli/${project.properties['releasedVersion.version']}/conga-aem-crypto-cli-${project.properties['releasedVersion.version']}-dist.zip) | [![Maven Central](https://maven-badges.herokuapp.com/maven-central/io.wcm.devops.conga.plugins/conga-aem-crypto-cli/badge.svg)](https://repo1.maven.org/maven2/io/wcm/devops/conga/plugins/conga-aem-crypto-cli/${project.properties['releasedVersion.version']}/conga-aem-crypto-cli-${project.properties['releasedVersion.version']}-dist.zip) |
 
 
-### Generate AEM crypto keys
+${symbol_pound}${symbol_pound}${symbol_pound} Generate AEM crypto keys
 
 Generate a set of crypto keys:
 
@@ -47,6 +50,26 @@ Decrypt a file with Ansible Vault:
 java -Dansible.vault.password=mypassword -jar conga-aem-crypto-cli-${project.properties['releasedVersion.version']}.jar \
     -ansibleVaultDecrypt <file>
 ```
+
+
+${symbol_pound}${symbol_pound}${symbol_pound} Encrypt and decrypt values using AEM crypto support
+
+Encrypt string using AEM crypto support and a given key:
+
+
+```
+java -jar conga-aem-crypto-cli-${project.properties['releasedVersion.version']}.jar \
+     -cryptoAesKey <path to master file> -aemCryptoEncrypt <value>
+```
+
+Decrypt string using AEM crypto support and a given key:
+
+
+```
+java -jar conga-aem-crypto-cli-${project.properties['releasedVersion.version']}.jar \
+     -cryptoAesKey <path to master file> -aemCryptoDecrypt <encrypted value>
+```
+
 
 
 [jce-policy]: http://www.oracle.com/technetwork/java/javase/downloads/jce8-download-2133166.html

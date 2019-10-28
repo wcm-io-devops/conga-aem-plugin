@@ -2,7 +2,7 @@
  * #%L
  * wcm.io
  * %%
- * Copyright (C) 2018 wcm.io
+ * Copyright (C) 2019 wcm.io
  * %%
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -20,23 +20,20 @@
 package io.wcm.devops.conga.plugins.aem.tooling.crypto.cli;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertFalse;
 
 import java.io.File;
-import java.util.List;
-import java.util.stream.Collectors;
-import java.util.stream.Stream;
 
 import org.apache.commons.io.FileUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
-import io.wcm.devops.conga.plugins.ansible.util.AnsibleVaultPassword;
-
-public class CryptoKeysTest {
+public class AemCryptoTest {
 
   private File targetFolder;
+  private String cryptoAesKey;
 
   @BeforeEach
   public void setUp() throws Exception {
@@ -44,7 +41,9 @@ public class CryptoKeysTest {
     targetFolder = File.createTempFile(getClass().getName(), null);
     targetFolder.delete();
 
-    System.setProperty(AnsibleVaultPassword.SYSTEM_PROPERTY_PASSWORD, "test123");
+    // generate crypto keys
+    CryptoKeys.generate(targetFolder, false).forEach(item -> { /* generate */ });
+    cryptoAesKey = targetFolder.getPath() + "/master";
   }
 
   @AfterEach
@@ -53,24 +52,14 @@ public class CryptoKeysTest {
   }
 
   @Test
-  public void testGenerate() throws Exception {
-    Stream<File> files = CryptoKeys.generate(targetFolder, false);
-    assertFiles(files);
-  }
+  public void testEncryptDecryptString() throws Exception {
+    String value = "myTestValue-äöüß€";
 
-  @Test
-  public void testGenerateAnsibleVaultEncrypt() throws Exception {
-    Stream<File> files = CryptoKeys.generate(targetFolder, true);
-    assertFiles(files);
-  }
+    String encryptedValue = AemCrypto.encryptString(value, cryptoAesKey);
+    assertFalse(StringUtils.equals(value, encryptedValue));
 
-  private void assertFiles(Stream<File> filesStream) {
-    List<File> files = filesStream.collect(Collectors.toList());
-    assertEquals(2, files.size());
-    assertTrue(files.get(0).exists());
-    assertEquals("master", files.get(0).getName());
-    assertTrue(files.get(1).exists());
-    assertEquals("hmac", files.get(1).getName());
+    String decryptedValue = AemCrypto.decryptString(encryptedValue, cryptoAesKey);
+    assertEquals(value, decryptedValue);
   }
 
 }
