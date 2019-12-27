@@ -94,7 +94,6 @@ public class WebConsolePasswordHashHelper implements HelperPlugin<Object> {
    * @param hashAlgorithm The hash algorithm to use
    * @param encoding The encoding to use
    * @return The hashed password (hashed + encoded as Base64)
-   * @throws IOException
    */
   private String hashPassword(String password, final String hashAlgorithm, final String encoding) throws IOException {
     byte[] bytePassword;

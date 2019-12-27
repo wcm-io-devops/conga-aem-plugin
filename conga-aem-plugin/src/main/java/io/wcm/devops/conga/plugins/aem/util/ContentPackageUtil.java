@@ -221,7 +221,7 @@ public final class ContentPackageUtil {
 
   /**
    * Get and validate AC handling value.
-   * @param options
+   * @param options Options
    * @return AC handling value or null if not set.
    */
   private static AcHandling getAcHandling(Map<String, Object> options) {

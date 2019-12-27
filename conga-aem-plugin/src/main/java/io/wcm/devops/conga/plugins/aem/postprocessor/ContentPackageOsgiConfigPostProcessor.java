@@ -126,7 +126,6 @@ public class ContentPackageOsgiConfigPostProcessor extends AbstractPostProcessor
    * @param rootPath Root path
    * @param fileHeader File header
    * @param context Post processor context
-   * @throws IOException
    */
   private void generateOsgiConfigurations(Model model, ContentPackage contentPackage,
       String rootPath, FileHeaderContext fileHeader, PostProcessorContext context) throws IOException {
