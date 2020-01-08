@@ -103,8 +103,8 @@ public class WebConsolePasswordHashHelper implements HelperPlugin<Object> {
     try {
       bytePassword = password.getBytes(encoding);
     }
-    catch (UnsupportedEncodingException e) {
-      throw new IOException("Cannot hash the password: " + e);
+    catch (UnsupportedEncodingException ex) {
+      throw new IOException("Cannot hash the password.", ex);
     }
 
     // create password hash
@@ -112,16 +112,16 @@ public class WebConsolePasswordHashHelper implements HelperPlugin<Object> {
       final MessageDigest md = MessageDigest.getInstance(hashAlgorithm);
       hashedPassword = md.digest(bytePassword);
     }
-    catch (NoSuchAlgorithmException e) {
-      throw new IOException("Cannot hash the password: " + e);
+    catch (NoSuchAlgorithmException ex) {
+      throw new IOException("Cannot hash the password.", ex);
     }
 
     // encode hashed password to utf8
     try {
       hashedPasswordBase64 = new String(Base64.getEncoder().encode(hashedPassword), encoding);
     }
-    catch (UnsupportedEncodingException e) {
-      throw new IOException("Invalid Encoding: " + e);
+    catch (UnsupportedEncodingException ex) {
+      throw new IOException("Invalid Encoding.", ex);
     }
 
     return String.format("{%s}%s", hashAlgorithm.toLowerCase(), hashedPasswordBase64);

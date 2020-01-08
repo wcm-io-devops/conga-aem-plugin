@@ -45,9 +45,9 @@ public final class AemDispatcherFilterHelper extends AbstractFilterHelper {
   protected String generateFilter(Map<String, Object> filterMap, Options options) {
     DispatcherFilter filter = new DispatcherFilter(filterMap);
 
-    StringBuilder sb = new StringBuilder();
-    sb.append("{ ");
-    sb.append("/type \"").append(filter.getType()).append("\" ");
+    StringBuilder sb = new StringBuilder()
+        .append("{ ")
+        .append("/type \"").append(filter.getType()).append("\" ");
 
     if (StringUtils.isNotEmpty(filter.getMethod())) {
       sb.append("/method '").append(filter.getMethod()).append("' ");

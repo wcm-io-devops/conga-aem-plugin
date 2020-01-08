@@ -51,6 +51,7 @@ abstract class AbstractFilter {
    * @param key Key
    * @return Value or null if not set
    */
+  @SuppressWarnings("PMD.PreserveStackTrace")
   protected final String getRegexValue(Map<String, Object> map, String key) {
     String value = getValue(map, key);
 
