@@ -32,11 +32,14 @@ import org.apache.commons.lang3.StringUtils;
  */
 public final class AemCryptoCli {
 
-  private static final String CRYPTO_KEYS_GENERATE = "cryptoKeysGenerate";
-  private static final String CRYPTO_KEYS_ANSIBLE_VAULT_ENCRYPT = "cryptoKeysAnsibleVaultEncrypt";
-  private static final String TARGET = "target";
-  private static final String ANSIBLE_VAULT_ENCRYPT = "ansibleVaultEncrypt";
-  private static final String ANSIBLE_VAULT_DECRYPT = "ansibleVaultDecrypt";
+  static final String CRYPTO_KEYS_GENERATE = "cryptoKeysGenerate";
+  static final String CRYPTO_KEYS_ANSIBLE_VAULT_ENCRYPT = "cryptoKeysAnsibleVaultEncrypt";
+  static final String TARGET = "target";
+  static final String ANSIBLE_VAULT_ENCRYPT = "ansibleVaultEncrypt";
+  static final String ANSIBLE_VAULT_DECRYPT = "ansibleVaultDecrypt";
+  static final String AEM_CRYPTO_ENCRYPT = "aemCryptoEncrypt";
+  static final String AEM_CRYPTO_DECRYPT = "aemCryptoDecrypt";
+  static final String CRYPTO_AES_KEY = "cryptoAesKey";
 
   /**
    * Command line options
@@ -48,6 +51,10 @@ public final class AemCryptoCli {
     CLI_OPTIONS.addOption(TARGET, true, "Target path for the generated keys.");
     CLI_OPTIONS.addOption(ANSIBLE_VAULT_ENCRYPT, true, "Encrypts the given file with Ansible Vault.");
     CLI_OPTIONS.addOption(ANSIBLE_VAULT_DECRYPT, true, "Decrypts the given file with Ansible Vault.");
+    CLI_OPTIONS.addOption(AEM_CRYPTO_ENCRYPT, true, "Encrypts the given value with AEM crypto support.");
+    CLI_OPTIONS.addOption(AEM_CRYPTO_DECRYPT, true, "Decrypts the given value with AEM crypto support.");
+    CLI_OPTIONS.addOption(CRYPTO_AES_KEY, true, "Path to 'master' file from AEM crypto keys for "
+        + "'" + AEM_CRYPTO_ENCRYPT + "' and '" + AEM_CRYPTO_DECRYPT + "'.");
     CLI_OPTIONS.addOption("?", false, "Print usage help.");
   }
 
@@ -61,6 +68,7 @@ public final class AemCryptoCli {
    * @throws Exception Exception
    */
   //CHECKSTYLE:OFF
+  @SuppressWarnings({ "PMD.SignatureDeclareThrowsException", "PMD.SystemPrintln" })
   public static void main(String[] args) throws Exception {
     //CHECKSTYLE:ON
     CommandLine commandLine = new DefaultParser().parse(CLI_OPTIONS, args, true);
@@ -70,6 +78,9 @@ public final class AemCryptoCli {
     File targetDir = new File(commandLine.getOptionValue(TARGET, "target"));
     String ansibleVaultEncryptPath = commandLine.getOptionValue(ANSIBLE_VAULT_ENCRYPT);
     String ansibleVaultDecryptPath = commandLine.getOptionValue(ANSIBLE_VAULT_DECRYPT);
+    String aemCryptoEncrypt = commandLine.getOptionValue(AEM_CRYPTO_ENCRYPT);
+    String aemCryptoDecrypt = commandLine.getOptionValue(AEM_CRYPTO_DECRYPT);
+    String cryptoAesKey = commandLine.getOptionValue(CRYPTO_AES_KEY);
 
     if (generateCryptoKeys) {
       CryptoKeys.generate(targetDir, ansibleVaultEncrypt)
@@ -82,6 +93,16 @@ public final class AemCryptoCli {
     }
     else if (StringUtils.isNotBlank(ansibleVaultDecryptPath)) {
       AnsibleVault.decrypt(new File(ansibleVaultDecryptPath));
+      return;
+    }
+    else if (StringUtils.isNotBlank(aemCryptoEncrypt)) {
+      String result = AemCrypto.encryptString(aemCryptoEncrypt, cryptoAesKey);
+      System.out.println(result);
+      return;
+    }
+    else if (StringUtils.isNotBlank(aemCryptoDecrypt)) {
+      String result = AemCrypto.decryptString(aemCryptoDecrypt, cryptoAesKey);
+      System.out.println(result);
       return;
     }
 

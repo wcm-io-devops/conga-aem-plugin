@@ -83,7 +83,7 @@ public class ContentPackagePostProcessor extends AbstractPostProcessor {
 
       // create AEM content package with configurations
       File zipFile = new File(file.getParentFile(), FilenameUtils.getBaseName(file.getName()) + ".zip");
-      logger.info("Generate " + zipFile.getCanonicalPath());
+      logger.info("Generate {}", zipFile.getCanonicalPath());
 
       String rootPath = ContentPackageUtil.getMandatoryProp(options, PROPERTY_PACKAGE_ROOT_PATH);
 

@@ -90,7 +90,7 @@ public class ContentPackageOsgiConfigPostProcessor extends AbstractPostProcessor
 
       // create AEM content package with configurations
       File zipFile = new File(file.getParentFile(), FilenameUtils.getBaseName(file.getName()) + ".zip");
-      logger.info("Generate " + zipFile.getCanonicalPath());
+      logger.info("Generate {}", zipFile.getCanonicalPath());
 
       String rootPath = ContentPackageUtil.getMandatoryProp(options, PROPERTY_PACKAGE_ROOT_PATH);
 
@@ -126,7 +126,6 @@ public class ContentPackageOsgiConfigPostProcessor extends AbstractPostProcessor
    * @param rootPath Root path
    * @param fileHeader File header
    * @param context Post processor context
-   * @throws IOException
    */
   private void generateOsgiConfigurations(Model model, ContentPackage contentPackage,
       String rootPath, FileHeaderContext fileHeader, PostProcessorContext context) throws IOException {
