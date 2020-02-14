@@ -22,6 +22,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.io.File;
+import java.nio.charset.StandardCharsets;
 import java.util.List;
 
 import org.apache.commons.io.FileUtils;
@@ -48,7 +49,7 @@ public class AnyFileHeaderTest {
   @Test
   public void testApply() throws Exception {
     File file = new File("target/generation-test/fileHeader.any");
-    FileUtils.write(file, "myany { }");
+    FileUtils.write(file, "myany { }", StandardCharsets.UTF_8);
 
     List<String> lines = ImmutableList.of("Der Jodelkaiser", "aus dem Oetztal", "ist wieder daheim.");
     FileHeaderContext context = new FileHeaderContext().commentLines(lines);
@@ -57,7 +58,7 @@ public class AnyFileHeaderTest {
     assertTrue(underTest.accepts(fileContext, context));
     underTest.apply(fileContext, context);
 
-    assertTrue(StringUtils.contains(FileUtils.readFileToString(file),
+    assertTrue(StringUtils.contains(FileUtils.readFileToString(file, StandardCharsets.UTF_8),
         "# Der Jodelkaiser\n# aus dem Oetztal\n# ist wieder daheim.\n"));
 
     FileHeaderContext extractContext = underTest.extract(fileContext);

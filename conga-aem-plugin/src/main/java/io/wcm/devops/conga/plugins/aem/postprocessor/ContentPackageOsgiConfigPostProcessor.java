@@ -42,6 +42,7 @@ import org.slf4j.Logger;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableMap;
 
+import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 import io.wcm.devops.conga.generator.GeneratorException;
 import io.wcm.devops.conga.generator.plugins.postprocessor.AbstractPostProcessor;
 import io.wcm.devops.conga.generator.spi.context.FileContext;
@@ -76,6 +77,7 @@ public class ContentPackageOsgiConfigPostProcessor extends AbstractPostProcessor
   }
 
   @Override
+  @SuppressFBWarnings("RV_RETURN_VALUE_IGNORED_BAD_PRACTICE")
   public List<FileContext> apply(FileContext fileContext, PostProcessorContext context) {
     File file = fileContext.getFile();
     Logger logger = context.getLogger();
@@ -131,6 +133,7 @@ public class ContentPackageOsgiConfigPostProcessor extends AbstractPostProcessor
       String rootPath, FileHeaderContext fileHeader, PostProcessorContext context) throws IOException {
     ProvisioningUtil.visitOsgiConfigurations(model, new ConfigConsumer<Void>() {
       @Override
+      @SuppressFBWarnings("RV_RETURN_VALUE_IGNORED_BAD_PRACTICE")
       public Void accept(String path, Dictionary<String, Object> properties) throws IOException {
         String contentPath = rootPath + (StringUtils.contains(path, "/") ? "." : "/") + path;
         context.getLogger().info("  Include " + contentPath);

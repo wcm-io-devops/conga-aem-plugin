@@ -119,7 +119,7 @@ public final class InstallPackagesMojo extends AbstractContentPackageMojo {
       }
     }
     catch (IOException ex) {
-      throw new RuntimeException("Unable to parse " + getCanonicalPath(modelFile));
+      throw new RuntimeException("Unable to parse " + getCanonicalPath(modelFile), ex);
     }
   }
 

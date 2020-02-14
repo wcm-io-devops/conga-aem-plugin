@@ -100,7 +100,7 @@ public class ContentPackagePostProcessorTest {
     File readmeFolder = new File(target, "readme");
     readmeFolder.mkdir();
     File readmeFile = new File(readmeFolder, "README.txt");
-    FileUtils.write(readmeFile, "readme");
+    FileUtils.write(readmeFile, "readme", StandardCharsets.UTF_8);
 
     // post-process
     FileContext fileContext = new FileContext()
