@@ -20,6 +20,7 @@
 package io.wcm.devops.conga.plugins.aem.handlebars.helper;
 
 import static io.wcm.devops.conga.plugins.aem.AemPluginConfig.PARAMETER_CRYPTO_AES_KEY_URL;
+import static io.wcm.devops.conga.plugins.aem.AemPluginConfig.PARAMETER_CRYPTO_SKIP;
 import static io.wcm.devops.conga.plugins.aem.AemPluginConfig.PLUGIN_NAME;
 import static io.wcm.devops.conga.plugins.aem.handlebars.helper.AemCryptoEncryptHelper.HASH_IGNORE_MISSING_KEY;
 import static io.wcm.devops.conga.plugins.aem.handlebars.helper.TestUtils.assertHelper;
@@ -79,12 +80,29 @@ public class AemCryptoEncryptHelperTest {
   }
 
   @Test
+  public void testWithoutKey_Skip() throws Exception {
+    pluginContext.getGenericPluginConfig().put(PLUGIN_NAME,
+        ImmutableMap.of(PARAMETER_CRYPTO_SKIP, true));
+
+    assertHelper(INPUT, helper, INPUT, new MockOptions(), pluginContext);
+  }
+
+  @Test
   public void testEncrypt() throws Exception {
     pluginContext.getGenericPluginConfig().put(PLUGIN_NAME,
         ImmutableMap.of(PARAMETER_CRYPTO_AES_KEY_URL, "classpath:/crypto/master"));
 
     String encrypted = (String)executeHelper(helper, INPUT, new MockOptions(), pluginContext);
     assertTrue(CryptoString.isCryptoString(encrypted));
+  }
+
+  @Test
+  public void testEncrypt_Skip() throws Exception {
+    pluginContext.getGenericPluginConfig().put(PLUGIN_NAME,
+        ImmutableMap.of(PARAMETER_CRYPTO_AES_KEY_URL, "classpath:/crypto/master",
+            PARAMETER_CRYPTO_SKIP, "true"));
+
+    assertHelper(INPUT, helper, INPUT, new MockOptions(), pluginContext);
   }
 
   @Test

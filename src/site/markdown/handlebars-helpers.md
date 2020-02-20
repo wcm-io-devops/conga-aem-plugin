@@ -38,6 +38,12 @@ If you want to write a generic template that runs with and without having a cryp
 {{aemCryptoEncrypt passwordVariable ignoreMissingKey=true}}
 ```
 
+| Plugin configuration parameter  | Description
+|---------------------------------|-------------
+| `cryptoAesKeyUrl`               | Path to the AEM crypto key to use
+| `cryptoSkip`                    | If set to `true` encryption is skipped and the value ins inserted unencrypted.
+
+
 ### httpHost
 
 Renders the HTTP host with port, when the port is not the default one (80).
