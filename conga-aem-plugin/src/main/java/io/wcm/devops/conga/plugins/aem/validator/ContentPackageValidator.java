@@ -52,7 +52,6 @@ public class ContentPackageValidator implements ValidatorPlugin {
   public static final String NAME = "aem-contentpackage";
 
   private static final String FILE_EXTENSION = "zip";
-  private static final String ALTERNATE_FILE_EXTENSION = "jar";
 
   private static final String OPTION_VALIDATORS_SETTINGS = "contentPackageValidatorsSettings";
 
@@ -63,8 +62,7 @@ public class ContentPackageValidator implements ValidatorPlugin {
 
   @Override
   public boolean accepts(FileContext file, ValidatorContext context) {
-    return FileUtil.matchesExtension(file, FILE_EXTENSION)
-        || FileUtil.matchesExtension(file, ALTERNATE_FILE_EXTENSION);
+    return FileUtil.matchesExtension(file, FILE_EXTENSION);
   }
 
   @Override
