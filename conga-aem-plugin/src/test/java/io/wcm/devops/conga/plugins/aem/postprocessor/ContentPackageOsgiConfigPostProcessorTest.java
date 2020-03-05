@@ -172,8 +172,6 @@ public class ContentPackageOsgiConfigPostProcessorTest {
 
     File zipFile = new File(target, "test.zip");
     assertTrue(zipFile.exists());
-
-    assertTrue(ZipUtil.containsEntry(zipFile, "jcr_root/apps/test/config/.content.xml"));
   }
 
 }

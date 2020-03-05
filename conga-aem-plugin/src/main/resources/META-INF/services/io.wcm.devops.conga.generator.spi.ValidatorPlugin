@@ -1,1 +1,2 @@
 io.wcm.devops.conga.plugins.aem.validator.AnyValidator
+io.wcm.devops.conga.plugins.aem.validator.ContentPackageValidator

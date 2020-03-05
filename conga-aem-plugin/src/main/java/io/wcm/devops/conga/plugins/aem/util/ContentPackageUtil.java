@@ -25,6 +25,7 @@ import static io.wcm.devops.conga.plugins.aem.postprocessor.ContentPackageOption
 import static io.wcm.devops.conga.plugins.aem.postprocessor.ContentPackageOptions.PROPERTY_PACKAGE_FILTERS;
 import static io.wcm.devops.conga.plugins.aem.postprocessor.ContentPackageOptions.PROPERTY_PACKAGE_GROUP;
 import static io.wcm.devops.conga.plugins.aem.postprocessor.ContentPackageOptions.PROPERTY_PACKAGE_NAME;
+import static io.wcm.devops.conga.plugins.aem.postprocessor.ContentPackageOptions.PROPERTY_PACKAGE_PACKAGE_TYPE;
 import static io.wcm.devops.conga.plugins.aem.postprocessor.ContentPackageOptions.PROPERTY_PACKAGE_PROPERTIES;
 import static io.wcm.devops.conga.plugins.aem.postprocessor.ContentPackageOptions.PROPERTY_PACKAGE_ROOT_PATH;
 import static io.wcm.devops.conga.plugins.aem.postprocessor.ContentPackageOptions.PROPERTY_PACKAGE_THUMBNAIL_IMAGE;
@@ -75,7 +76,8 @@ public final class ContentPackageUtil {
         .group(getMandatoryProp(options, PROPERTY_PACKAGE_GROUP))
         .name(getMandatoryProp(options, PROPERTY_PACKAGE_NAME))
         .description(mergeDescriptionFileHeader(getOptionalProp(options, PROPERTY_PACKAGE_DESCRIPTION), fileHeader))
-        .version(getOptionalProp(options, PROPERTY_PACKAGE_VERSION));
+        .version(getOptionalProp(options, PROPERTY_PACKAGE_VERSION))
+        .packageType(getOptionalProp(options, PROPERTY_PACKAGE_PACKAGE_TYPE));
 
     // AC handling
     AcHandling acHandling = getAcHandling(options);

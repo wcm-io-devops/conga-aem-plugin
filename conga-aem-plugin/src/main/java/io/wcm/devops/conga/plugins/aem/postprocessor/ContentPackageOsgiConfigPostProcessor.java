@@ -40,7 +40,6 @@ import org.apache.sling.provisioning.model.Model;
 import org.slf4j.Logger;
 
 import com.google.common.collect.ImmutableList;
-import com.google.common.collect.ImmutableMap;
 
 import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 import io.wcm.devops.conga.generator.GeneratorException;
@@ -99,10 +98,6 @@ public class ContentPackageOsgiConfigPostProcessor extends AbstractPostProcessor
       ContentPackageBuilder builder = ContentPackageUtil.getContentPackageBuilder(options, fileHeader);
 
       try (ContentPackage contentPackage = builder.build(zipFile)) {
-
-        // always create folder for root path
-        contentPackage.addContent(rootPath, ImmutableMap.of("jcr:primaryType", "nt:folder"));
-
         generateOsgiConfigurations(model, contentPackage, rootPath, fileHeader, context);
       }
 
@@ -151,7 +146,7 @@ public class ContentPackageOsgiConfigPostProcessor extends AbstractPostProcessor
 
           // write configuration to content package
           try (InputStream is = new BufferedInputStream(new FileInputStream(tempFile))) {
-            contentPackage.addFile(contentPath, is, "text/plain;charset=" + StandardCharsets.UTF_8.name());
+            contentPackage.addFile(contentPath, is);
           }
         }
         finally {
