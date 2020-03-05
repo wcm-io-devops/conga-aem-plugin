@@ -28,7 +28,13 @@
         Add support for new package property "contentPackage.packageType".
       </action>
       <action type="add" dev="sseifert">
+        Add validator for content package based on Jackrabbit FileVault Validation (for packages with a packageType set).
+      </action>
+      <action type="add" dev="sseifert">
         Add new config parameter 'cryptoSkip' that allows to skip crypto encryption in aemCryptoEncrypt expression.
+      </action>
+      <action type="update" dev="sseifert">
+        aem-contentpackage-osgiconfig post processor: Include only generated *.config files in AEM content package, no other .content files.
       </action>
     </release>
 

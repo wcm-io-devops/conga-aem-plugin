@@ -51,7 +51,7 @@
     <dependency>
       <groupId>io.wcm.devops.conga</groupId>
       <artifactId>io.wcm.devops.conga.generator</artifactId>
-      <version>1.11.0</version>
+      <version>1.12.1-SNAPSHOT</version>
       <scope>compile</scope>
     </dependency>
     <dependency>
