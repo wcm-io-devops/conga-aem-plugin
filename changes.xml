@@ -25,6 +25,9 @@
 
     <release version="1.11.0" date="not released">
       <action type="add" dev="sseifert">
+        Add support for new package property "contentPackage.packageType".
+      </action>
+      <action type="add" dev="sseifert">
         Add new config parameter 'cryptoSkip' that allows to skip crypto encryption in aemCryptoEncrypt expression.
       </action>
     </release>

@@ -83,4 +83,9 @@ public final class ContentPackageOptions {
    */
   public static final String PROPERTY_PACKAGE_PROPERTIES = "contentPackage.properties";
 
+  /**
+   * Defines content package type (for package validation).
+   */
+  public static final String PROPERTY_PACKAGE_PACKAGE_TYPE = "contentPackage.packageType";
+
 }
