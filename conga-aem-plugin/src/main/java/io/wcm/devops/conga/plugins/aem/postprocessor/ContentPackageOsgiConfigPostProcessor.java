@@ -40,6 +40,7 @@ import org.apache.sling.provisioning.model.Model;
 import org.slf4j.Logger;
 
 import com.google.common.collect.ImmutableList;
+import com.google.common.collect.ImmutableMap;
 
 import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 import io.wcm.devops.conga.generator.GeneratorException;
@@ -89,6 +90,10 @@ public class ContentPackageOsgiConfigPostProcessor extends AbstractPostProcessor
       // generate OSGi configurations
       Model model = ProvisioningUtil.getModel(fileContext);
 
+      // check if any osgi configuration is present
+      boolean hasAnyConfig = !ProvisioningUtil.visitOsgiConfigurations(model,
+          (ConfigConsumer<Boolean>)(path, properties) -> true).isEmpty();
+
       // create AEM content package with configurations
       File zipFile = new File(file.getParentFile(), FilenameUtils.getBaseName(file.getName()) + ".zip");
       logger.info("Generate {}", zipFile.getCanonicalPath());
@@ -97,8 +102,19 @@ public class ContentPackageOsgiConfigPostProcessor extends AbstractPostProcessor
 
       ContentPackageBuilder builder = ContentPackageUtil.getContentPackageBuilder(options, fileHeader);
 
+      // set package type depending on if config is present or not
+      builder.packageType(hasAnyConfig ? "container" : "application");
+
       try (ContentPackage contentPackage = builder.build(zipFile)) {
-        generateOsgiConfigurations(model, contentPackage, rootPath, fileHeader, context);
+        if (hasAnyConfig) {
+          // generate OSGI config files
+          generateOsgiConfigurations(model, contentPackage, rootPath, fileHeader, context);
+        }
+        else {
+          // create folder for root path if package is empty otherwise
+          // (to make sure probably already existing config is overridden/cleaned)
+          contentPackage.addContent(rootPath, ImmutableMap.of("jcr:primaryType", "nt:folder"));
+        }
       }
 
       // delete provisioning file after transformation
@@ -123,10 +139,11 @@ public class ContentPackageOsgiConfigPostProcessor extends AbstractPostProcessor
    * @param rootPath Root path
    * @param fileHeader File header
    * @param context Post processor context
+   * @return true if any config file was added
    */
-  private void generateOsgiConfigurations(Model model, ContentPackage contentPackage,
+  private boolean generateOsgiConfigurations(Model model, ContentPackage contentPackage,
       String rootPath, FileHeaderContext fileHeader, PostProcessorContext context) throws IOException {
-    ProvisioningUtil.visitOsgiConfigurations(model, new ConfigConsumer<Void>() {
+    List<Void> result = ProvisioningUtil.visitOsgiConfigurations(model, new ConfigConsumer<Void>() {
       @Override
       @SuppressFBWarnings("RV_RETURN_VALUE_IGNORED_BAD_PRACTICE")
       public Void accept(String path, Dictionary<String, Object> properties) throws IOException {
@@ -156,6 +173,7 @@ public class ContentPackageOsgiConfigPostProcessor extends AbstractPostProcessor
         return null;
       }
     });
+    return !result.isEmpty();
   }
 
 }

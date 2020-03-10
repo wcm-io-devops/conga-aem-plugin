@@ -34,7 +34,8 @@
         Add new config parameter 'cryptoSkip' that allows to skip crypto encryption in aemCryptoEncrypt expression.
       </action>
       <action type="update" dev="sseifert">
-        aem-contentpackage-osgiconfig post processor: Include only generated *.config files in AEM content package, no other .content files.
+        aem-contentpackage-osgiconfig post processor: Include only generated *.config files in AEM content package, no other .content files (exception the package is empty otherwise).
+        Automatically set 'packageType' for packages created by this post processor.
       </action>
     </release>
 
