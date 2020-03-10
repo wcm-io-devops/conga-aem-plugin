@@ -38,6 +38,7 @@ import io.wcm.devops.conga.generator.spi.ValidatorPlugin;
 import io.wcm.devops.conga.generator.spi.context.FileContext;
 import io.wcm.devops.conga.generator.spi.context.ValidatorContext;
 import io.wcm.devops.conga.generator.util.FileUtil;
+import io.wcm.devops.conga.model.util.MapExpander;
 import io.wcm.devops.conga.tooling.maven.plugin.util.MavenContext;
 import io.wcm.tooling.commons.packmgr.util.ContentPackageProperties;
 
@@ -53,7 +54,7 @@ public class ContentPackageValidator implements ValidatorPlugin {
 
   private static final String FILE_EXTENSION = "zip";
 
-  private static final String OPTION_VALIDATORS_SETTINGS = "contentPackageValidatorsSettings";
+  private static final String OPTION_VALIDATORS_SETTINGS = "contentPackage.validatorsSettings";
 
   @Override
   public String getName() {
@@ -111,7 +112,7 @@ public class ContentPackageValidator implements ValidatorPlugin {
     setProperty(mojo, "resolutionErrorHandler", mavenContext.getResolutionErrorHandler());
     setProperty(mojo, "buildContext", mavenContext.getBuildContext());
 
-    Object validatorsSettings = context.getOptions().get(OPTION_VALIDATORS_SETTINGS);
+    Object validatorsSettings = MapExpander.getDeep(context.getOptions(), OPTION_VALIDATORS_SETTINGS);
     setProperty(mojo, "validatorsSettings", toValidatorsSettings(toMap(validatorsSettings)));
 
     mojo.execute();

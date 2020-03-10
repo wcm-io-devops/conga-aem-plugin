@@ -25,7 +25,7 @@ files:
   template: sling-mapping.json.hbs
   # Example for disabling a FileVault filter
   validatorOptions:
-    contentPackageValidatorsSettings:
+    contentPackage.validatorsSettings:
       jackrabbit-filter:
         isDisabled: true
   # Transform JSON file to AEM content package
@@ -68,7 +68,7 @@ files:
   template: aem-replicationagents.json.hbs
   # Example for reconfiguring a FileVault filter
   validatorOptions:
-    contentPackageValidatorsSettings:
+    contentPackage.validatorsSettings:
       jackrabbit-filter:
         options:
           validRoots: /etc/replication
