@@ -68,16 +68,35 @@ public final class ContentPackageUtil {
   /**
    * Builds content package builder populated with options from options map.
    * @param options Options
+   * @param urlFileManager URL file manager
+   * @return Content package builder
+   */
+  public static ContentPackageBuilder getContentPackageBuilder(Map<String, Object> options, UrlFileManager urlFileManager) {
+    return getContentPackageBuilder(options, urlFileManager, null);
+  }
+
+  /**
+   * Builds content package builder populated with options from options map.
+   * @param options Options
+   * @param urlFileManager URL file manager
    * @param fileHeader File header
    * @return Content package builder
    */
-  public static ContentPackageBuilder getContentPackageBuilder(Map<String, Object> options, FileHeaderContext fileHeader) {
+  public static ContentPackageBuilder getContentPackageBuilder(Map<String, Object> options, UrlFileManager urlFileManager,
+      FileHeaderContext fileHeader) {
     ContentPackageBuilder builder = new ContentPackageBuilder()
         .group(getMandatoryProp(options, PROPERTY_PACKAGE_GROUP))
         .name(getMandatoryProp(options, PROPERTY_PACKAGE_NAME))
-        .description(mergeDescriptionFileHeader(getOptionalProp(options, PROPERTY_PACKAGE_DESCRIPTION), fileHeader))
         .version(getOptionalProp(options, PROPERTY_PACKAGE_VERSION))
         .packageType(getOptionalProp(options, PROPERTY_PACKAGE_PACKAGE_TYPE));
+
+    // description
+    if (fileHeader != null) {
+      builder.description(mergeDescriptionFileHeader(getOptionalProp(options, PROPERTY_PACKAGE_DESCRIPTION), fileHeader));
+    }
+    else {
+      builder.description(getOptionalProp(options, PROPERTY_PACKAGE_DESCRIPTION));
+    }
 
     // AC handling
     AcHandling acHandling = getAcHandling(options);
@@ -88,7 +107,6 @@ public final class ContentPackageUtil {
     // thumbnail image
     String thumbnailImageUrl = getOptionalProp(options, PROPERTY_PACKAGE_THUMBNAIL_IMAGE);
     if (StringUtils.isNotBlank(thumbnailImageUrl)) {
-      UrlFileManager urlFileManager = fileHeader.getUrlFileManager();
       try {
         builder.thumbnailImage(urlFileManager.getFile(thumbnailImageUrl));
       }

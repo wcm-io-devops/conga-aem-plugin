@@ -19,6 +19,8 @@
  */
 package io.wcm.devops.conga.plugins.aem.validator;
 
+import static org.apache.jackrabbit.vault.packaging.PackageProperties.NAME_PACKAGE_TYPE;
+
 import java.io.File;
 import java.io.IOException;
 import java.lang.reflect.Field;
@@ -81,7 +83,7 @@ public class ContentPackageValidator implements ValidatorPlugin {
     try {
       // validate package if a package type is defined
       // supported only within Maven
-      String packageType = (String)ContentPackageProperties.get(file.getFile()).get("packageType");
+      String packageType = (String)ContentPackageProperties.get(file.getFile()).get(NAME_PACKAGE_TYPE);
       if (packageType != null && context.getContainerContext() instanceof MavenContext) {
         validateContentPackage(file.getFile(), context, (MavenContext)context.getContainerContext());
       }

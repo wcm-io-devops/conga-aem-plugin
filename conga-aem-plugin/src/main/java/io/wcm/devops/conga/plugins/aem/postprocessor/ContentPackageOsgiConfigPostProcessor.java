@@ -100,7 +100,7 @@ public class ContentPackageOsgiConfigPostProcessor extends AbstractPostProcessor
 
       String rootPath = ContentPackageUtil.getMandatoryProp(options, PROPERTY_PACKAGE_ROOT_PATH);
 
-      ContentPackageBuilder builder = ContentPackageUtil.getContentPackageBuilder(options, fileHeader);
+      ContentPackageBuilder builder = ContentPackageUtil.getContentPackageBuilder(options, context.getUrlFileManager(), fileHeader);
 
       // set package type depending on if config is present or not
       builder.packageType(hasAnyConfig ? "container" : "application");

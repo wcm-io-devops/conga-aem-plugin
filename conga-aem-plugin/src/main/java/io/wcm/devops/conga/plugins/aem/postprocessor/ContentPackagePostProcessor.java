@@ -89,7 +89,7 @@ public class ContentPackagePostProcessor extends AbstractPostProcessor {
 
       String rootPath = ContentPackageUtil.getMandatoryProp(options, PROPERTY_PACKAGE_ROOT_PATH);
 
-      ContentPackageBuilder builder = ContentPackageUtil.getContentPackageBuilder(options, fileHeader);
+      ContentPackageBuilder builder = ContentPackageUtil.getContentPackageBuilder(options, context.getUrlFileManager(), fileHeader);
       try (ContentPackage contentPackage = builder.build(zipFile)) {
 
         // add content from JSON file
