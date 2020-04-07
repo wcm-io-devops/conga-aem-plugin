@@ -19,6 +19,7 @@
  */
 package io.wcm.devops.conga.plugins.aem.maven.allpackage;
 
+import static io.wcm.devops.conga.generator.util.FileUtil.getCanonicalPath;
 import static io.wcm.devops.conga.plugins.aem.maven.allpackage.RunModeUtil.RUNMODE_AUTHOR;
 import static io.wcm.devops.conga.plugins.aem.maven.allpackage.RunModeUtil.RUNMODE_PUBLISH;
 import static org.apache.jackrabbit.vault.packaging.PackageProperties.NAME_DEPENDENCIES;
@@ -41,6 +42,8 @@ import org.apache.commons.lang3.StringUtils;
 import org.apache.jackrabbit.vault.packaging.Dependency;
 import org.apache.jackrabbit.vault.packaging.DependencyUtil;
 import org.apache.jackrabbit.vault.packaging.VersionRange;
+import org.apache.maven.plugin.logging.Log;
+import org.apache.maven.plugin.logging.SystemStreamLog;
 
 import io.wcm.devops.conga.plugins.aem.maven.model.ContentPackageFile;
 import io.wcm.tooling.commons.contentpackagebuilder.ContentPackage;
@@ -56,6 +59,7 @@ public final class AllPackageBuilder {
   private final String groupName;
   private final String packageName;
   private boolean autoDependencies;
+  private Log log;
 
   /**
    * @param targetFile Target file
@@ -79,6 +83,22 @@ public final class AllPackageBuilder {
   }
 
   /**
+   * @param value Maven logger
+   * @return this
+   */
+  public AllPackageBuilder logger(Log value) {
+    this.log = value;
+    return this;
+  }
+
+  private Log getLog() {
+    if (this.log == null) {
+      this.log = new SystemStreamLog();
+    }
+    return this.log;
+  }
+
+  /**
    * Build "all" content package.
    * @param contentPackages Content packages (invalid will be filtered out)
    * @return true if "all" package was generated, false if not valid package was found.
@@ -86,9 +106,14 @@ public final class AllPackageBuilder {
    */
   public boolean build(List<ContentPackageFile> contentPackages) throws IOException {
 
+    // generate warnings for each invalid content packages that is skipped
+    contentPackages.stream()
+        .filter(pkg -> !isValid(pkg))
+        .forEach(pkg -> getLog().warn("Skipping content package without package type: " + getCanonicalPath(pkg.getFile())));
+
     // collect AEM content packages for this node
     List<ContentPackageFile> validContentPackages = contentPackages.stream()
-        .filter(AllPackageBuilder::isValid)
+        .filter(pkg -> isValid(pkg))
         .collect(Collectors.toList());
     if (validContentPackages.isEmpty()) {
       return false;

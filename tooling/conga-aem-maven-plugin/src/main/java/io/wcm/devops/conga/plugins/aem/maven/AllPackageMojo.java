@@ -166,7 +166,8 @@ public final class AllPackageMojo extends AbstractMojo {
     File targetFile = new File(target, packageName + ".zip");
 
     AllPackageBuilder builder = new AllPackageBuilder(targetFile, groupName, packageName)
-        .autoDependencies(this.autoDependencies);
+        .autoDependencies(this.autoDependencies)
+        .logger(getLog());
 
     try {
       if (builder.build(contentPackages)) {
