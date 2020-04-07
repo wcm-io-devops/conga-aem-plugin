@@ -19,23 +19,19 @@
  */
 package io.wcm.devops.conga.plugins.aem.maven;
 
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.InputStreamReader;
-import java.io.Reader;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
+import static io.wcm.devops.conga.generator.util.FileUtil.getCanonicalPath;
 
-import org.apache.commons.lang3.CharEncoding;
+import java.io.File;
+import java.util.List;
+import java.util.stream.Collectors;
+
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugin.MojoFailureException;
 import org.apache.maven.plugins.annotations.Mojo;
 import org.apache.maven.plugins.annotations.Parameter;
-import org.yaml.snakeyaml.Yaml;
 
+import io.wcm.devops.conga.plugins.aem.maven.model.ContentPackageFile;
+import io.wcm.devops.conga.plugins.aem.maven.model.ModelParser;
 import io.wcm.tooling.commons.packmgr.install.PackageFile;
 import io.wcm.tooling.commons.packmgr.install.PackageInstaller;
 
@@ -44,8 +40,6 @@ import io.wcm.tooling.commons.packmgr.install.PackageInstaller;
  */
 @Mojo(name = "package-install", threadSafe = true, requiresProject = false)
 public final class InstallPackagesMojo extends AbstractContentPackageMojo {
-
-  private static final String MODEL_FILE = "model.yaml";
 
   /**
    * Directory with the generated CONGA configuration containing the model.yaml.
@@ -91,14 +85,13 @@ public final class InstallPackagesMojo extends AbstractContentPackageMojo {
     if (!nodeDirectory.exists() || !nodeDirectory.isDirectory()) {
       throw new MojoFailureException("Node directory not found: " + getCanonicalPath(nodeDirectory));
     }
-    File modelFile = new File(nodeDirectory, MODEL_FILE);
-    if (!modelFile.exists() || !modelFile.isFile()) {
-      throw new MojoFailureException("Model file not found: " + getCanonicalPath(modelFile));
-    }
 
-    getLog().info("Get AEM content packages from " + getCanonicalPath(modelFile));
-    Map<String, Object> data = parseYaml(modelFile);
-    List<PackageFile> items = collectPackagesForNode(data, nodeDirectory);
+    getLog().info("Get AEM content packages from " + getCanonicalPath(nodeDirectory));
+
+    ModelParser modelParser = new ModelParser();
+    List<PackageFile> items = modelParser.getContentPackagesForNode(nodeDirectory).stream()
+        .map(this::toPackageFile)
+        .collect(Collectors.toList());
 
     if (items.isEmpty()) {
       getLog().warn("No file found for installing.");
@@ -109,71 +102,30 @@ public final class InstallPackagesMojo extends AbstractContentPackageMojo {
     }
   }
 
-  @SuppressWarnings("unchecked")
-  private Map<String, Object> parseYaml(File modelFile) {
-    try {
-      try (InputStream is = new FileInputStream(modelFile);
-          Reader reader = new InputStreamReader(is, CharEncoding.UTF_8)) {
-        Yaml yaml = YamlUtil.createYaml();
-        return yaml.loadAs(reader, Map.class);
-      }
-    }
-    catch (IOException ex) {
-      throw new RuntimeException("Unable to parse " + getCanonicalPath(modelFile), ex);
-    }
-  }
-
-  @SuppressWarnings("unchecked")
-  private List<PackageFile> collectPackagesForNode(Map<String, Object> data, File parentDir) {
-    List<PackageFile> items = new ArrayList<>();
-
-    List<Map<String, Object>> roles = (List<Map<String, Object>>)data.get("roles");
-    for (Map<String, Object> role : roles) {
-      List<Map<String, Object>> files = (List<Map<String, Object>>)role.get("files");
-      for (Map<String, Object> file : files) {
-        if (file.get("aemContentPackageProperties") != null) {
-          String path = (String)file.get("path");
-          Boolean itemInstall = (Boolean)file.get("install");
-          Boolean itemForce = (Boolean)file.get("force");
-          Boolean itemRecursive = (Boolean)file.get("recursive");
-          Integer itemDelayAfterInstallSec = (Integer)file.get("delayAfterInstallSec");
-          Integer httpSocketTimeoutSec = (Integer)file.get("httpSocketTimeoutSec");
-
-          File packageFile = new File(parentDir, path);
-          items.add(toPackageFile(packageFile, itemInstall, itemForce, itemRecursive, itemDelayAfterInstallSec, httpSocketTimeoutSec));
-        }
-      }
-    }
-
-    return items;
-  }
-
-  private PackageFile toPackageFile(File file,
-      Boolean itemInstall, Boolean itemForce, Boolean itemRecursive,
-      Integer itemDelayAfterInstallSec, Integer httpSocketTimeoutSec) {
+  private PackageFile toPackageFile(ContentPackageFile item) {
     PackageFile output = new PackageFile();
 
-    output.setFile(file);
-    if (itemInstall != null) {
-      output.setInstall(itemInstall);
+    output.setFile(item.getFile());
+    if (item.getInstall() != null) {
+      output.setInstall(item.getInstall());
     }
     else {
       output.setInstall(this.install);
     }
-    if (itemForce != null) {
-      output.setForce(itemForce);
+    if (item.getForce() != null) {
+      output.setForce(item.getForce());
     }
     else {
       output.setForce(this.force);
     }
-    if (itemRecursive != null) {
-      output.setRecursive(itemRecursive);
+    if (item.getRecursive() != null) {
+      output.setRecursive(item.getRecursive());
     }
     else {
       output.setRecursive(this.recursive);
     }
-    if (itemDelayAfterInstallSec != null) {
-      output.setDelayAfterInstallSec(itemDelayAfterInstallSec);
+    if (item.getDelayAfterInstallSec() != null) {
+      output.setDelayAfterInstallSec(item.getDelayAfterInstallSec());
     }
     else if (this.delayAfterInstallSec != null) {
       output.setDelayAfterInstallSec(this.delayAfterInstallSec);
@@ -181,18 +133,9 @@ public final class InstallPackagesMojo extends AbstractContentPackageMojo {
     else {
       output.setDelayAfterInstallSecAutoDetect();
     }
-    output.setHttpSocketTimeoutSec(httpSocketTimeoutSec);
+    output.setHttpSocketTimeoutSec(item.getHttpSocketTimeoutSec());
 
     return output;
-  }
-
-  private String getCanonicalPath(File file) {
-    try {
-      return file.getCanonicalPath();
-    }
-    catch (IOException ex) {
-      throw new RuntimeException(ex);
-    }
   }
 
 }

@@ -16,12 +16,6 @@ File plugins:
 
 Please note: Files with the extension `txt` are only managed as provisioning files if the contain the string "[feature " (heuristic).
 
-#### Export plugins
-
-| Plugin name               | Description
-|---------------------------|-------------
-| `aem-contentpackage`      | Generates "all" content packages to be used for deployment by Adobe Cloud Manager.
-
 
 ### Generating AEM Content Packages
 

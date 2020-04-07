@@ -34,10 +34,7 @@
         Add new config parameter 'cryptoSkip' that allows to skip crypto encryption in aemCryptoEncrypt expression.
       </action>
       <action type="add" dev="sseifert">
-        Add "aem-contentpackage" node model export plugin to generate "all" content packages to be used by Adobe Cloud Manager.
-      </action>
-      <action type="add" dev="sseifert">
-        conga-aem-maven-plugin: Add "copy-all-packages" goal to copy generated "all" content packages to the target directory so they can be picked up by Adobe Cloud Manager.
+        conga-aem-maven-plugin: Add 'all-package' goal to build combined container package for deployment with Adobe Cloud Manager.
       </action>
       <action type="update" dev="sseifert">
         aem-contentpackage-osgiconfig post processor: Include only generated *.config files in AEM content package, no other .content files (exception the package is empty otherwise).
