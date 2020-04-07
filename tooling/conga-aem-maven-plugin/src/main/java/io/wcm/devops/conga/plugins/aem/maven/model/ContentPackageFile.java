@@ -19,7 +19,10 @@
  */
 package io.wcm.devops.conga.plugins.aem.maven.model;
 
+import static org.apache.jackrabbit.vault.packaging.PackageProperties.NAME_GROUP;
+import static org.apache.jackrabbit.vault.packaging.PackageProperties.NAME_NAME;
 import static org.apache.jackrabbit.vault.packaging.PackageProperties.NAME_PACKAGE_TYPE;
+import static org.apache.jackrabbit.vault.packaging.PackageProperties.NAME_VERSION;
 
 import java.io.File;
 import java.util.Collections;
@@ -41,9 +44,14 @@ public final class ContentPackageFile {
   private final Integer delayAfterInstallSec;
   private final Integer httpSocketTimeoutSec;
 
+  private final String name;
+  private final String group;
+  private final String version;
   private final String packageType;
+
   private final List<String> variants;
 
+  @SuppressWarnings("unchecked")
   ContentPackageFile(File file, Map<String, Object> fileData, Map<String, Object> roleData) {
     this.file = file;
 
@@ -53,18 +61,17 @@ public final class ContentPackageFile {
     this.delayAfterInstallSec = (Integer)fileData.get("delayAfterInstallSec");
     this.httpSocketTimeoutSec = (Integer)fileData.get("httpSocketTimeoutSec");
 
-    this.packageType = getPackageType(fileData);
-    this.variants = getVariants(roleData);
-  }
-
-  @SuppressWarnings("unchecked")
-  private static String getPackageType(Map<String, Object> fileData) {
     Map<String, Object> contentPackageProperties = (Map<String, Object>)fileData.get(
         ContentPackagePropertiesPostProcessor.MODEL_OPTIONS_PROPERTY);
-    if (contentPackageProperties != null) {
-      return (String)contentPackageProperties.get(NAME_PACKAGE_TYPE);
+    if (contentPackageProperties == null) {
+      throw new IllegalArgumentException(ContentPackagePropertiesPostProcessor.MODEL_OPTIONS_PROPERTY + " missing.");
     }
-    return null;
+    this.name = (String)contentPackageProperties.get(NAME_NAME);
+    this.group = (String)contentPackageProperties.get(NAME_GROUP);
+    this.version = (String)contentPackageProperties.get(NAME_VERSION);
+    this.packageType = (String)contentPackageProperties.get(NAME_PACKAGE_TYPE);
+
+    this.variants = getVariants(roleData);
   }
 
   @SuppressWarnings("unchecked")
@@ -100,6 +107,18 @@ public final class ContentPackageFile {
 
   public Integer getHttpSocketTimeoutSec() {
     return this.httpSocketTimeoutSec;
+  }
+
+  public String getName() {
+    return this.name;
+  }
+
+  public String getGroup() {
+    return this.group;
+  }
+
+  public String getVersion() {
+    return this.version;
   }
 
   public String getPackageType() {

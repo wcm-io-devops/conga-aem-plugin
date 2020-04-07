@@ -61,6 +61,9 @@ class ModelParserTest {
     assertEquals(true, pkg1.getRecursive());
     assertEquals(30, pkg1.getDelayAfterInstallSec());
     assertEquals(60, pkg1.getHttpSocketTimeoutSec());
+    assertEquals("wcm-io-samples", pkg1.getGroup());
+    assertEquals("aem-cms-author-replicationagents", pkg1.getName());
+    assertEquals("1.3.1-SNAPSHOT", pkg1.getVersion());
   }
 
   private void assertPackage(ContentPackageFile pkg, String path, String packageType, Boolean force) {

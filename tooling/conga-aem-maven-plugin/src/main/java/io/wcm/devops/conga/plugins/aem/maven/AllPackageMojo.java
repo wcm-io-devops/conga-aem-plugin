@@ -61,6 +61,12 @@ public final class AllPackageMojo extends AbstractMojo {
   private String group;
 
   /**
+   * Automatically generate dependencies between content packages based on file order in CONGA configuration.
+   */
+  @Parameter(property = "conga.allPackage.autoDependencies", defaultValue = "true")
+  private boolean autoDependencies;
+
+  /**
    * Selected environments to generate. It's only allowed to define a single environment for this mojo,
    * but to be compatible with the other CONGA plugins it's uses the same semantic for defining multiple
    * environments.
@@ -158,8 +164,12 @@ public final class AllPackageMojo extends AbstractMojo {
 
     List<ContentPackageFile> contentPackages = modelParser.getContentPackagesForNode(nodeDir);
     File targetFile = new File(target, packageName + ".zip");
+
+    AllPackageBuilder builder = new AllPackageBuilder(targetFile, groupName, packageName)
+        .autoDependencies(this.autoDependencies);
+
     try {
-      if (AllPackageBuilder.build(targetFile, contentPackages, groupName, packageName)) {
+      if (builder.build(contentPackages)) {
         getLog().info("Generated " + getCanonicalPath(targetFile));
       }
       else {
