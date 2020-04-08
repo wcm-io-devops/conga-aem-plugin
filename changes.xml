@@ -25,7 +25,7 @@
 
     <release version="1.11.0" date="not released">
       <action type="add" dev="sseifert">
-        Add support for new package property "contentPackage.packageType".
+        Add support for package properties "packageType", "requiresRoot", "requiresRestart", "allowIndexDefinitions".
       </action>
       <action type="add" dev="sseifert">
         Add validator for content package based on Jackrabbit FileVault Validation (for packages with a packageType set).

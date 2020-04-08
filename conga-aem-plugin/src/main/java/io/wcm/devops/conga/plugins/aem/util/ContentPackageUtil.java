@@ -20,6 +20,7 @@
 package io.wcm.devops.conga.plugins.aem.util;
 
 import static io.wcm.devops.conga.plugins.aem.postprocessor.ContentPackageOptions.PROPERTY_PACKAGE_AC_HANDLING;
+import static io.wcm.devops.conga.plugins.aem.postprocessor.ContentPackageOptions.PROPERTY_PACKAGE_ALLOW_INDEX_DEFINITIONS;
 import static io.wcm.devops.conga.plugins.aem.postprocessor.ContentPackageOptions.PROPERTY_PACKAGE_DESCRIPTION;
 import static io.wcm.devops.conga.plugins.aem.postprocessor.ContentPackageOptions.PROPERTY_PACKAGE_FILES;
 import static io.wcm.devops.conga.plugins.aem.postprocessor.ContentPackageOptions.PROPERTY_PACKAGE_FILTERS;
@@ -27,6 +28,8 @@ import static io.wcm.devops.conga.plugins.aem.postprocessor.ContentPackageOption
 import static io.wcm.devops.conga.plugins.aem.postprocessor.ContentPackageOptions.PROPERTY_PACKAGE_NAME;
 import static io.wcm.devops.conga.plugins.aem.postprocessor.ContentPackageOptions.PROPERTY_PACKAGE_PACKAGE_TYPE;
 import static io.wcm.devops.conga.plugins.aem.postprocessor.ContentPackageOptions.PROPERTY_PACKAGE_PROPERTIES;
+import static io.wcm.devops.conga.plugins.aem.postprocessor.ContentPackageOptions.PROPERTY_PACKAGE_REQUIRES_RESTART;
+import static io.wcm.devops.conga.plugins.aem.postprocessor.ContentPackageOptions.PROPERTY_PACKAGE_REQUIRES_ROOT;
 import static io.wcm.devops.conga.plugins.aem.postprocessor.ContentPackageOptions.PROPERTY_PACKAGE_ROOT_PATH;
 import static io.wcm.devops.conga.plugins.aem.postprocessor.ContentPackageOptions.PROPERTY_PACKAGE_THUMBNAIL_IMAGE;
 import static io.wcm.devops.conga.plugins.aem.postprocessor.ContentPackageOptions.PROPERTY_PACKAGE_VERSION;
@@ -88,7 +91,10 @@ public final class ContentPackageUtil {
         .group(getMandatoryProp(options, PROPERTY_PACKAGE_GROUP))
         .name(getMandatoryProp(options, PROPERTY_PACKAGE_NAME))
         .version(getOptionalProp(options, PROPERTY_PACKAGE_VERSION))
-        .packageType(getOptionalProp(options, PROPERTY_PACKAGE_PACKAGE_TYPE));
+        .packageType(getOptionalProp(options, PROPERTY_PACKAGE_PACKAGE_TYPE))
+        .requiresRoot(getOptionalPropBoolean(options, PROPERTY_PACKAGE_REQUIRES_ROOT))
+        .requiresRestart(getOptionalPropBoolean(options, PROPERTY_PACKAGE_REQUIRES_RESTART))
+        .allowIndexDefinitions(getOptionalPropBoolean(options, PROPERTY_PACKAGE_ALLOW_INDEX_DEFINITIONS));
 
     // description
     if (fileHeader != null) {
@@ -290,6 +296,23 @@ public final class ContentPackageUtil {
       return value.toString();
     }
     return null;
+  }
+
+  /**
+   * Get boolean property from options or return null if not set.
+   * @param options Options
+   * @param key Key
+   * @return Option value or false
+   */
+  private static boolean getOptionalPropBoolean(Map<String, Object> options, String key) {
+    Object value = getOptionalProp(options, key);
+    if (value instanceof Boolean) {
+      return (Boolean)value;
+    }
+    else if (value != null) {
+      return BooleanUtils.toBoolean(value.toString());
+    }
+    return false;
   }
 
   /**

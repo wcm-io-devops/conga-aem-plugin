@@ -88,4 +88,19 @@ public final class ContentPackageOptions {
    */
   public static final String PROPERTY_PACKAGE_PACKAGE_TYPE = "contentPackage.packageType";
 
+  /**
+   * Package requires root.
+   */
+  public static final String PROPERTY_PACKAGE_REQUIRES_ROOT = "contentPackage.requiresRoot";
+
+  /**
+   * Package requires restart.
+   */
+  public static final String PROPERTY_PACKAGE_REQUIRES_RESTART = "contentPackage.requiresRestart";
+
+  /**
+   * Package allows index definitions.
+   */
+  public static final String PROPERTY_PACKAGE_ALLOW_INDEX_DEFINITIONS = "contentPackage.allowIndexDefinitions";
+
 }
