@@ -22,7 +22,6 @@ package io.wcm.devops.conga.plugins.aem.maven;
 import static io.wcm.devops.conga.generator.util.FileUtil.getCanonicalPath;
 
 import java.io.File;
-import java.io.IOException;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
@@ -31,40 +30,14 @@ import java.util.stream.Collectors;
 
 import org.apache.maven.plugin.AbstractMojo;
 import org.apache.maven.plugin.MojoExecutionException;
-import org.apache.maven.plugin.MojoFailureException;
-import org.apache.maven.plugins.annotations.Mojo;
 import org.apache.maven.plugins.annotations.Parameter;
 
 import com.google.common.collect.ImmutableSet;
 
-import io.wcm.devops.conga.plugins.aem.maven.allpackage.AllPackageBuilder;
-import io.wcm.devops.conga.plugins.aem.maven.model.ContentPackageFile;
-import io.wcm.devops.conga.plugins.aem.maven.model.ModelParser;
-
 /**
- * Builds an "all" content package dedicated for deployment via Adobe Cloud Manager
- * for the given environment and node(s).
+ * Common functionality for mojos that generate configuration ZIP files for Adobe Cloud Manager.
  */
-@Mojo(name = "all-package", threadSafe = true, requiresProject = false)
-public final class AllPackageMojo extends AbstractMojo {
-
-  /**
-   * Package name for the "all" content package.
-   */
-  @Parameter(property = "conga.allPackage.name", defaultValue = "all")
-  private String name;
-
-  /**
-   * Group name for the "all" content package.
-   */
-  @Parameter(property = "conga.allPackage.group", required = true)
-  private String group;
-
-  /**
-   * Automatically generate dependencies between content packages based on file order in CONGA configuration.
-   */
-  @Parameter(property = "conga.allPackage.autoDependencies", defaultValue = "true")
-  private boolean autoDependencies;
+abstract class AbstractCloudManagerMojo extends AbstractMojo {
 
   /**
    * Selected environments to generate. It's only allowed to define a single environment for this mojo,
@@ -93,31 +66,18 @@ public final class AllPackageMojo extends AbstractMojo {
   private File target;
 
   /**
-   * Set this to "true" to skip installing packages to CRX although configured in the POM.
+   * @return Target directory
    */
-  @Parameter(property = "conga.allPackage.skip", defaultValue = "false")
-  private boolean skip;
-
-  @Override
-  public void execute() throws MojoExecutionException, MojoFailureException {
-    if (skip) {
-      return;
-    }
-
-    File environmentDir = getEnvironmentDir();
-    List<File> nodeDirs = getNodeDirs(environmentDir);
-    ModelParser modelParser = new ModelParser();
-    for (File nodeDir : nodeDirs) {
-      buildAllPackage(nodeDir, modelParser);
-    }
+  protected File getTargetDir() {
+    return target;
   }
 
   /**
    * Get directory of the selected environment. It has to be exactly one matching environment.
    * @return Environment directory
-   * @throw MojoExecutionException if no or multiple directories found
+   * @throws MojoExecutionException if no or multiple directories found
    */
-  private File getEnvironmentDir() throws MojoExecutionException {
+  protected File getEnvironmentDir() throws MojoExecutionException {
     List<File> directories = null;
     Set<String> selectedEnvironments = toSet(this.environments);
     if (configurationDir.exists() && configurationDir.isDirectory()) {
@@ -144,7 +104,7 @@ public final class AllPackageMojo extends AbstractMojo {
    * @param environmentDir Environment directory
    * @return List of directories
    */
-  private List<File> getNodeDirs(File environmentDir) {
+  protected List<File> getNodeDirs(File environmentDir) {
     Set<String> selectedNodes = toSet(this.nodes);
     File[] files = environmentDir.listFiles();
     if (files != null) {
@@ -155,30 +115,6 @@ public final class AllPackageMojo extends AbstractMojo {
     }
     else {
       return Collections.emptyList();
-    }
-  }
-
-  private void buildAllPackage(File nodeDir, ModelParser modelParser) throws MojoFailureException {
-    String groupName = this.group;
-    String packageName = nodeDir.getName() + "-" + this.name;
-
-    List<ContentPackageFile> contentPackages = modelParser.getContentPackagesForNode(nodeDir);
-    File targetFile = new File(target, packageName + ".zip");
-
-    AllPackageBuilder builder = new AllPackageBuilder(targetFile, groupName, packageName)
-        .autoDependencies(this.autoDependencies)
-        .logger(getLog());
-
-    try {
-      if (builder.build(contentPackages)) {
-        getLog().info("Generated " + getCanonicalPath(targetFile));
-      }
-      else {
-        getLog().debug("Skipped " + getCanonicalPath(targetFile) + " - no valid package.");
-      }
-    }
-    catch (IOException ex) {
-      throw new MojoFailureException("Unable to generate " + getCanonicalPath(targetFile), ex);
     }
   }
 

@@ -32,6 +32,7 @@ import java.util.List;
 import java.util.Map;
 
 import org.apache.commons.lang3.CharEncoding;
+import org.apache.commons.lang3.StringUtils;
 import org.yaml.snakeyaml.Yaml;
 
 import io.wcm.devops.conga.plugins.aem.postprocessor.ContentPackagePropertiesPostProcessor;
@@ -41,7 +42,10 @@ import io.wcm.devops.conga.plugins.aem.postprocessor.ContentPackagePropertiesPos
  */
 public final class ModelParser {
 
-  private static final String MODEL_FILE = "model.yaml";
+  /**
+   * Model file.
+   */
+  public static final String MODEL_FILE = "model.yaml";
 
   private final Yaml yaml;
 
@@ -58,12 +62,16 @@ public final class ModelParser {
    * @return List of content packages
    */
   public List<ContentPackageFile> getContentPackagesForNode(File nodeDir) {
+    Map<String, Object> data = getModelData(nodeDir);
+    return collectPackages(data, nodeDir);
+  }
+
+  private Map<String, Object> getModelData(File nodeDir) {
     File modelFile = new File(nodeDir, MODEL_FILE);
     if (!modelFile.exists() || !modelFile.isFile()) {
       throw new RuntimeException("Model file not found: " + getCanonicalPath(modelFile));
     }
-    Map<String, Object> data = parseYaml(modelFile);
-    return collectPackages(data, nodeDir);
+    return parseYaml(modelFile);
   }
 
   @SuppressWarnings("unchecked")
@@ -103,6 +111,24 @@ public final class ModelParser {
     String path = (String)fileData.get("path");
     File file = new File(nodeDir, path);
     return new ContentPackageFile(file, fileData, roleData);
+  }
+
+  /**
+   * Checks if the node has the given node role assigned.
+   * @param nodeDir Node directory
+   * @param roleName Node role name
+   * @return true if role is assigned
+   */
+  @SuppressWarnings("unchecked")
+  public boolean hasRole(File nodeDir, String roleName) {
+    Map<String, Object> data = getModelData(nodeDir);
+    List<Map<String, Object>> roles = (List<Map<String, Object>>)data.get("roles");
+    for (Map<String, Object> role : roles) {
+      if (StringUtils.equals((String)role.get("role"), roleName)) {
+        return true;
+      }
+    }
+    return false;
   }
 
 }

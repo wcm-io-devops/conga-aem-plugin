@@ -34,7 +34,10 @@
         Add new config parameter 'cryptoSkip' that allows to skip crypto encryption in aemCryptoEncrypt expression.
       </action>
       <action type="add" dev="sseifert">
-        conga-aem-maven-plugin: Add 'all-package' goal to build combined container package for deployment with Adobe Cloud Manager.
+        conga-aem-maven-plugin: Add 'cloudmanager-all-package' goal to build combined container package for deployment with Adobe Cloud Manager.
+      </action>
+      <action type="add" dev="sseifert">
+        conga-aem-maven-plugin: Add 'cloudmanager-dispatcher-config' goal to build ZIP file with dispatcher configuration for deployment with Adobe Cloud Manager.
       </action>
       <action type="update" dev="sseifert">
         aem-contentpackage-osgiconfig post processor: Include only generated *.config files in AEM content package, no other .content files (exception the package is empty otherwise).

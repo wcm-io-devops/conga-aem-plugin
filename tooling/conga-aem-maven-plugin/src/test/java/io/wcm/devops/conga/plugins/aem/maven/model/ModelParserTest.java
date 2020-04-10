@@ -21,6 +21,8 @@ package io.wcm.devops.conga.plugins.aem.maven.model;
 
 import static io.wcm.devops.conga.generator.util.FileUtil.getCanonicalPath;
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.io.File;
 import java.util.List;
@@ -35,11 +37,13 @@ class ModelParserTest {
 
   private ModelParser underTest;
   private File nodeDir;
+  private File dispatcherNodeDir;
 
   @BeforeEach
   void setUp() {
     underTest = new ModelParser();
     nodeDir = new File("src/test/resources/node");
+    dispatcherNodeDir = new File("src/test/resources/node-dispatcher");
   }
 
   @Test
@@ -75,6 +79,12 @@ class ModelParserTest {
 
   private String getPath(File file) {
     return StringUtils.replace(getCanonicalPath(file), "\\", "/");
+  }
+
+  @Test
+  public void testHasRole() {
+    assertTrue(underTest.hasRole(dispatcherNodeDir, "aem-dispatcher-cloud"));
+    assertFalse(underTest.hasRole(nodeDir, "aem-dispatcher-cloud"));
   }
 
 }
