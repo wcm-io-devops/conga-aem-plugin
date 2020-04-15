@@ -21,8 +21,13 @@ package io.wcm.devops.conga.plugins.aem.maven;
 
 import java.io.File;
 import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.util.Collections;
 import java.util.List;
+import java.util.Set;
 
+import org.apache.commons.lang3.StringUtils;
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugin.MojoFailureException;
 import org.apache.maven.plugins.annotations.Component;
@@ -32,6 +37,7 @@ import org.codehaus.plexus.archiver.Archiver;
 import org.codehaus.plexus.archiver.ArchiverException;
 import org.codehaus.plexus.archiver.zip.ZipArchiver;
 
+import io.wcm.devops.conga.generator.util.FileUtil;
 import io.wcm.devops.conga.plugins.aem.maven.model.ModelParser;
 
 /**
@@ -72,16 +78,60 @@ public final class CloudManagerDispatcherConfigMojo extends AbstractCloudManager
   private void buildDispatcherConfig(File nodeDir) throws MojoFailureException {
     File targetFile = new File(getTargetDir(), nodeDir.getName() + ".dispatcher-config.zip");
 
-    zipArchiver.setDestFile(targetFile);
-    String[] includes = new String[] { "**/*" };
-    String[] excludes = new String[] { ModelParser.MODEL_FILE };
-    zipArchiver.addDirectory(nodeDir, includes, excludes);
     try {
+      String basePath = toZipDirectoryPath(nodeDir);
+      addZipDirectory(basePath, nodeDir, Collections.singleton(ModelParser.MODEL_FILE));
+      zipArchiver.setDestFile(targetFile);
+
       zipArchiver.createArchive();
     }
     catch (ArchiverException | IOException ex) {
       throw new MojoFailureException("Unable to build file " + targetFile.getPath() + ": " + ex.getMessage(), ex);
     }
+  }
+
+  /**
+   * Recursive through all directory and add file to zipArchiver.
+   * This method has special support for symlinks which are required for dispatcher configuration.
+   * @param basePath Base path
+   * @param directory Directory to include
+   * @param excludeFiles Exclude filenames
+   * @throws IOException I/O exception
+   */
+  private void addZipDirectory(String basePath, File directory, Set<String> excludeFiles) throws IOException {
+    String directoryPath = toZipDirectoryPath(directory);
+    if (StringUtils.startsWith(directoryPath, basePath)) {
+      String relativeDirectoryPath = StringUtils.substring(directoryPath, basePath.length());
+      File[] files = directory.listFiles();
+      if (files != null) {
+        for (File file : files) {
+          if (excludeFiles.contains(file.getName())) {
+            continue;
+          }
+          if (file.isDirectory()) {
+            addZipDirectory(basePath, file, Collections.emptySet());
+          }
+          else if (Files.isSymbolicLink(file.toPath())) {
+            Path linkPath = file.toPath();
+            Path targetPath = linkPath.toRealPath();
+            Path symlinkPath = file.getParentFile().toPath().relativize(targetPath);
+            zipArchiver.addSymlink(relativeDirectoryPath + file.getName(), sanitizePathSeparators(symlinkPath.toString()));
+          }
+          else {
+            zipArchiver.addFile(file, relativeDirectoryPath + file.getName());
+          }
+        }
+      }
+    }
+  }
+
+  private String toZipDirectoryPath(File directory) {
+    String canoncialPath = FileUtil.getCanonicalPath(directory);
+    return sanitizePathSeparators(canoncialPath) + "/";
+  }
+
+  private String sanitizePathSeparators(String path) {
+    return StringUtils.replace(path, "\\", "/");
   }
 
 }
