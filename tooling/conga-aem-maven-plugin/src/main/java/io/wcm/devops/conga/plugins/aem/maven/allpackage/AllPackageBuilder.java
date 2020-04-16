@@ -28,6 +28,7 @@ import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.util.ArrayList;
 import java.util.Enumeration;
 import java.util.List;
 import java.util.Properties;
@@ -59,6 +60,7 @@ public final class AllPackageBuilder {
   private final String groupName;
   private final String packageName;
   private boolean autoDependencies;
+  private boolean autoDependenciesSeparateMutable;
   private Log log;
 
   /**
@@ -79,6 +81,15 @@ public final class AllPackageBuilder {
    */
   public AllPackageBuilder autoDependencies(boolean value) {
     this.autoDependencies = value;
+    return this;
+  }
+
+  /**
+   * @param value Use separate dependency chains for mutable and immutable packages.
+   * @return this
+   */
+  public AllPackageBuilder autoDependenciesSeparateMutable(boolean value) {
+    this.autoDependenciesSeparateMutable = value;
     return this;
   }
 
@@ -130,10 +141,19 @@ public final class AllPackageBuilder {
     builder.filter(new PackageFilter(rootPath));
 
     // build content package
-    ContentPackageFile previousPkg = null;
+    // if auto dependencies is active: build separate "dependency chains" between mutable and immutable packages
+    List<ContentPackageFile> previousPackages = new ArrayList<>();
     try (ContentPackage contentPackage = builder.build(targetFile)) {
       for (ContentPackageFile pkg : validContentPackages) {
         String path = buildPackagePath(pkg, rootPath);
+
+        // get last previous package
+        // if autoDependenciesSeparateMutable active only that of the same mutability type
+        ContentPackageFile previousPkg = previousPackages.stream()
+            .filter(item -> !autoDependenciesSeparateMutable || mutableMatches(item, pkg))
+            .reduce((first, second) -> second)
+            .orElse(null);
+
         if (autoDependencies && previousPkg != null) {
           // wire previous package in package dependency
           addFileWithDependency(contentPackage, path, pkg, previousPkg);
@@ -142,7 +162,7 @@ public final class AllPackageBuilder {
           // add package file directly
           contentPackage.addFile(path, pkg.getFile());
         }
-        previousPkg = pkg;
+        previousPackages.add(pkg);
       }
     }
 
@@ -152,6 +172,17 @@ public final class AllPackageBuilder {
   private static boolean isValid(ContentPackageFile pkg) {
     // accept only content packages with package type
     return pkg.getPackageType() != null;
+  }
+
+  private static boolean isMutable(ContentPackageFile pkg) {
+    return StringUtils.equals("content", pkg.getPackageType());
+  }
+
+  private static boolean mutableMatches(ContentPackageFile pkg1, ContentPackageFile pkg2) {
+    if (pkg1 == null || pkg2 == null) {
+      return false;
+    }
+    return isMutable(pkg1) == isMutable(pkg2);
   }
 
   /**

@@ -86,8 +86,7 @@ class AllPackageBuilderTest {
     File contentInstallDir = new File(contentDir, "install.author");
     assertFiles(contentInstallDir, "aem-cms-author-replicationagents.zip", "wcm-io-samples-sample-content-1.3.1-SNAPSHOT.zip");
     assertDependencies(contentInstallDir, "aem-cms-author-replicationagents.zip");
-    assertDependencies(contentInstallDir, "wcm-io-samples-sample-content-1.3.1-SNAPSHOT.zip",
-        "wcm-io-samples:wcm-io-samples-complete:1.3.1-SNAPSHOT");
+    assertDependencies(contentInstallDir, "wcm-io-samples-sample-content-1.3.1-SNAPSHOT.zip");
 
     File containerDir = new File(appsDir, "container");
     assertFiles(containerDir, "install.author");
@@ -130,6 +129,50 @@ class AllPackageBuilderTest {
     assertDependencies(contentInstallDir, "aem-cms-author-replicationagents.zip");
     assertDependencies(contentInstallDir, "wcm-io-samples-sample-content-1.3.1-SNAPSHOT.zip",
         "wcm-io-samples:wcm-io-samples-complete:1.3.1-SNAPSHOT");
+
+    File containerDir = new File(appsDir, "container");
+    assertFiles(containerDir, "install.author");
+
+    File containerInstallDir = new File(containerDir, "install.author");
+    assertFiles(containerInstallDir, "wcm-io-samples-aem-cms-config.zip", "wcm-io-samples-complete-1.3.1-SNAPSHOT.zip");
+    assertDependencies(containerInstallDir, "wcm-io-samples-aem-cms-config.zip",
+        "wcm-io-samples:aem-cms-system-config:1.3.1-SNAPSHOT");
+    assertDependencies(containerInstallDir, "wcm-io-samples-complete-1.3.1-SNAPSHOT.zip",
+        "wcm-io-samples:wcm-io-samples-aem-cms-config:1.3.1-SNAPSHOT");
+  }
+
+  @Test
+  void testBuildWithAutoDependenciesSeparateMutable() throws Exception {
+    List<ContentPackageFile> contentPackages = new ModelParser().getContentPackagesForNode(nodeDir);
+    File targetFile = new File(targetDir, "all.zip");
+
+    AllPackageBuilder builder = new AllPackageBuilder(targetFile, "test-group", "test-pkg")
+        .autoDependencies(true)
+        .autoDependenciesSeparateMutable(true);
+    assertTrue(builder.build(contentPackages));
+
+    ZipUtil.unpack(targetFile, targetUnpackDir);
+
+    File appsDir = new File(targetUnpackDir, "jcr_root/apps/test-group-test-pkg-packages");
+    assertFiles(appsDir, "application", "content", "container");
+
+    File applicationDir = new File(appsDir, "application");
+    assertFiles(applicationDir, "install.author");
+
+    File applicationInstallDir = new File(applicationDir, "install.author");
+    assertFiles(applicationInstallDir, "aem-cms-system-config.zip");
+    assertDependencies(applicationInstallDir, "aem-cms-system-config.zip",
+        "day/cq60/product:cq-ui-wcm-editor-content:1.1.224",
+        "adobe/cq/product:cq-remotedam-client-ui-components:1.1.6");
+
+    File contentDir = new File(appsDir, "content");
+    assertFiles(contentDir, "install.author");
+
+    File contentInstallDir = new File(contentDir, "install.author");
+    assertFiles(contentInstallDir, "aem-cms-author-replicationagents.zip", "wcm-io-samples-sample-content-1.3.1-SNAPSHOT.zip");
+    assertDependencies(contentInstallDir, "aem-cms-author-replicationagents.zip");
+    assertDependencies(contentInstallDir, "wcm-io-samples-sample-content-1.3.1-SNAPSHOT.zip",
+        "wcm-io-samples:aem-cms-author-replicationagents:1.3.1-SNAPSHOT");
 
     File containerDir = new File(appsDir, "container");
     assertFiles(containerDir, "install.author");

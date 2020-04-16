@@ -60,6 +60,12 @@ public final class CloudManagerAllPackageMojo extends AbstractCloudManagerMojo {
   private boolean autoDependencies;
 
   /**
+   * Use separate dependency chains for mutable and immutable packages.
+   */
+  @Parameter(property = "conga.cloudManager.allPackage.autoDependenciesSeparateMutable", defaultValue = "false")
+  private boolean autoDependenciesSeparateMutable;
+
+  /**
    * Set this to "true" to skip installing packages to CRX although configured in the POM.
    */
   @Parameter(property = "conga.cloudManager.allPackage.skip", defaultValue = "false")
@@ -88,6 +94,7 @@ public final class CloudManagerAllPackageMojo extends AbstractCloudManagerMojo {
 
     AllPackageBuilder builder = new AllPackageBuilder(targetFile, groupName, packageName)
         .autoDependencies(this.autoDependencies)
+        .autoDependenciesSeparateMutable(this.autoDependenciesSeparateMutable)
         .logger(getLog());
 
     try {
