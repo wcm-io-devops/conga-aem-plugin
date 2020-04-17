@@ -24,6 +24,7 @@ import static io.wcm.devops.conga.generator.util.FileUtil.getCanonicalPath;
 import java.io.File;
 import java.io.IOException;
 import java.util.List;
+import java.util.Set;
 
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugin.MojoFailureException;
@@ -71,23 +72,31 @@ public final class CloudManagerAllPackageMojo extends AbstractCloudManagerMojo {
   @Parameter(property = "conga.cloudManager.allPackage.skip", defaultValue = "false")
   private boolean skip;
 
+  private static final String CLOUDMANAGER_TARGET_NONE = "none";
+
   @Override
   public void execute() throws MojoExecutionException, MojoFailureException {
     if (skip) {
       return;
     }
 
-    File environmentDir = getEnvironmentDir();
-    List<File> nodeDirs = getNodeDirs(environmentDir);
-    ModelParser modelParser = new ModelParser();
-    for (File nodeDir : nodeDirs) {
-      buildAllPackage(nodeDir, modelParser);
+    List<File> environmentDirs = getEnvironmentDir();
+    for (File environmentDir : environmentDirs) {
+      List<File> nodeDirs = getNodeDirs(environmentDir);
+      ModelParser modelParser = new ModelParser();
+      for (File nodeDir : nodeDirs) {
+        Set<String> cloudManagerTarget = modelParser.getCloudManagerTarget(nodeDir);
+        if (!cloudManagerTarget.contains(CLOUDMANAGER_TARGET_NONE)) {
+          buildAllPackage(environmentDir, nodeDir, cloudManagerTarget, modelParser);
+        }
+      }
     }
   }
 
-  private void buildAllPackage(File nodeDir, ModelParser modelParser) throws MojoFailureException {
+  private void buildAllPackage(File environmentDir, File nodeDir, Set<String> cloudManagerTarget,
+      ModelParser modelParser) throws MojoExecutionException {
     String groupName = this.group;
-    String packageName = nodeDir.getName() + "-" + this.name;
+    String packageName = environmentDir.getName() + "." + nodeDir.getName() + "." + this.name;
 
     List<ContentPackageFile> contentPackages = modelParser.getContentPackagesForNode(nodeDir);
     File targetFile = new File(getTargetDir(), packageName + ".zip");
@@ -98,7 +107,7 @@ public final class CloudManagerAllPackageMojo extends AbstractCloudManagerMojo {
         .logger(getLog());
 
     try {
-      if (builder.build(contentPackages)) {
+      if (builder.build(contentPackages, cloudManagerTarget)) {
         getLog().info("Generated " + getCanonicalPath(targetFile));
       }
       else {
@@ -106,7 +115,7 @@ public final class CloudManagerAllPackageMojo extends AbstractCloudManagerMojo {
       }
     }
     catch (IOException ex) {
-      throw new MojoFailureException("Unable to generate " + getCanonicalPath(targetFile), ex);
+      throw new MojoExecutionException("Unable to generate " + getCanonicalPath(targetFile), ex);
     }
   }
 

@@ -28,13 +28,16 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.Reader;
 import java.util.ArrayList;
+import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import org.apache.commons.lang3.CharEncoding;
 import org.apache.commons.lang3.StringUtils;
 import org.yaml.snakeyaml.Yaml;
 
+import io.wcm.devops.conga.model.util.MapExpander;
 import io.wcm.devops.conga.plugins.aem.postprocessor.ContentPackagePropertiesPostProcessor;
 
 /**
@@ -64,6 +67,54 @@ public final class ModelParser {
   public List<ContentPackageFile> getContentPackagesForNode(File nodeDir) {
     Map<String, Object> data = getModelData(nodeDir);
     return collectPackages(data, nodeDir);
+  }
+
+  /**
+   * Checks if the node has the given node role assigned.
+   * @param nodeDir Node directory
+   * @param roleName Node role name
+   * @return true if role is assigned
+   */
+  @SuppressWarnings("unchecked")
+  public boolean hasRole(File nodeDir, String roleName) {
+    Map<String, Object> data = getModelData(nodeDir);
+    List<Map<String, Object>> roles = (List<Map<String, Object>>)data.get("roles");
+    for (Map<String, Object> role : roles) {
+      if (StringUtils.equals((String)role.get("role"), roleName)) {
+        return true;
+      }
+    }
+    return false;
+  }
+
+  /**
+   * Collects all assigned "cloudManager.target" values (lists or single values) to any role from the node.
+   * @param nodeDir Node directory
+   * @return List of cloud manager environment names or "none"
+   */
+  @SuppressWarnings("unchecked")
+  public Set<String> getCloudManagerTarget(File nodeDir) {
+    Set<String> targets = new LinkedHashSet<>();
+    Map<String, Object> data = getModelData(nodeDir);
+    List<Map<String, Object>> roles = (List<Map<String, Object>>)data.get("roles");
+    for (Map<String, Object> role : roles) {
+      Map<String, Object> config = (Map<String, Object>)role.get("config");
+      if (config != null) {
+        Object targetValue = MapExpander.getDeep(config, "cloudManager.target");
+        if (targetValue != null) {
+          if (targetValue instanceof String) {
+            targets.add((String)targetValue);
+          }
+          else if (targetValue instanceof List) {
+            targets.addAll((List<String>)targetValue);
+          }
+          else {
+            throw new RuntimeException("Invalid cloudManager.target value: " + targetValue);
+          }
+        }
+      }
+    }
+    return targets;
   }
 
   private Map<String, Object> getModelData(File nodeDir) {
@@ -111,24 +162,6 @@ public final class ModelParser {
     String path = (String)fileData.get("path");
     File file = new File(nodeDir, path);
     return new ContentPackageFile(file, fileData, roleData);
-  }
-
-  /**
-   * Checks if the node has the given node role assigned.
-   * @param nodeDir Node directory
-   * @param roleName Node role name
-   * @return true if role is assigned
-   */
-  @SuppressWarnings("unchecked")
-  public boolean hasRole(File nodeDir, String roleName) {
-    Map<String, Object> data = getModelData(nodeDir);
-    List<Map<String, Object>> roles = (List<Map<String, Object>>)data.get("roles");
-    for (Map<String, Object> role : roles) {
-      if (StringUtils.equals((String)role.get("role"), roleName)) {
-        return true;
-      }
-    }
-    return false;
   }
 
 }

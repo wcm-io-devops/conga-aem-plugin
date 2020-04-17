@@ -32,6 +32,7 @@ import java.util.ArrayList;
 import java.util.Enumeration;
 import java.util.List;
 import java.util.Properties;
+import java.util.Set;
 import java.util.stream.Collectors;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipFile;
@@ -62,6 +63,8 @@ public final class AllPackageBuilder {
   private boolean autoDependencies;
   private boolean autoDependenciesSeparateMutable;
   private Log log;
+
+  private static final String RUNMODE_DEFAULT = "$default$";
 
   /**
    * @param targetFile Target file
@@ -112,10 +115,20 @@ public final class AllPackageBuilder {
   /**
    * Build "all" content package.
    * @param contentPackages Content packages (invalid will be filtered out)
+   * @param cloudManagerTarget Target environments/run modes the packages should be attached to
    * @return true if "all" package was generated, false if not valid package was found.
    * @throws IOException I/O exception
    */
-  public boolean build(List<ContentPackageFile> contentPackages) throws IOException {
+  public boolean build(List<ContentPackageFile> contentPackages, Set<String> cloudManagerTarget) throws IOException {
+
+    // collect list of cloud manager environment run modes
+    List<String> environmentRunmodes = new ArrayList<>();
+    if (cloudManagerTarget.isEmpty()) {
+      environmentRunmodes.add(RUNMODE_DEFAULT);
+    }
+    else {
+      environmentRunmodes.addAll(cloudManagerTarget);
+    }
 
     // generate warnings for each invalid content packages that is skipped
     contentPackages.stream()
@@ -142,27 +155,29 @@ public final class AllPackageBuilder {
 
     // build content package
     // if auto dependencies is active: build separate "dependency chains" between mutable and immutable packages
-    List<ContentPackageFile> previousPackages = new ArrayList<>();
     try (ContentPackage contentPackage = builder.build(targetFile)) {
-      for (ContentPackageFile pkg : validContentPackages) {
-        String path = buildPackagePath(pkg, rootPath);
+      for (String environmentRunmode : environmentRunmodes) {
+        List<ContentPackageFile> previousPackages = new ArrayList<>();
+        for (ContentPackageFile pkg : validContentPackages) {
+          String path = buildPackagePath(pkg, rootPath, environmentRunmode);
 
-        // get last previous package
-        // if autoDependenciesSeparateMutable active only that of the same mutability type
-        ContentPackageFile previousPkg = previousPackages.stream()
-            .filter(item -> !autoDependenciesSeparateMutable || mutableMatches(item, pkg))
-            .reduce((first, second) -> second)
-            .orElse(null);
+          // get last previous package
+          // if autoDependenciesSeparateMutable active only that of the same mutability type
+          ContentPackageFile previousPkg = previousPackages.stream()
+              .filter(item -> !autoDependenciesSeparateMutable || mutableMatches(item, pkg))
+              .reduce((first, second) -> second)
+              .orElse(null);
 
-        if (autoDependencies && previousPkg != null) {
-          // wire previous package in package dependency
-          addFileWithDependency(contentPackage, path, pkg, previousPkg);
+          if (autoDependencies && previousPkg != null) {
+            // wire previous package in package dependency
+            addFileWithDependency(contentPackage, path, pkg, previousPkg);
+          }
+          else {
+            // add package file directly
+            contentPackage.addFile(path, pkg.getFile());
+          }
+          previousPackages.add(pkg);
         }
-        else {
-          // add package file directly
-          contentPackage.addFile(path, pkg.getFile());
-        }
-        previousPackages.add(pkg);
       }
     }
 
@@ -201,15 +216,18 @@ public final class AllPackageBuilder {
    * @param rootPath Root path
    * @return Package path
    */
-  private static String buildPackagePath(ContentPackageFile pkg, String rootPath) {
-    String runModeSuffix = "";
+  private static String buildPackagePath(ContentPackageFile pkg, String rootPath, String environmentRunmode) {
+    StringBuilder runModeSuffix = new StringBuilder();
     if (RunModeUtil.isOnlyAuthor(pkg)) {
-      runModeSuffix = "." + RUNMODE_AUTHOR;
+      runModeSuffix.append(".").append(RUNMODE_AUTHOR);
     }
     else if (RunModeUtil.isOnlyPublish(pkg)) {
-      runModeSuffix = "." + RUNMODE_PUBLISH;
+      runModeSuffix.append(".").append(RUNMODE_PUBLISH);
     }
-    return rootPath + "/" + pkg.getPackageType() + "/install" + runModeSuffix + "/" + pkg.getFile().getName();
+    if (!StringUtils.equals(environmentRunmode, RUNMODE_DEFAULT)) {
+      runModeSuffix.append(".").append(environmentRunmode);
+    }
+    return rootPath + "/" + pkg.getPackageType() + "/install" + runModeSuffix.toString() + "/" + pkg.getFile().getName();
   }
 
   /**

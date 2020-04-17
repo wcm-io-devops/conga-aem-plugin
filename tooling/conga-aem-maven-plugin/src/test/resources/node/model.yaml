@@ -85,6 +85,8 @@ roles:
       mapping: {generatePackage: true}
     crypto: null
     contentPackage: {version: 1.3.1-SNAPSHOT, group: wcm-io-samples}
+    cloudManager:
+      target: [stage, prod]
 - role: wcm-io-samples-aem-cms
   variant: aem-author
   variants: [aem-author]
@@ -179,6 +181,8 @@ roles:
       mapping: {generatePackage: true}
     crypto: null
     contentPackage: {version: 1.3.1-SNAPSHOT, group: wcm-io-samples}
+    cloudManager:
+      target: [stage, prod]
 versionInfo: {'io.wcm.devops.conga.plugins:io.wcm.devops.conga.plugins.aem': 1.10.0,
   'io.wcm.devops.conga.plugins:io.wcm.devops.conga.plugins.ansible': 1.3.0, 'io.wcm.devops.conga.plugins:io.wcm.devops.conga.plugins.sling': 1.2.6,
   'io.wcm.devops.conga:conga-maven-plugin': 1.12.0, 'io.wcm.maven.plugins:wcmio-content-package-maven-plugin': 1.7.4}

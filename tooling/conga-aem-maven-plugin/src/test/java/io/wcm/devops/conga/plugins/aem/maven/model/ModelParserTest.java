@@ -32,6 +32,7 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 import com.google.common.collect.ImmutableList;
+import com.google.common.collect.ImmutableSet;
 
 class ModelParserTest {
 
@@ -82,9 +83,15 @@ class ModelParserTest {
   }
 
   @Test
-  public void testHasRole() {
+  void testHasRole() {
     assertTrue(underTest.hasRole(dispatcherNodeDir, "aem-dispatcher-cloud"));
     assertFalse(underTest.hasRole(nodeDir, "aem-dispatcher-cloud"));
+  }
+
+  @Test
+  void testGetCloudManagerTarget() {
+    assertEquals(ImmutableSet.of("stage", "prod"), underTest.getCloudManagerTarget(nodeDir));
+    assertTrue(underTest.getCloudManagerTarget(dispatcherNodeDir).isEmpty());
   }
 
 }

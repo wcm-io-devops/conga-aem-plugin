@@ -65,18 +65,27 @@ public final class CloudManagerDispatcherConfigMojo extends AbstractCloudManager
       return;
     }
 
-    File environmentDir = getEnvironmentDir();
-    List<File> nodeDirs = getNodeDirs(environmentDir);
-    ModelParser modelParser = new ModelParser();
-    for (File nodeDir : nodeDirs) {
-      if (modelParser.hasRole(nodeDir, ROLE_AEM_DISPATCHER_CLOUD)) {
-        buildDispatcherConfig(nodeDir);
+    int dispatcherNodeCount = 0;
+    List<File> environmentDirs = getEnvironmentDir();
+    for (File environmentDir : environmentDirs) {
+      List<File> nodeDirs = getNodeDirs(environmentDir);
+      ModelParser modelParser = new ModelParser();
+      for (File nodeDir : nodeDirs) {
+        if (modelParser.hasRole(nodeDir, ROLE_AEM_DISPATCHER_CLOUD)) {
+          buildDispatcherConfig(environmentDir, nodeDir);
+          dispatcherNodeCount++;
+        }
       }
+    }
+
+    if (dispatcherNodeCount > 1) {
+      throw new MojoFailureException("More than one node with role '" + ROLE_AEM_DISPATCHER_CLOUD + "' found - "
+          + "AEM Cloud service supports only a single dispatcher configuration.");
     }
   }
 
-  private void buildDispatcherConfig(File nodeDir) throws MojoFailureException {
-    File targetFile = new File(getTargetDir(), nodeDir.getName() + ".dispatcher-config.zip");
+  private void buildDispatcherConfig(File environmentDir, File nodeDir) throws MojoExecutionException {
+    File targetFile = new File(getTargetDir(), environmentDir.getName() + "." + nodeDir.getName() + ".dispatcher-config.zip");
 
     try {
       String basePath = toZipDirectoryPath(nodeDir);
@@ -86,7 +95,7 @@ public final class CloudManagerDispatcherConfigMojo extends AbstractCloudManager
       zipArchiver.createArchive();
     }
     catch (ArchiverException | IOException ex) {
-      throw new MojoFailureException("Unable to build file " + targetFile.getPath() + ": " + ex.getMessage(), ex);
+      throw new MojoExecutionException("Unable to build file " + targetFile.getPath() + ": " + ex.getMessage(), ex);
     }
   }
 

@@ -40,9 +40,7 @@ import com.google.common.collect.ImmutableSet;
 abstract class AbstractCloudManagerMojo extends AbstractMojo {
 
   /**
-   * Selected environments to generate. It's only allowed to define a single environment for this mojo,
-   * but to be compatible with the other CONGA plugins it's uses the same semantic for defining multiple
-   * environments.
+   * Selected environments to generate.
    */
   @Parameter(property = "conga.environments")
   private String[] environments;
@@ -77,7 +75,7 @@ abstract class AbstractCloudManagerMojo extends AbstractMojo {
    * @return Environment directory
    * @throws MojoExecutionException if no or multiple directories found
    */
-  protected File getEnvironmentDir() throws MojoExecutionException {
+  protected List<File> getEnvironmentDir() throws MojoExecutionException {
     List<File> directories = null;
     Set<String> selectedEnvironments = toSet(this.environments);
     if (configurationDir.exists() && configurationDir.isDirectory()) {
@@ -92,11 +90,7 @@ abstract class AbstractCloudManagerMojo extends AbstractMojo {
     if (directories == null || directories.isEmpty()) {
       throw new MojoExecutionException("No matching environment directory found in " + getCanonicalPath(configurationDir));
     }
-    if (directories.size() > 1) {
-      throw new MojoExecutionException("Multiple environments found in " + getCanonicalPath(configurationDir)
-          + " - please specify a single environment via the 'environments' parameter.");
-    }
-    return directories.get(0);
+    return directories;
   }
 
   /**
