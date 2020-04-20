@@ -105,13 +105,13 @@ public final class ModelParser {
         if (targetValue != null) {
           if (targetValue instanceof String) {
             String target = (String)targetValue;
-            if (!StringUtils.isBlank(target)) {
+            if (StringUtils.isNotBlank(target)) {
               targets.add(target);
             }
           }
           else if (targetValue instanceof List) {
             targets.addAll(((List<String>)targetValue).stream()
-                .filter(target -> !StringUtils.isBlank(target))
+                .filter(StringUtils::isNotBlank)
                 .collect(Collectors.toList()));
           }
           else {
