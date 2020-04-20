@@ -32,6 +32,7 @@ import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.stream.Collectors;
 
 import org.apache.commons.lang3.CharEncoding;
 import org.apache.commons.lang3.StringUtils;
@@ -103,10 +104,15 @@ public final class ModelParser {
         Object targetValue = MapExpander.getDeep(config, "cloudManager.target");
         if (targetValue != null) {
           if (targetValue instanceof String) {
-            targets.add((String)targetValue);
+            String target = (String)targetValue;
+            if (!StringUtils.isBlank(target)) {
+              targets.add(target);
+            }
           }
           else if (targetValue instanceof List) {
-            targets.addAll((List<String>)targetValue);
+            targets.addAll(((List<String>)targetValue).stream()
+                .filter(target -> !StringUtils.isBlank(target))
+                .collect(Collectors.toList()));
           }
           else {
             throw new RuntimeException("Invalid cloudManager.target value: " + targetValue);
