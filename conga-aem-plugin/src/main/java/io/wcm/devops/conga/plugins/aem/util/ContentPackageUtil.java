@@ -287,7 +287,7 @@ public final class ContentPackageUtil {
    * @param key Key
    * @return Option value or null
    */
-  private static String getOptionalProp(Map<String, Object> options, String key) {
+  public static String getOptionalProp(Map<String, Object> options, String key) {
     Object value = MapExpander.getDeep(options, key);
     if (value instanceof String) {
       return (String)value;
