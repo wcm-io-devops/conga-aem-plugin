@@ -47,6 +47,8 @@ import org.apache.jackrabbit.vault.packaging.VersionRange;
 import org.apache.maven.plugin.logging.Log;
 import org.apache.maven.plugin.logging.SystemStreamLog;
 
+import com.google.common.collect.ImmutableSet;
+
 import io.wcm.devops.conga.plugins.aem.maven.model.ContentPackageFile;
 import io.wcm.tooling.commons.contentpackagebuilder.ContentPackage;
 import io.wcm.tooling.commons.contentpackagebuilder.ContentPackageBuilder;
@@ -65,6 +67,7 @@ public final class AllPackageBuilder {
   private Log log;
 
   private static final String RUNMODE_DEFAULT = "$default$";
+  private static final Set<String> ALLOWED_PACKAGE_TYPES = ImmutableSet.of("application", "container", "content");
 
   /**
    * @param targetFile Target file
@@ -132,12 +135,24 @@ public final class AllPackageBuilder {
 
     // generate warnings for each invalid content packages that is skipped
     contentPackages.stream()
-        .filter(pkg -> !isValid(pkg))
+        .filter(pkg -> !hasPackageType(pkg))
         .forEach(pkg -> getLog().warn("Skipping content package without package type: " + getCanonicalPath(pkg.getFile())));
+
+    // fail build if content packages with non-allowed package types exist
+    List<ContentPackageFile> invalidPackageTypeContentPackages = contentPackages.stream()
+        .filter(AllPackageBuilder::hasPackageType)
+        .filter(pkg -> !isValidPackageType(pkg))
+        .collect(Collectors.toList());
+    if (!invalidPackageTypeContentPackages.isEmpty()) {
+      throw new IOException("Content packages found with unsupported package types: " +
+          invalidPackageTypeContentPackages.stream()
+              .map(pkg -> pkg.getName() + " -> " + pkg.getPackageType())
+              .collect(Collectors.joining(", ")));
+    }
 
     // collect AEM content packages for this node
     List<ContentPackageFile> validContentPackages = contentPackages.stream()
-        .filter(pkg -> isValid(pkg))
+        .filter(AllPackageBuilder::hasPackageType)
         .collect(Collectors.toList());
     if (validContentPackages.isEmpty()) {
       return false;
@@ -184,9 +199,14 @@ public final class AllPackageBuilder {
     return true;
   }
 
-  private static boolean isValid(ContentPackageFile pkg) {
-    // accept only content packages with package type
+  private static boolean hasPackageType(ContentPackageFile pkg) {
+    // accept only content packages with a package type set
     return pkg.getPackageType() != null;
+  }
+
+  private static boolean isValidPackageType(ContentPackageFile pkg) {
+    // check if the package type is an allowed package type
+    return ALLOWED_PACKAGE_TYPES.contains(pkg.getPackageType());
   }
 
   private static boolean isMutable(ContentPackageFile pkg) {
