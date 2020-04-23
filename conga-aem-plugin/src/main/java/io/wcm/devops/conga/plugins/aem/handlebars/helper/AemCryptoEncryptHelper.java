@@ -20,6 +20,7 @@
 package io.wcm.devops.conga.plugins.aem.handlebars.helper;
 
 import static io.wcm.devops.conga.plugins.aem.AemPluginConfig.PARAMETER_CRYPTO_AES_KEY_URL;
+import static io.wcm.devops.conga.plugins.aem.AemPluginConfig.PARAMETER_CRYPTO_SKIP;
 import static io.wcm.devops.conga.plugins.aem.AemPluginConfig.PLUGIN_NAME;
 
 import java.io.IOException;
@@ -29,6 +30,7 @@ import java.security.Key;
 import java.util.Map;
 
 import org.apache.commons.io.IOUtils;
+import org.apache.commons.lang3.BooleanUtils;
 import org.apache.commons.lang3.StringUtils;
 
 import com.github.jknack.handlebars.Options;
@@ -65,20 +67,32 @@ public final class AemCryptoEncryptHelper implements HelperPlugin<Object> {
       return null;
     }
 
-    // Skip encryption if already encrypted
+    // read crypto config parameter
+    String cryptoAesKeyUrl = null;
+    boolean cryptoSkip = false;
+    Map<String, Object> aemPluginConfig = pluginContext.getGenericPluginConfig().get(PLUGIN_NAME);
+    if (aemPluginConfig != null) {
+      cryptoAesKeyUrl = (String)aemPluginConfig.get(PARAMETER_CRYPTO_AES_KEY_URL);
+      Object cryptoSkipObject = aemPluginConfig.get(PARAMETER_CRYPTO_SKIP);
+      if (cryptoSkipObject != null) {
+        if (cryptoSkipObject instanceof Boolean) {
+          cryptoSkip = (Boolean)cryptoSkipObject;
+        }
+        else {
+          cryptoSkip = BooleanUtils.toBoolean(cryptoSkipObject.toString());
+        }
+      }
+    }
+
+    // Skip encryption if configured, or if value is already encrypted
     String input = context.toString();
-    if (CryptoString.isCryptoString(input)) {
+    if (cryptoSkip || CryptoString.isCryptoString(input)) {
       return input;
     }
 
     byte[] cryptoKeyData;
     try {
       // get urls to crypto keys
-      String cryptoAesKeyUrl = null;
-      Map<String, Object> aemPluginConfig = pluginContext.getGenericPluginConfig().get(PLUGIN_NAME);
-      if (aemPluginConfig != null) {
-        cryptoAesKeyUrl = (String)aemPluginConfig.get(PARAMETER_CRYPTO_AES_KEY_URL);
-      }
       if (StringUtils.isBlank(cryptoAesKeyUrl)) {
         throw new IOException("Unable to encrypto string with AEM crypto keys: "
             + "Please add plugin configuration: '" + PLUGIN_NAME + ";" + PARAMETER_CRYPTO_AES_KEY_URL + "=/path/to/master");

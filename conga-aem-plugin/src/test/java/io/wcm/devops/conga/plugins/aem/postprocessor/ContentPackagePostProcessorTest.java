@@ -24,6 +24,7 @@ import static io.wcm.devops.conga.plugins.aem.postprocessor.ContentPackageOption
 import static io.wcm.devops.conga.plugins.aem.postprocessor.ContentPackageOptions.PROPERTY_PACKAGE_FILTERS;
 import static io.wcm.devops.conga.plugins.aem.postprocessor.ContentPackageOptions.PROPERTY_PACKAGE_GROUP;
 import static io.wcm.devops.conga.plugins.aem.postprocessor.ContentPackageOptions.PROPERTY_PACKAGE_NAME;
+import static io.wcm.devops.conga.plugins.aem.postprocessor.ContentPackageOptions.PROPERTY_PACKAGE_PACKAGE_TYPE;
 import static io.wcm.devops.conga.plugins.aem.postprocessor.ContentPackageOptions.PROPERTY_PACKAGE_PROPERTIES;
 import static io.wcm.devops.conga.plugins.aem.postprocessor.ContentPackageOptions.PROPERTY_PACKAGE_ROOT_PATH;
 import static io.wcm.devops.conga.plugins.aem.postprocessor.ContentPackageOptions.PROPERTY_PACKAGE_THUMBNAIL_IMAGE;
@@ -74,6 +75,7 @@ public class ContentPackagePostProcessorTest {
     options.put(PROPERTY_PACKAGE_NAME, "myName");
     options.put(PROPERTY_PACKAGE_ROOT_PATH, "/content/test");
     options.put(PROPERTY_PACKAGE_AC_HANDLING, "ignore");
+    options.put(PROPERTY_PACKAGE_PACKAGE_TYPE, "content");
     options.put(PROPERTY_PACKAGE_THUMBNAIL_IMAGE, "classpath:/package/thumbnail.png");
     options.put(PROPERTY_PACKAGE_FILTERS, ImmutableList.of(
             ImmutableMap.<String, Object>of("filter", "/content/test/1"),
@@ -100,7 +102,7 @@ public class ContentPackagePostProcessorTest {
     File readmeFolder = new File(target, "readme");
     readmeFolder.mkdir();
     File readmeFile = new File(readmeFolder, "README.txt");
-    FileUtils.write(readmeFile, "readme");
+    FileUtils.write(readmeFile, "readme", StandardCharsets.UTF_8);
 
     // post-process
     FileContext fileContext = new FileContext()
@@ -137,6 +139,7 @@ public class ContentPackagePostProcessorTest {
 
     Document propertiesXml = getXmlFromZip(zipFile, "META-INF/vault/properties.xml");
     assertXpathEvaluatesTo("ignore", "/properties/entry[@key='acHandling']", propertiesXml);
+    assertXpathEvaluatesTo("content", "/properties/entry[@key='packageType']", propertiesXml);
     assertXpathEvaluatesTo("Sample comment in content.json", "/properties/entry[@key='description']", propertiesXml);
     assertXpathEvaluatesTo("value1", "/properties/entry[@key='prop1']", propertiesXml);
     assertXpathEvaluatesTo("123", "/properties/entry[@key='my.custom.prop2']", propertiesXml);

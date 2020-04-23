@@ -17,7 +17,7 @@
  * limitations under the License.
  * #L%
  */
-package io.wcm.devops.conga.plugins.aem.maven;
+package io.wcm.devops.conga.plugins.aem.maven.model;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;

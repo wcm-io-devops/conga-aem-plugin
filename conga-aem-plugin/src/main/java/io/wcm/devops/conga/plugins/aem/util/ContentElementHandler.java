@@ -24,7 +24,7 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import org.apache.commons.lang3.StringUtils;
-import org.apache.sling.jcr.contentparser.ContentHandler;
+import org.apache.sling.contentparser.api.ContentHandler;
 
 import io.wcm.tooling.commons.contentpackagebuilder.element.ContentElement;
 import io.wcm.tooling.commons.contentpackagebuilder.element.ContentElementImpl;

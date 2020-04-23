@@ -42,6 +42,7 @@ import org.slf4j.Logger;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableMap;
 
+import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 import io.wcm.devops.conga.generator.GeneratorException;
 import io.wcm.devops.conga.generator.plugins.postprocessor.AbstractPostProcessor;
 import io.wcm.devops.conga.generator.spi.context.FileContext;
@@ -76,6 +77,7 @@ public class ContentPackageOsgiConfigPostProcessor extends AbstractPostProcessor
   }
 
   @Override
+  @SuppressFBWarnings("RV_RETURN_VALUE_IGNORED_BAD_PRACTICE")
   public List<FileContext> apply(FileContext fileContext, PostProcessorContext context) {
     File file = fileContext.getFile();
     Logger logger = context.getLogger();
@@ -88,20 +90,31 @@ public class ContentPackageOsgiConfigPostProcessor extends AbstractPostProcessor
       // generate OSGi configurations
       Model model = ProvisioningUtil.getModel(fileContext);
 
+      // check if any osgi configuration is present
+      boolean hasAnyConfig = !ProvisioningUtil.visitOsgiConfigurations(model,
+          (ConfigConsumer<Boolean>)(path, properties) -> true).isEmpty();
+
       // create AEM content package with configurations
       File zipFile = new File(file.getParentFile(), FilenameUtils.getBaseName(file.getName()) + ".zip");
       logger.info("Generate {}", zipFile.getCanonicalPath());
 
       String rootPath = ContentPackageUtil.getMandatoryProp(options, PROPERTY_PACKAGE_ROOT_PATH);
 
-      ContentPackageBuilder builder = ContentPackageUtil.getContentPackageBuilder(options, fileHeader);
+      ContentPackageBuilder builder = ContentPackageUtil.getContentPackageBuilder(options, context.getUrlFileManager(), fileHeader);
+
+      // set package type depending on if config is present or not
+      builder.packageType(hasAnyConfig ? "container" : "application");
 
       try (ContentPackage contentPackage = builder.build(zipFile)) {
-
-        // always create folder for root path
-        contentPackage.addContent(rootPath, ImmutableMap.of("jcr:primaryType", "nt:folder"));
-
-        generateOsgiConfigurations(model, contentPackage, rootPath, fileHeader, context);
+        if (hasAnyConfig) {
+          // generate OSGI config files
+          generateOsgiConfigurations(model, contentPackage, rootPath, fileHeader, context);
+        }
+        else {
+          // create folder for root path if package is empty otherwise
+          // (to make sure probably already existing config is overridden/cleaned)
+          contentPackage.addContent(rootPath, ImmutableMap.of("jcr:primaryType", "nt:folder"));
+        }
       }
 
       // delete provisioning file after transformation
@@ -126,11 +139,13 @@ public class ContentPackageOsgiConfigPostProcessor extends AbstractPostProcessor
    * @param rootPath Root path
    * @param fileHeader File header
    * @param context Post processor context
+   * @return true if any config file was added
    */
-  private void generateOsgiConfigurations(Model model, ContentPackage contentPackage,
+  private boolean generateOsgiConfigurations(Model model, ContentPackage contentPackage,
       String rootPath, FileHeaderContext fileHeader, PostProcessorContext context) throws IOException {
-    ProvisioningUtil.visitOsgiConfigurations(model, new ConfigConsumer<Void>() {
+    List<Void> result = ProvisioningUtil.visitOsgiConfigurations(model, new ConfigConsumer<Void>() {
       @Override
+      @SuppressFBWarnings("RV_RETURN_VALUE_IGNORED_BAD_PRACTICE")
       public Void accept(String path, Dictionary<String, Object> properties) throws IOException {
         String contentPath = rootPath + (StringUtils.contains(path, "/") ? "." : "/") + path;
         context.getLogger().info("  Include " + contentPath);
@@ -148,7 +163,7 @@ public class ContentPackageOsgiConfigPostProcessor extends AbstractPostProcessor
 
           // write configuration to content package
           try (InputStream is = new BufferedInputStream(new FileInputStream(tempFile))) {
-            contentPackage.addFile(contentPath, is, "text/plain;charset=" + StandardCharsets.UTF_8.name());
+            contentPackage.addFile(contentPath, is);
           }
         }
         finally {
@@ -158,6 +173,7 @@ public class ContentPackageOsgiConfigPostProcessor extends AbstractPostProcessor
         return null;
       }
     });
+    return !result.isEmpty();
   }
 
 }

@@ -141,6 +141,9 @@ public class ContentPackageOsgiConfigPostProcessorTest {
     assertXpathEvaluatesTo("myName", "/properties/entry[@key='name']", propsXml);
     assertXpathEvaluatesTo("myDesc\n---\nSample comment in provisioning.txt", "/properties/entry[@key='description']", propsXml);
     assertXpathEvaluatesTo("1.5", "/properties/entry[@key='version']", propsXml);
+    assertXpathEvaluatesTo("container", "/properties/entry[@key='packageType']", propsXml);
+
+    assertFalse(ZipUtil.containsEntry(zipFile, "jcr_root/apps/test/config/.content.xml"));
   }
 
   @Test
@@ -172,6 +175,9 @@ public class ContentPackageOsgiConfigPostProcessorTest {
 
     File zipFile = new File(target, "test.zip");
     assertTrue(zipFile.exists());
+
+    Document propsXml = getXmlFromZip(zipFile, "META-INF/vault/properties.xml");
+    assertXpathEvaluatesTo("application", "/properties/entry[@key='packageType']", propsXml);
 
     assertTrue(ZipUtil.containsEntry(zipFile, "jcr_root/apps/test/config/.content.xml"));
   }

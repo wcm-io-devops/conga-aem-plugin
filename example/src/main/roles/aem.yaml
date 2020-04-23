@@ -12,6 +12,7 @@ files:
   postProcessorOptions:
     contentPackage:
       name: config-sample
+      packageType: container
       description: The description of the sample package.
       version: "${version}"
       rootPath: /apps/sample/config
@@ -22,12 +23,18 @@ files:
 - file: sling-mapping.json
   dir: packages
   template: sling-mapping.json.hbs
+  # Example for disabling a FileVault filter
+  validatorOptions:
+    contentPackage.validatorsSettings:
+      jackrabbit-filter:
+        isDisabled: true
   # Transform JSON file to AEM content package
   postProcessors:
   - aem-contentpackage
   postProcessorOptions:
     contentPackage:
       name: mapping-sample
+      packageType: content
       rootPath: /etc/map/http
       filters:
       - filter: /etc/map/http
@@ -59,11 +66,18 @@ files:
 - file: aem-replicationagents.json
   dir: packages
   template: aem-replicationagents.json.hbs
+  # Example for reconfiguring a FileVault filter
+  validatorOptions:
+    contentPackage.validatorsSettings:
+      jackrabbit-filter:
+        options:
+          validRoots: /etc/replication
   postProcessors:
   - aem-contentpackage
   postProcessorOptions:
     contentPackage:
       name: aem-cms-author-replicationagents
+      packageType: content
       rootPath: /etc/replication
       filters:
       - filter: /etc/replication/agents.author
@@ -85,6 +99,7 @@ files:
   postProcessorOptions:
     contentPackage:
       name: content-sample
+      packageType: content
       rootPath: /content/sample
       files:
       # Include generated HTML file in content package and delete the file afterwards from filesystem

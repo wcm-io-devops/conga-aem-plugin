@@ -20,12 +20,16 @@
 package io.wcm.devops.conga.plugins.aem.util;
 
 import static io.wcm.devops.conga.plugins.aem.postprocessor.ContentPackageOptions.PROPERTY_PACKAGE_AC_HANDLING;
+import static io.wcm.devops.conga.plugins.aem.postprocessor.ContentPackageOptions.PROPERTY_PACKAGE_ALLOW_INDEX_DEFINITIONS;
 import static io.wcm.devops.conga.plugins.aem.postprocessor.ContentPackageOptions.PROPERTY_PACKAGE_DESCRIPTION;
 import static io.wcm.devops.conga.plugins.aem.postprocessor.ContentPackageOptions.PROPERTY_PACKAGE_FILES;
 import static io.wcm.devops.conga.plugins.aem.postprocessor.ContentPackageOptions.PROPERTY_PACKAGE_FILTERS;
 import static io.wcm.devops.conga.plugins.aem.postprocessor.ContentPackageOptions.PROPERTY_PACKAGE_GROUP;
 import static io.wcm.devops.conga.plugins.aem.postprocessor.ContentPackageOptions.PROPERTY_PACKAGE_NAME;
+import static io.wcm.devops.conga.plugins.aem.postprocessor.ContentPackageOptions.PROPERTY_PACKAGE_PACKAGE_TYPE;
 import static io.wcm.devops.conga.plugins.aem.postprocessor.ContentPackageOptions.PROPERTY_PACKAGE_PROPERTIES;
+import static io.wcm.devops.conga.plugins.aem.postprocessor.ContentPackageOptions.PROPERTY_PACKAGE_REQUIRES_RESTART;
+import static io.wcm.devops.conga.plugins.aem.postprocessor.ContentPackageOptions.PROPERTY_PACKAGE_REQUIRES_ROOT;
 import static io.wcm.devops.conga.plugins.aem.postprocessor.ContentPackageOptions.PROPERTY_PACKAGE_ROOT_PATH;
 import static io.wcm.devops.conga.plugins.aem.postprocessor.ContentPackageOptions.PROPERTY_PACKAGE_THUMBNAIL_IMAGE;
 import static io.wcm.devops.conga.plugins.aem.postprocessor.ContentPackageOptions.PROPERTY_PACKAGE_VERSION;
@@ -67,15 +71,38 @@ public final class ContentPackageUtil {
   /**
    * Builds content package builder populated with options from options map.
    * @param options Options
+   * @param urlFileManager URL file manager
+   * @return Content package builder
+   */
+  public static ContentPackageBuilder getContentPackageBuilder(Map<String, Object> options, UrlFileManager urlFileManager) {
+    return getContentPackageBuilder(options, urlFileManager, null);
+  }
+
+  /**
+   * Builds content package builder populated with options from options map.
+   * @param options Options
+   * @param urlFileManager URL file manager
    * @param fileHeader File header
    * @return Content package builder
    */
-  public static ContentPackageBuilder getContentPackageBuilder(Map<String, Object> options, FileHeaderContext fileHeader) {
+  public static ContentPackageBuilder getContentPackageBuilder(Map<String, Object> options, UrlFileManager urlFileManager,
+      FileHeaderContext fileHeader) {
     ContentPackageBuilder builder = new ContentPackageBuilder()
         .group(getMandatoryProp(options, PROPERTY_PACKAGE_GROUP))
         .name(getMandatoryProp(options, PROPERTY_PACKAGE_NAME))
-        .description(mergeDescriptionFileHeader(getOptionalProp(options, PROPERTY_PACKAGE_DESCRIPTION), fileHeader))
-        .version(getOptionalProp(options, PROPERTY_PACKAGE_VERSION));
+        .version(getOptionalProp(options, PROPERTY_PACKAGE_VERSION))
+        .packageType(getOptionalProp(options, PROPERTY_PACKAGE_PACKAGE_TYPE))
+        .requiresRoot(getOptionalPropBoolean(options, PROPERTY_PACKAGE_REQUIRES_ROOT))
+        .requiresRestart(getOptionalPropBoolean(options, PROPERTY_PACKAGE_REQUIRES_RESTART))
+        .allowIndexDefinitions(getOptionalPropBoolean(options, PROPERTY_PACKAGE_ALLOW_INDEX_DEFINITIONS));
+
+    // description
+    if (fileHeader != null) {
+      builder.description(mergeDescriptionFileHeader(getOptionalProp(options, PROPERTY_PACKAGE_DESCRIPTION), fileHeader));
+    }
+    else {
+      builder.description(getOptionalProp(options, PROPERTY_PACKAGE_DESCRIPTION));
+    }
 
     // AC handling
     AcHandling acHandling = getAcHandling(options);
@@ -86,7 +113,6 @@ public final class ContentPackageUtil {
     // thumbnail image
     String thumbnailImageUrl = getOptionalProp(options, PROPERTY_PACKAGE_THUMBNAIL_IMAGE);
     if (StringUtils.isNotBlank(thumbnailImageUrl)) {
-      UrlFileManager urlFileManager = fileHeader.getUrlFileManager();
       try {
         builder.thumbnailImage(urlFileManager.getFile(thumbnailImageUrl));
       }
@@ -261,7 +287,7 @@ public final class ContentPackageUtil {
    * @param key Key
    * @return Option value or null
    */
-  private static String getOptionalProp(Map<String, Object> options, String key) {
+  public static String getOptionalProp(Map<String, Object> options, String key) {
     Object value = MapExpander.getDeep(options, key);
     if (value instanceof String) {
       return (String)value;
@@ -270,6 +296,23 @@ public final class ContentPackageUtil {
       return value.toString();
     }
     return null;
+  }
+
+  /**
+   * Get boolean property from options or return null if not set.
+   * @param options Options
+   * @param key Key
+   * @return Option value or false
+   */
+  private static boolean getOptionalPropBoolean(Map<String, Object> options, String key) {
+    Object value = getOptionalProp(options, key);
+    if (value instanceof Boolean) {
+      return (Boolean)value;
+    }
+    else if (value != null) {
+      return BooleanUtils.toBoolean(value.toString());
+    }
+    return false;
   }
 
   /**

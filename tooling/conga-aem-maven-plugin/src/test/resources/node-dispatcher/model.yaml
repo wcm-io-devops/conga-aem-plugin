@@ -1,0 +1,141 @@
+roles:
+- role: aem-dispatcher-cloud
+  variant: aem-publish
+  variants: [aem-publish]
+  files:
+  - {path: conf.d/available_vhosts/0000_wcm-io-samples.vhost}
+  - {path: conf.d/enabled_vhosts/0000_wcm-io-samples.vhost}
+  - {path: conf.d/rewrites/rewrite.rules}
+  - {path: conf.d/variables/custom.vars}
+  - {path: conf.d/variables/global.vars}
+  - {path: conf.d/dispatcher_vhost.conf}
+  - {path: conf.d/rewrites/default_rewrite.rules}
+  - {path: conf.dispatcher.d/available_farms/publish.farm}
+  - {path: conf.dispatcher.d/enabled_farms/publish.farm}
+  - {path: conf.dispatcher.d/cache/rules.any}
+  - {path: conf.dispatcher.d/clientheaders/clientheaders.any}
+  - {path: conf.dispatcher.d/filters/filters.any}
+  - {path: conf.dispatcher.d/virtualhosts/virtualhosts.any}
+  - {path: conf.dispatcher.d/dispatcher.any}
+  - {path: conf.dispatcher.d/renders/default_renders.any}
+  - {path: conf.dispatcher.d/cache/default_invalidate.any}
+  config:
+    app: {sampleContent: true}
+    log: {projectSpecificLogLevel: info}
+    nodeRoleVariants: [aem-publish]
+    httpd:
+      headers: {xssProtection: null, referrerPolicy: origin-when-cross-origin, contentSecurityPolicy: null}
+      corsHeader: {locationMatch: \.(svg|eot|ttf|woff), enabled: true, allowAllHosts: true}
+      rootRedirect: {httpStatus: 301}
+      serverName: ''
+      customVHostConfig: {after: null, before: null, beforeRewrite: null}
+      serverAliasNames: null
+    dispatcher:
+      filter:
+      - {type: deny, url: /.*}
+      - {extension: (css|eot|gif|ico|jpeg|jpg|js|gif|pdf|png|svg|swf|ttf|woff|woff2|html),
+        type: allow, url: '/content(/.*)?'}
+      - {method: GET, type: allow, url: '/etc.clientlibs(/.*)?'}
+      - {extension: json, method: GET, type: allow, url: /libs/granite/csrf/token.json}
+      - {method: POST, type: allow, url: /content/*.form.html}
+      - {method: GET, type: allow, url: '/libs/cq/personalization(/.*)?'}
+      - {extension: (json|xml|html|feed), selectors: '(feed|rss|pages|languages|blueprint|infinity|tidy|sysview|docview|query|[0-9-]+|jcr:content)',
+        type: deny}
+      - {type: deny, query: debug=.*}
+      - {type: deny, query: wcmmode=.*}
+      - {type: allow, url: /libs/granite/security/currentuser.json}
+      - {path: '/content(/.*)?', extension: (json), selectors: (ambits|assignments|childrenlist|cloudservices|contentfinder|context|emailservice|exacttarget|ext|form|media|missingpages|mobileapps|pages|paragraphs|payloadsummary|permissions|publications|referencelist|savedsearch|skippedpages|search|social|style|tags|tagtree|timezones),
+        type: deny}
+      - {path: '/content(/.*)?', extension: (html), selectors: (translate|translationRulesEditor),
+        type: deny}
+      - {path: '/content(/.*)?', extension: (gif|jpeg|png), selectors: (emulatorstrip|projectcard|thumb),
+        type: deny}
+      - {path: '/content(/.*)?', selectors: (overlay), type: deny}
+      logging: {level: Warn}
+      cache:
+        enableTTL: true
+        headers: [Cache-Control, Content-Disposition, Content-Type, Expires, Last-Modified,
+          X-Content-Type-Options]
+        rules:
+        - {glob: '*', type: allow}
+        - {glob: '*.htx', type: deny}
+        invalidate:
+        - {glob: '*', type: deny}
+        - {glob: '*.html', type: allow}
+        - {glob: '*.json', type: allow}
+        - {glob: /etc/segmentation.segment.js, type: allow}
+        - {glob: '*/analytics.sitecatalyst.js', type: allow}
+        rootPath: null
+        ignoreUrlParams:
+        - {glob: '*', type: deny}
+      forwardClientHeaders: [X-Forwarded-Proto, X-Forwarded-SSL-Certificate, X-Forwarded-SSL-Client-Cert,
+        X-Forwarded-SSL, X-Forwarded-Protocol, CSRF-Token, referer, user-agent, from,
+        content-type, content-length, accept-charset, accept-encoding, accept-language,
+        accept, host, if-match, if-none-match, if-range, if-unmodified-since, max-forwards,
+        range, cookie, depth, translate, expires, date, if, lock-token, x-expected-entity-length,
+        destination, Sling-uploadmode, x-requested-with]
+    sling: {mapping: null}
+    contentPackage: {group: wcm-io-samples}
+  tenants:
+  - tenant: wcm-io-samples
+    config:
+      app: {sampleContent: true}
+      log: {projectSpecificLogLevel: info}
+      nodeRoleVariants: [aem-publish]
+      httpd:
+        headers: {xssProtection: null, referrerPolicy: origin-when-cross-origin, contentSecurityPolicy: null}
+        corsHeader: {locationMatch: \.(svg|eot|ttf|woff), enabled: true, allowAllHosts: true}
+        rootRedirect: {url: /en.html, httpStatus: 301}
+        serverName: wcm-io-samples
+        customVHostConfig: {after: null, before: null, beforeRewrite: null}
+        serverAliasNames: null
+      dispatcher:
+        filter:
+        - {type: deny, url: /.*}
+        - {extension: (css|eot|gif|ico|jpeg|jpg|js|gif|pdf|png|svg|swf|ttf|woff|woff2|html),
+          type: allow, url: '/content(/.*)?'}
+        - {method: GET, type: allow, url: '/etc.clientlibs(/.*)?'}
+        - {extension: json, method: GET, type: allow, url: /libs/granite/csrf/token.json}
+        - {method: POST, type: allow, url: /content/*.form.html}
+        - {method: GET, type: allow, url: '/libs/cq/personalization(/.*)?'}
+        - {extension: (json|xml|html|feed), selectors: '(feed|rss|pages|languages|blueprint|infinity|tidy|sysview|docview|query|[0-9-]+|jcr:content)',
+          type: deny}
+        - {type: deny, query: debug=.*}
+        - {type: deny, query: wcmmode=.*}
+        - {type: allow, url: /libs/granite/security/currentuser.json}
+        - {path: '/content(/.*)?', extension: (json), selectors: (ambits|assignments|childrenlist|cloudservices|contentfinder|context|emailservice|exacttarget|ext|form|media|missingpages|mobileapps|pages|paragraphs|payloadsummary|permissions|publications|referencelist|savedsearch|skippedpages|search|social|style|tags|tagtree|timezones),
+          type: deny}
+        - {path: '/content(/.*)?', extension: (html), selectors: (translate|translationRulesEditor),
+          type: deny}
+        - {path: '/content(/.*)?', extension: (gif|jpeg|png), selectors: (emulatorstrip|projectcard|thumb),
+          type: deny}
+        - {path: '/content(/.*)?', selectors: (overlay), type: deny}
+        logging: {level: Warn}
+        cache:
+          enableTTL: true
+          headers: [Cache-Control, Content-Disposition, Content-Type, Expires, Last-Modified,
+            X-Content-Type-Options]
+          rules:
+          - {glob: '*', type: allow}
+          - {glob: '*.htx', type: deny}
+          invalidate:
+          - {glob: '*', type: deny}
+          - {glob: '*.html', type: allow}
+          - {glob: '*.json', type: allow}
+          - {glob: /etc/segmentation.segment.js, type: allow}
+          - {glob: '*/analytics.sitecatalyst.js', type: allow}
+          rootPath: null
+          ignoreUrlParams:
+          - {glob: '*', type: deny}
+        forwardClientHeaders: [X-Forwarded-Proto, X-Forwarded-SSL-Certificate, X-Forwarded-SSL-Client-Cert,
+          X-Forwarded-SSL, X-Forwarded-Protocol, CSRF-Token, referer, user-agent,
+          from, content-type, content-length, accept-charset, accept-encoding, accept-language,
+          accept, host, if-match, if-none-match, if-range, if-unmodified-since, max-forwards,
+          range, cookie, depth, translate, expires, date, if, lock-token, x-expected-entity-length,
+          destination, Sling-uploadmode, x-requested-with]
+      sling:
+        mapping: {rootPath: /content/wcm-io-samples}
+      contentPackage: {group: wcm-io-samples}
+versionInfo: {'io.wcm.devops.conga.plugins:io.wcm.devops.conga.plugins.aem': 1.10.1-SNAPSHOT,
+  'io.wcm.devops.conga.plugins:io.wcm.devops.conga.plugins.ansible': 1.3.0, 'io.wcm.devops.conga.plugins:io.wcm.devops.conga.plugins.sling': 1.2.7-SNAPSHOT,
+  'io.wcm.devops.conga:conga-maven-plugin': 1.12.1-SNAPSHOT, 'io.wcm.maven.plugins:wcmio-content-package-maven-plugin': 1.7.5-SNAPSHOT}

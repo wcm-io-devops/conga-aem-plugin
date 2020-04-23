@@ -27,6 +27,7 @@ import java.io.InputStream;
 
 import org.apache.commons.lang3.StringUtils;
 
+import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 import io.wcm.devops.conga.generator.UrlFileManager;
 
 /**
@@ -91,6 +92,7 @@ public final class ContentPackageBinaryFile {
    * @param targetDir Target directory for configuration
    * @throws IOException I/O exception
    */
+  @SuppressFBWarnings("RV_RETURN_VALUE_IGNORED_BAD_PRACTICE")
   public void deleteIfRequired(UrlFileManager urlFileManager, File targetDir) throws IOException {
     if (delete) {
       if (StringUtils.isNotBlank(url)) {

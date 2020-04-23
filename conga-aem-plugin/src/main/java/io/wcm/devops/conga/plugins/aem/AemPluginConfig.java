@@ -34,6 +34,11 @@ public final class AemPluginConfig {
    */
   public static final String PARAMETER_CRYPTO_AES_KEY_URL = "cryptoAesKeyUrl";
 
+  /**
+   * Skip AES AEM crypto support, output strings that should be encrypted without encryption.
+   */
+  public static final String PARAMETER_CRYPTO_SKIP = "cryptoSkip";
+
   private AemPluginConfig() {
     // constants only
   }

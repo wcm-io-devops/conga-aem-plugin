@@ -19,10 +19,14 @@
  */
 package io.wcm.devops.conga.plugins.aem.postprocessor;
 
+import static io.wcm.devops.conga.plugins.aem.postprocessor.ContentPackageOptions.PROPERTY_PACKAGE_PACKAGE_TYPE;
+import static org.apache.jackrabbit.vault.packaging.PackageProperties.NAME_PACKAGE_TYPE;
+
 import java.io.IOException;
 import java.util.List;
 import java.util.Map;
 
+import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 
 import com.google.common.collect.ImmutableList;
@@ -33,6 +37,7 @@ import io.wcm.devops.conga.generator.spi.ImplicitApplyOptions;
 import io.wcm.devops.conga.generator.spi.context.FileContext;
 import io.wcm.devops.conga.generator.spi.context.PostProcessorContext;
 import io.wcm.devops.conga.generator.util.FileUtil;
+import io.wcm.devops.conga.plugins.aem.util.ContentPackageUtil;
 import io.wcm.tooling.commons.packmgr.util.ContentPackageProperties;
 
 /**
@@ -82,6 +87,14 @@ public class ContentPackagePropertiesPostProcessor extends AbstractPostProcessor
     try {
       Map<String, Object> properties = ContentPackageProperties.get(fileContext.getFile());
       if (!properties.isEmpty()) {
+
+        // allow to redefine the packageType content package property via post processor options
+        // this is useful when 3rdparty packages do not define a package type
+        String packageType = ContentPackageUtil.getOptionalProp(context.getOptions(), PROPERTY_PACKAGE_PACKAGE_TYPE);
+        if (StringUtils.isNotBlank(packageType)) {
+          properties.put(NAME_PACKAGE_TYPE, packageType);
+        }
+
         fileContext.getModelOptions().put(MODEL_OPTIONS_PROPERTY, properties);
         logger.info("Extracted properties from AEM content package.");
       }

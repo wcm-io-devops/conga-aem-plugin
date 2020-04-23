@@ -24,13 +24,15 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.util.EnumSet;
 import java.util.Set;
 
 import org.apache.jackrabbit.JcrConstants;
-import org.apache.sling.jcr.contentparser.ContentParser;
-import org.apache.sling.jcr.contentparser.ContentParserFactory;
-import org.apache.sling.jcr.contentparser.ContentType;
-import org.apache.sling.jcr.contentparser.ParserOptions;
+import org.apache.sling.contentparser.api.ContentParser;
+import org.apache.sling.contentparser.api.ParserOptions;
+import org.apache.sling.contentparser.json.JSONParserFeature;
+import org.apache.sling.contentparser.json.JSONParserOptions;
+import org.apache.sling.contentparser.json.internal.JSONContentParser;
 
 import com.google.common.collect.ImmutableSet;
 
@@ -53,10 +55,12 @@ public final class JsonContentLoader {
       "jcr:isCheckedOut",
       ":jcr:data");
 
-  private static final ContentParser JSON_PARSER = ContentParserFactory.create(ContentType.JSON, new ParserOptions()
+  private static final ContentParser JSON_PARSER = new JSONContentParser();
+  private static final ParserOptions JSON_PARSER_OPTIONS = new JSONParserOptions()
+      .withFeatures(EnumSet.of(JSONParserFeature.COMMENTS, JSONParserFeature.QUOTE_TICK))
       .detectCalendarValues(true)
       .ignorePropertyNames(IGNORED_NAMES)
-      .ignoreResourceNames(IGNORED_NAMES));
+      .ignoreResourceNames(IGNORED_NAMES);
 
   /**
    * Load a JSON file and transform the contained data structured in nested maps, as supported by the
@@ -67,7 +71,7 @@ public final class JsonContentLoader {
   public ContentElement load(File jsonFile) {
     try (InputStream is = new BufferedInputStream(new FileInputStream(jsonFile))) {
       ContentElementHandler contentHandler = new ContentElementHandler();
-      JSON_PARSER.parse(contentHandler, is);
+      JSON_PARSER.parse(contentHandler, is, JSON_PARSER_OPTIONS);
       return contentHandler.getRoot();
     }
     /*CHECKSTYLE:OFF*/ catch (Exception ex) { /*CHECKSTYLE:ON*/
@@ -85,7 +89,7 @@ public final class JsonContentLoader {
   public ContentElement load(InputStream inputStream) throws IOException {
     try {
       ContentElementHandler contentHandler = new ContentElementHandler();
-      JSON_PARSER.parse(contentHandler, inputStream);
+      JSON_PARSER.parse(contentHandler, inputStream, JSON_PARSER_OPTIONS);
       return contentHandler.getRoot();
     }
     /*CHECKSTYLE:OFF*/ catch (Exception ex) { /*CHECKSTYLE:ON*/
