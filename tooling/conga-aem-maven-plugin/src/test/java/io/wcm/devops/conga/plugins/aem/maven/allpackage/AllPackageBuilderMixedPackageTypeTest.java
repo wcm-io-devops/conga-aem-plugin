@@ -60,7 +60,7 @@ class AllPackageBuilderMixedPackageTypeTest {
 
     // should fail to to "mixed" packageType
     assertThrows(IOException.class, () -> {
-      builder.build(contentPackages, ImmutableSet.of());
+      builder.build(contentPackages, ImmutableSet.of(), null);
     });
   }
 

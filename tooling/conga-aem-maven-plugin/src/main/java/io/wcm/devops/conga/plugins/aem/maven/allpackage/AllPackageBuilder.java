@@ -31,6 +31,7 @@ import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.Enumeration;
 import java.util.List;
+import java.util.Map;
 import java.util.Properties;
 import java.util.Set;
 import java.util.stream.Collectors;
@@ -119,10 +120,12 @@ public final class AllPackageBuilder {
    * Build "all" content package.
    * @param contentPackages Content packages (invalid will be filtered out)
    * @param cloudManagerTarget Target environments/run modes the packages should be attached to
+   * @param properties Specifies additional properties to be set in the properties.xml file.
    * @return true if "all" package was generated, false if not valid package was found.
    * @throws IOException I/O exception
    */
-  public boolean build(List<ContentPackageFile> contentPackages, Set<String> cloudManagerTarget) throws IOException {
+  public boolean build(List<ContentPackageFile> contentPackages,
+      Set<String> cloudManagerTarget, Map<String, String> properties) throws IOException {
 
     // collect list of cloud manager environment run modes
     List<String> environmentRunmodes = new ArrayList<>();
@@ -167,6 +170,11 @@ public final class AllPackageBuilder {
     // define root path for "all" package
     String rootPath = buildRootPath(groupName, packageName);
     builder.filter(new PackageFilter(rootPath));
+
+    // additional package properties
+    if (properties != null) {
+      properties.entrySet().forEach(entry -> builder.property(entry.getKey(), entry.getValue()));
+    }
 
     // build content package
     // if auto dependencies is active: build separate "dependency chains" between mutable and immutable packages

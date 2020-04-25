@@ -24,6 +24,9 @@
   <body>
 
     <release version="1.11.2" date="not released">
+      <action type="update" dev="sseifert">
+        conga-aem-maven-plugin: Allow to defined custom package properties for 'cloudmanager-all-package' goal.
+      </action>
       <action type="fix" dev="sseifert">
         Fail content package build when node or property names contains illegal characters (not following JCR standards).
       </action>
