@@ -24,6 +24,7 @@ import static io.wcm.devops.conga.generator.util.FileUtil.getCanonicalPath;
 import java.io.File;
 import java.io.IOException;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 
 import org.apache.maven.plugin.MojoExecutionException;
@@ -67,6 +68,12 @@ public final class CloudManagerAllPackageMojo extends AbstractCloudManagerMojo {
   private boolean autoDependenciesSeparateMutable;
 
   /**
+   * Specifies additional properties to be set in the properties.xml file.
+   */
+  @Parameter
+  private Map<String, String> properties;
+
+  /**
    * Set this to "true" to skip installing packages to CRX although configured in the POM.
    */
   @Parameter(property = "conga.cloudManager.allPackage.skip", defaultValue = "false")
@@ -107,7 +114,7 @@ public final class CloudManagerAllPackageMojo extends AbstractCloudManagerMojo {
         .logger(getLog());
 
     try {
-      if (builder.build(contentPackages, cloudManagerTarget)) {
+      if (builder.build(contentPackages, cloudManagerTarget, properties)) {
         getLog().info("Generated " + getCanonicalPath(targetFile));
       }
       else {

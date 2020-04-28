@@ -40,6 +40,7 @@ import org.junit.jupiter.params.provider.MethodSource;
 import org.w3c.dom.Document;
 import org.zeroturnaround.zip.ZipUtil;
 
+import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.ImmutableSet;
 
 import io.wcm.devops.conga.plugins.aem.maven.model.ContentPackageFile;
@@ -54,7 +55,9 @@ class AllPackageBuilderTest {
   @BeforeEach
   void setUp(TestInfo testInfo) throws IOException {
     nodeDir = new File("src/test/resources/node");
-    targetDir = new File("target/test-" + getClass().getSimpleName() + "_" + testInfo.getDisplayName());
+    targetDir = new File("target/test-" + getClass().getSimpleName()
+        + (testInfo.getTestMethod().isPresent() ? "_" + testInfo.getTestMethod().get().getName() : ":")
+        + "_" + testInfo.getDisplayName());
     targetUnpackDir = new File(targetDir, "unpack");
     FileUtils.deleteDirectory(targetDir);
     targetDir.mkdirs();
@@ -76,7 +79,7 @@ class AllPackageBuilderTest {
     File targetFile = new File(targetDir, "all.zip");
 
     AllPackageBuilder builder = new AllPackageBuilder(targetFile, "test-group", "test-pkg");
-    assertTrue(builder.build(contentPackages, cloudManagerTarget));
+    assertTrue(builder.build(contentPackages, cloudManagerTarget, ImmutableMap.of("prop1", "value1")));
 
     ZipUtil.unpack(targetFile, targetUnpackDir);
 
@@ -123,7 +126,7 @@ class AllPackageBuilderTest {
 
     AllPackageBuilder builder = new AllPackageBuilder(targetFile, "test-group", "test-pkg")
         .autoDependencies(true);
-    assertTrue(builder.build(contentPackages, cloudManagerTarget));
+    assertTrue(builder.build(contentPackages, cloudManagerTarget, null));
 
     ZipUtil.unpack(targetFile, targetUnpackDir);
 
@@ -175,7 +178,7 @@ class AllPackageBuilderTest {
     AllPackageBuilder builder = new AllPackageBuilder(targetFile, "test-group", "test-pkg")
         .autoDependencies(true)
         .autoDependenciesSeparateMutable(true);
-    assertTrue(builder.build(contentPackages, cloudManagerTarget));
+    assertTrue(builder.build(contentPackages, cloudManagerTarget, null));
 
     ZipUtil.unpack(targetFile, targetUnpackDir);
 
