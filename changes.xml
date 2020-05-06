@@ -68,7 +68,7 @@
         conga-aem-crypto-cli: Add command line options to encrypt and decrypt values using AEM crypto support.
       </action>
       <action type="fix" dev="sseifert">
-        conga-aem-crypto-cli: Allow to generate AEM crypto keys without specifying and Ansible vault password.
+        conga-aem-crypto-cli: Allow to generate AEM crypto keys without specifying an Ansible vault password.
       </action>
       <action type="fix" dev="sseifert">
         conga-aem-maven-plugin: Retry HTTP action in case of JSON parse failure (system may respond temporarily with non-JSON response).
