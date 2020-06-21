@@ -40,6 +40,7 @@ import org.junit.jupiter.params.provider.MethodSource;
 import org.w3c.dom.Document;
 import org.zeroturnaround.zip.ZipUtil;
 
+import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.ImmutableSet;
 
@@ -67,14 +68,14 @@ class AllPackageBuilderTest {
   private static Stream<Arguments> cloudManagerTargetVariants() {
     return Stream.of(
         // test with no environment (=all environments)
-        Arguments.of(ImmutableSet.of(), new String[] { "install.author" }),
+        Arguments.of(ImmutableSet.of(), ImmutableList.of(".author")),
         // test with two environments
-        Arguments.of(ImmutableSet.of("stage", "prod"), new String[] { "install.author.stage", "install.author.prod" }));
+        Arguments.of(ImmutableSet.of("stage", "prod"), ImmutableList.of(".author.stage", ".author.prod")));
   }
 
   @ParameterizedTest
   @MethodSource("cloudManagerTargetVariants")
-  void testBuild(Set<String> cloudManagerTarget, String[] expectedEnvironmentDirs) throws Exception {
+  void testBuild(Set<String> cloudManagerTarget, List<String> runmodeSuffixes) throws Exception {
     List<ContentPackageFile> contentPackages = new ModelParser().getContentPackagesForNode(nodeDir);
     File targetFile = new File(targetDir, "all.zip");
 
@@ -87,40 +88,44 @@ class AllPackageBuilderTest {
     assertFiles(appsDir, "application", "content", "container");
 
     File applicationDir = new File(appsDir, "application");
-    assertFiles(applicationDir, expectedEnvironmentDirs);
+    assertFiles(applicationDir, toInstallFolderNames("install", runmodeSuffixes));
 
-    for (String expectedEnvironmentDir : expectedEnvironmentDirs) {
-      File applicationInstallDir = new File(applicationDir, expectedEnvironmentDir);
-      assertFiles(applicationInstallDir, "aem-cms-system-config.zip");
-      assertDependencies(applicationInstallDir, "aem-cms-system-config.zip",
+    for (String runmodeSuffix : runmodeSuffixes) {
+      File applicationInstallDir = new File(applicationDir, "install" + runmodeSuffix);
+      assertFiles(applicationInstallDir, "aem-cms-system-config" + runmodeSuffix + ".zip");
+      assertPackageName(applicationInstallDir, "aem-cms-system-config" + runmodeSuffix + ".zip",
+          "aem-cms-system-config" + runmodeSuffix);
+      assertDependencies(applicationInstallDir, "aem-cms-system-config" + runmodeSuffix + ".zip",
           "day/cq60/product:cq-ui-wcm-editor-content:1.1.224",
           "adobe/cq/product:cq-remotedam-client-ui-components:1.1.6");
     }
 
     File contentDir = new File(appsDir, "content");
-    assertFiles(contentDir, expectedEnvironmentDirs);
+    assertFiles(contentDir, toInstallFolderNames("install", runmodeSuffixes));
 
-    for (String expectedEnvironmentDir : expectedEnvironmentDirs) {
-      File contentInstallDir = new File(contentDir, expectedEnvironmentDir);
-      assertFiles(contentInstallDir, "aem-cms-author-replicationagents.zip", "wcm-io-samples-sample-content-1.3.1-SNAPSHOT.zip");
-      assertDependencies(contentInstallDir, "aem-cms-author-replicationagents.zip");
-      assertDependencies(contentInstallDir, "wcm-io-samples-sample-content-1.3.1-SNAPSHOT.zip");
+    for (String runmodeSuffix : runmodeSuffixes) {
+      File contentInstallDir = new File(contentDir, "install" + runmodeSuffix);
+      assertFiles(contentInstallDir, "aem-cms-author-replicationagents" + runmodeSuffix + ".zip",
+          "wcm-io-samples-sample-content" + runmodeSuffix + "-1.3.1-SNAPSHOT.zip");
+      assertDependencies(contentInstallDir, "aem-cms-author-replicationagents" + runmodeSuffix + ".zip");
+      assertDependencies(contentInstallDir, "wcm-io-samples-sample-content" + runmodeSuffix + "-1.3.1-SNAPSHOT.zip");
     }
 
     File containerDir = new File(appsDir, "container");
-    assertFiles(containerDir, expectedEnvironmentDirs);
+    assertFiles(containerDir, toInstallFolderNames("install", runmodeSuffixes));
 
-    for (String expectedEnvironmentDir : expectedEnvironmentDirs) {
-      File containerInstallDir = new File(containerDir, expectedEnvironmentDir);
-      assertFiles(containerInstallDir, "wcm-io-samples-aem-cms-config.zip", "wcm-io-samples-complete-1.3.1-SNAPSHOT.zip");
-      assertDependencies(containerInstallDir, "wcm-io-samples-aem-cms-config.zip");
-      assertDependencies(containerInstallDir, "wcm-io-samples-complete-1.3.1-SNAPSHOT.zip");
+    for (String runmodeSuffix : runmodeSuffixes) {
+      File containerInstallDir = new File(containerDir, "install" + runmodeSuffix);
+      assertFiles(containerInstallDir, "wcm-io-samples-aem-cms-config" + runmodeSuffix + ".zip",
+          "wcm-io-samples-complete" + runmodeSuffix + "-1.3.1-SNAPSHOT.zip");
+      assertDependencies(containerInstallDir, "wcm-io-samples-aem-cms-config" + runmodeSuffix + ".zip");
+      assertDependencies(containerInstallDir, "wcm-io-samples-complete" + runmodeSuffix + "-1.3.1-SNAPSHOT.zip");
     }
   }
 
   @ParameterizedTest
   @MethodSource("cloudManagerTargetVariants")
-  void testBuildWithAutoDependencies(Set<String> cloudManagerTarget, String[] expectedEnvironmentDirs) throws Exception {
+  void testBuildWithAutoDependencies(Set<String> cloudManagerTarget, List<String> runmodeSuffixes) throws Exception {
     List<ContentPackageFile> contentPackages = new ModelParser().getContentPackagesForNode(nodeDir);
     File targetFile = new File(targetDir, "all.zip");
 
@@ -134,44 +139,46 @@ class AllPackageBuilderTest {
     assertFiles(appsDir, "application", "content", "container");
 
     File applicationDir = new File(appsDir, "application");
-    assertFiles(applicationDir, expectedEnvironmentDirs);
+    assertFiles(applicationDir, toInstallFolderNames("install", runmodeSuffixes));
 
-    for (String expectedEnvironmentDir : expectedEnvironmentDirs) {
-      File applicationInstallDir = new File(applicationDir, expectedEnvironmentDir);
-      assertFiles(applicationInstallDir, "aem-cms-system-config.zip");
-      assertDependencies(applicationInstallDir, "aem-cms-system-config.zip",
+    for (String runmodeSuffix : runmodeSuffixes) {
+      File applicationInstallDir = new File(applicationDir, "install" + runmodeSuffix);
+      assertFiles(applicationInstallDir, "aem-cms-system-config" + runmodeSuffix + ".zip");
+      assertDependencies(applicationInstallDir, "aem-cms-system-config" + runmodeSuffix + ".zip",
           "day/cq60/product:cq-ui-wcm-editor-content:1.1.224",
           "adobe/cq/product:cq-remotedam-client-ui-components:1.1.6",
-          "wcm-io-samples:aem-cms-author-replicationagents:1.3.1-SNAPSHOT");
+          "wcm-io-samples:aem-cms-author-replicationagents" + runmodeSuffix + ":1.3.1-SNAPSHOT");
     }
 
     File contentDir = new File(appsDir, "content");
-    assertFiles(contentDir, expectedEnvironmentDirs);
+    assertFiles(contentDir, toInstallFolderNames("install", runmodeSuffixes));
 
-    for (String expectedEnvironmentDir : expectedEnvironmentDirs) {
-      File contentInstallDir = new File(contentDir, expectedEnvironmentDir);
-      assertFiles(contentInstallDir, "aem-cms-author-replicationagents.zip", "wcm-io-samples-sample-content-1.3.1-SNAPSHOT.zip");
-      assertDependencies(contentInstallDir, "aem-cms-author-replicationagents.zip");
-      assertDependencies(contentInstallDir, "wcm-io-samples-sample-content-1.3.1-SNAPSHOT.zip",
-          "wcm-io-samples:wcm-io-samples-complete:1.3.1-SNAPSHOT");
+    for (String runmodeSuffix : runmodeSuffixes) {
+      File contentInstallDir = new File(contentDir, "install" + runmodeSuffix);
+      assertFiles(contentInstallDir, "aem-cms-author-replicationagents" + runmodeSuffix + ".zip",
+          "wcm-io-samples-sample-content" + runmodeSuffix + "-1.3.1-SNAPSHOT.zip");
+      assertDependencies(contentInstallDir, "aem-cms-author-replicationagents" + runmodeSuffix + ".zip");
+      assertDependencies(contentInstallDir, "wcm-io-samples-sample-content" + runmodeSuffix + "-1.3.1-SNAPSHOT.zip",
+          "wcm-io-samples:wcm-io-samples-complete" + runmodeSuffix + ":1.3.1-SNAPSHOT");
     }
 
     File containerDir = new File(appsDir, "container");
-    assertFiles(containerDir, expectedEnvironmentDirs);
+    assertFiles(containerDir, toInstallFolderNames("install", runmodeSuffixes));
 
-    for (String expectedEnvironmentDir : expectedEnvironmentDirs) {
-      File containerInstallDir = new File(containerDir, expectedEnvironmentDir);
-      assertFiles(containerInstallDir, "wcm-io-samples-aem-cms-config.zip", "wcm-io-samples-complete-1.3.1-SNAPSHOT.zip");
-      assertDependencies(containerInstallDir, "wcm-io-samples-aem-cms-config.zip",
-          "wcm-io-samples:aem-cms-system-config:1.3.1-SNAPSHOT");
-      assertDependencies(containerInstallDir, "wcm-io-samples-complete-1.3.1-SNAPSHOT.zip",
-          "wcm-io-samples:wcm-io-samples-aem-cms-config:1.3.1-SNAPSHOT");
+    for (String runmodeSuffix : runmodeSuffixes) {
+      File containerInstallDir = new File(containerDir, "install" + runmodeSuffix);
+      assertFiles(containerInstallDir, "wcm-io-samples-aem-cms-config" + runmodeSuffix + ".zip",
+          "wcm-io-samples-complete" + runmodeSuffix + "-1.3.1-SNAPSHOT.zip");
+      assertDependencies(containerInstallDir, "wcm-io-samples-aem-cms-config" + runmodeSuffix + ".zip",
+          "wcm-io-samples:aem-cms-system-config" + runmodeSuffix + ":1.3.1-SNAPSHOT");
+      assertDependencies(containerInstallDir, "wcm-io-samples-complete" + runmodeSuffix + "-1.3.1-SNAPSHOT.zip",
+          "wcm-io-samples:wcm-io-samples-aem-cms-config" + runmodeSuffix + ":1.3.1-SNAPSHOT");
     }
   }
 
   @ParameterizedTest
   @MethodSource("cloudManagerTargetVariants")
-  void testBuildWithAutoDependenciesSeparateMutable(Set<String> cloudManagerTarget, String[] expectedEnvironmentDirs) throws Exception {
+  void testBuildWithAutoDependenciesSeparateMutable(Set<String> cloudManagerTarget, List<String> runmodeSuffixes) throws Exception {
     List<ContentPackageFile> contentPackages = new ModelParser().getContentPackagesForNode(nodeDir);
     File targetFile = new File(targetDir, "all.zip");
 
@@ -186,37 +193,39 @@ class AllPackageBuilderTest {
     assertFiles(appsDir, "application", "content", "container");
 
     File applicationDir = new File(appsDir, "application");
-    assertFiles(applicationDir, expectedEnvironmentDirs);
+    assertFiles(applicationDir, toInstallFolderNames("install", runmodeSuffixes));
 
-    for (String expectedEnvironmentDir : expectedEnvironmentDirs) {
-      File applicationInstallDir = new File(applicationDir, expectedEnvironmentDir);
-      assertFiles(applicationInstallDir, "aem-cms-system-config.zip");
-      assertDependencies(applicationInstallDir, "aem-cms-system-config.zip",
+    for (String runmodeSuffix : runmodeSuffixes) {
+      File applicationInstallDir = new File(applicationDir, "install" + runmodeSuffix);
+      assertFiles(applicationInstallDir, "aem-cms-system-config" + runmodeSuffix + ".zip");
+      assertDependencies(applicationInstallDir, "aem-cms-system-config" + runmodeSuffix + ".zip",
           "day/cq60/product:cq-ui-wcm-editor-content:1.1.224",
           "adobe/cq/product:cq-remotedam-client-ui-components:1.1.6");
     }
 
     File contentDir = new File(appsDir, "content");
-    assertFiles(contentDir, expectedEnvironmentDirs);
+    assertFiles(contentDir, toInstallFolderNames("install", runmodeSuffixes));
 
-    for (String expectedEnvironmentDir : expectedEnvironmentDirs) {
-      File contentInstallDir = new File(contentDir, expectedEnvironmentDir);
-      assertFiles(contentInstallDir, "aem-cms-author-replicationagents.zip", "wcm-io-samples-sample-content-1.3.1-SNAPSHOT.zip");
-      assertDependencies(contentInstallDir, "aem-cms-author-replicationagents.zip");
-      assertDependencies(contentInstallDir, "wcm-io-samples-sample-content-1.3.1-SNAPSHOT.zip",
-          "wcm-io-samples:aem-cms-author-replicationagents:1.3.1-SNAPSHOT");
+    for (String runmodeSuffix : runmodeSuffixes) {
+      File contentInstallDir = new File(contentDir, "install" + runmodeSuffix);
+      assertFiles(contentInstallDir, "aem-cms-author-replicationagents" + runmodeSuffix + ".zip",
+          "wcm-io-samples-sample-content" + runmodeSuffix + "-1.3.1-SNAPSHOT.zip");
+      assertDependencies(contentInstallDir, "aem-cms-author-replicationagents" + runmodeSuffix + ".zip");
+      assertDependencies(contentInstallDir, "wcm-io-samples-sample-content" + runmodeSuffix + "-1.3.1-SNAPSHOT.zip",
+          "wcm-io-samples:aem-cms-author-replicationagents" + runmodeSuffix + ":1.3.1-SNAPSHOT");
     }
 
     File containerDir = new File(appsDir, "container");
-    assertFiles(containerDir, expectedEnvironmentDirs);
+    assertFiles(containerDir, toInstallFolderNames("install", runmodeSuffixes));
 
-    for (String expectedEnvironmentDir : expectedEnvironmentDirs) {
-      File containerInstallDir = new File(containerDir, expectedEnvironmentDir);
-      assertFiles(containerInstallDir, "wcm-io-samples-aem-cms-config.zip", "wcm-io-samples-complete-1.3.1-SNAPSHOT.zip");
-      assertDependencies(containerInstallDir, "wcm-io-samples-aem-cms-config.zip",
-          "wcm-io-samples:aem-cms-system-config:1.3.1-SNAPSHOT");
-      assertDependencies(containerInstallDir, "wcm-io-samples-complete-1.3.1-SNAPSHOT.zip",
-          "wcm-io-samples:wcm-io-samples-aem-cms-config:1.3.1-SNAPSHOT");
+    for (String runmodeSuffix : runmodeSuffixes) {
+      File containerInstallDir = new File(containerDir, "install" + runmodeSuffix);
+      assertFiles(containerInstallDir, "wcm-io-samples-aem-cms-config" + runmodeSuffix + ".zip",
+          "wcm-io-samples-complete" + runmodeSuffix + "-1.3.1-SNAPSHOT.zip");
+      assertDependencies(containerInstallDir, "wcm-io-samples-aem-cms-config" + runmodeSuffix + ".zip",
+          "wcm-io-samples:aem-cms-system-config" + runmodeSuffix + ":1.3.1-SNAPSHOT");
+      assertDependencies(containerInstallDir, "wcm-io-samples-complete" + runmodeSuffix + "-1.3.1-SNAPSHOT.zip",
+          "wcm-io-samples:wcm-io-samples-aem-cms-config" + runmodeSuffix + ":1.3.1-SNAPSHOT");
     }
   }
 
@@ -229,6 +238,12 @@ class AllPackageBuilderTest {
     assertEquals(expectedFileNames, actualFileNames, "files in " + dir.getPath());
   }
 
+  private void assertPackageName(File dir, String fileName, String name) throws Exception {
+    File zipFile = new File(dir, fileName);
+    Document filterXml = getXmlFromZip(zipFile, "META-INF/vault/properties.xml");
+    assertXpathEvaluatesTo(name, "/properties/entry[@key='name']", filterXml);
+  }
+
   private void assertDependencies(File dir, String fileName, String... dependencies) throws Exception {
     File zipFile = new File(dir, fileName);
     Document filterXml = getXmlFromZip(zipFile, "META-INF/vault/properties.xml");
@@ -238,6 +253,12 @@ class AllPackageBuilderTest {
       expecedDependencies = StringUtils.join(dependencies, ",");
     }
     assertXpathEvaluatesTo(expecedDependencies, "/properties/entry[@key='dependencies']", filterXml);
+  }
+
+  private String[] toInstallFolderNames(String baseName, List<String> runmodeSuffixes) {
+    return runmodeSuffixes.stream()
+        .map(suffix -> baseName + suffix)
+        .toArray(size -> new String[size]);
   }
 
 }
