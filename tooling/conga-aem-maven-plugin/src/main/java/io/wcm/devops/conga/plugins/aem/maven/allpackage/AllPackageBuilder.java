@@ -52,6 +52,7 @@ import org.apache.maven.plugin.logging.SystemStreamLog;
 
 import com.google.common.collect.ImmutableSet;
 
+import io.wcm.devops.conga.plugins.aem.maven.AutoDependenciesMode;
 import io.wcm.devops.conga.plugins.aem.maven.model.ContentPackageFile;
 import io.wcm.tooling.commons.contentpackagebuilder.ContentPackage;
 import io.wcm.tooling.commons.contentpackagebuilder.ContentPackageBuilder;
@@ -65,8 +66,7 @@ public final class AllPackageBuilder {
   private final File targetFile;
   private final String groupName;
   private final String packageName;
-  private boolean autoDependencies;
-  private boolean autoDependenciesSeparateMutable;
+  private AutoDependenciesMode autoDependenciesMode = AutoDependenciesMode.OFF;
   private Log log;
 
   private static final String RUNMODE_DEFAULT = "$default$";
@@ -88,17 +88,8 @@ public final class AllPackageBuilder {
    *          configuration.
    * @return this
    */
-  public AllPackageBuilder autoDependencies(boolean value) {
-    this.autoDependencies = value;
-    return this;
-  }
-
-  /**
-   * @param value Use separate dependency chains for mutable and immutable packages.
-   * @return this
-   */
-  public AllPackageBuilder autoDependenciesSeparateMutable(boolean value) {
-    this.autoDependenciesSeparateMutable = value;
+  public AllPackageBuilder autoDependenciesMode(AutoDependenciesMode value) {
+    this.autoDependenciesMode = value;
     return this;
   }
 
@@ -186,15 +177,20 @@ public final class AllPackageBuilder {
         for (ContentPackageFile pkg : validContentPackages) {
           String path = buildPackagePath(pkg, rootPath, environmentRunMode);
 
-          // get last previous package
-          // if autoDependenciesSeparateMutable active only that of the same mutability type
-          ContentPackageFile previousPkg = previousPackages.stream()
-              .filter(item -> !autoDependenciesSeparateMutable || mutableMatches(item, pkg))
-              .reduce((first, second) -> second)
-              .orElse(null);
+          ContentPackageFile previousPkg = null;
+
+          if (autoDependenciesMode != AutoDependenciesMode.OFF
+              && (autoDependenciesMode != AutoDependenciesMode.IMMUTABLE_ONLY || !isMutable(pkg))) {
+            // get last previous package
+            // if not IMMUTABLE_MUTABLE_COMBINED active only that of the same mutability type
+            previousPkg = previousPackages.stream()
+                .filter(item -> (autoDependenciesMode == AutoDependenciesMode.IMMUTABLE_MUTABLE_COMBINED) || mutableMatches(item, pkg))
+                .reduce((first, second) -> second)
+                .orElse(null);
+          }
 
           // set package name, wire previous package in package dependency
-          addFileWithDependency(contentPackage, path, pkg, autoDependencies ? previousPkg : null, environmentRunMode);
+          addFileWithDependency(contentPackage, path, pkg, previousPkg, environmentRunMode);
 
           previousPackages.add(pkg);
         }

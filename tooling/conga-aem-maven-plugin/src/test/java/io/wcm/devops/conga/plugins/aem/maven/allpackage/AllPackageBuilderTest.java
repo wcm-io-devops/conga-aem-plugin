@@ -44,6 +44,7 @@ import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.ImmutableSet;
 
+import io.wcm.devops.conga.plugins.aem.maven.AutoDependenciesMode;
 import io.wcm.devops.conga.plugins.aem.maven.model.ContentPackageFile;
 import io.wcm.devops.conga.plugins.aem.maven.model.ModelParser;
 
@@ -128,12 +129,12 @@ class AllPackageBuilderTest {
 
   @ParameterizedTest
   @MethodSource("cloudManagerTargetVariants")
-  void testBuildWithAutoDependencies(Set<String> cloudManagerTarget, List<String> runmodeSuffixes) throws Exception {
+  void testBuil_IMMUTABLE_MUTABLE_COMBINED(Set<String> cloudManagerTarget, List<String> runmodeSuffixes) throws Exception {
     List<ContentPackageFile> contentPackages = new ModelParser().getContentPackagesForNode(nodeDir);
     File targetFile = new File(targetDir, "all.zip");
 
     AllPackageBuilder builder = new AllPackageBuilder(targetFile, "test-group", "test-pkg")
-        .autoDependencies(true);
+        .autoDependenciesMode(AutoDependenciesMode.IMMUTABLE_MUTABLE_COMBINED);
     assertTrue(builder.build(contentPackages, cloudManagerTarget, null));
 
     ZipUtil.unpack(targetFile, targetUnpackDir);
@@ -186,13 +187,12 @@ class AllPackageBuilderTest {
 
   @ParameterizedTest
   @MethodSource("cloudManagerTargetVariants")
-  void testBuildWithAutoDependenciesSeparateMutable(Set<String> cloudManagerTarget, List<String> runmodeSuffixes) throws Exception {
+  void testBuild_IMMUTABLE_MUTABLE_SEPARATE(Set<String> cloudManagerTarget, List<String> runmodeSuffixes) throws Exception {
     List<ContentPackageFile> contentPackages = new ModelParser().getContentPackagesForNode(nodeDir);
     File targetFile = new File(targetDir, "all.zip");
 
     AllPackageBuilder builder = new AllPackageBuilder(targetFile, "test-group", "test-pkg")
-        .autoDependencies(true)
-        .autoDependenciesSeparateMutable(true);
+        .autoDependenciesMode(AutoDependenciesMode.IMMUTABLE_MUTABLE_SEPARATE);
     assertTrue(builder.build(contentPackages, cloudManagerTarget, null));
 
     ZipUtil.unpack(targetFile, targetUnpackDir);
@@ -224,6 +224,62 @@ class AllPackageBuilderTest {
       assertNameDependencies(contentInstallDir, "wcm-io-samples-sample-content" + runmodeSuffix + "-1.3.1-SNAPSHOT.zip",
           "wcm-io-samples-sample-content" + runmodeSuffix,
           "wcm-io-samples:aem-cms-author-replicationagents" + runmodeSuffix + ":1.3.1-SNAPSHOT");
+    }
+
+    File containerDir = new File(appsDir, "container");
+    assertFiles(containerDir, toInstallFolderNames("install", runmodeSuffixes));
+
+    for (String runmodeSuffix : runmodeSuffixes) {
+      File containerInstallDir = new File(containerDir, "install" + runmodeSuffix);
+      assertFiles(containerInstallDir, "wcm-io-samples-aem-cms-config" + runmodeSuffix + ".zip",
+          "wcm-io-samples-complete" + runmodeSuffix + "-1.3.1-SNAPSHOT.zip");
+      assertNameDependencies(containerInstallDir, "wcm-io-samples-aem-cms-config" + runmodeSuffix + ".zip",
+          "wcm-io-samples-aem-cms-config" + runmodeSuffix,
+          "wcm-io-samples:aem-cms-system-config" + runmodeSuffix + ":1.3.1-SNAPSHOT");
+      assertNameDependencies(containerInstallDir, "wcm-io-samples-complete" + runmodeSuffix + "-1.3.1-SNAPSHOT.zip",
+          "wcm-io-samples-complete" + runmodeSuffix,
+          "wcm-io-samples:wcm-io-samples-aem-cms-config" + runmodeSuffix + ":1.3.1-SNAPSHOT");
+    }
+  }
+
+  @ParameterizedTest
+  @MethodSource("cloudManagerTargetVariants")
+  void testBuild_IMMUTABLE_ONLY(Set<String> cloudManagerTarget, List<String> runmodeSuffixes) throws Exception {
+    List<ContentPackageFile> contentPackages = new ModelParser().getContentPackagesForNode(nodeDir);
+    File targetFile = new File(targetDir, "all.zip");
+
+    AllPackageBuilder builder = new AllPackageBuilder(targetFile, "test-group", "test-pkg")
+        .autoDependenciesMode(AutoDependenciesMode.IMMUTABLE_ONLY);
+    assertTrue(builder.build(contentPackages, cloudManagerTarget, null));
+
+    ZipUtil.unpack(targetFile, targetUnpackDir);
+
+    File appsDir = new File(targetUnpackDir, "jcr_root/apps/test-group-test-pkg-packages");
+    assertFiles(appsDir, "application", "content", "container");
+
+    File applicationDir = new File(appsDir, "application");
+    assertFiles(applicationDir, toInstallFolderNames("install", runmodeSuffixes));
+
+    for (String runmodeSuffix : runmodeSuffixes) {
+      File applicationInstallDir = new File(applicationDir, "install" + runmodeSuffix);
+      assertFiles(applicationInstallDir, "aem-cms-system-config" + runmodeSuffix + ".zip");
+      assertNameDependencies(applicationInstallDir, "aem-cms-system-config" + runmodeSuffix + ".zip",
+          "aem-cms-system-config" + runmodeSuffix,
+          "day/cq60/product:cq-ui-wcm-editor-content:1.1.224",
+          "adobe/cq/product:cq-remotedam-client-ui-components:1.1.6");
+    }
+
+    File contentDir = new File(appsDir, "content");
+    assertFiles(contentDir, toInstallFolderNames("install", runmodeSuffixes));
+
+    for (String runmodeSuffix : runmodeSuffixes) {
+      File contentInstallDir = new File(contentDir, "install" + runmodeSuffix);
+      assertFiles(contentInstallDir, "aem-cms-author-replicationagents" + runmodeSuffix + ".zip",
+          "wcm-io-samples-sample-content" + runmodeSuffix + "-1.3.1-SNAPSHOT.zip");
+      assertNameDependencies(contentInstallDir, "aem-cms-author-replicationagents" + runmodeSuffix + ".zip",
+          "aem-cms-author-replicationagents" + runmodeSuffix);
+      assertNameDependencies(contentInstallDir, "wcm-io-samples-sample-content" + runmodeSuffix + "-1.3.1-SNAPSHOT.zip",
+          "wcm-io-samples-sample-content" + runmodeSuffix);
     }
 
     File containerDir = new File(appsDir, "container");
