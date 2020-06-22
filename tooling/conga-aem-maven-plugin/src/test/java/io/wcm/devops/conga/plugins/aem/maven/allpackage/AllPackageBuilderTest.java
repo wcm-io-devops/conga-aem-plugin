@@ -93,9 +93,8 @@ class AllPackageBuilderTest {
     for (String runmodeSuffix : runmodeSuffixes) {
       File applicationInstallDir = new File(applicationDir, "install" + runmodeSuffix);
       assertFiles(applicationInstallDir, "aem-cms-system-config" + runmodeSuffix + ".zip");
-      assertPackageName(applicationInstallDir, "aem-cms-system-config" + runmodeSuffix + ".zip",
-          "aem-cms-system-config" + runmodeSuffix);
-      assertDependencies(applicationInstallDir, "aem-cms-system-config" + runmodeSuffix + ".zip",
+      assertNameDependencies(applicationInstallDir, "aem-cms-system-config" + runmodeSuffix + ".zip",
+          "aem-cms-system-config" + runmodeSuffix,
           "day/cq60/product:cq-ui-wcm-editor-content:1.1.224",
           "adobe/cq/product:cq-remotedam-client-ui-components:1.1.6");
     }
@@ -107,8 +106,10 @@ class AllPackageBuilderTest {
       File contentInstallDir = new File(contentDir, "install" + runmodeSuffix);
       assertFiles(contentInstallDir, "aem-cms-author-replicationagents" + runmodeSuffix + ".zip",
           "wcm-io-samples-sample-content" + runmodeSuffix + "-1.3.1-SNAPSHOT.zip");
-      assertDependencies(contentInstallDir, "aem-cms-author-replicationagents" + runmodeSuffix + ".zip");
-      assertDependencies(contentInstallDir, "wcm-io-samples-sample-content" + runmodeSuffix + "-1.3.1-SNAPSHOT.zip");
+      assertNameDependencies(contentInstallDir, "aem-cms-author-replicationagents" + runmodeSuffix + ".zip",
+          "aem-cms-author-replicationagents" + runmodeSuffix);
+      assertNameDependencies(contentInstallDir, "wcm-io-samples-sample-content" + runmodeSuffix + "-1.3.1-SNAPSHOT.zip",
+          "wcm-io-samples-sample-content" + runmodeSuffix);
     }
 
     File containerDir = new File(appsDir, "container");
@@ -118,8 +119,10 @@ class AllPackageBuilderTest {
       File containerInstallDir = new File(containerDir, "install" + runmodeSuffix);
       assertFiles(containerInstallDir, "wcm-io-samples-aem-cms-config" + runmodeSuffix + ".zip",
           "wcm-io-samples-complete" + runmodeSuffix + "-1.3.1-SNAPSHOT.zip");
-      assertDependencies(containerInstallDir, "wcm-io-samples-aem-cms-config" + runmodeSuffix + ".zip");
-      assertDependencies(containerInstallDir, "wcm-io-samples-complete" + runmodeSuffix + "-1.3.1-SNAPSHOT.zip");
+      assertNameDependencies(containerInstallDir, "wcm-io-samples-aem-cms-config" + runmodeSuffix + ".zip",
+          "wcm-io-samples-aem-cms-config" + runmodeSuffix);
+      assertNameDependencies(containerInstallDir, "wcm-io-samples-complete" + runmodeSuffix + "-1.3.1-SNAPSHOT.zip",
+          "wcm-io-samples-complete" + runmodeSuffix);
     }
   }
 
@@ -144,7 +147,8 @@ class AllPackageBuilderTest {
     for (String runmodeSuffix : runmodeSuffixes) {
       File applicationInstallDir = new File(applicationDir, "install" + runmodeSuffix);
       assertFiles(applicationInstallDir, "aem-cms-system-config" + runmodeSuffix + ".zip");
-      assertDependencies(applicationInstallDir, "aem-cms-system-config" + runmodeSuffix + ".zip",
+      assertNameDependencies(applicationInstallDir, "aem-cms-system-config" + runmodeSuffix + ".zip",
+          "aem-cms-system-config" + runmodeSuffix,
           "day/cq60/product:cq-ui-wcm-editor-content:1.1.224",
           "adobe/cq/product:cq-remotedam-client-ui-components:1.1.6",
           "wcm-io-samples:aem-cms-author-replicationagents" + runmodeSuffix + ":1.3.1-SNAPSHOT");
@@ -157,8 +161,10 @@ class AllPackageBuilderTest {
       File contentInstallDir = new File(contentDir, "install" + runmodeSuffix);
       assertFiles(contentInstallDir, "aem-cms-author-replicationagents" + runmodeSuffix + ".zip",
           "wcm-io-samples-sample-content" + runmodeSuffix + "-1.3.1-SNAPSHOT.zip");
-      assertDependencies(contentInstallDir, "aem-cms-author-replicationagents" + runmodeSuffix + ".zip");
-      assertDependencies(contentInstallDir, "wcm-io-samples-sample-content" + runmodeSuffix + "-1.3.1-SNAPSHOT.zip",
+      assertNameDependencies(contentInstallDir, "aem-cms-author-replicationagents" + runmodeSuffix + ".zip",
+          "aem-cms-author-replicationagents" + runmodeSuffix);
+      assertNameDependencies(contentInstallDir, "wcm-io-samples-sample-content" + runmodeSuffix + "-1.3.1-SNAPSHOT.zip",
+          "wcm-io-samples-sample-content" + runmodeSuffix,
           "wcm-io-samples:wcm-io-samples-complete" + runmodeSuffix + ":1.3.1-SNAPSHOT");
     }
 
@@ -169,9 +175,11 @@ class AllPackageBuilderTest {
       File containerInstallDir = new File(containerDir, "install" + runmodeSuffix);
       assertFiles(containerInstallDir, "wcm-io-samples-aem-cms-config" + runmodeSuffix + ".zip",
           "wcm-io-samples-complete" + runmodeSuffix + "-1.3.1-SNAPSHOT.zip");
-      assertDependencies(containerInstallDir, "wcm-io-samples-aem-cms-config" + runmodeSuffix + ".zip",
+      assertNameDependencies(containerInstallDir, "wcm-io-samples-aem-cms-config" + runmodeSuffix + ".zip",
+          "wcm-io-samples-aem-cms-config" + runmodeSuffix,
           "wcm-io-samples:aem-cms-system-config" + runmodeSuffix + ":1.3.1-SNAPSHOT");
-      assertDependencies(containerInstallDir, "wcm-io-samples-complete" + runmodeSuffix + "-1.3.1-SNAPSHOT.zip",
+      assertNameDependencies(containerInstallDir, "wcm-io-samples-complete" + runmodeSuffix + "-1.3.1-SNAPSHOT.zip",
+          "wcm-io-samples-complete" + runmodeSuffix,
           "wcm-io-samples:wcm-io-samples-aem-cms-config" + runmodeSuffix + ":1.3.1-SNAPSHOT");
     }
   }
@@ -198,7 +206,8 @@ class AllPackageBuilderTest {
     for (String runmodeSuffix : runmodeSuffixes) {
       File applicationInstallDir = new File(applicationDir, "install" + runmodeSuffix);
       assertFiles(applicationInstallDir, "aem-cms-system-config" + runmodeSuffix + ".zip");
-      assertDependencies(applicationInstallDir, "aem-cms-system-config" + runmodeSuffix + ".zip",
+      assertNameDependencies(applicationInstallDir, "aem-cms-system-config" + runmodeSuffix + ".zip",
+          "aem-cms-system-config" + runmodeSuffix,
           "day/cq60/product:cq-ui-wcm-editor-content:1.1.224",
           "adobe/cq/product:cq-remotedam-client-ui-components:1.1.6");
     }
@@ -210,8 +219,10 @@ class AllPackageBuilderTest {
       File contentInstallDir = new File(contentDir, "install" + runmodeSuffix);
       assertFiles(contentInstallDir, "aem-cms-author-replicationagents" + runmodeSuffix + ".zip",
           "wcm-io-samples-sample-content" + runmodeSuffix + "-1.3.1-SNAPSHOT.zip");
-      assertDependencies(contentInstallDir, "aem-cms-author-replicationagents" + runmodeSuffix + ".zip");
-      assertDependencies(contentInstallDir, "wcm-io-samples-sample-content" + runmodeSuffix + "-1.3.1-SNAPSHOT.zip",
+      assertNameDependencies(contentInstallDir, "aem-cms-author-replicationagents" + runmodeSuffix + ".zip",
+          "aem-cms-author-replicationagents" + runmodeSuffix);
+      assertNameDependencies(contentInstallDir, "wcm-io-samples-sample-content" + runmodeSuffix + "-1.3.1-SNAPSHOT.zip",
+          "wcm-io-samples-sample-content" + runmodeSuffix,
           "wcm-io-samples:aem-cms-author-replicationagents" + runmodeSuffix + ":1.3.1-SNAPSHOT");
     }
 
@@ -222,9 +233,11 @@ class AllPackageBuilderTest {
       File containerInstallDir = new File(containerDir, "install" + runmodeSuffix);
       assertFiles(containerInstallDir, "wcm-io-samples-aem-cms-config" + runmodeSuffix + ".zip",
           "wcm-io-samples-complete" + runmodeSuffix + "-1.3.1-SNAPSHOT.zip");
-      assertDependencies(containerInstallDir, "wcm-io-samples-aem-cms-config" + runmodeSuffix + ".zip",
+      assertNameDependencies(containerInstallDir, "wcm-io-samples-aem-cms-config" + runmodeSuffix + ".zip",
+          "wcm-io-samples-aem-cms-config" + runmodeSuffix,
           "wcm-io-samples:aem-cms-system-config" + runmodeSuffix + ":1.3.1-SNAPSHOT");
-      assertDependencies(containerInstallDir, "wcm-io-samples-complete" + runmodeSuffix + "-1.3.1-SNAPSHOT.zip",
+      assertNameDependencies(containerInstallDir, "wcm-io-samples-complete" + runmodeSuffix + "-1.3.1-SNAPSHOT.zip",
+          "wcm-io-samples-complete" + runmodeSuffix,
           "wcm-io-samples:wcm-io-samples-aem-cms-config" + runmodeSuffix + ":1.3.1-SNAPSHOT");
     }
   }
@@ -238,15 +251,12 @@ class AllPackageBuilderTest {
     assertEquals(expectedFileNames, actualFileNames, "files in " + dir.getPath());
   }
 
-  private void assertPackageName(File dir, String fileName, String name) throws Exception {
+  private void assertNameDependencies(File dir, String fileName, String packageName,
+      String... dependencies) throws Exception {
     File zipFile = new File(dir, fileName);
     Document filterXml = getXmlFromZip(zipFile, "META-INF/vault/properties.xml");
-    assertXpathEvaluatesTo(name, "/properties/entry[@key='name']", filterXml);
-  }
 
-  private void assertDependencies(File dir, String fileName, String... dependencies) throws Exception {
-    File zipFile = new File(dir, fileName);
-    Document filterXml = getXmlFromZip(zipFile, "META-INF/vault/properties.xml");
+    assertXpathEvaluatesTo(packageName, "/properties/entry[@key='name']", filterXml);
 
     String expecedDependencies = "";
     if (dependencies.length > 0) {
