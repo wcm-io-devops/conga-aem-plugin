@@ -1,12 +1,12 @@
 # name of the dispatcher
 /name "{{node}}"
- 
+
 # each farm configures a set of (loadbalanced) renders
 /farms
  {
    # first farm entry (label is not important, just for your convenience)
-   /website 
-     {  
+   /website
+     {
      /clientheaders
        {
        # List of headers that are passed on
@@ -15,7 +15,7 @@
        {
        # List of URLs for this Web site
        }
-     /sessionmanagement 
+     /sessionmanagement
        {
        # settings for user authentification
        }
@@ -57,4 +57,3 @@
      /failover "1"
      }
  }
- 
