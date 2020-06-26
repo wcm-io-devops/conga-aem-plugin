@@ -20,7 +20,6 @@
 package io.wcm.devops.conga.plugins.aem.handlebars.helper;
 
 import java.io.IOException;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
@@ -30,6 +29,7 @@ import org.apache.commons.lang3.StringUtils;
 import com.github.jknack.handlebars.Context;
 import com.github.jknack.handlebars.Options;
 import com.github.jknack.handlebars.Options.Buffer;
+import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableMap;
 
 import io.wcm.devops.conga.generator.spi.handlebars.HelperPlugin;
@@ -45,7 +45,7 @@ abstract class AbstractCloudManagerConditionalHelper implements HelperPlugin<Obj
 
   static final String HTTPD_KEY = "httpd";
   static final String CLOUD_MANAGER_CONDITIONAL_KEY = "cloudManagerConditional";
-  static final String TARGET_ENVIRONMENT_KEY = "targetEnvironment";
+  static final List<String> ENVIRONMENTS = ImmutableList.of("dev", "stage", "prod");
 
   @Override
   @SuppressWarnings("unchecked")
@@ -60,13 +60,13 @@ abstract class AbstractCloudManagerConditionalHelper implements HelperPlugin<Obj
     // get tenants from context
     Object cloudManagerConditional = currentContext.get(HTTPD_KEY + "." + CLOUD_MANAGER_CONDITIONAL_KEY);
 
-    if (!(cloudManagerConditional instanceof List)) {
+    if (!(cloudManagerConditional instanceof Map)) {
       // no conditional statement - just render the body
       buffer.append(options.fn(currentContext));
     }
     else {
       // render body for each environment in conditional block with a merged context
-      List<CloudManagerConditional> items = getCloudManagerConditional((List<Map<String, Object>>)cloudManagerConditional);
+      List<CloudManagerConditional> items = getCloudManagerConditional((Map<String, Object>)cloudManagerConditional);
       for (CloudManagerConditional item : items) {
 
         // config inside httpd.cloudManagerConditional is considered to be prefixed with "httpd.", so wrap it around here for merging
@@ -94,10 +94,9 @@ abstract class AbstractCloudManagerConditionalHelper implements HelperPlugin<Obj
   protected abstract void renderBodyContent(Buffer buffer, CharSequence bodyContent,
       String targetEnvironment) throws IOException;
 
-  private List<CloudManagerConditional> getCloudManagerConditional(List<Map<String, Object>> configs) {
-    return configs.stream()
-        .map(config -> new CloudManagerConditional(config))
-        .filter(item -> item.getTargetEnvironment() != null)
+  private List<CloudManagerConditional> getCloudManagerConditional(Map<String, Object> cloudManagerConditional) {
+    return ENVIRONMENTS.stream()
+        .map(env -> new CloudManagerConditional(env, cloudManagerConditional.getOrDefault(env, ImmutableMap.of())))
         .collect(Collectors.toList());
   }
 
@@ -109,16 +108,15 @@ abstract class AbstractCloudManagerConditionalHelper implements HelperPlugin<Obj
     private final Map<String, Object> config;
     private final String targetEnvironment;
 
-    CloudManagerConditional(Map<String, Object> config) {
-      this.config = new HashMap<>(config);
-      Object value = this.config.get(AbstractCloudManagerConditionalHelper.TARGET_ENVIRONMENT_KEY);
-      if (value instanceof String) {
-        this.targetEnvironment = (String)value;
+    @SuppressWarnings("unchecked")
+    CloudManagerConditional(String targetEnvironment, Object value) {
+      this.targetEnvironment = targetEnvironment;
+      if (value instanceof Map) {
+        this.config = (Map<String, Object>)value;
       }
       else {
-        this.targetEnvironment = null;
+        this.config = ImmutableMap.of();
       }
-      this.config.remove(AbstractCloudManagerConditionalHelper.TARGET_ENVIRONMENT_KEY);
     }
 
     public String getTargetEnvironment() {

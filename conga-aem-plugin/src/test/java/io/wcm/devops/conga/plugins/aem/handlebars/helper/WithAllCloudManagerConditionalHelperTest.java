@@ -28,7 +28,6 @@ import java.util.Map;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
-import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableMap;
 
 import io.wcm.devops.conga.generator.spi.handlebars.HelperPlugin;
@@ -64,11 +63,10 @@ class WithAllCloudManagerConditionalHelperTest {
   void testApplyWithCloudManagerConditional() throws IOException {
     Map<String, Object> model = ImmutableMap.of("httpd",
         ImmutableMap.of("serverName", "host0",
-            "cloudManagerConditional", ImmutableList.of(
-                ImmutableMap.of("targetEnvironment", "dev", "serverName", "host1"),
-                ImmutableMap.of("targetEnvironment", "stage", "serverName", "host2"),
-                ImmutableMap.of("targetEnvironment", "prod"),
-                ImmutableMap.of("serverName", "host3"))));
+            "cloudManagerConditional", ImmutableMap.of(
+                "dev", ImmutableMap.of("serverName", "host1"),
+                "stage", ImmutableMap.of("serverName", "host2"),
+                "prod", ImmutableMap.of())));
     MockOptions options = new MockOptions(model);
 
     Map<String, Object> model_dev = ImmutableMap.of("httpd", ImmutableMap.of("serverName", "host1"));
@@ -84,11 +82,9 @@ class WithAllCloudManagerConditionalHelperTest {
   void testApplyWithCloudManagerConditionalSeparateModel() throws IOException {
     Map<String, Object> model = ImmutableMap.of("httpd",
         ImmutableMap.of("serverName", "host0",
-            "cloudManagerConditional", ImmutableList.of(
-                ImmutableMap.of("targetEnvironment", "dev", "serverName", "host1"),
-                ImmutableMap.of("targetEnvironment", "stage", "serverName", "host2"),
-                ImmutableMap.of("targetEnvironment", "prod"),
-                ImmutableMap.of("serverName", "host3"))));
+            "cloudManagerConditional", ImmutableMap.of(
+                "dev", ImmutableMap.of("serverName", "host1"),
+                "stage", ImmutableMap.of("serverName", "host2"))));
     MockOptions options = new MockOptions();
 
     Map<String, Object> model_dev = ImmutableMap.of("httpd", ImmutableMap.of("serverName", "host1"));
