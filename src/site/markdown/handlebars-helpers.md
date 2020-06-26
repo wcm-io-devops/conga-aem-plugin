@@ -133,9 +133,9 @@ Generates AEM dispatcher filter rules for a filter expression. See [CONGA AEM De
     }
 ```
 
-### aemTenantsCloudManagerConditional
+### httpdCloudManagerConditional, withAllCloudManagerConditional
 
-Used to build conditional sling mapping definitions for AEM cloud service with a sling dispatcher configuration. See [CONGA AEM Definitions][aem-definitions] for an usage example.
+Used to build envrionment-conditional  configuration sections for AEM cloud service.
 
 
 

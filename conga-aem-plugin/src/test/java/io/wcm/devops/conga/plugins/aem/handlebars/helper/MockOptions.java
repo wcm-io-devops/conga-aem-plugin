@@ -78,6 +78,22 @@ final class MockOptions extends Options {
         ImmutableList.of());
   }
 
+  /**
+   * Options with model in context
+   * @param model Model
+   */
+  MockOptions(Map<String, Object> model) {
+    super(mock(Handlebars.class),
+        "dummyHelperName",
+        TagType.VAR,
+        Context.newBuilder(model).build(),
+        getFnTemplate(),
+        getInverseTemplate(),
+        new Object[0],
+        new HashMap<>(),
+        ImmutableList.of());
+  }
+
   private static Template getFnTemplate() {
     Template template = mock(Template.class);
     try {
@@ -154,6 +170,16 @@ final class MockOptions extends Options {
    */
   public MockOptions withHash(String name, Object value) {
     hash.put(name, value);
+    return this;
+  }
+
+  /**
+   * Set model.
+   * @param model Model
+   * @return this
+   */
+  public MockOptions withModel(Map<String, Object> model) {
+    context.combine(model);
     return this;
   }
 
