@@ -4,5 +4,7 @@ io.wcm.devops.conga.plugins.aem.handlebars.helper.AemHttpdFilterHelper
 io.wcm.devops.conga.plugins.aem.handlebars.helper.OakAuthorizableUuidHelper
 io.wcm.devops.conga.plugins.aem.handlebars.helper.OakPasswordHashHelper
 io.wcm.devops.conga.plugins.aem.handlebars.helper.WebConsolePasswordHashHelper
+io.wcm.devops.conga.plugins.aem.handlebars.helper.HttpdCloudManagerConditionalHelper
 io.wcm.devops.conga.plugins.aem.handlebars.helper.HttpHostHelper
 io.wcm.devops.conga.plugins.aem.handlebars.helper.HttpHostSslHelper
+io.wcm.devops.conga.plugins.aem.handlebars.helper.WithAllCloudManagerConditionalHelper

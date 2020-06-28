@@ -23,6 +23,7 @@ import static io.wcm.devops.conga.generator.util.FileUtil.getCanonicalPath;
 import static io.wcm.devops.conga.plugins.aem.maven.allpackage.RunModeUtil.RUNMODE_AUTHOR;
 import static io.wcm.devops.conga.plugins.aem.maven.allpackage.RunModeUtil.RUNMODE_PUBLISH;
 import static org.apache.jackrabbit.vault.packaging.PackageProperties.NAME_DEPENDENCIES;
+import static org.apache.jackrabbit.vault.packaging.PackageProperties.NAME_NAME;
 
 import java.io.File;
 import java.io.FileOutputStream;
@@ -40,6 +41,7 @@ import java.util.zip.ZipFile;
 import java.util.zip.ZipOutputStream;
 
 import org.apache.commons.io.FileUtils;
+import org.apache.commons.io.FilenameUtils;
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.jackrabbit.vault.packaging.Dependency;
@@ -50,6 +52,7 @@ import org.apache.maven.plugin.logging.SystemStreamLog;
 
 import com.google.common.collect.ImmutableSet;
 
+import io.wcm.devops.conga.plugins.aem.maven.AutoDependenciesMode;
 import io.wcm.devops.conga.plugins.aem.maven.model.ContentPackageFile;
 import io.wcm.tooling.commons.contentpackagebuilder.ContentPackage;
 import io.wcm.tooling.commons.contentpackagebuilder.ContentPackageBuilder;
@@ -63,8 +66,7 @@ public final class AllPackageBuilder {
   private final File targetFile;
   private final String groupName;
   private final String packageName;
-  private boolean autoDependencies;
-  private boolean autoDependenciesSeparateMutable;
+  private AutoDependenciesMode autoDependenciesMode = AutoDependenciesMode.OFF;
   private Log log;
 
   private static final String RUNMODE_DEFAULT = "$default$";
@@ -86,17 +88,8 @@ public final class AllPackageBuilder {
    *          configuration.
    * @return this
    */
-  public AllPackageBuilder autoDependencies(boolean value) {
-    this.autoDependencies = value;
-    return this;
-  }
-
-  /**
-   * @param value Use separate dependency chains for mutable and immutable packages.
-   * @return this
-   */
-  public AllPackageBuilder autoDependenciesSeparateMutable(boolean value) {
-    this.autoDependenciesSeparateMutable = value;
+  public AllPackageBuilder autoDependenciesMode(AutoDependenciesMode value) {
+    this.autoDependenciesMode = value;
     return this;
   }
 
@@ -128,12 +121,12 @@ public final class AllPackageBuilder {
       Set<String> cloudManagerTarget, Map<String, String> properties) throws IOException {
 
     // collect list of cloud manager environment run modes
-    List<String> environmentRunmodes = new ArrayList<>();
+    List<String> environmentRunModes = new ArrayList<>();
     if (cloudManagerTarget.isEmpty()) {
-      environmentRunmodes.add(RUNMODE_DEFAULT);
+      environmentRunModes.add(RUNMODE_DEFAULT);
     }
     else {
-      environmentRunmodes.addAll(cloudManagerTarget);
+      environmentRunModes.addAll(cloudManagerTarget);
     }
 
     // generate warnings for each invalid content packages that is skipped
@@ -179,26 +172,26 @@ public final class AllPackageBuilder {
     // build content package
     // if auto dependencies is active: build separate "dependency chains" between mutable and immutable packages
     try (ContentPackage contentPackage = builder.build(targetFile)) {
-      for (String environmentRunmode : environmentRunmodes) {
+      for (String environmentRunMode : environmentRunModes) {
         List<ContentPackageFile> previousPackages = new ArrayList<>();
         for (ContentPackageFile pkg : validContentPackages) {
-          String path = buildPackagePath(pkg, rootPath, environmentRunmode);
+          String path = buildPackagePath(pkg, rootPath, environmentRunMode);
 
-          // get last previous package
-          // if autoDependenciesSeparateMutable active only that of the same mutability type
-          ContentPackageFile previousPkg = previousPackages.stream()
-              .filter(item -> !autoDependenciesSeparateMutable || mutableMatches(item, pkg))
-              .reduce((first, second) -> second)
-              .orElse(null);
+          ContentPackageFile previousPkg = null;
 
-          if (autoDependencies && previousPkg != null) {
-            // wire previous package in package dependency
-            addFileWithDependency(contentPackage, path, pkg, previousPkg);
+          if (autoDependenciesMode != AutoDependenciesMode.OFF
+              && (autoDependenciesMode != AutoDependenciesMode.IMMUTABLE_ONLY || !isMutable(pkg))) {
+            // get last previous package
+            // if not IMMUTABLE_MUTABLE_COMBINED active only that of the same mutability type
+            previousPkg = previousPackages.stream()
+                .filter(item -> (autoDependenciesMode == AutoDependenciesMode.IMMUTABLE_MUTABLE_COMBINED) || mutableMatches(item, pkg))
+                .reduce((first, second) -> second)
+                .orElse(null);
           }
-          else {
-            // add package file directly
-            contentPackage.addFile(path, pkg.getFile());
-          }
+
+          // set package name, wire previous package in package dependency
+          addFileWithDependency(contentPackage, path, pkg, previousPkg, environmentRunMode);
+
           previousPackages.add(pkg);
         }
       }
@@ -239,12 +232,11 @@ public final class AllPackageBuilder {
   }
 
   /**
-   * Build path to be used for embedded package.
+   * Generate suffix for instance and environment run modes.
    * @param pkg Package
-   * @param rootPath Root path
    * @return Package path
    */
-  private static String buildPackagePath(ContentPackageFile pkg, String rootPath, String environmentRunmode) {
+  private static String buildRunModeSuffix(ContentPackageFile pkg, String environmentRunMode) {
     StringBuilder runModeSuffix = new StringBuilder();
     if (RunModeUtil.isOnlyAuthor(pkg)) {
       runModeSuffix.append(".").append(RUNMODE_AUTHOR);
@@ -252,10 +244,31 @@ public final class AllPackageBuilder {
     else if (RunModeUtil.isOnlyPublish(pkg)) {
       runModeSuffix.append(".").append(RUNMODE_PUBLISH);
     }
-    if (!StringUtils.equals(environmentRunmode, RUNMODE_DEFAULT)) {
-      runModeSuffix.append(".").append(environmentRunmode);
+    if (!StringUtils.equals(environmentRunMode, RUNMODE_DEFAULT)) {
+      runModeSuffix.append(".").append(environmentRunMode);
     }
-    return rootPath + "/" + pkg.getPackageType() + "/install" + runModeSuffix.toString() + "/" + pkg.getFile().getName();
+    return runModeSuffix.toString();
+  }
+
+  /**
+   * Build path to be used for embedded package.
+   * @param pkg Package
+   * @param rootPath Root path
+   * @return Package path
+   */
+  private static String buildPackagePath(ContentPackageFile pkg, String rootPath, String environmentRunMode) {
+    String runModeSuffix = buildRunModeSuffix(pkg, environmentRunMode);
+
+    // add run mode suffix to both install folder path and package file name
+    String path = rootPath + "/" + pkg.getPackageType() + "/install" + runModeSuffix;
+
+    String versionSuffix = "";
+    if (pkg.getVersion() != null && pkg.getFile().getName().contains(pkg.getVersion())) {
+      versionSuffix = "-" + pkg.getVersion();
+    }
+    String fileName = pkg.getName() + runModeSuffix + versionSuffix
+        + "." + FilenameUtils.getExtension(pkg.getFile().getName());
+    return path + "/" + fileName;
   }
 
   /**
@@ -265,10 +278,11 @@ public final class AllPackageBuilder {
    * @param path Path in target content package
    * @param pkg Package to add
    * @param previousPkg Previous package to get dependency information from
+   * @param environmentRunMode Environment run mode
    * @throws IOException I/O error
    */
   private static void addFileWithDependency(ContentPackage contentPackage, String path,
-      ContentPackageFile pkg, ContentPackageFile previousPkg) throws IOException {
+      ContentPackageFile pkg, ContentPackageFile previousPkg, String environmentRunMode) throws IOException {
 
     // create temp zip file to create rewritten copy of package
     File tempFile = File.createTempFile("pkg", ".zip");
@@ -290,7 +304,10 @@ public final class AllPackageBuilder {
               try (InputStream is = zipFileIn.getInputStream(zipInEntry)) {
                 Properties props = new Properties();
                 props.loadFromXML(is);
-                updateDependencies(props, previousPkg);
+                addSuffixToPackageName(props, pkg, environmentRunMode);
+                if (previousPkg != null) {
+                  updateDependencies(props, previousPkg, environmentRunMode);
+                }
                 props.storeToXML(zipOut, null);
               }
             }
@@ -318,14 +335,16 @@ public final class AllPackageBuilder {
    * @param props Properties
    * @param dependencyFile Dependency package
    */
-  private static void updateDependencies(Properties props, ContentPackageFile dependencyFile) {
+  private static void updateDependencies(Properties props, ContentPackageFile dependencyFile, String environmentRunMode) {
     String[] existingDepsStrings = StringUtils.split(props.getProperty(NAME_DEPENDENCIES), ",");
     Dependency[] existingDeps = null;
     if (existingDepsStrings != null && existingDepsStrings.length > 0) {
       existingDeps = Dependency.fromString(existingDepsStrings);
     }
 
-    Dependency newDependency = new Dependency(dependencyFile.getGroup(), dependencyFile.getName(),
+    String runModeSuffix = buildRunModeSuffix(dependencyFile, environmentRunMode);
+    Dependency newDependency = new Dependency(dependencyFile.getGroup(),
+        dependencyFile.getName() + runModeSuffix,
         VersionRange.fromString(dependencyFile.getVersion()));
     Dependency[] deps;
     if (existingDeps != null) {
@@ -336,6 +355,12 @@ public final class AllPackageBuilder {
     }
 
     props.put(NAME_DEPENDENCIES, Dependency.toString(deps));
+  }
+
+  private static void addSuffixToPackageName(Properties props, ContentPackageFile pkg, String environmentRunMode) {
+    String runModeSuffix = buildRunModeSuffix(pkg, environmentRunMode);
+    String packageName = props.getProperty(NAME_NAME) + runModeSuffix;
+    props.put(NAME_NAME, packageName);
   }
 
 }

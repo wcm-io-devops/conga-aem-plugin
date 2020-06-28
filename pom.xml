@@ -29,7 +29,7 @@
 
   <groupId>io.wcm.devops.conga.plugins</groupId>
   <artifactId>io.wcm.devops.conga.plugins.aem.root</artifactId>
-  <version>1.11.4</version>
+  <version>1.12.0</version>
   <packaging>pom</packaging>
 
   <name>CONGA AEM Plugin</name>

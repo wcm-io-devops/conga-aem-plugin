@@ -133,6 +133,10 @@ Generates AEM dispatcher filter rules for a filter expression. See [CONGA AEM De
     }
 ```
 
+### httpdCloudManagerConditional, withAllCloudManagerConditional
+
+Used to build envrionment-conditional  configuration sections for AEM cloud service.
+
 
 
 [handlebars-quickstart]: ../../handlebars-quickstart.html

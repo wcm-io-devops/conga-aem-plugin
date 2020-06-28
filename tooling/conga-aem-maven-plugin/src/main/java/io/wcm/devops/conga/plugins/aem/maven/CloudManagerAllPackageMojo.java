@@ -57,13 +57,34 @@ public final class CloudManagerAllPackageMojo extends AbstractCloudManagerMojo {
 
   /**
    * Automatically generate dependencies between content packages based on file order in CONGA configuration.
+   * <p>
+   * Possible values:
+   * </p>
+   * <ul>
+   * <li><code>IMMUTABLE_MUTABLE_COMBINED</code>: Generate a single dependency chain spanning both immutable and mutable
+   * content packages.</li>
+   * <li><code>IMMUTABLE_MUTABLE_SEPARATE</code>: Generate separate dependency chains for immutable and mutable content
+   * packages.</li>
+   * <li><code>IMMUTABLE_ONLY</code>: Generate a dependency chain only for immutable content packages.</li>
+   * <li><code>OFF</code>: Do not generate dependencies between content packages.</li>
+   * </ul>
    */
+  @Parameter(property = "conga.cloudManager.allPackage.autoDependenciesMode")
+  private AutoDependenciesMode autoDependenciesMode;
+
+  /**
+   * Automatically generate dependencies between content packages based on file order in CONGA configuration.
+   * @deprecated Please use autoDependenciesMode instead.
+   */
+  @Deprecated
   @Parameter(property = "conga.cloudManager.allPackage.autoDependencies", defaultValue = "true")
   private boolean autoDependencies;
 
   /**
    * Use separate dependency chains for mutable and immutable packages.
+   * @deprecated Please use autoDependenciesMode instead.
    */
+  @Deprecated
   @Parameter(property = "conga.cloudManager.allPackage.autoDependenciesSeparateMutable", defaultValue = "false")
   private boolean autoDependenciesSeparateMutable;
 
@@ -85,6 +106,20 @@ public final class CloudManagerAllPackageMojo extends AbstractCloudManagerMojo {
   public void execute() throws MojoExecutionException, MojoFailureException {
     if (skip) {
       return;
+    }
+
+    if (this.autoDependenciesMode == null) {
+      if (this.autoDependencies) {
+        if (this.autoDependenciesSeparateMutable) {
+          this.autoDependenciesMode = AutoDependenciesMode.IMMUTABLE_MUTABLE_SEPARATE;
+        }
+        else {
+          this.autoDependenciesMode = AutoDependenciesMode.IMMUTABLE_MUTABLE_COMBINED;
+        }
+      }
+      else {
+        this.autoDependenciesMode = AutoDependenciesMode.OFF;
+      }
     }
 
     List<File> environmentDirs = getEnvironmentDir();
@@ -109,8 +144,7 @@ public final class CloudManagerAllPackageMojo extends AbstractCloudManagerMojo {
     File targetFile = new File(getTargetDir(), packageName + ".zip");
 
     AllPackageBuilder builder = new AllPackageBuilder(targetFile, groupName, packageName)
-        .autoDependencies(this.autoDependencies)
-        .autoDependenciesSeparateMutable(this.autoDependenciesSeparateMutable)
+        .autoDependenciesMode(this.autoDependenciesMode)
         .logger(getLog());
 
     try {
