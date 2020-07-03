@@ -19,8 +19,8 @@
  */
 package io.wcm.devops.conga.plugins.aem.maven.allpackage;
 
+import static io.wcm.devops.conga.plugins.aem.maven.allpackage.ContentPackageTestUtil.assertXpathEvaluatesTo;
 import static io.wcm.devops.conga.plugins.aem.maven.allpackage.ContentPackageTestUtil.getXmlFromZip;
-import static org.custommonkey.xmlunit.XMLAssert.assertXpathEvaluatesTo;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
