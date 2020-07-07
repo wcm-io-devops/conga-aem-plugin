@@ -97,7 +97,7 @@ public class ContentPackagePostProcessor extends AbstractPostProcessor {
         contentPackage.addContent(rootPath, content);
 
         // add additional binary files
-        for (ContentPackageBinaryFile binaryFile : ContentPackageUtil.getFiles(options)) {
+        for (ContentPackageBinaryFile binaryFile : ContentPackageUtil.getFiles(options, fileContext.getTargetDir())) {
           String path = binaryFile.getPath();
           try (InputStream is = binaryFile.getInputStream(context.getUrlFileManager(), fileContext.getTargetDir())) {
             contentPackage.addFile(path, is);

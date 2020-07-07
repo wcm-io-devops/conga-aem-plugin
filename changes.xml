@@ -23,6 +23,12 @@
     xsi:schemaLocation="http://maven.apache.org/changes/1.0.0 https://maven.apache.org/plugins/maven-changes-plugin/xsd/changes-1.0.0.xsd">
   <body>
 
+    <release version="1.12.2" date="not released">
+      <action type="update" dev="sseifert">
+        aem-contentpackage post processor: Support "fileMatch" property to include a list of binary files matching the pattern into a content package.
+      </action>
+    </release>
+
     <release version="1.12.0" date="2020-06-28">
       <action type="add" dev="sseifert">
         Add httpdCloudManagerConditional and withAllCloudManagerConditional handlebars helper to build envrionment-conditional configuration for AEM cloud service..
