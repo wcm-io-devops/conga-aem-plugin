@@ -19,6 +19,8 @@
  */
 package io.wcm.devops.conga.plugins.aem.maven.allpackage;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
+
 import java.io.ByteArrayInputStream;
 import java.io.File;
 import java.io.FileNotFoundException;
@@ -26,9 +28,10 @@ import java.io.FileNotFoundException;
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 
-import org.custommonkey.xmlunit.SimpleNamespaceContext;
-import org.custommonkey.xmlunit.XMLUnit;
 import org.w3c.dom.Document;
+import org.w3c.dom.Node;
+import org.xmlunit.xpath.JAXPXPathEngine;
+import org.xmlunit.xpath.XPathEngine;
 import org.zeroturnaround.zip.ZipUtil;
 
 import io.wcm.tooling.commons.contentpackagebuilder.XmlNamespaces;
@@ -36,9 +39,10 @@ import io.wcm.tooling.commons.contentpackagebuilder.XmlNamespaces;
 public final class ContentPackageTestUtil {
 
   private static final DocumentBuilderFactory DOCUMENT_BUILDER_FACTORY = DocumentBuilderFactory.newInstance();
+  private static final XPathEngine XPATH_ENGINE = new JAXPXPathEngine();
   static {
     DOCUMENT_BUILDER_FACTORY.setNamespaceAware(true);
-    XMLUnit.setXpathNamespaceContext(new SimpleNamespaceContext(XmlNamespaces.DEFAULT_NAMESPACES));
+    XPATH_ENGINE.setNamespaceContext(XmlNamespaces.DEFAULT_NAMESPACES);
   }
 
   private ContentPackageTestUtil() {
@@ -57,6 +61,14 @@ public final class ContentPackageTestUtil {
     byte[] data = getDataFromZip(file, path);
     DocumentBuilder documentBuilder = DOCUMENT_BUILDER_FACTORY.newDocumentBuilder();
     return documentBuilder.parse(new ByteArrayInputStream(data));
+  }
+
+  public static void assertXpathEvaluatesTo(String expected, String xpath, Node node) throws Exception {
+    assertEquals(expected, XPATH_ENGINE.evaluate(xpath, node));
+  }
+
+  public static void assertXpathEvaluatesTo(String expected, String xpath, Document doc) throws Exception {
+    assertXpathEvaluatesTo(expected, xpath, doc.getDocumentElement());
   }
 
 }

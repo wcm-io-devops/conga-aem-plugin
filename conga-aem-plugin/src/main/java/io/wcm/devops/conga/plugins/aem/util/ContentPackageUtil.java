@@ -34,11 +34,18 @@ import static io.wcm.devops.conga.plugins.aem.postprocessor.ContentPackageOption
 import static io.wcm.devops.conga.plugins.aem.postprocessor.ContentPackageOptions.PROPERTY_PACKAGE_THUMBNAIL_IMAGE;
 import static io.wcm.devops.conga.plugins.aem.postprocessor.ContentPackageOptions.PROPERTY_PACKAGE_VERSION;
 
+import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 
 import org.apache.commons.lang3.BooleanUtils;
@@ -348,25 +355,70 @@ public final class ContentPackageUtil {
   /**
    * Get binary files to be added to package.
    * @param options Options
+   * @param targetDir Target directory
    * @return File list
    * @throws IOException I/O exception
    */
-  public static List<ContentPackageBinaryFile> getFiles(Map<String, Object> options) throws IOException {
+  public static List<ContentPackageBinaryFile> getFiles(Map<String, Object> options, File targetDir) throws IOException {
     List<ContentPackageBinaryFile> files = new ArrayList<>();
 
     List<Map<String, Object>> fileDefinitions = getOptionalPropMapList(options, PROPERTY_PACKAGE_FILES);
     if (fileDefinitions != null) {
       for (Map<String, Object> fileDefinition : fileDefinitions) {
         String file = getOptionalProp(fileDefinition, "file");
+        String fileMatch = getOptionalProp(fileDefinition, "fileMatch");
         String dir = getOptionalProp(fileDefinition, "dir");
         String url = getOptionalProp(fileDefinition, "url");
         String path = getMandatoryProp(fileDefinition, "path");
         boolean delete = BooleanUtils.toBoolean(getOptionalProp(fileDefinition, "delete"));
-        files.add(new ContentPackageBinaryFile(file, dir, url, path, delete));
+
+        if (fileMatch != null && file == null && url == null) {
+          // add multiple (local) files matching with given regex
+          files.addAll(getMatchingFiles(targetDir, fileMatch, dir, path, delete));
+        }
+        else {
+          // add single file
+          files.add(new ContentPackageBinaryFile(file, dir, url, path, delete));
+        }
       }
     }
 
     return files;
+  }
+
+  private static List<ContentPackageBinaryFile> getMatchingFiles(File targetDir, String fileMatch,
+      String dir, String path, boolean delete) throws IOException {
+    File fileTargetDir = targetDir;
+    if (StringUtils.isNotEmpty(dir)) {
+      fileTargetDir = new File(targetDir, dir);
+    }
+    Path fileTargetPath = Paths.get(fileTargetDir.toURI());
+    String targetPathPrefix = normalizedAbsolutePath(fileTargetPath) + "/";
+    Pattern pattern = Pattern.compile(fileMatch);
+
+    // collect all files below the target dir
+    return Files.walk(Paths.get(fileTargetDir.toURI()))
+        .filter(Files::isRegularFile)
+        // strip off the target dir paths, keep only the relative path/file name
+        .map(ContentPackageUtil::normalizedAbsolutePath)
+        .map(file -> StringUtils.removeStart(file, targetPathPrefix))
+        // check if file matches with the regex, apply matching input groups to path
+        .map(file -> {
+          Matcher matcher = pattern.matcher(file);
+          if (matcher.matches()) {
+            String adaptedPath = matcher.replaceAll(path);
+            return new ContentPackageBinaryFile(file, dir, null, adaptedPath, delete);
+          }
+          else {
+            return null;
+          }
+        })
+        .filter(Objects::nonNull)
+        .collect(Collectors.toList());
+  }
+
+  private static String normalizedAbsolutePath(Path path) {
+    return StringUtils.replace(path.toAbsolutePath().toString(), "\\", "/");
   }
 
 }

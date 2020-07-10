@@ -28,9 +28,9 @@ import static io.wcm.devops.conga.plugins.aem.postprocessor.ContentPackageOption
 import static io.wcm.devops.conga.plugins.aem.postprocessor.ContentPackageOptions.PROPERTY_PACKAGE_PROPERTIES;
 import static io.wcm.devops.conga.plugins.aem.postprocessor.ContentPackageOptions.PROPERTY_PACKAGE_ROOT_PATH;
 import static io.wcm.devops.conga.plugins.aem.postprocessor.ContentPackageOptions.PROPERTY_PACKAGE_THUMBNAIL_IMAGE;
+import static io.wcm.devops.conga.plugins.aem.postprocessor.ContentPackageTestUtil.assertXpathEvaluatesTo;
 import static io.wcm.devops.conga.plugins.aem.postprocessor.ContentPackageTestUtil.getDataFromZip;
 import static io.wcm.devops.conga.plugins.aem.postprocessor.ContentPackageTestUtil.getXmlFromZip;
-import static org.custommonkey.xmlunit.XMLAssert.assertXpathEvaluatesTo;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
@@ -88,7 +88,8 @@ public class ContentPackagePostProcessorTest {
         "my.custom.prop2", 123));
     options.put(PROPERTY_PACKAGE_FILES, ImmutableList.of(
         ImmutableMap.<String, Object>of("url", "classpath:/package/thumbnail.png", "path", "/content/image.png"),
-        ImmutableMap.<String, Object>of("file", "README.txt", "dir", "readme", "path", "/content/README.txt", "delete", true)));
+        ImmutableMap.<String, Object>of("file", "README.txt", "dir", "readme", "path", "/content/README.txt", "delete", true),
+        ImmutableMap.<String, Object>of("fileMatch", "file_(.*).txt", "dir", "files", "path", "/content/files/$1.txt", "delete", true)));
 
     // prepare JSON file
     File target = new File("target/" + ContentPackagePostProcessor.NAME + "-test");
@@ -98,11 +99,20 @@ public class ContentPackagePostProcessorTest {
     File contentPackageFile = new File(target, "test.json");
     FileUtils.copyFile(new File(getClass().getResource("/json/content.json").toURI()), contentPackageFile);
 
-    // pepare additionaly binary file
+    // prepare additional binary files
     File readmeFolder = new File(target, "readme");
     readmeFolder.mkdir();
     File readmeFile = new File(readmeFolder, "README.txt");
     FileUtils.write(readmeFile, "readme", StandardCharsets.UTF_8);
+
+    File filesFolder = new File(target, "files");
+    filesFolder.mkdir();
+    File file_1 = new File(filesFolder, "file_1.txt");
+    FileUtils.write(file_1, "file_1", StandardCharsets.UTF_8);
+    File file_2 = new File(filesFolder, "file_2.txt");
+    FileUtils.write(file_2, "file_2", StandardCharsets.UTF_8);
+    File file_3 = new File(filesFolder, "file_3.txt");
+    FileUtils.write(file_3, "file_3", StandardCharsets.UTF_8);
 
     // post-process
     FileContext fileContext = new FileContext()
@@ -153,6 +163,18 @@ public class ContentPackagePostProcessorTest {
     byte[] readmeText = getDataFromZip(zipFile, "jcr_root/content/README.txt");
     assertNotNull(readmeText);
     assertFalse(readmeFile.exists());
+
+    byte[] file_1Text = getDataFromZip(zipFile, "jcr_root/content/files/1.txt");
+    assertNotNull(file_1Text);
+    assertFalse(file_1.exists());
+
+    byte[] file_2Text = getDataFromZip(zipFile, "jcr_root/content/files/2.txt");
+    assertNotNull(file_2Text);
+    assertFalse(file_2.exists());
+
+    byte[] file_3Text = getDataFromZip(zipFile, "jcr_root/content/files/3.txt");
+    assertNotNull(file_3Text);
+    assertFalse(file_3.exists());
   }
 
 }
