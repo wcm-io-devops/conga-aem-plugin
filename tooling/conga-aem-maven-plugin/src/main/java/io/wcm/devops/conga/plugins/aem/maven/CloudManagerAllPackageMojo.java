@@ -39,6 +39,16 @@ import io.wcm.devops.conga.plugins.aem.maven.model.ModelParser;
 /**
  * Builds an "all" content package dedicated for deployment via Adobe Cloud Manager
  * for the given environment and node(s).
+ * <p>
+ * By default, it builds one "all" package per environment and node without adding any Cloud Manager
+ * environment-specific run mode suffixes to the folders. By defining a parameter <code>cloudManager.target</code>
+ * (contains a list of string values) in the CONGA environment it is possible:
+ * </p>
+ * <ul>
+ * <li>If it contains <code>none</code> no "all" package is build.</li>
+ * <li>If set to one or multiple environment names (normally dev/stage/prod) one "all" package for each of
+ * them is defined, and the environment name is added as runmode suffix to all config and install folders.</li>
+ * </ul>
  */
 @Mojo(name = "cloudmanager-all-package", threadSafe = true)
 public final class CloudManagerAllPackageMojo extends AbstractCloudManagerMojo {
