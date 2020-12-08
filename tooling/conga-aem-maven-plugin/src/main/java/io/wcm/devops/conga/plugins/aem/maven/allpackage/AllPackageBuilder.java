@@ -72,6 +72,8 @@ public final class AllPackageBuilder {
   private static final String RUNMODE_DEFAULT = "$default$";
   private static final Set<String> ALLOWED_PACKAGE_TYPES = ImmutableSet.of("application", "container", "content");
 
+  private final List<ContentPackageFileSet> fileSets = new ArrayList<>();
+
   /**
    * @param targetFile Target file
    * @param groupName Group name
@@ -110,15 +112,12 @@ public final class AllPackageBuilder {
   }
 
   /**
-   * Build "all" content package.
+   * Add content packages to be contained in "all" content package.
    * @param contentPackages Content packages (invalid will be filtered out)
    * @param cloudManagerTarget Target environments/run modes the packages should be attached to
-   * @param properties Specifies additional properties to be set in the properties.xml file.
-   * @return true if "all" package was generated, false if not valid package was found.
-   * @throws IOException I/O exception
+   * @throws IllegalArgumentException If and invalid package type is detected
    */
-  public boolean build(List<ContentPackageFile> contentPackages,
-      Set<String> cloudManagerTarget, Map<String, String> properties) throws IOException {
+  public void add(List<ContentPackageFile> contentPackages, Set<String> cloudManagerTarget) {
 
     // collect list of cloud manager environment run modes
     List<String> environmentRunModes = new ArrayList<>();
@@ -140,7 +139,7 @@ public final class AllPackageBuilder {
         .filter(pkg -> !isValidPackageType(pkg))
         .collect(Collectors.toList());
     if (!invalidPackageTypeContentPackages.isEmpty()) {
-      throw new IOException("Content packages found with unsupported package types: " +
+      throw new IllegalArgumentException("Content packages found with unsupported package types: " +
           invalidPackageTypeContentPackages.stream()
               .map(pkg -> pkg.getName() + " -> " + pkg.getPackageType())
               .collect(Collectors.joining(", ")));
@@ -150,7 +149,21 @@ public final class AllPackageBuilder {
     List<ContentPackageFile> validContentPackages = contentPackages.stream()
         .filter(AllPackageBuilder::hasPackageType)
         .collect(Collectors.toList());
-    if (validContentPackages.isEmpty()) {
+
+    if (!validContentPackages.isEmpty()) {
+      fileSets.add(new ContentPackageFileSet(validContentPackages, environmentRunModes));
+    }
+  }
+
+  /**
+   * Build "all" content package.
+   * @param properties Specifies additional properties to be set in the properties.xml file.
+   * @return true if "all" package was generated, false if no valid package was found.
+   * @throws IOException I/O exception
+   */
+  public boolean build(Map<String, String> properties) throws IOException {
+
+    if (fileSets.isEmpty()) {
       return false;
     }
 
@@ -172,27 +185,29 @@ public final class AllPackageBuilder {
     // build content package
     // if auto dependencies is active: build separate "dependency chains" between mutable and immutable packages
     try (ContentPackage contentPackage = builder.build(targetFile)) {
-      for (String environmentRunMode : environmentRunModes) {
-        List<ContentPackageFile> previousPackages = new ArrayList<>();
-        for (ContentPackageFile pkg : validContentPackages) {
-          String path = buildPackagePath(pkg, rootPath, environmentRunMode);
+      for (ContentPackageFileSet fileSet : fileSets) {
+        for (String environmentRunMode : fileSet.getEnvironmentRunModes()) {
+          List<ContentPackageFile> previousPackages = new ArrayList<>();
+          for (ContentPackageFile pkg : fileSet.getContentPackages()) {
+            String path = buildPackagePath(pkg, rootPath, environmentRunMode);
 
-          ContentPackageFile previousPkg = null;
+            ContentPackageFile previousPkg = null;
 
-          if (autoDependenciesMode != AutoDependenciesMode.OFF
-              && (autoDependenciesMode != AutoDependenciesMode.IMMUTABLE_ONLY || !isMutable(pkg))) {
-            // get last previous package
-            // if not IMMUTABLE_MUTABLE_COMBINED active only that of the same mutability type
-            previousPkg = previousPackages.stream()
-                .filter(item -> (autoDependenciesMode == AutoDependenciesMode.IMMUTABLE_MUTABLE_COMBINED) || mutableMatches(item, pkg))
-                .reduce((first, second) -> second)
-                .orElse(null);
+            if (autoDependenciesMode != AutoDependenciesMode.OFF
+                && (autoDependenciesMode != AutoDependenciesMode.IMMUTABLE_ONLY || !isMutable(pkg))) {
+              // get last previous package
+              // if not IMMUTABLE_MUTABLE_COMBINED active only that of the same mutability type
+              previousPkg = previousPackages.stream()
+                  .filter(item -> (autoDependenciesMode == AutoDependenciesMode.IMMUTABLE_MUTABLE_COMBINED) || mutableMatches(item, pkg))
+                  .reduce((first, second) -> second)
+                  .orElse(null);
+            }
+
+            // set package name, wire previous package in package dependency
+            addFileWithDependency(contentPackage, path, pkg, previousPkg, environmentRunMode);
+
+            previousPackages.add(pkg);
           }
-
-          // set package name, wire previous package in package dependency
-          addFileWithDependency(contentPackage, path, pkg, previousPkg, environmentRunMode);
-
-          previousPackages.add(pkg);
         }
       }
     }
@@ -361,6 +376,10 @@ public final class AllPackageBuilder {
     String runModeSuffix = buildRunModeSuffix(pkg, environmentRunMode);
     String packageName = props.getProperty(NAME_NAME) + runModeSuffix;
     props.put(NAME_NAME, packageName);
+  }
+
+  public File getTargetFile() {
+    return this.targetFile;
   }
 
 }

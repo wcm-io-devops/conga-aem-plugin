@@ -59,8 +59,8 @@ class AllPackageBuilderMixedPackageTypeTest {
     AllPackageBuilder builder = new AllPackageBuilder(targetFile, "test-group", "test-pkg");
 
     // should fail to to "mixed" packageType
-    assertThrows(IOException.class, () -> {
-      builder.build(contentPackages, ImmutableSet.of(), null);
+    assertThrows(IllegalArgumentException.class, () -> {
+      builder.add(contentPackages, ImmutableSet.of());
     });
   }
 

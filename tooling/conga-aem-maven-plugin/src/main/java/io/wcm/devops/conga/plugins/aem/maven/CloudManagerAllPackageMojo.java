@@ -66,6 +66,12 @@ public final class CloudManagerAllPackageMojo extends AbstractCloudManagerMojo {
   private String group;
 
   /**
+   * Build one single content package for all environments and nodes.
+   */
+  @Parameter(property = "conga.cloudManager.allPackage.singlePackage", defaultValue = "true")
+  private boolean singlePackage;
+
+  /**
    * Automatically generate dependencies between content packages based on file order in CONGA configuration.
    * <p>
    * Possible values:
@@ -132,42 +138,91 @@ public final class CloudManagerAllPackageMojo extends AbstractCloudManagerMojo {
       }
     }
 
+    if (singlePackage) {
+      buildSingleAllPackage();
+    }
+    else {
+      buildAllPackagesPerEnvironmentNode();
+    }
+  }
+
+  /**
+   * Build an "all" package for each environment and node.
+   */
+  private void buildAllPackagesPerEnvironmentNode() throws MojoExecutionException, MojoFailureException {
+    visitEnvironmentsNodes((environmentDir, nodeDir, cloudManagerTarget, contentPackages) -> {
+      String packageName = environmentDir.getName() + "." + nodeDir.getName() + "." + this.name;
+      AllPackageBuilder builder = createBuilder(packageName);
+
+      try {
+        builder.add(contentPackages, cloudManagerTarget);
+      }
+      catch (IllegalArgumentException ex) {
+        throw new MojoFailureException(ex.getMessage(), ex);
+      }
+
+      buildAllPackage(builder);
+    });
+  }
+
+  /**
+   * Build a single "all" package containing packages from all environments and nodes.
+   */
+  private void buildSingleAllPackage() throws MojoExecutionException, MojoFailureException {
+    String packageName = this.name;
+    AllPackageBuilder builder = createBuilder(packageName);
+
+    visitEnvironmentsNodes((environmentDir, nodeDir, cloudManagerTarget, contentPackages) -> {
+      try {
+        builder.add(contentPackages, cloudManagerTarget);
+      }
+      catch (IllegalArgumentException ex) {
+        throw new MojoFailureException(ex.getMessage(), ex);
+      }
+    });
+
+    buildAllPackage(builder);
+  }
+
+  private AllPackageBuilder createBuilder(String packageName) {
+    File targetFile = new File(getTargetDir(), packageName + ".zip");
+    return new AllPackageBuilder(targetFile, this.group, packageName)
+        .autoDependenciesMode(this.autoDependenciesMode)
+        .logger(getLog());
+  }
+
+  private void buildAllPackage(AllPackageBuilder builder) throws MojoExecutionException {
+    try {
+      if (builder.build(properties)) {
+        getLog().info("Generated " + getCanonicalPath(builder.getTargetFile()));
+      }
+      else {
+        getLog().debug("Skipped " + getCanonicalPath(builder.getTargetFile()) + " - no valid package.");
+      }
+    }
+    catch (IOException ex) {
+      throw new MojoExecutionException("Unable to generate " + getCanonicalPath(builder.getTargetFile()), ex);
+    }
+  }
+
+  private void visitEnvironmentsNodes(EnvironmentNodeVisitor visitor) throws MojoExecutionException, MojoFailureException {
+    ModelParser modelParser = new ModelParser();
     List<File> environmentDirs = getEnvironmentDir();
     for (File environmentDir : environmentDirs) {
       List<File> nodeDirs = getNodeDirs(environmentDir);
-      ModelParser modelParser = new ModelParser();
       for (File nodeDir : nodeDirs) {
         Set<String> cloudManagerTarget = modelParser.getCloudManagerTarget(nodeDir);
         if (!cloudManagerTarget.contains(CLOUDMANAGER_TARGET_NONE)) {
-          buildAllPackage(environmentDir, nodeDir, cloudManagerTarget, modelParser);
+          List<ContentPackageFile> contentPackages = modelParser.getContentPackagesForNode(nodeDir);
+          visitor.visit(environmentDir, nodeDir, cloudManagerTarget, contentPackages);
         }
       }
     }
   }
 
-  private void buildAllPackage(File environmentDir, File nodeDir, Set<String> cloudManagerTarget,
-      ModelParser modelParser) throws MojoExecutionException {
-    String groupName = this.group;
-    String packageName = environmentDir.getName() + "." + nodeDir.getName() + "." + this.name;
-
-    List<ContentPackageFile> contentPackages = modelParser.getContentPackagesForNode(nodeDir);
-    File targetFile = new File(getTargetDir(), packageName + ".zip");
-
-    AllPackageBuilder builder = new AllPackageBuilder(targetFile, groupName, packageName)
-        .autoDependenciesMode(this.autoDependenciesMode)
-        .logger(getLog());
-
-    try {
-      if (builder.build(contentPackages, cloudManagerTarget, properties)) {
-        getLog().info("Generated " + getCanonicalPath(targetFile));
-      }
-      else {
-        getLog().debug("Skipped " + getCanonicalPath(targetFile) + " - no valid package.");
-      }
-    }
-    catch (IOException ex) {
-      throw new MojoExecutionException("Unable to generate " + getCanonicalPath(targetFile), ex);
-    }
+  interface EnvironmentNodeVisitor {
+    void visit(File environmentDir, File nodeDir, Set<String> cloudManagerTarget,
+        List<ContentPackageFile> contentPackages) throws MojoExecutionException, MojoFailureException;
   }
 
 }

@@ -81,7 +81,8 @@ class AllPackageBuilderTest {
     File targetFile = new File(targetDir, "all.zip");
 
     AllPackageBuilder builder = new AllPackageBuilder(targetFile, "test-group", "test-pkg");
-    assertTrue(builder.build(contentPackages, cloudManagerTarget, ImmutableMap.of("prop1", "value1")));
+    builder.add(contentPackages, cloudManagerTarget);
+    assertTrue(builder.build(ImmutableMap.of("prop1", "value1")));
 
     ZipUtil.unpack(targetFile, targetUnpackDir);
 
@@ -135,7 +136,8 @@ class AllPackageBuilderTest {
 
     AllPackageBuilder builder = new AllPackageBuilder(targetFile, "test-group", "test-pkg")
         .autoDependenciesMode(AutoDependenciesMode.IMMUTABLE_MUTABLE_COMBINED);
-    assertTrue(builder.build(contentPackages, cloudManagerTarget, null));
+    builder.add(contentPackages, cloudManagerTarget);
+    assertTrue(builder.build(null));
 
     ZipUtil.unpack(targetFile, targetUnpackDir);
 
@@ -193,7 +195,8 @@ class AllPackageBuilderTest {
 
     AllPackageBuilder builder = new AllPackageBuilder(targetFile, "test-group", "test-pkg")
         .autoDependenciesMode(AutoDependenciesMode.IMMUTABLE_MUTABLE_SEPARATE);
-    assertTrue(builder.build(contentPackages, cloudManagerTarget, null));
+    builder.add(contentPackages, cloudManagerTarget);
+    assertTrue(builder.build(null));
 
     ZipUtil.unpack(targetFile, targetUnpackDir);
 
@@ -250,7 +253,8 @@ class AllPackageBuilderTest {
 
     AllPackageBuilder builder = new AllPackageBuilder(targetFile, "test-group", "test-pkg")
         .autoDependenciesMode(AutoDependenciesMode.IMMUTABLE_ONLY);
-    assertTrue(builder.build(contentPackages, cloudManagerTarget, null));
+    builder.add(contentPackages, cloudManagerTarget);
+    assertTrue(builder.build(null));
 
     ZipUtil.unpack(targetFile, targetUnpackDir);
 
