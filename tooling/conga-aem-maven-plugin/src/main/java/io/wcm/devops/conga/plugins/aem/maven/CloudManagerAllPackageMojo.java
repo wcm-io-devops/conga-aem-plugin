@@ -68,7 +68,7 @@ public final class CloudManagerAllPackageMojo extends AbstractCloudManagerMojo {
   /**
    * Build one single content package for all environments and nodes.
    */
-  @Parameter(property = "conga.cloudManager.allPackage.singlePackage", defaultValue = "true")
+  @Parameter(property = "conga.cloudManager.allPackage.singlePackage", defaultValue = "false")
   private boolean singlePackage;
 
   /**
