@@ -3,6 +3,22 @@ roles:
   variant: aem-author
   variants: [aem-author]
   files:
+  - path: packages/acs-aem-commons-ui.apps-4.10.0-min.zip
+    postProcessors: [aem-contentpackage-properties]
+    aemContentPackageProperties: {acHandling: merge, artifactId: acs-aem-commons-ui.apps,
+      created: '2020-11-10T15:02:57.234-0500', createdBy: davidg, dependencies: 'day/cq60/product:cq-content:6.3.64',
+      description: ACS AEM Commons content package containing code (/apps)., group: adobe/consulting,
+      groupId: com.adobe.acs, name: acs-aem-commons-ui.apps, packageType: application,
+      path: /etc/packages/adobe/consulting/acs-aem-commons-ui.apps.zip, requiresRoot: false,
+      version: 4.10.0}
+  - path: packages/acs-aem-commons-ui.content-4.10.0-min.zip
+    postProcessors: [aem-contentpackage-properties]
+    aemContentPackageProperties: {acHandling: merge, artifactId: acs-aem-commons-ui.content,
+      created: '2020-11-10T15:03:12.316-0500', createdBy: davidg, dependencies: 'adobe/consulting:acs-aem-commons-ui.apps:4.10.0',
+      description: ACS AEM Commons content package containing content and configuration.,
+      group: adobe/consulting, groupId: com.adobe.acs, name: acs-aem-commons-ui.content,
+      packageType: content, path: /etc/packages/adobe/consulting/acs-aem-commons-ui.content.zip,
+      requiresRoot: false, version: 4.10.0}
   - path: packages/aem-cms-author-replicationagents.zip
     postProcessors: [aem-contentpackage, aem-contentpackage-properties]
     aemContentPackageProperties:

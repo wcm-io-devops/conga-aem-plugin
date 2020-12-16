@@ -30,7 +30,9 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Enumeration;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Properties;
@@ -182,6 +184,14 @@ public final class AllPackageBuilder {
       properties.entrySet().forEach(entry -> builder.property(entry.getKey(), entry.getValue()));
     }
 
+    // build set with dependencies instances for each package contained in all filesets
+    Set<Dependency> allPackagesFromFileSets = new HashSet<>();
+    for (ContentPackageFileSet fileSet : fileSets) {
+      for (ContentPackageFile pkg : fileSet.getContentPackages()) {
+        allPackagesFromFileSets.add(new Dependency(pkg.getGroup(), pkg.getName(), VersionRange.fromString(pkg.getVersion())));
+      }
+    }
+
     // build content package
     // if auto dependencies is active: build separate "dependency chains" between mutable and immutable packages
     try (ContentPackage contentPackage = builder.build(targetFile)) {
@@ -204,7 +214,7 @@ public final class AllPackageBuilder {
             }
 
             // set package name, wire previous package in package dependency
-            addFileWithDependency(contentPackage, path, pkg, previousPkg, environmentRunMode);
+            addFileWithDependency(contentPackage, path, pkg, previousPkg, environmentRunMode, allPackagesFromFileSets);
 
             previousPackages.add(pkg);
           }
@@ -292,12 +302,15 @@ public final class AllPackageBuilder {
    * @param contentPackage Target content page
    * @param path Path in target content package
    * @param pkg Package to add
-   * @param previousPkg Previous package to get dependency information from
+   * @param previousPkg Previous package to get dependency information from.
+   *          Is null if no previous package exists or auto dependency mode is switched off.
    * @param environmentRunMode Environment run mode
+   * @param allPackagesFromFileSets Set with all packages from all file sets as dependency instances
    * @throws IOException I/O error
    */
-  private static void addFileWithDependency(ContentPackage contentPackage, String path,
-      ContentPackageFile pkg, ContentPackageFile previousPkg, String environmentRunMode) throws IOException {
+  private void addFileWithDependency(ContentPackage contentPackage, String path,
+      ContentPackageFile pkg, ContentPackageFile previousPkg, String environmentRunMode,
+      Set<Dependency> allPackagesFromFileSets) throws IOException {
 
     // create temp zip file to create rewritten copy of package
     File tempFile = File.createTempFile("pkg", ".zip");
@@ -320,8 +333,8 @@ public final class AllPackageBuilder {
                 Properties props = new Properties();
                 props.loadFromXML(is);
                 addSuffixToPackageName(props, pkg, environmentRunMode);
-                if (previousPkg != null) {
-                  updateDependencies(props, previousPkg, environmentRunMode);
+                if (autoDependenciesMode != AutoDependenciesMode.OFF) {
+                  updateDependencies(props, previousPkg, environmentRunMode, allPackagesFromFileSets);
                 }
                 props.storeToXML(zipOut, null);
               }
@@ -349,33 +362,58 @@ public final class AllPackageBuilder {
    * Add dependency information to dependencies string in properties (if it does not exist already).
    * @param props Properties
    * @param dependencyFile Dependency package
+   * @param allPackagesFromFileSets Set with all packages from all file sets as dependency instances
    */
-  private static void updateDependencies(Properties props, ContentPackageFile dependencyFile, String environmentRunMode) {
+  private static void updateDependencies(Properties props, ContentPackageFile dependencyFile, String environmentRunMode,
+      Set<Dependency> allPackagesFromFileSets) {
     String[] existingDepsStrings = StringUtils.split(props.getProperty(NAME_DEPENDENCIES), ",");
     Dependency[] existingDeps = null;
     if (existingDepsStrings != null && existingDepsStrings.length > 0) {
       existingDeps = Dependency.fromString(existingDepsStrings);
     }
-
-    String runModeSuffix = buildRunModeSuffix(dependencyFile, environmentRunMode);
-    Dependency newDependency = new Dependency(dependencyFile.getGroup(),
-        dependencyFile.getName() + runModeSuffix,
-        VersionRange.fromString(dependencyFile.getVersion()));
-    Dependency[] deps;
     if (existingDeps != null) {
-      deps = DependencyUtil.add(existingDeps, newDependency);
+      existingDeps = removeReferencesToManagedPackages(existingDeps, allPackagesFromFileSets);
+    }
+
+    Dependency[] deps;
+    if (dependencyFile != null) {
+      String runModeSuffix = buildRunModeSuffix(dependencyFile, environmentRunMode);
+      Dependency newDependency = new Dependency(dependencyFile.getGroup(),
+          dependencyFile.getName() + runModeSuffix,
+          VersionRange.fromString(dependencyFile.getVersion()));
+      if (existingDeps != null) {
+        deps = DependencyUtil.add(existingDeps, newDependency);
+      }
+      else {
+        deps = new Dependency[] { newDependency };
+      }
     }
     else {
-      deps = new Dependency[] { newDependency };
+      deps = existingDeps;
     }
 
-    props.put(NAME_DEPENDENCIES, Dependency.toString(deps));
+    if (deps != null) {
+      props.put(NAME_DEPENDENCIES, Dependency.toString(deps));
+    }
   }
 
   private static void addSuffixToPackageName(Properties props, ContentPackageFile pkg, String environmentRunMode) {
     String runModeSuffix = buildRunModeSuffix(pkg, environmentRunMode);
     String packageName = props.getProperty(NAME_NAME) + runModeSuffix;
     props.put(NAME_NAME, packageName);
+  }
+
+  /**
+   * Removes existing references to packages contained in the list of packages to manage by this builder because
+   * they are added new (and probably with a different package name) during processing.
+   * @param deps Dependencies list
+   * @param allPackagesFromFileSets Set with all packages from all file sets as dependency instances
+   * @return Dependencies list
+   */
+  private static Dependency[] removeReferencesToManagedPackages(Dependency[] deps, Set<Dependency> allPackagesFromFileSets) {
+    return Arrays.stream(deps)
+        .filter(dep -> !allPackagesFromFileSets.contains(dep))
+        .toArray(size -> new Dependency[size]);
   }
 
   public File getTargetFile() {

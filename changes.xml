@@ -25,7 +25,10 @@
 
     <release version="1.14.0" date="not released">
       <action type="add" dev="sseifert">
-        conga-aem-maven-plugin: Add "singlePackage" flag for "cloudmanager-all-package" goal to alternatively build single "all" content package for all environments and nodes.
+        conga-aem-maven-plugin:cloudmanager-all-package: Add "singlePackage" flag to alternatively build single "all" content package for all environments and nodes.
+      </action>
+      <action type="add" dev="sseifert">
+        conga-aem-maven-plugin:cloudmanager-all-package: Fix auto dependency generation for package that already contain dependencies.
       </action>
     </release>
 
