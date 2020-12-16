@@ -29,8 +29,11 @@ import java.util.Set;
 
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugin.MojoFailureException;
+import org.apache.maven.plugins.annotations.Component;
 import org.apache.maven.plugins.annotations.Mojo;
 import org.apache.maven.plugins.annotations.Parameter;
+import org.apache.maven.project.MavenProject;
+import org.apache.maven.project.MavenProjectHelper;
 
 import io.wcm.devops.conga.plugins.aem.maven.allpackage.AllPackageBuilder;
 import io.wcm.devops.conga.plugins.aem.maven.model.ContentPackageFile;
@@ -70,6 +73,13 @@ public final class CloudManagerAllPackageMojo extends AbstractCloudManagerMojo {
    */
   @Parameter(property = "conga.cloudManager.allPackage.singlePackage", defaultValue = "false")
   private boolean singlePackage;
+
+  /**
+   * Attach "all" content package(s) as artifacts to maven build lifecycle.
+   * The given package name will be used as classifier.
+   */
+  @Parameter(property = "conga.cloudManager.allPackage.attachArtifact", defaultValue = "false")
+  private boolean attachArtifact;
 
   /**
    * Automatically generate dependencies between content packages based on file order in CONGA configuration.
@@ -115,6 +125,11 @@ public final class CloudManagerAllPackageMojo extends AbstractCloudManagerMojo {
    */
   @Parameter(property = "conga.cloudManager.allPackage.skip", defaultValue = "false")
   private boolean skip;
+
+  @Parameter(readonly = true, defaultValue = "${project}")
+  private MavenProject project;
+  @Component
+  private MavenProjectHelper projectHelper;
 
   private static final String CLOUDMANAGER_TARGET_NONE = "none";
 
@@ -185,8 +200,16 @@ public final class CloudManagerAllPackageMojo extends AbstractCloudManagerMojo {
   }
 
   private AllPackageBuilder createBuilder(String packageName) {
-    File targetFile = new File(getTargetDir(), packageName + ".zip");
+    String fileName;
+    if (attachArtifact) {
+      fileName = project.getArtifactId() + "." + packageName + "-" + project.getVersion() + ".zip";
+    }
+    else {
+      fileName = packageName + ".zip";
+    }
+    File targetFile = new File(getTargetDir(), fileName);
     return new AllPackageBuilder(targetFile, this.group, packageName)
+        .version(project.getVersion())
         .autoDependenciesMode(this.autoDependenciesMode)
         .logger(getLog());
   }
@@ -195,6 +218,9 @@ public final class CloudManagerAllPackageMojo extends AbstractCloudManagerMojo {
     try {
       if (builder.build(properties)) {
         getLog().info("Generated " + getCanonicalPath(builder.getTargetFile()));
+        if (attachArtifact) {
+          projectHelper.attachArtifact(this.project, "zip", builder.getPackageName(), builder.getTargetFile());
+        }
       }
       else {
         getLog().debug("Skipped " + getCanonicalPath(builder.getTargetFile()) + " - no valid package.");

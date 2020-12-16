@@ -68,6 +68,7 @@ public final class AllPackageBuilder {
   private final File targetFile;
   private final String groupName;
   private final String packageName;
+  private String version;
   private AutoDependenciesMode autoDependenciesMode = AutoDependenciesMode.OFF;
   private Log log;
 
@@ -103,6 +104,15 @@ public final class AllPackageBuilder {
    */
   public AllPackageBuilder logger(Log value) {
     this.log = value;
+    return this;
+  }
+
+  /**
+   * @param value Package version
+   * @return this
+   */
+  public AllPackageBuilder version(String value) {
+    this.version = value;
     return this;
   }
 
@@ -174,6 +184,9 @@ public final class AllPackageBuilder {
         .group(groupName)
         .name(packageName)
         .packageType("container");
+    if (version != null) {
+      builder.version(version);
+    }
 
     // define root path for "all" package
     String rootPath = buildRootPath(groupName, packageName);
@@ -414,6 +427,14 @@ public final class AllPackageBuilder {
     return Arrays.stream(deps)
         .filter(dep -> !allPackagesFromFileSets.contains(dep))
         .toArray(size -> new Dependency[size]);
+  }
+
+  public String getGroupName() {
+    return this.groupName;
+  }
+
+  public String getPackageName() {
+    return this.packageName;
   }
 
   public File getTargetFile() {
