@@ -51,16 +51,18 @@ class ModelParserTest {
   void testGetContentPackagesForNode() {
     List<ContentPackageFile> contentPackages = underTest.getContentPackagesForNode(nodeDir);
 
-    assertEquals(6, contentPackages.size());
+    assertEquals(8, contentPackages.size());
 
-    assertPackage(contentPackages.get(0), "packages/aem-cms-author-replicationagents.zip", "content", true);
-    assertPackage(contentPackages.get(1), "packages/aem-cms-system-config.zip", "application", true);
-    assertPackage(contentPackages.get(2), "packages/wcm-io-samples-aem-cms-config.zip", "container", true);
-    assertPackage(contentPackages.get(3), "packages/wcm-io-samples-aem-cms-author-systemusers.zip", null, true);
-    assertPackage(contentPackages.get(4), "packages/wcm-io-samples-complete-1.3.1-SNAPSHOT.zip", "container", null);
-    assertPackage(contentPackages.get(5), "packages/wcm-io-samples-sample-content-1.3.1-SNAPSHOT.zip", "content", null);
+    assertPackage(contentPackages.get(0), "packages/acs-aem-commons-ui.apps-4.10.0-min.zip", "application", null);
+    assertPackage(contentPackages.get(1), "packages/acs-aem-commons-ui.content-4.10.0-min.zip", "content", null);
+    assertPackage(contentPackages.get(2), "packages/aem-cms-author-replicationagents.zip", "content", true);
+    assertPackage(contentPackages.get(3), "packages/aem-cms-system-config.zip", "application", true);
+    assertPackage(contentPackages.get(4), "packages/wcm-io-samples-aem-cms-config.zip", "container", true);
+    assertPackage(contentPackages.get(5), "packages/wcm-io-samples-aem-cms-author-systemusers.zip", null, true);
+    assertPackage(contentPackages.get(6), "packages/wcm-io-samples-complete-1.3.1-SNAPSHOT.zip", "container", null);
+    assertPackage(contentPackages.get(7), "packages/wcm-io-samples-sample-content-1.3.1-SNAPSHOT.zip", "content", null);
 
-    ContentPackageFile pkg1 = contentPackages.get(0);
+    ContentPackageFile pkg1 = contentPackages.get(2);
     assertEquals(ImmutableList.of("aem-author"), pkg1.getVariants());
     assertEquals(false, pkg1.getInstall());
     assertEquals(true, pkg1.getRecursive());

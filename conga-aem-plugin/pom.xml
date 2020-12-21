@@ -31,7 +31,7 @@
 
   <groupId>io.wcm.devops.conga.plugins</groupId>
   <artifactId>io.wcm.devops.conga.plugins.aem</artifactId>
-  <version>1.13.0</version>
+  <version>1.14.0</version>
   <packaging>jar</packaging>
 
   <name>CONGA AEM Plugin</name>
@@ -107,7 +107,7 @@
     <dependency>
       <groupId>io.wcm.tooling.commons</groupId>
       <artifactId>io.wcm.tooling.commons.crx-packmgr-helper</artifactId>
-      <version>1.7.2</version>
+      <version>1.7.4</version>
       <scope>compile</scope>
     </dependency>
 

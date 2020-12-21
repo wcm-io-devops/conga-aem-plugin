@@ -81,7 +81,8 @@ class AllPackageBuilderTest {
     File targetFile = new File(targetDir, "all.zip");
 
     AllPackageBuilder builder = new AllPackageBuilder(targetFile, "test-group", "test-pkg");
-    assertTrue(builder.build(contentPackages, cloudManagerTarget, ImmutableMap.of("prop1", "value1")));
+    builder.add(contentPackages, cloudManagerTarget);
+    assertTrue(builder.build(ImmutableMap.of("prop1", "value1")));
 
     ZipUtil.unpack(targetFile, targetUnpackDir);
 
@@ -93,7 +94,11 @@ class AllPackageBuilderTest {
 
     for (String runmodeSuffix : runmodeSuffixes) {
       File applicationInstallDir = new File(applicationDir, "install" + runmodeSuffix);
-      assertFiles(applicationInstallDir, "aem-cms-system-config" + runmodeSuffix + ".zip");
+      assertFiles(applicationInstallDir, "acs-aem-commons-ui.apps" + runmodeSuffix + "-4.10.0.zip",
+          "aem-cms-system-config" + runmodeSuffix + ".zip");
+      assertNameDependencies(applicationInstallDir, "acs-aem-commons-ui.apps" + runmodeSuffix + "-4.10.0.zip",
+          "acs-aem-commons-ui.apps" + runmodeSuffix,
+          "day/cq60/product:cq-content:6.3.64");
       assertNameDependencies(applicationInstallDir, "aem-cms-system-config" + runmodeSuffix + ".zip",
           "aem-cms-system-config" + runmodeSuffix,
           "day/cq60/product:cq-ui-wcm-editor-content:1.1.224",
@@ -105,8 +110,12 @@ class AllPackageBuilderTest {
 
     for (String runmodeSuffix : runmodeSuffixes) {
       File contentInstallDir = new File(contentDir, "install" + runmodeSuffix);
-      assertFiles(contentInstallDir, "aem-cms-author-replicationagents" + runmodeSuffix + ".zip",
+      assertFiles(contentInstallDir, "acs-aem-commons-ui.content" + runmodeSuffix + "-4.10.0.zip",
+          "aem-cms-author-replicationagents" + runmodeSuffix + ".zip",
           "wcm-io-samples-sample-content" + runmodeSuffix + "-1.3.1-SNAPSHOT.zip");
+      assertNameDependencies(contentInstallDir, "acs-aem-commons-ui.content" + runmodeSuffix + "-4.10.0.zip",
+          "acs-aem-commons-ui.content" + runmodeSuffix,
+          "adobe/consulting:acs-aem-commons-ui.apps:4.10.0");
       assertNameDependencies(contentInstallDir, "aem-cms-author-replicationagents" + runmodeSuffix + ".zip",
           "aem-cms-author-replicationagents" + runmodeSuffix);
       assertNameDependencies(contentInstallDir, "wcm-io-samples-sample-content" + runmodeSuffix + "-1.3.1-SNAPSHOT.zip",
@@ -129,13 +138,14 @@ class AllPackageBuilderTest {
 
   @ParameterizedTest
   @MethodSource("cloudManagerTargetVariants")
-  void testBuil_IMMUTABLE_MUTABLE_COMBINED(Set<String> cloudManagerTarget, List<String> runmodeSuffixes) throws Exception {
+  void testBuild_IMMUTABLE_MUTABLE_COMBINED(Set<String> cloudManagerTarget, List<String> runmodeSuffixes) throws Exception {
     List<ContentPackageFile> contentPackages = new ModelParser().getContentPackagesForNode(nodeDir);
     File targetFile = new File(targetDir, "all.zip");
 
     AllPackageBuilder builder = new AllPackageBuilder(targetFile, "test-group", "test-pkg")
         .autoDependenciesMode(AutoDependenciesMode.IMMUTABLE_MUTABLE_COMBINED);
-    assertTrue(builder.build(contentPackages, cloudManagerTarget, null));
+    builder.add(contentPackages, cloudManagerTarget);
+    assertTrue(builder.build(null));
 
     ZipUtil.unpack(targetFile, targetUnpackDir);
 
@@ -147,7 +157,11 @@ class AllPackageBuilderTest {
 
     for (String runmodeSuffix : runmodeSuffixes) {
       File applicationInstallDir = new File(applicationDir, "install" + runmodeSuffix);
-      assertFiles(applicationInstallDir, "aem-cms-system-config" + runmodeSuffix + ".zip");
+      assertFiles(applicationInstallDir, "acs-aem-commons-ui.apps" + runmodeSuffix + "-4.10.0.zip",
+          "aem-cms-system-config" + runmodeSuffix + ".zip");
+      assertNameDependencies(applicationInstallDir, "acs-aem-commons-ui.apps" + runmodeSuffix + "-4.10.0.zip",
+          "acs-aem-commons-ui.apps" + runmodeSuffix,
+          "day/cq60/product:cq-content:6.3.64");
       assertNameDependencies(applicationInstallDir, "aem-cms-system-config" + runmodeSuffix + ".zip",
           "aem-cms-system-config" + runmodeSuffix,
           "day/cq60/product:cq-ui-wcm-editor-content:1.1.224",
@@ -160,10 +174,15 @@ class AllPackageBuilderTest {
 
     for (String runmodeSuffix : runmodeSuffixes) {
       File contentInstallDir = new File(contentDir, "install" + runmodeSuffix);
-      assertFiles(contentInstallDir, "aem-cms-author-replicationagents" + runmodeSuffix + ".zip",
+      assertFiles(contentInstallDir, "acs-aem-commons-ui.content" + runmodeSuffix + "-4.10.0.zip",
+          "aem-cms-author-replicationagents" + runmodeSuffix + ".zip",
           "wcm-io-samples-sample-content" + runmodeSuffix + "-1.3.1-SNAPSHOT.zip");
+      assertNameDependencies(contentInstallDir, "acs-aem-commons-ui.content" + runmodeSuffix + "-4.10.0.zip",
+          "acs-aem-commons-ui.content" + runmodeSuffix,
+          "adobe/consulting:acs-aem-commons-ui.apps" + runmodeSuffix + ":4.10.0");
       assertNameDependencies(contentInstallDir, "aem-cms-author-replicationagents" + runmodeSuffix + ".zip",
-          "aem-cms-author-replicationagents" + runmodeSuffix);
+          "aem-cms-author-replicationagents" + runmodeSuffix,
+          "adobe/consulting:acs-aem-commons-ui.content" + runmodeSuffix + ":4.10.0");
       assertNameDependencies(contentInstallDir, "wcm-io-samples-sample-content" + runmodeSuffix + "-1.3.1-SNAPSHOT.zip",
           "wcm-io-samples-sample-content" + runmodeSuffix,
           "wcm-io-samples:wcm-io-samples-complete" + runmodeSuffix + ":1.3.1-SNAPSHOT");
@@ -193,7 +212,8 @@ class AllPackageBuilderTest {
 
     AllPackageBuilder builder = new AllPackageBuilder(targetFile, "test-group", "test-pkg")
         .autoDependenciesMode(AutoDependenciesMode.IMMUTABLE_MUTABLE_SEPARATE);
-    assertTrue(builder.build(contentPackages, cloudManagerTarget, null));
+    builder.add(contentPackages, cloudManagerTarget);
+    assertTrue(builder.build(null));
 
     ZipUtil.unpack(targetFile, targetUnpackDir);
 
@@ -205,11 +225,16 @@ class AllPackageBuilderTest {
 
     for (String runmodeSuffix : runmodeSuffixes) {
       File applicationInstallDir = new File(applicationDir, "install" + runmodeSuffix);
-      assertFiles(applicationInstallDir, "aem-cms-system-config" + runmodeSuffix + ".zip");
+      assertFiles(applicationInstallDir, "acs-aem-commons-ui.apps" + runmodeSuffix + "-4.10.0.zip",
+          "aem-cms-system-config" + runmodeSuffix + ".zip");
+      assertNameDependencies(applicationInstallDir, "acs-aem-commons-ui.apps" + runmodeSuffix + "-4.10.0.zip",
+          "acs-aem-commons-ui.apps" + runmodeSuffix,
+          "day/cq60/product:cq-content:6.3.64");
       assertNameDependencies(applicationInstallDir, "aem-cms-system-config" + runmodeSuffix + ".zip",
           "aem-cms-system-config" + runmodeSuffix,
           "day/cq60/product:cq-ui-wcm-editor-content:1.1.224",
-          "adobe/cq/product:cq-remotedam-client-ui-components:1.1.6");
+          "adobe/cq/product:cq-remotedam-client-ui-components:1.1.6",
+          "adobe/consulting:acs-aem-commons-ui.apps" + runmodeSuffix + ":4.10.0");
     }
 
     File contentDir = new File(appsDir, "content");
@@ -217,10 +242,14 @@ class AllPackageBuilderTest {
 
     for (String runmodeSuffix : runmodeSuffixes) {
       File contentInstallDir = new File(contentDir, "install" + runmodeSuffix);
-      assertFiles(contentInstallDir, "aem-cms-author-replicationagents" + runmodeSuffix + ".zip",
+      assertFiles(contentInstallDir, "acs-aem-commons-ui.content" + runmodeSuffix + "-4.10.0.zip",
+          "aem-cms-author-replicationagents" + runmodeSuffix + ".zip",
           "wcm-io-samples-sample-content" + runmodeSuffix + "-1.3.1-SNAPSHOT.zip");
+      assertNameDependencies(contentInstallDir, "acs-aem-commons-ui.content" + runmodeSuffix + "-4.10.0.zip",
+          "acs-aem-commons-ui.content" + runmodeSuffix);
       assertNameDependencies(contentInstallDir, "aem-cms-author-replicationagents" + runmodeSuffix + ".zip",
-          "aem-cms-author-replicationagents" + runmodeSuffix);
+          "aem-cms-author-replicationagents" + runmodeSuffix,
+          "adobe/consulting:acs-aem-commons-ui.content" + runmodeSuffix + ":4.10.0");
       assertNameDependencies(contentInstallDir, "wcm-io-samples-sample-content" + runmodeSuffix + "-1.3.1-SNAPSHOT.zip",
           "wcm-io-samples-sample-content" + runmodeSuffix,
           "wcm-io-samples:aem-cms-author-replicationagents" + runmodeSuffix + ":1.3.1-SNAPSHOT");
@@ -250,7 +279,8 @@ class AllPackageBuilderTest {
 
     AllPackageBuilder builder = new AllPackageBuilder(targetFile, "test-group", "test-pkg")
         .autoDependenciesMode(AutoDependenciesMode.IMMUTABLE_ONLY);
-    assertTrue(builder.build(contentPackages, cloudManagerTarget, null));
+    builder.add(contentPackages, cloudManagerTarget);
+    assertTrue(builder.build(null));
 
     ZipUtil.unpack(targetFile, targetUnpackDir);
 
@@ -262,11 +292,16 @@ class AllPackageBuilderTest {
 
     for (String runmodeSuffix : runmodeSuffixes) {
       File applicationInstallDir = new File(applicationDir, "install" + runmodeSuffix);
-      assertFiles(applicationInstallDir, "aem-cms-system-config" + runmodeSuffix + ".zip");
+      assertFiles(applicationInstallDir, "acs-aem-commons-ui.apps" + runmodeSuffix + "-4.10.0.zip",
+          "aem-cms-system-config" + runmodeSuffix + ".zip");
+      assertNameDependencies(applicationInstallDir, "acs-aem-commons-ui.apps" + runmodeSuffix + "-4.10.0.zip",
+          "acs-aem-commons-ui.apps" + runmodeSuffix,
+          "day/cq60/product:cq-content:6.3.64");
       assertNameDependencies(applicationInstallDir, "aem-cms-system-config" + runmodeSuffix + ".zip",
           "aem-cms-system-config" + runmodeSuffix,
           "day/cq60/product:cq-ui-wcm-editor-content:1.1.224",
-          "adobe/cq/product:cq-remotedam-client-ui-components:1.1.6");
+          "adobe/cq/product:cq-remotedam-client-ui-components:1.1.6",
+          "adobe/consulting:acs-aem-commons-ui.apps" + runmodeSuffix + ":4.10.0");
     }
 
     File contentDir = new File(appsDir, "content");
@@ -274,8 +309,11 @@ class AllPackageBuilderTest {
 
     for (String runmodeSuffix : runmodeSuffixes) {
       File contentInstallDir = new File(contentDir, "install" + runmodeSuffix);
-      assertFiles(contentInstallDir, "aem-cms-author-replicationagents" + runmodeSuffix + ".zip",
+      assertFiles(contentInstallDir, "acs-aem-commons-ui.content" + runmodeSuffix + "-4.10.0.zip",
+          "aem-cms-author-replicationagents" + runmodeSuffix + ".zip",
           "wcm-io-samples-sample-content" + runmodeSuffix + "-1.3.1-SNAPSHOT.zip");
+      assertNameDependencies(contentInstallDir, "acs-aem-commons-ui.content" + runmodeSuffix + "-4.10.0.zip",
+          "acs-aem-commons-ui.content" + runmodeSuffix);
       assertNameDependencies(contentInstallDir, "aem-cms-author-replicationagents" + runmodeSuffix + ".zip",
           "aem-cms-author-replicationagents" + runmodeSuffix);
       assertNameDependencies(contentInstallDir, "wcm-io-samples-sample-content" + runmodeSuffix + "-1.3.1-SNAPSHOT.zip",
