@@ -27,6 +27,7 @@ import java.lang.reflect.Field;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Objects;
 
 import org.apache.commons.lang3.BooleanUtils;
 import org.apache.jackrabbit.filevault.maven.packaging.ValidatePackageMojo;
@@ -83,7 +84,7 @@ public class ContentPackageValidator implements ValidatorPlugin {
     try {
       // validate package if a package type is defined
       // supported only within Maven
-      String packageType = (String)ContentPackageProperties.get(file.getFile()).get(NAME_PACKAGE_TYPE);
+      String packageType = Objects.toString(ContentPackageProperties.get(file.getFile()).get(NAME_PACKAGE_TYPE), null);
       if (packageType != null && context.getContainerContext() instanceof MavenContext) {
         validateContentPackage(file.getFile(), context, (MavenContext)context.getContainerContext());
       }

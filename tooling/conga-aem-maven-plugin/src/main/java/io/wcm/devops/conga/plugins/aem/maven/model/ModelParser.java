@@ -31,6 +31,7 @@ import java.util.ArrayList;
 import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 import java.util.Set;
 import java.util.stream.Collectors;
 
@@ -81,7 +82,7 @@ public final class ModelParser {
     Map<String, Object> data = getModelData(nodeDir);
     List<Map<String, Object>> roles = (List<Map<String, Object>>)data.get("roles");
     for (Map<String, Object> role : roles) {
-      if (StringUtils.equals((String)role.get("role"), roleName)) {
+      if (StringUtils.equals(Objects.toString(role.get("role"), null), roleName)) {
         return true;
       }
     }
@@ -165,7 +166,7 @@ public final class ModelParser {
 
   private ContentPackageFile toContentPackageFile(Map<String, Object> fileData,
       Map<String, Object> roleData, File nodeDir) {
-    String path = (String)fileData.get("path");
+    String path = Objects.toString(fileData.get("path"), null);
     File file = new File(nodeDir, path);
     return new ContentPackageFile(file, fileData, roleData);
   }
