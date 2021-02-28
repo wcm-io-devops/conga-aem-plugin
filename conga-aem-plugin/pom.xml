@@ -23,10 +23,10 @@
   <modelVersion>4.0.0</modelVersion>
 
   <parent>
-    <groupId>io.wcm.devops</groupId>
-    <artifactId>io.wcm.devops.parent_toplevel</artifactId>
-    <version>1.2.5-SNAPSHOT</version>
-    <relativePath />
+    <groupId>io.wcm.devops.conga.plugins</groupId>
+    <artifactId>io.wcm.devops.conga.plugins.aem.parent</artifactId>
+    <version>1.14.1-SNAPSHOT</version>
+    <relativePath>../parent/pom.xml</relativePath>
   </parent>
 
   <groupId>io.wcm.devops.conga.plugins</groupId>
@@ -101,13 +101,11 @@
     <dependency>
       <groupId>io.wcm.tooling.commons</groupId>
       <artifactId>io.wcm.tooling.commons.content-package-builder</artifactId>
-      <version>1.5.4</version>
       <scope>compile</scope>
     </dependency>
     <dependency>
       <groupId>io.wcm.tooling.commons</groupId>
       <artifactId>io.wcm.tooling.commons.crx-packmgr-helper</artifactId>
-      <version>1.7.4</version>
       <scope>compile</scope>
     </dependency>
 
