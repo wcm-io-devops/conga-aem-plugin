@@ -39,7 +39,7 @@
 
   <properties>
     <maven.version>3.0.5</maven.version>
-    <site.url.module.prefix>conga/plugins/aem/conga-aem-maven-plugin</site.url.module.prefix>
+    <site.url.module.prefix>tooling/conga-aem-maven-plugin</site.url.module.prefix>
   </properties>
 
   <prerequisites>
@@ -163,16 +163,20 @@
         </executions>
       </plugin>
 
-      <!-- deploy site because because of generated plugin docs -->
-      <plugin>
-        <groupId>org.apache.maven.plugins</groupId>
-        <artifactId>maven-site-plugin</artifactId>
-        <configuration>
-          <skipDeploy>false</skipDeploy>
-        </configuration>
-      </plugin>
-
     </plugins>
+    <pluginManagement>
+      <plugins>
+
+        <plugin>
+          <groupId>org.apache.maven.plugins</groupId>
+          <artifactId>maven-site-plugin</artifactId>
+          <configuration>
+            <topSiteURL>${site.deploy.url}</topSiteURL>
+          </configuration>
+        </plugin>
+
+      </plugins>
+    </pluginManagement>
   </build>
 
   <reporting>
@@ -251,7 +255,7 @@
   <distributionManagement>
     <site>
       <id>${site.deploy.id}</id>
-      <url>${site.deploy.url}${site.url.module.prefix}</url>
+      <url>${site.deploy.url}/${site.url.module.prefix}</url>
     </site>
   </distributionManagement>
 
