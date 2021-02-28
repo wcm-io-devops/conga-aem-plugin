@@ -34,6 +34,8 @@
   <version>1.14.1-SNAPSHOT</version>
   <packaging>pom</packaging>
 
+  <name>CONGA AEM Plugin</name>
+
   <ciManagement>
     <system>GitHub Actions</system>
     <url>https://github.com/wcm-io-devops/conga-aem-plugin/actions</url>
