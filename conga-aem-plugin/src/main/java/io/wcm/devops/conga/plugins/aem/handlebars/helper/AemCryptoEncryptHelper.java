@@ -28,6 +28,7 @@ import java.io.InputStream;
 import java.security.GeneralSecurityException;
 import java.security.Key;
 import java.util.Map;
+import java.util.Objects;
 
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang3.BooleanUtils;
@@ -72,7 +73,7 @@ public final class AemCryptoEncryptHelper implements HelperPlugin<Object> {
     boolean cryptoSkip = false;
     Map<String, Object> aemPluginConfig = pluginContext.getGenericPluginConfig().get(PLUGIN_NAME);
     if (aemPluginConfig != null) {
-      cryptoAesKeyUrl = (String)aemPluginConfig.get(PARAMETER_CRYPTO_AES_KEY_URL);
+      cryptoAesKeyUrl = Objects.toString(aemPluginConfig.get(PARAMETER_CRYPTO_AES_KEY_URL), null);
       Object cryptoSkipObject = aemPluginConfig.get(PARAMETER_CRYPTO_SKIP);
       if (cryptoSkipObject != null) {
         if (cryptoSkipObject instanceof Boolean) {

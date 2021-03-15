@@ -28,6 +28,7 @@ import java.io.File;
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 
 import io.wcm.devops.conga.plugins.aem.postprocessor.ContentPackagePropertiesPostProcessor;
 
@@ -66,10 +67,10 @@ public final class ContentPackageFile {
     if (contentPackageProperties == null) {
       throw new IllegalArgumentException(ContentPackagePropertiesPostProcessor.MODEL_OPTIONS_PROPERTY + " missing.");
     }
-    this.name = (String)contentPackageProperties.get(NAME_NAME);
-    this.group = (String)contentPackageProperties.get(NAME_GROUP);
-    this.version = (String)contentPackageProperties.get(NAME_VERSION);
-    this.packageType = (String)contentPackageProperties.get(NAME_PACKAGE_TYPE);
+    this.name = Objects.toString(contentPackageProperties.get(NAME_NAME), null);
+    this.group = Objects.toString(contentPackageProperties.get(NAME_GROUP), null);
+    this.version = Objects.toString(contentPackageProperties.get(NAME_VERSION), null);
+    this.packageType = Objects.toString(contentPackageProperties.get(NAME_PACKAGE_TYPE), null);
 
     this.variants = getVariants(roleData);
   }

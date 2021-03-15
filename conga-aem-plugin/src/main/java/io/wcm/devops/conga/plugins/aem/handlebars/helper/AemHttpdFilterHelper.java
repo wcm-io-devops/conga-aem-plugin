@@ -93,10 +93,10 @@ public final class AemHttpdFilterHelper extends AbstractFilterHelper {
           .append("    Deny from all\n");
       if (filterType == HttpdFilterType.DENY_ALLOW_ADMIN) {
         if (StringUtils.isNotBlank(allowFrom)) {
-          sb.append("    Allow from " + allowFrom + "\n");
+          sb.append("    Allow from ").append(allowFrom).append("\n");
         }
         if (StringUtils.isNotBlank(allowFromHost)) {
-          sb.append("    Allow from " + allowFromHost + "\n");
+          sb.append("    Allow from ").append(allowFromHost).append("\n");
         }
       }
       sb.append("  </IfVersion>\n")
@@ -104,10 +104,10 @@ public final class AemHttpdFilterHelper extends AbstractFilterHelper {
           .append("    Require all denied\n");
       if (filterType == HttpdFilterType.DENY_ALLOW_ADMIN) {
         if (StringUtils.isNotBlank(allowFrom)) {
-          sb.append("    Require ip " + allowFrom + "\n");
+          sb.append("    Require ip ").append(allowFrom).append("\n");
         }
         if (StringUtils.isNotBlank(allowFromHost)) {
-          sb.append("    Require host " + allowFromHost + "\n");
+          sb.append("    Require host ").append(allowFromHost).append("\n");
         }
       }
       sb.append("  </IfVersion>\n");

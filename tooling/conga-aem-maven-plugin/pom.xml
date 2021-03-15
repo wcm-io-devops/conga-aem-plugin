@@ -23,23 +23,23 @@
   <modelVersion>4.0.0</modelVersion>
 
   <parent>
-    <groupId>io.wcm.devops</groupId>
-    <artifactId>io.wcm.devops.parent_toplevel</artifactId>
-    <version>1.2.4</version>
-    <relativePath />
+    <groupId>io.wcm.devops.conga.plugins</groupId>
+    <artifactId>io.wcm.devops.conga.plugins.aem.parent</artifactId>
+    <version>1.14.2</version>
+    <relativePath>../../parent/pom.xml</relativePath>
   </parent>
 
   <groupId>io.wcm.devops.conga.plugins</groupId>
   <artifactId>conga-aem-maven-plugin</artifactId>
   <packaging>maven-plugin</packaging>
-  <version>1.14.0</version>
+  <version>1.14.2</version>
 
   <name>CONGA AEM Maven Plugin</name>
   <description>wcm.io DevOps CONGA - CONfiguration GenerAtor Maven Plugin for AEM</description>
 
   <properties>
     <maven.version>3.0.5</maven.version>
-    <site.url.module.prefix>conga/plugins/aem/conga-aem-maven-plugin</site.url.module.prefix>
+    <site.url.module.prefix>tooling/conga-aem-maven-plugin</site.url.module.prefix>
   </properties>
 
   <prerequisites>
@@ -57,13 +57,12 @@
     <dependency>
       <groupId>io.wcm.devops.conga.plugins</groupId>
       <artifactId>io.wcm.devops.conga.plugins.aem</artifactId>
-      <version>1.14.0</version>
+      <version>1.14.2</version>
       <scope>compile</scope>
     </dependency>
     <dependency>
       <groupId>io.wcm.devops.conga.plugins</groupId>
       <artifactId>io.wcm.devops.conga.plugins.ansible</artifactId>
-      <version>1.3.2</version>
       <scope>compile</scope>
     </dependency>
 
@@ -106,7 +105,6 @@
     <dependency>
       <groupId>io.wcm.tooling.commons</groupId>
       <artifactId>io.wcm.tooling.commons.crx-packmgr-helper</artifactId>
-      <version>1.7.4</version>
       <scope>compile</scope>
     </dependency>
 
@@ -165,16 +163,20 @@
         </executions>
       </plugin>
 
-      <!-- deploy site because because of generated plugin docs -->
-      <plugin>
-        <groupId>org.apache.maven.plugins</groupId>
-        <artifactId>maven-site-plugin</artifactId>
-        <configuration>
-          <skipDeploy>false</skipDeploy>
-        </configuration>
-      </plugin>
-
     </plugins>
+    <pluginManagement>
+      <plugins>
+
+        <plugin>
+          <groupId>org.apache.maven.plugins</groupId>
+          <artifactId>maven-site-plugin</artifactId>
+          <configuration>
+            <topSiteURL>${site.deploy.url}</topSiteURL>
+          </configuration>
+        </plugin>
+
+      </plugins>
+    </pluginManagement>
   </build>
 
   <reporting>
@@ -253,7 +255,7 @@
   <distributionManagement>
     <site>
       <id>${site.deploy.id}</id>
-      <url>${site.deploy.url}${site.url.module.prefix}</url>
+      <url>${site.deploy.url}/${site.url.module.prefix}</url>
     </site>
   </distributionManagement>
 
