@@ -31,7 +31,7 @@
 
   <groupId>io.wcm.devops.conga.plugins</groupId>
   <artifactId>io.wcm.devops.conga.plugins.aem.parent</artifactId>
-  <version>1.14.1-SNAPSHOT</version>
+  <version>1.14.2</version>
   <packaging>pom</packaging>
 
   <name>CONGA AEM Plugin</name>
