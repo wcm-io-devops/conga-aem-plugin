@@ -84,7 +84,7 @@ public class HttpdFilterTest {
     assertEquals(HttpdFilterType.ALLOW, underTest.getType());
     assertEquals("/abc", underTest.getLocation());
     assertNull(underTest.getLocationMatch());
-    assertEquals("type=allow, location=/abc", underTest.toString());
+    assertEquals("location=/abc, type=allow", underTest.toString());
   }
 
   @Test
@@ -93,7 +93,7 @@ public class HttpdFilterTest {
     assertEquals(HttpdFilterType.ALLOW, underTest.getType());
     assertNull(underTest.getLocation());
     assertEquals("/abc(/.*)?", underTest.getLocationMatch());
-    assertEquals("type=allow, locationMatch=/abc(/.*)?", underTest.toString());
+    assertEquals("locationMatch=/abc(/.*)?, type=allow", underTest.toString());
   }
 
 }

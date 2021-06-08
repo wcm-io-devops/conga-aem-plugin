@@ -25,14 +25,14 @@
   <parent>
     <groupId>io.wcm.devops.conga.plugins</groupId>
     <artifactId>io.wcm.devops.conga.plugins.aem.parent</artifactId>
-    <version>1.14.2</version>
+    <version>1.14.4</version>
     <relativePath>../../parent/pom.xml</relativePath>
   </parent>
 
   <groupId>io.wcm.devops.conga.plugins</groupId>
   <artifactId>conga-aem-maven-plugin</artifactId>
   <packaging>maven-plugin</packaging>
-  <version>1.14.2</version>
+  <version>1.14.4</version>
 
   <name>CONGA AEM Maven Plugin</name>
   <description>wcm.io DevOps CONGA - CONfiguration GenerAtor Maven Plugin for AEM</description>
@@ -51,13 +51,12 @@
     <dependency>
       <groupId>io.wcm.devops.conga</groupId>
       <artifactId>io.wcm.devops.conga.generator</artifactId>
-      <version>1.13.0</version>
       <scope>compile</scope>
     </dependency>
     <dependency>
       <groupId>io.wcm.devops.conga.plugins</groupId>
       <artifactId>io.wcm.devops.conga.plugins.aem</artifactId>
-      <version>1.14.2</version>
+      <version>1.14.4</version>
       <scope>compile</scope>
     </dependency>
     <dependency>
@@ -116,13 +115,11 @@
     <dependency>
       <groupId>org.xmlunit</groupId>
       <artifactId>xmlunit-core</artifactId>
-      <version>2.7.0</version>
       <scope>test</scope>
     </dependency>
     <dependency>
       <groupId>org.zeroturnaround</groupId>
       <artifactId>zt-zip</artifactId>
-      <version>1.14</version>
       <scope>test</scope>
     </dependency>
 
