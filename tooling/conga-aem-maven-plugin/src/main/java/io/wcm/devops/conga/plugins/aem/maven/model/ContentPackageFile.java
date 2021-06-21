@@ -52,8 +52,13 @@ public final class ContentPackageFile {
 
   private final List<String> variants;
 
+  /**
+   * @param file Content package file
+   * @param fileData File data
+   * @param roleData Role data
+   */
   @SuppressWarnings("unchecked")
-  ContentPackageFile(File file, Map<String, Object> fileData, Map<String, Object> roleData) {
+  public ContentPackageFile(File file, Map<String, Object> fileData, Map<String, Object> roleData) {
     this.file = file;
 
     this.install = (Boolean)fileData.get("install");
