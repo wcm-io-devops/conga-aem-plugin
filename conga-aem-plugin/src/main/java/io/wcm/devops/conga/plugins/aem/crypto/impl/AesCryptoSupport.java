@@ -22,6 +22,7 @@ package io.wcm.devops.conga.plugins.aem.crypto.impl;
 import java.nio.ByteBuffer;
 import java.security.GeneralSecurityException;
 import java.security.Key;
+import java.security.NoSuchAlgorithmException;
 import java.security.SecureRandom;
 import java.util.Random;
 
@@ -30,6 +31,7 @@ import javax.crypto.KeyGenerator;
 import javax.crypto.spec.IvParameterSpec;
 import javax.crypto.spec.SecretKeySpec;
 
+import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 import io.wcm.devops.conga.plugins.aem.crypto.CryptoSupport;
 
 /**
@@ -45,13 +47,15 @@ public class AesCryptoSupport extends CryptoSupport {
 
   private static final String SECURE_RANDOM_ALGORITHM = "SHA1PRNG";
 
-  private final Random random;
+  private static final Random RANDOM = initRandom();
 
-  /**
-   * @throws GeneralSecurityException Security exception
-   */
-  public AesCryptoSupport() throws GeneralSecurityException {
-    this.random = SecureRandom.getInstance(SECURE_RANDOM_ALGORITHM);
+  private static Random initRandom() {
+    try {
+      return SecureRandom.getInstance(SECURE_RANDOM_ALGORITHM);
+    }
+    catch (NoSuchAlgorithmException ex) {
+      throw new RuntimeException(ex);
+    }
   }
 
   @Override
@@ -91,9 +95,10 @@ public class AesCryptoSupport extends CryptoSupport {
     return cipher;
   }
 
+  @SuppressFBWarnings("DMI_RANDOM_USED_ONLY_ONCE")
   private byte[] generateIV() {
     byte[] iv = new byte[IV_SIZE];
-    random.nextBytes(iv);
+    RANDOM.nextBytes(iv);
     return iv;
   }
 
