@@ -27,6 +27,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.Reader;
+import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.LinkedHashSet;
 import java.util.List;
@@ -35,7 +36,6 @@ import java.util.Objects;
 import java.util.Set;
 import java.util.stream.Collectors;
 
-import org.apache.commons.lang3.CharEncoding;
 import org.apache.commons.lang3.StringUtils;
 import org.yaml.snakeyaml.Yaml;
 
@@ -136,7 +136,7 @@ public final class ModelParser {
   private Map<String, Object> parseYaml(File modelFile) {
     try {
       try (InputStream is = new FileInputStream(modelFile);
-          Reader reader = new InputStreamReader(is, CharEncoding.UTF_8)) {
+          Reader reader = new InputStreamReader(is, StandardCharsets.UTF_8)) {
         return yaml.loadAs(reader, Map.class);
       }
     }
