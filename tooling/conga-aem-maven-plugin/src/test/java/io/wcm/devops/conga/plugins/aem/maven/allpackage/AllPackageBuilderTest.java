@@ -164,7 +164,7 @@ class AllPackageBuilderTest {
           "aem-cms-system-config" + runmodeSuffix + ".zip");
       assertNameDependencies(applicationInstallDir, "accesscontroltool-oakindex-package" + runmodeSuffix + "-3.0.0.zip",
           "accesscontroltool-oakindex-package" + runmodeSuffix,
-          "Netcentric:accesscontroltool-apps-package:3.0.0");
+          "Netcentric:accesscontroltool-package" + runmodeSuffix + ":3.0.0");
       assertNameDependencies(applicationInstallDir, "acs-aem-commons-ui.apps" + runmodeSuffix + "-4.10.0.zip",
           "acs-aem-commons-ui.apps" + runmodeSuffix,
           "day/cq60/product:cq-content:6.3.64");
@@ -240,7 +240,7 @@ class AllPackageBuilderTest {
           "aem-cms-system-config" + runmodeSuffix + ".zip");
       assertNameDependencies(applicationInstallDir, "accesscontroltool-oakindex-package" + runmodeSuffix + "-3.0.0.zip",
           "accesscontroltool-oakindex-package" + runmodeSuffix,
-          "Netcentric:accesscontroltool-apps-package:3.0.0");
+          "Netcentric:accesscontroltool-package" + runmodeSuffix + ":3.0.0");
       assertNameDependencies(applicationInstallDir, "acs-aem-commons-ui.apps" + runmodeSuffix + "-4.10.0.zip",
           "acs-aem-commons-ui.apps" + runmodeSuffix,
           "day/cq60/product:cq-content:6.3.64");
@@ -315,7 +315,7 @@ class AllPackageBuilderTest {
           "aem-cms-system-config" + runmodeSuffix + ".zip");
       assertNameDependencies(applicationInstallDir, "accesscontroltool-oakindex-package" + runmodeSuffix + "-3.0.0.zip",
           "accesscontroltool-oakindex-package" + runmodeSuffix,
-          "Netcentric:accesscontroltool-apps-package:3.0.0");
+          "Netcentric:accesscontroltool-package" + runmodeSuffix + ":3.0.0");
       assertNameDependencies(applicationInstallDir, "acs-aem-commons-ui.apps" + runmodeSuffix + "-4.10.0.zip",
           "acs-aem-commons-ui.apps" + runmodeSuffix,
           "day/cq60/product:cq-content:6.3.64");

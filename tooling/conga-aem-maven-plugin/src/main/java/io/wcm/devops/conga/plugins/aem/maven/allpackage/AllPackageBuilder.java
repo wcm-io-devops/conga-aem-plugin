@@ -29,7 +29,6 @@ import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
-import java.nio.file.Files;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Enumeration;
@@ -53,18 +52,14 @@ import org.apache.jackrabbit.vault.packaging.PackageType;
 import org.apache.jackrabbit.vault.packaging.VersionRange;
 import org.apache.maven.plugin.logging.Log;
 import org.apache.maven.plugin.logging.SystemStreamLog;
-import org.jetbrains.annotations.NotNull;
 
-import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.ImmutableSet;
 
 import io.wcm.devops.conga.plugins.aem.maven.AutoDependenciesMode;
 import io.wcm.devops.conga.plugins.aem.maven.model.ContentPackageFile;
-import io.wcm.devops.conga.plugins.aem.postprocessor.ContentPackagePropertiesPostProcessor;
 import io.wcm.tooling.commons.contentpackagebuilder.ContentPackage;
 import io.wcm.tooling.commons.contentpackagebuilder.ContentPackageBuilder;
 import io.wcm.tooling.commons.contentpackagebuilder.PackageFilter;
-import io.wcm.tooling.commons.packmgr.util.ContentPackageProperties;
 
 /**
  * Builds "all" package based on given set of content packages.
@@ -404,34 +399,16 @@ public final class AllPackageBuilder {
       existingDeps = removeReferencesToManagedPackages(existingDeps, allPackagesFromFileSets);
     }
 
-    Dependency[] deps = null;
-    if (dependencyFile == null) {
-      deps = existingDeps;
+    Dependency[] deps;
+    if (dependencyFile != null) {
+      String runModeSuffix = buildRunModeSuffix(dependencyFile, environmentRunMode);
+      Dependency newDependency = new Dependency(dependencyFile.getGroup(),
+          dependencyFile.getName() + runModeSuffix,
+          VersionRange.fromString(dependencyFile.getVersion()));
+      deps = addDependency(existingDeps, newDependency);
     }
     else {
-      // if package is container package: check for embedded sub packages
-      List<ContentPackageFile> containerSubPackageFiles = null;
-      if (isContainerPackage(dependencyFile)) {
-        containerSubPackageFiles = getContainerSubPackageFiles(dependencyFile);
-      }
-      // if sub packages are present: add dependencies to sub packages instead of the container package
-      // nested sub packages are referenced without any runmode suffix
-      if (containerSubPackageFiles != null) {
-        for (ContentPackageFile subPackageFileItem : containerSubPackageFiles) {
-          Dependency newDependency = new Dependency(subPackageFileItem.getGroup(),
-              subPackageFileItem.getName(),
-              VersionRange.fromString(subPackageFileItem.getVersion()));
-          deps = addDependency(existingDeps, newDependency);
-        }
-      }
-      // otherwise add dependency to package itself
-      else {
-        String runModeSuffix = buildRunModeSuffix(dependencyFile, environmentRunMode);
-        Dependency newDependency = new Dependency(dependencyFile.getGroup(),
-            dependencyFile.getName() + runModeSuffix,
-            VersionRange.fromString(dependencyFile.getVersion()));
-        deps = addDependency(existingDeps, newDependency);
-      }
+      deps = existingDeps;
     }
 
     if (deps != null) {
@@ -451,55 +428,6 @@ public final class AllPackageBuilder {
     else {
       return new Dependency[] { newDependency };
     }
-  }
-
-  /**
-   * If the content package is a container package that contains sub packages (that are sub packages in sub packages),
-   * the cp2fm conversion eliminates the nested package container "in the middle", leading to unresolveable
-   * dependencies. So, if the dependency content package contains sub packages, we add dependencies
-   * to the contained sub packages instead.
-   * @param dependencyFile Dependency package
-   * @return List of dependency packages or null if none exist
-   * @throws IOException I/O exception
-   */
-  private static List<ContentPackageFile> getContainerSubPackageFiles(@NotNull ContentPackageFile dependencyFile) throws IOException {
-    // introspect container package file - check for sub packages
-    List<ContentPackageFile> dependencyFiles = new ArrayList<>();
-    try (ZipFile zipFileIn = new ZipFile(dependencyFile.getFile())) {
-      Enumeration<? extends ZipEntry> zipInEntries = zipFileIn.entries();
-      while (zipInEntries.hasMoreElements()) {
-        ZipEntry zipInEntry = zipInEntries.nextElement();
-        if (StringUtils.equals("zip", FilenameUtils.getExtension(zipInEntry.getName()))) {
-          File tempFile = File.createTempFile(zipInEntry.getName() + "-subpackage-", ".zip");
-          try {
-            try (FileOutputStream fos = new FileOutputStream(tempFile);
-                InputStream zis = zipFileIn.getInputStream(zipInEntry)) {
-              IOUtils.copy(zis, fos);
-            }
-            Map<String, Object> props = ContentPackageProperties.get(tempFile);
-            ContentPackageFile subPackageFile = new ContentPackageFile(tempFile,
-                ImmutableMap.of(ContentPackagePropertiesPostProcessor.MODEL_OPTIONS_PROPERTY, props),
-                ImmutableMap.of("variants", dependencyFile.getVariants()));
-            if (StringUtils.isNoneBlank(subPackageFile.getGroup(), subPackageFile.getName(), subPackageFile.getVersion())) {
-              dependencyFiles.add(subPackageFile);
-            }
-          }
-          finally {
-            Files.delete(tempFile.toPath());
-          }
-        }
-      }
-    }
-    if (dependencyFiles.isEmpty()) {
-      return null;
-    }
-    else {
-      return dependencyFiles;
-    }
-  }
-
-  private static boolean isContainerPackage(@NotNull ContentPackageFile packageFile) {
-    return StringUtils.equals(packageFile.getPackageType(), PackageType.CONTAINER.name().toLowerCase());
   }
 
   private static void addSuffixToPackageName(Properties props, ContentPackageFile pkg, String environmentRunMode) {
