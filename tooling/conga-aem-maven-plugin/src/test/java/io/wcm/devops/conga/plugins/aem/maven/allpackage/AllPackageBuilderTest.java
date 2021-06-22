@@ -20,17 +20,21 @@
 package io.wcm.devops.conga.plugins.aem.maven.allpackage;
 
 import static io.wcm.devops.conga.plugins.aem.maven.allpackage.ContentPackageTestUtil.assertXpathEvaluatesTo;
+import static io.wcm.devops.conga.plugins.aem.maven.allpackage.ContentPackageTestUtil.getDataFromZip;
 import static io.wcm.devops.conga.plugins.aem.maven.allpackage.ContentPackageTestUtil.getXmlFromZip;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
+import java.io.ByteArrayInputStream;
 import java.io.File;
+import java.io.FileOutputStream;
 import java.io.IOException;
 import java.util.List;
 import java.util.Set;
 import java.util.stream.Stream;
 
 import org.apache.commons.io.FileUtils;
+import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.TestInfo;
@@ -131,6 +135,11 @@ class AllPackageBuilderTest {
       assertFiles(containerInstallDir, "accesscontroltool-package" + runmodeSuffix + "-3.0.0.zip",
           "wcm-io-samples-aem-cms-config" + runmodeSuffix + ".zip",
           "wcm-io-samples-complete" + runmodeSuffix + "-1.3.1-SNAPSHOT.zip");
+      assertNameDependencies(containerInstallDir, "accesscontroltool-package" + runmodeSuffix + "-3.0.0.zip",
+          "accesscontroltool-package" + runmodeSuffix);
+      assertNameDependenciesSubPackage(containerInstallDir, "accesscontroltool-package" + runmodeSuffix + "-3.0.0.zip",
+          "jcr_root/apps/netcentric/actool/install/accesscontroltool-apps-package-3.0.0.zip",
+          "accesscontroltool-apps-package" + runmodeSuffix);
       assertNameDependencies(containerInstallDir, "wcm-io-samples-aem-cms-config" + runmodeSuffix + ".zip",
           "wcm-io-samples-aem-cms-config" + runmodeSuffix);
       assertNameDependencies(containerInstallDir, "wcm-io-samples-complete" + runmodeSuffix + "-1.3.1-SNAPSHOT.zip",
@@ -204,6 +213,10 @@ class AllPackageBuilderTest {
           "wcm-io-samples-complete" + runmodeSuffix + "-1.3.1-SNAPSHOT.zip");
       assertNameDependencies(containerInstallDir, "accesscontroltool-package" + runmodeSuffix + "-3.0.0.zip",
           "accesscontroltool-package" + runmodeSuffix,
+          "adobe/consulting:acs-aem-commons-ui.content" + runmodeSuffix + ":4.10.0");
+      assertNameDependenciesSubPackage(containerInstallDir, "accesscontroltool-package" + runmodeSuffix + "-3.0.0.zip",
+          "jcr_root/apps/netcentric/actool/install/accesscontroltool-apps-package-3.0.0.zip",
+          "accesscontroltool-apps-package" + runmodeSuffix,
           "adobe/consulting:acs-aem-commons-ui.content" + runmodeSuffix + ":4.10.0");
       assertNameDependencies(containerInstallDir, "wcm-io-samples-aem-cms-config" + runmodeSuffix + ".zip",
           "wcm-io-samples-aem-cms-config" + runmodeSuffix,
@@ -280,6 +293,10 @@ class AllPackageBuilderTest {
       assertNameDependencies(containerInstallDir, "accesscontroltool-package" + runmodeSuffix + "-3.0.0.zip",
           "accesscontroltool-package" + runmodeSuffix,
           "adobe/consulting:acs-aem-commons-ui.apps" + runmodeSuffix + ":4.10.0");
+      assertNameDependenciesSubPackage(containerInstallDir, "accesscontroltool-package" + runmodeSuffix + "-3.0.0.zip",
+          "jcr_root/apps/netcentric/actool/install/accesscontroltool-apps-package-3.0.0.zip",
+          "accesscontroltool-apps-package" + runmodeSuffix,
+          "adobe/consulting:acs-aem-commons-ui.apps" + runmodeSuffix + ":4.10.0");
       assertNameDependencies(containerInstallDir, "wcm-io-samples-aem-cms-config" + runmodeSuffix + ".zip",
           "wcm-io-samples-aem-cms-config" + runmodeSuffix,
           "wcm-io-samples:aem-cms-system-config" + runmodeSuffix + ":1.3.1-SNAPSHOT");
@@ -353,6 +370,10 @@ class AllPackageBuilderTest {
       assertNameDependencies(containerInstallDir, "accesscontroltool-package" + runmodeSuffix + "-3.0.0.zip",
           "accesscontroltool-package" + runmodeSuffix,
           "adobe/consulting:acs-aem-commons-ui.apps" + runmodeSuffix + ":4.10.0");
+      assertNameDependenciesSubPackage(containerInstallDir, "accesscontroltool-package" + runmodeSuffix + "-3.0.0.zip",
+          "jcr_root/apps/netcentric/actool/install/accesscontroltool-apps-package-3.0.0.zip",
+          "accesscontroltool-apps-package" + runmodeSuffix,
+          "adobe/consulting:acs-aem-commons-ui.apps" + runmodeSuffix + ":4.10.0");
       assertNameDependencies(containerInstallDir, "wcm-io-samples-aem-cms-config" + runmodeSuffix + ".zip",
           "wcm-io-samples-aem-cms-config" + runmodeSuffix,
           "wcm-io-samples:aem-cms-system-config" + runmodeSuffix + ":1.3.1-SNAPSHOT");
@@ -362,6 +383,11 @@ class AllPackageBuilderTest {
     }
   }
 
+  /**
+   * Assert existence of given files.
+   * @param dir Directory
+   * @param fileNames Expected file names in directory
+   */
   private void assertFiles(File dir, String... fileNames) {
     assertTrue(dir.exists(), "file exists: " + dir.getPath());
     assertTrue(dir.isDirectory(), "is directory: " + dir.getPath());
@@ -371,6 +397,14 @@ class AllPackageBuilderTest {
     assertEquals(expectedFileNames, actualFileNames, "files in " + dir.getPath());
   }
 
+  /**
+   * Assert content package name and list of package dependencies.
+   * @param dir Directory
+   * @param fileName Content package file name
+   * @param packageName Expected content package name
+   * @param dependencies Expected dependencies
+   * @throws Exception Exception
+   */
   private void assertNameDependencies(File dir, String fileName, String packageName,
       String... dependencies) throws Exception {
     File zipFile = new File(dir, fileName);
@@ -383,6 +417,33 @@ class AllPackageBuilderTest {
       expecedDependencies = StringUtils.join(dependencies, ",");
     }
     assertXpathEvaluatesTo(expecedDependencies, "/properties/entry[@key='dependencies']", filterXml);
+  }
+
+  /**
+   * Assert content package name and list of package dependencies.
+   * @param dir Directory
+   * @param fileName Content package file name
+   * @param subPackageFileName Path and file name of sub package inside main package.
+   * @param packageName Expected content package name
+   * @param dependencies Expected dependencies
+   * @throws Exception Exception
+   */
+  private void assertNameDependenciesSubPackage(File dir, String fileName, String subPackageFileName,
+      String packageName, String... dependencies) throws Exception {
+    File zipFile = new File(dir, fileName);
+    byte[] subPackageData = getDataFromZip(zipFile, subPackageFileName);
+    File tempPackageFile = File.createTempFile("testpkg", ".zip");
+    try (ByteArrayInputStream is = new ByteArrayInputStream(subPackageData);
+        FileOutputStream fos = new FileOutputStream(tempPackageFile)) {
+      IOUtils.copy(is, fos);
+    }
+    try {
+      assertNameDependencies(tempPackageFile.getParentFile(), tempPackageFile.getName(),
+          packageName, dependencies);
+    }
+    finally {
+      FileUtils.deleteQuietly(tempPackageFile);
+    }
   }
 
   private String[] toInstallFolderNames(String baseName, List<String> runmodeSuffixes) {

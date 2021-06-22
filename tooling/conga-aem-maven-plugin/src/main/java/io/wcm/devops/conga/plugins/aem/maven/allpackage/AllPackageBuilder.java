@@ -26,6 +26,7 @@ import static org.apache.jackrabbit.vault.packaging.PackageProperties.NAME_DEPEN
 import static org.apache.jackrabbit.vault.packaging.PackageProperties.NAME_NAME;
 
 import java.io.File;
+import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
@@ -231,7 +232,15 @@ public final class AllPackageBuilder {
             }
 
             // set package name, wire previous package in package dependency
-            addFileWithDependency(contentPackage, path, pkg, previousPkg, environmentRunMode, allPackagesFromFileSets);
+            File tempPackageFile = processContentPackage(pkg.getFile(), pkg, previousPkg, environmentRunMode, allPackagesFromFileSets);
+
+            // add temp zip file to "all" content package
+            try {
+              contentPackage.addFile(path, tempPackageFile);
+            }
+            finally {
+              FileUtils.deleteQuietly(tempPackageFile);
+            }
 
             previousPackages.add(pkg);
           }
@@ -316,24 +325,24 @@ public final class AllPackageBuilder {
   /**
    * Rewrite content package ZIP file while adding to "all" package:
    * Add dependency to previous package in CONGA configuration file oder.
-   * @param contentPackage Target content page
-   * @param path Path in target content package
-   * @param pkg Package to add
+   * @param contentPackageFile The actual content package file to process
+   * @param pkg Package to process (can be parent packe of the actual file)
    * @param previousPkg Previous package to get dependency information from.
    *          Is null if no previous package exists or auto dependency mode is switched off.
    * @param environmentRunMode Environment run mode
    * @param allPackagesFromFileSets Set with all packages from all file sets as dependency instances
+   * @return Returns a *temporary* file - has to be deleted when processing the result is completed.
    * @throws IOException I/O error
    */
-  private void addFileWithDependency(ContentPackage contentPackage, String path,
-      ContentPackageFile pkg, ContentPackageFile previousPkg, String environmentRunMode,
+  private File processContentPackage(File contentPackageFile, ContentPackageFile pkg,
+      ContentPackageFile previousPkg, String environmentRunMode,
       Set<Dependency> allPackagesFromFileSets) throws IOException {
 
     // create temp zip file to create rewritten copy of package
     File tempFile = File.createTempFile("pkg", ".zip");
 
     // open original content package
-    try (ZipFile zipFileIn = new ZipFile(pkg.getFile())) {
+    try (ZipFile zipFileIn = new ZipFile(contentPackageFile)) {
       String dependenciesString = null;
 
       // iterate through entries and write them to the temp. zip file
@@ -345,9 +354,10 @@ public final class AllPackageBuilder {
           ZipEntry zipOutEntry = new ZipEntry(zipInEntry.getName());
           if (!zipInEntry.isDirectory()) {
             zipOut.putNextEntry(zipOutEntry);
-            if (StringUtils.equals(zipInEntry.getName(), "META-INF/vault/properties.xml")) {
+            try (InputStream is = zipFileIn.getInputStream(zipInEntry)) {
+
               // if entry is properties.xml, update dependency information
-              try (InputStream is = zipFileIn.getInputStream(zipInEntry)) {
+              if (StringUtils.equals(zipInEntry.getName(), "META-INF/vault/properties.xml")) {
                 Properties props = new Properties();
                 props.loadFromXML(is);
                 addSuffixToPackageName(props, pkg, environmentRunMode);
@@ -356,28 +366,39 @@ public final class AllPackageBuilder {
                 }
                 props.storeToXML(zipOut, null);
               }
-            }
-            else {
+
+              // process sub-packages as well: add runmode suffix and update dependencies
+              else if (StringUtils.equals(FilenameUtils.getExtension(zipInEntry.getName()), "zip")) {
+                File tempSubPackageFile = File.createTempFile("subpkg", ".zip");
+                try (FileOutputStream subPackageFos = new FileOutputStream(tempSubPackageFile)) {
+                  IOUtils.copy(is, subPackageFos);
+                }
+                File resultSubPackageFile = processContentPackage(tempSubPackageFile, pkg, previousPkg, environmentRunMode, allPackagesFromFileSets);
+                try (FileInputStream subPackageFis = new FileInputStream(resultSubPackageFile)) {
+                  IOUtils.copy(subPackageFis, zipOut);
+                }
+                finally {
+                  FileUtils.deleteQuietly(resultSubPackageFile);
+                }
+              }
+
               // otherwise transfer the binary data 1:1
-              try (InputStream is = zipFileIn.getInputStream(zipInEntry)) {
+              else {
                 IOUtils.copy(is, zipOut);
               }
             }
+
             zipOut.closeEntry();
           }
         }
 
         if (log.isDebugEnabled()) {
-          log.debug("Adding package " + getCanonicalPath(pkg.getFile())
+          log.debug("Processed " + getCanonicalPath(contentPackageFile)
               + (dependenciesString != null ? " with dependencies: " + dependenciesString : ""));
         }
       }
 
-      // add temp zip file to "all" content package
-      contentPackage.addFile(path, tempFile);
-    }
-    finally {
-      FileUtils.deleteQuietly(tempFile);
+      return tempFile;
     }
   }
 
