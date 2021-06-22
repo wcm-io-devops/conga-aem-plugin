@@ -351,9 +351,7 @@ public final class AllPackageBuilder {
         Enumeration<? extends ZipEntry> zipInEntries = zipFileIn.entries();
         while (zipInEntries.hasMoreElements()) {
           ZipEntry zipInEntry = zipInEntries.nextElement();
-          ZipEntry zipOutEntry = new ZipEntry(zipInEntry.getName());
           if (!zipInEntry.isDirectory()) {
-            zipOut.putNextEntry(zipOutEntry);
             try (InputStream is = zipFileIn.getInputStream(zipInEntry)) {
 
               // if entry is properties.xml, update dependency information
@@ -364,17 +362,26 @@ public final class AllPackageBuilder {
                 if (autoDependenciesMode != AutoDependenciesMode.OFF) {
                   dependenciesString = updateDependencies(props, previousPkg, environmentRunMode, allPackagesFromFileSets);
                 }
+
+                ZipEntry zipOutEntry = new ZipEntry(zipInEntry.getName());
+                zipOut.putNextEntry(zipOutEntry);
                 props.storeToXML(zipOut, null);
               }
 
               // process sub-packages as well: add runmode suffix and update dependencies
               else if (StringUtils.equals(FilenameUtils.getExtension(zipInEntry.getName()), "zip")) {
-                File tempSubPackageFile = File.createTempFile("subpkg", ".zip");
+                String path = FilenameUtils.getPath(zipInEntry.getName());
+                String basename = FilenameUtils.getBaseName(zipInEntry.getName());
+                String runModeSuffix = buildRunModeSuffix(pkg, environmentRunMode);
+
+                File tempSubPackageFile = File.createTempFile("subpkg-" + basename + runModeSuffix, ".zip");
                 try (FileOutputStream subPackageFos = new FileOutputStream(tempSubPackageFile)) {
                   IOUtils.copy(is, subPackageFos);
                 }
                 File resultSubPackageFile = processContentPackage(tempSubPackageFile, pkg, previousPkg, environmentRunMode, allPackagesFromFileSets);
                 try (FileInputStream subPackageFis = new FileInputStream(resultSubPackageFile)) {
+                  ZipEntry zipOutEntry = new ZipEntry(path + basename + runModeSuffix + ".zip");
+                  zipOut.putNextEntry(zipOutEntry);
                   IOUtils.copy(subPackageFis, zipOut);
                 }
                 finally {
@@ -384,6 +391,8 @@ public final class AllPackageBuilder {
 
               // otherwise transfer the binary data 1:1
               else {
+                ZipEntry zipOutEntry = new ZipEntry(zipInEntry.getName());
+                zipOut.putNextEntry(zipOutEntry);
                 IOUtils.copy(is, zipOut);
               }
             }

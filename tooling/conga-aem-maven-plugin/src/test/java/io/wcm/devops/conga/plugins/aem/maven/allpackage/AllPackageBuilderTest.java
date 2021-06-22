@@ -138,7 +138,7 @@ class AllPackageBuilderTest {
       assertNameDependencies(containerInstallDir, "accesscontroltool-package" + runmodeSuffix + "-3.0.0.zip",
           "accesscontroltool-package" + runmodeSuffix);
       assertNameDependenciesSubPackage(containerInstallDir, "accesscontroltool-package" + runmodeSuffix + "-3.0.0.zip",
-          "jcr_root/apps/netcentric/actool/install/accesscontroltool-apps-package-3.0.0.zip",
+          "jcr_root/apps/netcentric/actool/install/accesscontroltool-apps-package-3.0.0" + runmodeSuffix + ".zip",
           "accesscontroltool-apps-package" + runmodeSuffix);
       assertNameDependencies(containerInstallDir, "wcm-io-samples-aem-cms-config" + runmodeSuffix + ".zip",
           "wcm-io-samples-aem-cms-config" + runmodeSuffix);
@@ -215,7 +215,7 @@ class AllPackageBuilderTest {
           "accesscontroltool-package" + runmodeSuffix,
           "adobe/consulting:acs-aem-commons-ui.content" + runmodeSuffix + ":4.10.0");
       assertNameDependenciesSubPackage(containerInstallDir, "accesscontroltool-package" + runmodeSuffix + "-3.0.0.zip",
-          "jcr_root/apps/netcentric/actool/install/accesscontroltool-apps-package-3.0.0.zip",
+          "jcr_root/apps/netcentric/actool/install/accesscontroltool-apps-package-3.0.0" + runmodeSuffix + ".zip",
           "accesscontroltool-apps-package" + runmodeSuffix,
           "adobe/consulting:acs-aem-commons-ui.content" + runmodeSuffix + ":4.10.0");
       assertNameDependencies(containerInstallDir, "wcm-io-samples-aem-cms-config" + runmodeSuffix + ".zip",
@@ -294,7 +294,7 @@ class AllPackageBuilderTest {
           "accesscontroltool-package" + runmodeSuffix,
           "adobe/consulting:acs-aem-commons-ui.apps" + runmodeSuffix + ":4.10.0");
       assertNameDependenciesSubPackage(containerInstallDir, "accesscontroltool-package" + runmodeSuffix + "-3.0.0.zip",
-          "jcr_root/apps/netcentric/actool/install/accesscontroltool-apps-package-3.0.0.zip",
+          "jcr_root/apps/netcentric/actool/install/accesscontroltool-apps-package-3.0.0" + runmodeSuffix + ".zip",
           "accesscontroltool-apps-package" + runmodeSuffix,
           "adobe/consulting:acs-aem-commons-ui.apps" + runmodeSuffix + ":4.10.0");
       assertNameDependencies(containerInstallDir, "wcm-io-samples-aem-cms-config" + runmodeSuffix + ".zip",
@@ -371,7 +371,7 @@ class AllPackageBuilderTest {
           "accesscontroltool-package" + runmodeSuffix,
           "adobe/consulting:acs-aem-commons-ui.apps" + runmodeSuffix + ":4.10.0");
       assertNameDependenciesSubPackage(containerInstallDir, "accesscontroltool-package" + runmodeSuffix + "-3.0.0.zip",
-          "jcr_root/apps/netcentric/actool/install/accesscontroltool-apps-package-3.0.0.zip",
+          "jcr_root/apps/netcentric/actool/install/accesscontroltool-apps-package-3.0.0" + runmodeSuffix + ".zip",
           "accesscontroltool-apps-package" + runmodeSuffix,
           "adobe/consulting:acs-aem-commons-ui.apps" + runmodeSuffix + ":4.10.0");
       assertNameDependencies(containerInstallDir, "wcm-io-samples-aem-cms-config" + runmodeSuffix + ".zip",
