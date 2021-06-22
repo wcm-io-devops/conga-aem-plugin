@@ -339,6 +339,7 @@ public final class AllPackageBuilder {
 
     // open original content package
     try (ZipFile zipFileIn = new ZipFile(pkg.getFile())) {
+      String dependenciesString = null;
 
       // iterate through entries and write them to the temp. zip file
       try (FileOutputStream fos = new FileOutputStream(tempFile);
@@ -356,7 +357,7 @@ public final class AllPackageBuilder {
                 props.loadFromXML(is);
                 addSuffixToPackageName(props, pkg, environmentRunMode);
                 if (autoDependenciesMode != AutoDependenciesMode.OFF) {
-                  updateDependencies(props, previousPkg, environmentRunMode, allPackagesFromFileSets);
+                  dependenciesString = updateDependencies(props, previousPkg, environmentRunMode, allPackagesFromFileSets);
                 }
                 props.storeToXML(zipOut, null);
               }
@@ -369,6 +370,11 @@ public final class AllPackageBuilder {
             }
             zipOut.closeEntry();
           }
+        }
+
+        if (log.isDebugEnabled()) {
+          log.debug("Adding package " + getCanonicalPath(pkg.getFile())
+              + (dependenciesString != null ? " with dependencies: " + dependenciesString : ""));
         }
       }
 
@@ -387,7 +393,7 @@ public final class AllPackageBuilder {
    * @param allPackagesFromFileSets Set with all packages from all file sets as dependency instances
    * @throws IOException I/O exception
    */
-  private static void updateDependencies(Properties props, ContentPackageFile dependencyFile, String environmentRunMode,
+  private static String updateDependencies(Properties props, ContentPackageFile dependencyFile, String environmentRunMode,
       Set<Dependency> allPackagesFromFileSets) throws IOException {
     String[] existingDepsStrings = StringUtils.split(props.getProperty(NAME_DEPENDENCIES), ",");
     Dependency[] existingDeps = null;
@@ -429,7 +435,12 @@ public final class AllPackageBuilder {
     }
 
     if (deps != null) {
-      props.put(NAME_DEPENDENCIES, Dependency.toString(deps));
+      String dependenciesString = Dependency.toString(deps);
+      props.put(NAME_DEPENDENCIES, dependenciesString);
+      return dependenciesString;
+    }
+    else {
+      return null;
     }
   }
 

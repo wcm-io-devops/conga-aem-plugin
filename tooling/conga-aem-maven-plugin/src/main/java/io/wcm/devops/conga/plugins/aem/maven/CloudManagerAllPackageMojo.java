@@ -216,6 +216,7 @@ public final class CloudManagerAllPackageMojo extends AbstractCloudManagerMojo {
 
   private void buildAllPackage(AllPackageBuilder builder) throws MojoExecutionException {
     try {
+      getLog().debug("Start generating " + getCanonicalPath(builder.getTargetFile()) + "...");
       if (builder.build(properties)) {
         getLog().info("Generated " + getCanonicalPath(builder.getTargetFile()));
         if (attachArtifact) {
