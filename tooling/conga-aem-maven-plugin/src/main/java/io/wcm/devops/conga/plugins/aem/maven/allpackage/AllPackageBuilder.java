@@ -380,7 +380,11 @@ public final class AllPackageBuilder {
                 }
                 File resultSubPackageFile = processContentPackage(tempSubPackageFile, pkg, null, environmentRunMode, allPackagesFromFileSets);
                 try (FileInputStream subPackageFis = new FileInputStream(resultSubPackageFile)) {
-                  ZipEntry zipOutEntry = new ZipEntry(path + basename + runModeSuffix + ".zip");
+                  // add runmode suffix to install path and to filename
+                  String newPath = StringUtils.removeEnd(path, "/") + runModeSuffix + "/"
+                      + basename + runModeSuffix + ".zip";
+
+                  ZipEntry zipOutEntry = new ZipEntry(newPath);
                   zipOut.putNextEntry(zipOutEntry);
                   IOUtils.copy(subPackageFis, zipOut);
                 }
