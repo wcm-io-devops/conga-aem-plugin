@@ -24,8 +24,8 @@
   <body>
 
     <release version="1.14.6" date="not released">
-      <action type="fix" dev="sseifert">
-        conga-aem-maven-plugin:cloudmanager-all-package: Also process package names and dependencies in embedded sub packages.
+      <action type="update" dev="sseifert">
+        conga-aem-maven-plugin:cloudmanager-all-package: Extract nested sub packages and treat them in the same way as the other packages (managing dependencies and run modes).
       </action>
     </release>
 

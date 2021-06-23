@@ -66,7 +66,7 @@ public final class ModelParser {
    * @param nodeDir Node directory
    * @return List of content packages
    */
-  public List<ContentPackageFile> getContentPackagesForNode(File nodeDir) {
+  public List<ModelContentPackageFile> getContentPackagesForNode(File nodeDir) {
     Map<String, Object> data = getModelData(nodeDir);
     return collectPackages(data, nodeDir);
   }
@@ -146,8 +146,8 @@ public final class ModelParser {
   }
 
   @SuppressWarnings("unchecked")
-  private List<ContentPackageFile> collectPackages(Map<String, Object> data, File nodeDir) {
-    List<ContentPackageFile> items = new ArrayList<>();
+  private List<ModelContentPackageFile> collectPackages(Map<String, Object> data, File nodeDir) {
+    List<ModelContentPackageFile> items = new ArrayList<>();
     List<Map<String, Object>> roles = (List<Map<String, Object>>)data.get("roles");
     if (roles != null) {
       for (Map<String, Object> role : roles) {
@@ -164,11 +164,11 @@ public final class ModelParser {
     return items;
   }
 
-  private ContentPackageFile toContentPackageFile(Map<String, Object> fileData,
+  private ModelContentPackageFile toContentPackageFile(Map<String, Object> fileData,
       Map<String, Object> roleData, File nodeDir) {
     String path = Objects.toString(fileData.get("path"), null);
     File file = new File(nodeDir, path);
-    return new ContentPackageFile(file, fileData, roleData);
+    return new ModelContentPackageFile(file, fileData, roleData);
   }
 
 }

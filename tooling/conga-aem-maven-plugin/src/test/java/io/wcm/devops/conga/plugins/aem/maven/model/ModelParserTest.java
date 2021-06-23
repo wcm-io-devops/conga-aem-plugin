@@ -49,7 +49,7 @@ class ModelParserTest {
 
   @Test
   void testGetContentPackagesForNode() {
-    List<ContentPackageFile> contentPackages = underTest.getContentPackagesForNode(nodeDir);
+    List<ModelContentPackageFile> contentPackages = underTest.getContentPackagesForNode(nodeDir);
 
     assertEquals(10, contentPackages.size());
 
@@ -64,7 +64,7 @@ class ModelParserTest {
     assertPackage(contentPackages.get(8), "packages/wcm-io-samples-complete-1.3.1-SNAPSHOT.zip", "container", null);
     assertPackage(contentPackages.get(9), "packages/wcm-io-samples-sample-content-1.3.1-SNAPSHOT.zip", "content", null);
 
-    ContentPackageFile pkg1 = contentPackages.get(4);
+    ModelContentPackageFile pkg1 = contentPackages.get(4);
     assertEquals(ImmutableList.of("aem-author"), pkg1.getVariants());
     assertEquals(false, pkg1.getInstall());
     assertEquals(true, pkg1.getRecursive());
@@ -75,7 +75,7 @@ class ModelParserTest {
     assertEquals("1.3.1-SNAPSHOT", pkg1.getVersion());
   }
 
-  private void assertPackage(ContentPackageFile pkg, String path, String packageType, Boolean force) {
+  private void assertPackage(ModelContentPackageFile pkg, String path, String packageType, Boolean force) {
     String actualPath = StringUtils.substringAfter(getPath(pkg.getFile()), getPath(nodeDir) + "/");
     assertEquals(path, actualPath, "package path");
     assertEquals(packageType, pkg.getPackageType(), packageType);

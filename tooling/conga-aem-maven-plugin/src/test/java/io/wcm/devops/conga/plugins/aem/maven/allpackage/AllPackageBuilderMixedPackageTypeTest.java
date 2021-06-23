@@ -53,7 +53,7 @@ class AllPackageBuilderMixedPackageTypeTest {
 
   @Test
   void testBuild() throws Exception {
-    List<ContentPackageFile> contentPackages = new ModelParser().getContentPackagesForNode(nodeDir);
+    List<? extends ContentPackageFile> contentPackages = new ModelParser().getContentPackagesForNode(nodeDir);
     File targetFile = new File(targetDir, "all.zip");
 
     AllPackageBuilder builder = new AllPackageBuilder(targetFile, "test-group", "test-pkg");

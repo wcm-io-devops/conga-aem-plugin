@@ -240,7 +240,7 @@ public final class CloudManagerAllPackageMojo extends AbstractCloudManagerMojo {
       for (File nodeDir : nodeDirs) {
         Set<String> cloudManagerTarget = modelParser.getCloudManagerTarget(nodeDir);
         if (!cloudManagerTarget.contains(CLOUDMANAGER_TARGET_NONE)) {
-          List<ContentPackageFile> contentPackages = modelParser.getContentPackagesForNode(nodeDir);
+          List<? extends ContentPackageFile> contentPackages = modelParser.getContentPackagesForNode(nodeDir);
           visitor.visit(environmentDir, nodeDir, cloudManagerTarget, contentPackages);
         }
       }
@@ -249,7 +249,7 @@ public final class CloudManagerAllPackageMojo extends AbstractCloudManagerMojo {
 
   interface EnvironmentNodeVisitor {
     void visit(File environmentDir, File nodeDir, Set<String> cloudManagerTarget,
-        List<ContentPackageFile> contentPackages) throws MojoExecutionException, MojoFailureException;
+        List<? extends ContentPackageFile> contentPackages) throws MojoExecutionException, MojoFailureException;
   }
 
 }

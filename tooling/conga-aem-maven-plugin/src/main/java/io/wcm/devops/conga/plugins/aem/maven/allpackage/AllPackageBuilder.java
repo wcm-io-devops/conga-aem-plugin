@@ -24,9 +24,9 @@ import static io.wcm.devops.conga.plugins.aem.maven.allpackage.RunModeUtil.RUNMO
 import static io.wcm.devops.conga.plugins.aem.maven.allpackage.RunModeUtil.RUNMODE_PUBLISH;
 import static org.apache.jackrabbit.vault.packaging.PackageProperties.NAME_DEPENDENCIES;
 import static org.apache.jackrabbit.vault.packaging.PackageProperties.NAME_NAME;
+import static org.apache.jackrabbit.vault.packaging.PackageProperties.NAME_PACKAGE_TYPE;
 
 import java.io.File;
-import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
@@ -64,6 +64,21 @@ import io.wcm.tooling.commons.contentpackagebuilder.PackageFilter;
 
 /**
  * Builds "all" package based on given set of content packages.
+ * <p>
+ * General concept:
+ * </p>
+ * <ul>
+ * <li>Iterates through all content packages that are generated or collected by CONGA and contained in the
+ * model.json</li>
+ * <li>Enforces the order defined in CONGA by automatically adding dependencies to all packages reflecting the file
+ * order in model.json</li>
+ * <li>Because the dependency chain may be different for each runmode (author/publish), each package is added once for
+ * each runmode (so usually twice, for author+publish)</li>
+ * <li>To avoid conflicts with duplicate packages with different dependencies all package names are changed and a
+ * runmode suffix (.author or .publish) is added, same applies to the install folder</li>
+ * <li>To avoid problems with nested sub packages, the sub packages are extracted from the packages and treated in the
+ * same way as other packages</li>
+ * </ul>
  */
 public final class AllPackageBuilder {
 
@@ -134,7 +149,7 @@ public final class AllPackageBuilder {
    * @param cloudManagerTarget Target environments/run modes the packages should be attached to
    * @throws IllegalArgumentException If and invalid package type is detected
    */
-  public void add(List<ContentPackageFile> contentPackages, Set<String> cloudManagerTarget) {
+  public void add(List<? extends ContentPackageFile> contentPackages, Set<String> cloudManagerTarget) {
 
     // collect list of cloud manager environment run modes
     List<String> environmentRunModes = new ArrayList<>();
@@ -217,7 +232,6 @@ public final class AllPackageBuilder {
         for (String environmentRunMode : fileSet.getEnvironmentRunModes()) {
           List<ContentPackageFile> previousPackages = new ArrayList<>();
           for (ContentPackageFile pkg : fileSet.getContentPackages()) {
-            String path = buildPackagePath(pkg, rootPath, environmentRunMode);
 
             ContentPackageFile previousPkg = null;
 
@@ -232,14 +246,22 @@ public final class AllPackageBuilder {
             }
 
             // set package name, wire previous package in package dependency
-            File tempPackageFile = processContentPackage(pkg.getFile(), pkg, previousPkg, environmentRunMode, allPackagesFromFileSets);
+            List<TemporaryContentPackageFile> processedFiles = processContentPackage(pkg, previousPkg, environmentRunMode, allPackagesFromFileSets);
 
-            // add temp zip file to "all" content package
+            // add processed content packages to "all" content package - and delete the temporary files
             try {
-              contentPackage.addFile(path, tempPackageFile);
+              for (TemporaryContentPackageFile processedFile : processedFiles) {
+                String path = buildPackagePath(processedFile, rootPath, environmentRunMode);
+                contentPackage.addFile(path, processedFile.getFile());
+                if (log.isDebugEnabled()) {
+                  log.debug("  Add " + processedFile.getPackageInfoWithDependencies());
+                }
+              }
             }
             finally {
-              FileUtils.deleteQuietly(tempPackageFile);
+              processedFiles.stream()
+                  .map(TemporaryContentPackageFile::getFile)
+                  .forEach(FileUtils::deleteQuietly);
             }
 
             previousPackages.add(pkg);
@@ -284,7 +306,7 @@ public final class AllPackageBuilder {
 
   /**
    * Generate suffix for instance and environment run modes.
-   * @param pkg Package
+   * @param pkg Content package
    * @return Package path
    */
   private static String buildRunModeSuffix(ContentPackageFile pkg, String environmentRunMode) {
@@ -308,6 +330,10 @@ public final class AllPackageBuilder {
    * @return Package path
    */
   private static String buildPackagePath(ContentPackageFile pkg, String rootPath, String environmentRunMode) {
+    if (!isValidPackageType(pkg)) {
+      throw new IllegalArgumentException("Package " + pkg.getPackageInfo() + " has invalid package type: '" + pkg.getPackageType() + "'.");
+    }
+
     String runModeSuffix = buildRunModeSuffix(pkg, environmentRunMode);
 
     // add run mode suffix to both install folder path and package file name
@@ -317,7 +343,7 @@ public final class AllPackageBuilder {
     if (pkg.getVersion() != null && pkg.getFile().getName().contains(pkg.getVersion())) {
       versionSuffix = "-" + pkg.getVersion();
     }
-    String fileName = pkg.getName() + runModeSuffix + versionSuffix
+    String fileName = pkg.getName() + versionSuffix
         + "." + FilenameUtils.getExtension(pkg.getFile().getName());
     return path + "/" + fileName;
   }
@@ -325,25 +351,25 @@ public final class AllPackageBuilder {
   /**
    * Rewrite content package ZIP file while adding to "all" package:
    * Add dependency to previous package in CONGA configuration file oder.
-   * @param contentPackageFile The actual content package file to process
    * @param pkg Package to process (can be parent packe of the actual file)
    * @param previousPkg Previous package to get dependency information from.
    *          Is null if no previous package exists or auto dependency mode is switched off.
    * @param environmentRunMode Environment run mode
    * @param allPackagesFromFileSets Set with all packages from all file sets as dependency instances
-   * @return Returns a *temporary* file - has to be deleted when processing the result is completed.
+   * @return Returns a list of content package *temporary* files - have to be deleted when processing is completed.
    * @throws IOException I/O error
    */
-  private File processContentPackage(File contentPackageFile, ContentPackageFile pkg,
+  private List<TemporaryContentPackageFile> processContentPackage(ContentPackageFile pkg,
       ContentPackageFile previousPkg, String environmentRunMode,
       Set<Dependency> allPackagesFromFileSets) throws IOException {
 
+    List<TemporaryContentPackageFile> result = new ArrayList<>();
+
     // create temp zip file to create rewritten copy of package
-    File tempFile = File.createTempFile("pkg", ".zip");
+    File tempFile = File.createTempFile(FilenameUtils.getBaseName(pkg.getFile().getName()), ".zip");
 
     // open original content package
-    try (ZipFile zipFileIn = new ZipFile(contentPackageFile)) {
-      String dependenciesString = null;
+    try (ZipFile zipFileIn = new ZipFile(pkg.getFile())) {
 
       // iterate through entries and write them to the temp. zip file
       try (FileOutputStream fos = new FileOutputStream(tempFile);
@@ -353,6 +379,7 @@ public final class AllPackageBuilder {
           ZipEntry zipInEntry = zipInEntries.nextElement();
           if (!zipInEntry.isDirectory()) {
             try (InputStream is = zipFileIn.getInputStream(zipInEntry)) {
+              boolean processedEntry = false;
 
               // if entry is properties.xml, update dependency information
               if (StringUtils.equals(zipInEntry.getName(), "META-INF/vault/properties.xml")) {
@@ -360,41 +387,46 @@ public final class AllPackageBuilder {
                 props.loadFromXML(is);
                 addSuffixToPackageName(props, pkg, environmentRunMode);
                 if (autoDependenciesMode != AutoDependenciesMode.OFF) {
-                  dependenciesString = updateDependencies(props, previousPkg, environmentRunMode, allPackagesFromFileSets);
+                  updateDependencies(props, previousPkg, environmentRunMode, allPackagesFromFileSets);
+                }
+
+                // if package type is missing package properties, put in the type defined in model
+                if (props.get(NAME_PACKAGE_TYPE) == null) {
+                  props.put(NAME_PACKAGE_TYPE, pkg.getPackageType());
                 }
 
                 ZipEntry zipOutEntry = new ZipEntry(zipInEntry.getName());
                 zipOut.putNextEntry(zipOutEntry);
                 props.storeToXML(zipOut, null);
+                processedEntry = true;
               }
 
               // process sub-packages as well: add runmode suffix and update dependencies
               else if (StringUtils.equals(FilenameUtils.getExtension(zipInEntry.getName()), "zip")) {
-                String path = FilenameUtils.getPath(zipInEntry.getName());
-                String basename = FilenameUtils.getBaseName(zipInEntry.getName());
-                String runModeSuffix = buildRunModeSuffix(pkg, environmentRunMode);
-
-                File tempSubPackageFile = File.createTempFile("subpkg-" + basename + runModeSuffix, ".zip");
+                File tempSubPackageFile = File.createTempFile(FilenameUtils.getBaseName(zipInEntry.getName()), ".zip");
                 try (FileOutputStream subPackageFos = new FileOutputStream(tempSubPackageFile)) {
                   IOUtils.copy(is, subPackageFos);
                 }
-                File resultSubPackageFile = processContentPackage(tempSubPackageFile, pkg, null, environmentRunMode, allPackagesFromFileSets);
-                try (FileInputStream subPackageFis = new FileInputStream(resultSubPackageFile)) {
-                  // add runmode suffix to install path and to filename
-                  String newPath = StringUtils.removeEnd(path, "/") + runModeSuffix + "/"
-                      + basename + runModeSuffix + ".zip";
 
-                  ZipEntry zipOutEntry = new ZipEntry(newPath);
-                  zipOut.putNextEntry(zipOutEntry);
-                  IOUtils.copy(subPackageFis, zipOut);
+                // check if contained ZIP file is really a content package
+                // then process it as well, remove if from the content package is was contained it
+                // and add it as "1st level package" to the all package
+                TemporaryContentPackageFile tempSubPackage = new TemporaryContentPackageFile(tempSubPackageFile, pkg.getVariants());
+                if (!isValidPackageType(tempSubPackage)) {
+                  throw new IllegalArgumentException("Package " + pkg.getPackageInfo() + " contains sub package " + tempSubPackage.getPackageInfo()
+                      + " with invalid package type: '" + StringUtils.defaultString(tempSubPackage.getPackageType()) + "'");
                 }
-                finally {
-                  FileUtils.deleteQuietly(resultSubPackageFile);
+                if (StringUtils.isNoneBlank(tempSubPackage.getGroup(), tempSubPackage.getName())) {
+                  result.addAll(processContentPackage(tempSubPackage, previousPkg, environmentRunMode, allPackagesFromFileSets));
+                  processedEntry = true;
+                }
+                else {
+                  FileUtils.deleteQuietly(tempSubPackageFile);
                 }
               }
 
               // otherwise transfer the binary data 1:1
-              else {
+              if (!processedEntry) {
                 ZipEntry zipOutEntry = new ZipEntry(zipInEntry.getName());
                 zipOut.putNextEntry(zipOutEntry);
                 IOUtils.copy(is, zipOut);
@@ -404,15 +436,11 @@ public final class AllPackageBuilder {
             zipOut.closeEntry();
           }
         }
-
-        if (log.isDebugEnabled()) {
-          log.debug("Processed " + getCanonicalPath(contentPackageFile)
-              + (dependenciesString != null ? " with dependencies: " + dependenciesString : ""));
-        }
       }
 
-      return tempFile;
+      result.add(new TemporaryContentPackageFile(tempFile, pkg.getVariants()));
     }
+    return result;
   }
 
   /**
@@ -420,10 +448,9 @@ public final class AllPackageBuilder {
    * @param props Properties
    * @param dependencyFile Dependency package
    * @param allPackagesFromFileSets Set with all packages from all file sets as dependency instances
-   * @throws IOException I/O exception
    */
-  private static String updateDependencies(Properties props, ContentPackageFile dependencyFile, String environmentRunMode,
-      Set<Dependency> allPackagesFromFileSets) throws IOException {
+  private static void updateDependencies(Properties props, ContentPackageFile dependencyFile, String environmentRunMode,
+      Set<Dependency> allPackagesFromFileSets) {
     String[] existingDepsStrings = StringUtils.split(props.getProperty(NAME_DEPENDENCIES), ",");
     Dependency[] existingDeps = null;
     if (existingDepsStrings != null && existingDepsStrings.length > 0) {
@@ -448,10 +475,6 @@ public final class AllPackageBuilder {
     if (deps != null) {
       String dependenciesString = Dependency.toString(deps);
       props.put(NAME_DEPENDENCIES, dependenciesString);
-      return dependenciesString;
-    }
-    else {
-      return null;
     }
   }
 

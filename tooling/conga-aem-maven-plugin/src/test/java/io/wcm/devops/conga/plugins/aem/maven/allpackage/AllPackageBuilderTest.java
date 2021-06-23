@@ -20,21 +20,17 @@
 package io.wcm.devops.conga.plugins.aem.maven.allpackage;
 
 import static io.wcm.devops.conga.plugins.aem.maven.allpackage.ContentPackageTestUtil.assertXpathEvaluatesTo;
-import static io.wcm.devops.conga.plugins.aem.maven.allpackage.ContentPackageTestUtil.getDataFromZip;
 import static io.wcm.devops.conga.plugins.aem.maven.allpackage.ContentPackageTestUtil.getXmlFromZip;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
-import java.io.ByteArrayInputStream;
 import java.io.File;
-import java.io.FileOutputStream;
 import java.io.IOException;
 import java.util.List;
 import java.util.Set;
 import java.util.stream.Stream;
 
 import org.apache.commons.io.FileUtils;
-import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.TestInfo;
@@ -81,7 +77,7 @@ class AllPackageBuilderTest {
   @ParameterizedTest
   @MethodSource("cloudManagerTargetVariants")
   void testBuild(Set<String> cloudManagerTarget, List<String> runmodeSuffixes) throws Exception {
-    List<ContentPackageFile> contentPackages = new ModelParser().getContentPackagesForNode(nodeDir);
+    List<? extends ContentPackageFile> contentPackages = new ModelParser().getContentPackagesForNode(nodeDir);
     File targetFile = new File(targetDir, "all.zip");
 
     AllPackageBuilder builder = new AllPackageBuilder(targetFile, "test-group", "test-pkg");
@@ -98,9 +94,14 @@ class AllPackageBuilderTest {
 
     for (String runmodeSuffix : runmodeSuffixes) {
       File applicationInstallDir = new File(applicationDir, "install" + runmodeSuffix);
-      assertFiles(applicationInstallDir, "accesscontroltool-oakindex-package" + runmodeSuffix + "-3.0.0.zip",
+      assertFiles(applicationInstallDir, "accesscontroltool-apps-package" + runmodeSuffix + "-3.0.0.zip",
+          "accesscontroltool-oakindex-package" + runmodeSuffix + "-3.0.0.zip",
           "acs-aem-commons-ui.apps" + runmodeSuffix + "-4.10.0.zip",
           "aem-cms-system-config" + runmodeSuffix + ".zip");
+      assertNameDependencies(applicationInstallDir, "accesscontroltool-apps-package" + runmodeSuffix + "-3.0.0.zip",
+          "accesscontroltool-apps-package" + runmodeSuffix);
+      assertNameDependencies(applicationInstallDir, "accesscontroltool-oakindex-package" + runmodeSuffix + "-3.0.0.zip",
+          "accesscontroltool-oakindex-package" + runmodeSuffix);
       assertNameDependencies(applicationInstallDir, "acs-aem-commons-ui.apps" + runmodeSuffix + "-4.10.0.zip",
           "acs-aem-commons-ui.apps" + runmodeSuffix,
           "day/cq60/product:cq-content:6.3.64");
@@ -137,9 +138,6 @@ class AllPackageBuilderTest {
           "wcm-io-samples-complete" + runmodeSuffix + "-1.3.1-SNAPSHOT.zip");
       assertNameDependencies(containerInstallDir, "accesscontroltool-package" + runmodeSuffix + "-3.0.0.zip",
           "accesscontroltool-package" + runmodeSuffix);
-      assertNameDependenciesSubPackage(containerInstallDir, "accesscontroltool-package" + runmodeSuffix + "-3.0.0.zip",
-          "jcr_root/apps/netcentric/actool/install" + runmodeSuffix + "/accesscontroltool-apps-package-3.0.0" + runmodeSuffix + ".zip",
-          "accesscontroltool-apps-package" + runmodeSuffix);
       assertNameDependencies(containerInstallDir, "wcm-io-samples-aem-cms-config" + runmodeSuffix + ".zip",
           "wcm-io-samples-aem-cms-config" + runmodeSuffix);
       assertNameDependencies(containerInstallDir, "wcm-io-samples-complete" + runmodeSuffix + "-1.3.1-SNAPSHOT.zip",
@@ -150,7 +148,7 @@ class AllPackageBuilderTest {
   @ParameterizedTest
   @MethodSource("cloudManagerTargetVariants")
   void testBuild_IMMUTABLE_MUTABLE_COMBINED(Set<String> cloudManagerTarget, List<String> runmodeSuffixes) throws Exception {
-    List<ContentPackageFile> contentPackages = new ModelParser().getContentPackagesForNode(nodeDir);
+    List<? extends ContentPackageFile> contentPackages = new ModelParser().getContentPackagesForNode(nodeDir);
     File targetFile = new File(targetDir, "all.zip");
 
     AllPackageBuilder builder = new AllPackageBuilder(targetFile, "test-group", "test-pkg")
@@ -168,9 +166,13 @@ class AllPackageBuilderTest {
 
     for (String runmodeSuffix : runmodeSuffixes) {
       File applicationInstallDir = new File(applicationDir, "install" + runmodeSuffix);
-      assertFiles(applicationInstallDir, "accesscontroltool-oakindex-package" + runmodeSuffix + "-3.0.0.zip",
+      assertFiles(applicationInstallDir, "accesscontroltool-apps-package" + runmodeSuffix + "-3.0.0.zip",
+          "accesscontroltool-oakindex-package" + runmodeSuffix + "-3.0.0.zip",
           "acs-aem-commons-ui.apps" + runmodeSuffix + "-4.10.0.zip",
           "aem-cms-system-config" + runmodeSuffix + ".zip");
+      assertNameDependencies(applicationInstallDir, "accesscontroltool-apps-package" + runmodeSuffix + "-3.0.0.zip",
+          "accesscontroltool-apps-package" + runmodeSuffix,
+          "adobe/consulting:acs-aem-commons-ui.content" + runmodeSuffix + ":4.10.0");
       assertNameDependencies(applicationInstallDir, "accesscontroltool-oakindex-package" + runmodeSuffix + "-3.0.0.zip",
           "accesscontroltool-oakindex-package" + runmodeSuffix,
           "Netcentric:accesscontroltool-package" + runmodeSuffix + ":3.0.0");
@@ -214,9 +216,6 @@ class AllPackageBuilderTest {
       assertNameDependencies(containerInstallDir, "accesscontroltool-package" + runmodeSuffix + "-3.0.0.zip",
           "accesscontroltool-package" + runmodeSuffix,
           "adobe/consulting:acs-aem-commons-ui.content" + runmodeSuffix + ":4.10.0");
-      assertNameDependenciesSubPackage(containerInstallDir, "accesscontroltool-package" + runmodeSuffix + "-3.0.0.zip",
-          "jcr_root/apps/netcentric/actool/install" + runmodeSuffix + "/accesscontroltool-apps-package-3.0.0" + runmodeSuffix + ".zip",
-          "accesscontroltool-apps-package" + runmodeSuffix);
       assertNameDependencies(containerInstallDir, "wcm-io-samples-aem-cms-config" + runmodeSuffix + ".zip",
           "wcm-io-samples-aem-cms-config" + runmodeSuffix,
           "wcm-io-samples:aem-cms-system-config" + runmodeSuffix + ":1.3.1-SNAPSHOT");
@@ -229,7 +228,7 @@ class AllPackageBuilderTest {
   @ParameterizedTest
   @MethodSource("cloudManagerTargetVariants")
   void testBuild_IMMUTABLE_MUTABLE_SEPARATE(Set<String> cloudManagerTarget, List<String> runmodeSuffixes) throws Exception {
-    List<ContentPackageFile> contentPackages = new ModelParser().getContentPackagesForNode(nodeDir);
+    List<? extends ContentPackageFile> contentPackages = new ModelParser().getContentPackagesForNode(nodeDir);
     File targetFile = new File(targetDir, "all.zip");
 
     AllPackageBuilder builder = new AllPackageBuilder(targetFile, "test-group", "test-pkg")
@@ -247,9 +246,13 @@ class AllPackageBuilderTest {
 
     for (String runmodeSuffix : runmodeSuffixes) {
       File applicationInstallDir = new File(applicationDir, "install" + runmodeSuffix);
-      assertFiles(applicationInstallDir, "accesscontroltool-oakindex-package" + runmodeSuffix + "-3.0.0.zip",
+      assertFiles(applicationInstallDir, "accesscontroltool-apps-package" + runmodeSuffix + "-3.0.0.zip",
+          "accesscontroltool-oakindex-package" + runmodeSuffix + "-3.0.0.zip",
           "acs-aem-commons-ui.apps" + runmodeSuffix + "-4.10.0.zip",
           "aem-cms-system-config" + runmodeSuffix + ".zip");
+      assertNameDependencies(applicationInstallDir, "accesscontroltool-apps-package" + runmodeSuffix + "-3.0.0.zip",
+          "accesscontroltool-apps-package" + runmodeSuffix,
+          "adobe/consulting:acs-aem-commons-ui.apps" + runmodeSuffix + ":4.10.0");
       assertNameDependencies(applicationInstallDir, "accesscontroltool-oakindex-package" + runmodeSuffix + "-3.0.0.zip",
           "accesscontroltool-oakindex-package" + runmodeSuffix,
           "Netcentric:accesscontroltool-package" + runmodeSuffix + ":3.0.0");
@@ -292,9 +295,6 @@ class AllPackageBuilderTest {
       assertNameDependencies(containerInstallDir, "accesscontroltool-package" + runmodeSuffix + "-3.0.0.zip",
           "accesscontroltool-package" + runmodeSuffix,
           "adobe/consulting:acs-aem-commons-ui.apps" + runmodeSuffix + ":4.10.0");
-      assertNameDependenciesSubPackage(containerInstallDir, "accesscontroltool-package" + runmodeSuffix + "-3.0.0.zip",
-          "jcr_root/apps/netcentric/actool/install" + runmodeSuffix + "/accesscontroltool-apps-package-3.0.0" + runmodeSuffix + ".zip",
-          "accesscontroltool-apps-package" + runmodeSuffix);
       assertNameDependencies(containerInstallDir, "wcm-io-samples-aem-cms-config" + runmodeSuffix + ".zip",
           "wcm-io-samples-aem-cms-config" + runmodeSuffix,
           "wcm-io-samples:aem-cms-system-config" + runmodeSuffix + ":1.3.1-SNAPSHOT");
@@ -307,7 +307,7 @@ class AllPackageBuilderTest {
   @ParameterizedTest
   @MethodSource("cloudManagerTargetVariants")
   void testBuild_IMMUTABLE_ONLY(Set<String> cloudManagerTarget, List<String> runmodeSuffixes) throws Exception {
-    List<ContentPackageFile> contentPackages = new ModelParser().getContentPackagesForNode(nodeDir);
+    List<? extends ContentPackageFile> contentPackages = new ModelParser().getContentPackagesForNode(nodeDir);
     File targetFile = new File(targetDir, "all.zip");
 
     AllPackageBuilder builder = new AllPackageBuilder(targetFile, "test-group", "test-pkg")
@@ -325,9 +325,13 @@ class AllPackageBuilderTest {
 
     for (String runmodeSuffix : runmodeSuffixes) {
       File applicationInstallDir = new File(applicationDir, "install" + runmodeSuffix);
-      assertFiles(applicationInstallDir, "accesscontroltool-oakindex-package" + runmodeSuffix + "-3.0.0.zip",
+      assertFiles(applicationInstallDir, "accesscontroltool-apps-package" + runmodeSuffix + "-3.0.0.zip",
+          "accesscontroltool-oakindex-package" + runmodeSuffix + "-3.0.0.zip",
           "acs-aem-commons-ui.apps" + runmodeSuffix + "-4.10.0.zip",
           "aem-cms-system-config" + runmodeSuffix + ".zip");
+      assertNameDependencies(applicationInstallDir, "accesscontroltool-apps-package" + runmodeSuffix + "-3.0.0.zip",
+          "accesscontroltool-apps-package" + runmodeSuffix,
+          "adobe/consulting:acs-aem-commons-ui.apps" + runmodeSuffix + ":4.10.0");
       assertNameDependencies(applicationInstallDir, "accesscontroltool-oakindex-package" + runmodeSuffix + "-3.0.0.zip",
           "accesscontroltool-oakindex-package" + runmodeSuffix,
           "Netcentric:accesscontroltool-package" + runmodeSuffix + ":3.0.0");
@@ -368,9 +372,6 @@ class AllPackageBuilderTest {
       assertNameDependencies(containerInstallDir, "accesscontroltool-package" + runmodeSuffix + "-3.0.0.zip",
           "accesscontroltool-package" + runmodeSuffix,
           "adobe/consulting:acs-aem-commons-ui.apps" + runmodeSuffix + ":4.10.0");
-      assertNameDependenciesSubPackage(containerInstallDir, "accesscontroltool-package" + runmodeSuffix + "-3.0.0.zip",
-          "jcr_root/apps/netcentric/actool/install" + runmodeSuffix + "/accesscontroltool-apps-package-3.0.0" + runmodeSuffix + ".zip",
-          "accesscontroltool-apps-package" + runmodeSuffix);
       assertNameDependencies(containerInstallDir, "wcm-io-samples-aem-cms-config" + runmodeSuffix + ".zip",
           "wcm-io-samples-aem-cms-config" + runmodeSuffix,
           "wcm-io-samples:aem-cms-system-config" + runmodeSuffix + ":1.3.1-SNAPSHOT");
@@ -414,33 +415,6 @@ class AllPackageBuilderTest {
       expecedDependencies = StringUtils.join(dependencies, ",");
     }
     assertXpathEvaluatesTo(expecedDependencies, "/properties/entry[@key='dependencies']", filterXml);
-  }
-
-  /**
-   * Assert content package name and list of package dependencies.
-   * @param dir Directory
-   * @param fileName Content package file name
-   * @param subPackageFileName Path and file name of sub package inside main package.
-   * @param packageName Expected content package name
-   * @param dependencies Expected dependencies
-   * @throws Exception Exception
-   */
-  private void assertNameDependenciesSubPackage(File dir, String fileName, String subPackageFileName,
-      String packageName, String... dependencies) throws Exception {
-    File zipFile = new File(dir, fileName);
-    byte[] subPackageData = getDataFromZip(zipFile, subPackageFileName);
-    File tempPackageFile = File.createTempFile("testpkg", ".zip");
-    try (ByteArrayInputStream is = new ByteArrayInputStream(subPackageData);
-        FileOutputStream fos = new FileOutputStream(tempPackageFile)) {
-      IOUtils.copy(is, fos);
-    }
-    try {
-      assertNameDependencies(tempPackageFile.getParentFile(), tempPackageFile.getName(),
-          packageName, dependencies);
-    }
-    finally {
-      FileUtils.deleteQuietly(tempPackageFile);
-    }
   }
 
   private String[] toInstallFolderNames(String baseName, List<String> runmodeSuffixes) {
