@@ -19,6 +19,18 @@ roles:
       group: adobe/consulting, groupId: com.adobe.acs, name: acs-aem-commons-ui.content,
       packageType: content, path: /etc/packages/adobe/consulting/acs-aem-commons-ui.content.zip,
       requiresRoot: false, version: 4.10.0}
+  - path: packages/accesscontroltool-package-3.0.0-cloud.zip
+    postProcessors: [aem-contentpackage-properties]
+    aemContentPackageProperties: {artifactId: accesscontroltool-package,
+      created: '2021-06-09T07:05:31.106Z', description: Container package of the AC Tool containing the bundle, config, apps and content package.,
+      group: Netcentric, groupId: biz.netcentric.cq.tools.accesscontroltool, name: accesscontroltool-package, packageType: container,
+      requiresRoot: false, version: 3.0.0}
+  - path: packages/accesscontroltool-oakindex-package-3.0.0-cloud.zip
+    postProcessors: [aem-contentpackage-properties]
+    aemContentPackageProperties: {allowIndexDefinitions: true, artifactId: accesscontroltool-oakindex-package,
+      created: '2021-06-09T07:05:54.784Z', description: Package containing an oak index definition for 'rep:ACL' nodetypes. This speeds up the performance of the Access Control Tool.,
+      group: Netcentric, groupId: biz.netcentric.cq.tools.accesscontroltool, name: accesscontroltool-oakindex-package,
+      packageType: application, requiresRoot: false, version: 3.0.0}
   - path: packages/aem-cms-author-replicationagents.zip
     postProcessors: [aem-contentpackage, aem-contentpackage-properties]
     aemContentPackageProperties:

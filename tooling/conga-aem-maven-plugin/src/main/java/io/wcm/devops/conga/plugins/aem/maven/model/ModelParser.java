@@ -27,6 +27,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.Reader;
+import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.LinkedHashSet;
 import java.util.List;
@@ -35,7 +36,6 @@ import java.util.Objects;
 import java.util.Set;
 import java.util.stream.Collectors;
 
-import org.apache.commons.lang3.CharEncoding;
 import org.apache.commons.lang3.StringUtils;
 import org.yaml.snakeyaml.Yaml;
 
@@ -66,7 +66,7 @@ public final class ModelParser {
    * @param nodeDir Node directory
    * @return List of content packages
    */
-  public List<ContentPackageFile> getContentPackagesForNode(File nodeDir) {
+  public List<ModelContentPackageFile> getContentPackagesForNode(File nodeDir) {
     Map<String, Object> data = getModelData(nodeDir);
     return collectPackages(data, nodeDir);
   }
@@ -136,7 +136,7 @@ public final class ModelParser {
   private Map<String, Object> parseYaml(File modelFile) {
     try {
       try (InputStream is = new FileInputStream(modelFile);
-          Reader reader = new InputStreamReader(is, CharEncoding.UTF_8)) {
+          Reader reader = new InputStreamReader(is, StandardCharsets.UTF_8)) {
         return yaml.loadAs(reader, Map.class);
       }
     }
@@ -146,8 +146,8 @@ public final class ModelParser {
   }
 
   @SuppressWarnings("unchecked")
-  private List<ContentPackageFile> collectPackages(Map<String, Object> data, File nodeDir) {
-    List<ContentPackageFile> items = new ArrayList<>();
+  private List<ModelContentPackageFile> collectPackages(Map<String, Object> data, File nodeDir) {
+    List<ModelContentPackageFile> items = new ArrayList<>();
     List<Map<String, Object>> roles = (List<Map<String, Object>>)data.get("roles");
     if (roles != null) {
       for (Map<String, Object> role : roles) {
@@ -164,11 +164,11 @@ public final class ModelParser {
     return items;
   }
 
-  private ContentPackageFile toContentPackageFile(Map<String, Object> fileData,
+  private ModelContentPackageFile toContentPackageFile(Map<String, Object> fileData,
       Map<String, Object> roleData, File nodeDir) {
     String path = Objects.toString(fileData.get("path"), null);
     File file = new File(nodeDir, path);
-    return new ContentPackageFile(file, fileData, roleData);
+    return new ModelContentPackageFile(file, fileData, roleData);
   }
 
 }

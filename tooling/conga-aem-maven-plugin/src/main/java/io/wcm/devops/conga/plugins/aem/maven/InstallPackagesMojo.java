@@ -30,7 +30,7 @@ import org.apache.maven.plugin.MojoFailureException;
 import org.apache.maven.plugins.annotations.Mojo;
 import org.apache.maven.plugins.annotations.Parameter;
 
-import io.wcm.devops.conga.plugins.aem.maven.model.ContentPackageFile;
+import io.wcm.devops.conga.plugins.aem.maven.model.ModelContentPackageFile;
 import io.wcm.devops.conga.plugins.aem.maven.model.ModelParser;
 import io.wcm.tooling.commons.packmgr.install.PackageFile;
 import io.wcm.tooling.commons.packmgr.install.PackageInstaller;
@@ -102,7 +102,7 @@ public final class InstallPackagesMojo extends AbstractContentPackageMojo {
     }
   }
 
-  private PackageFile toPackageFile(ContentPackageFile item) {
+  private PackageFile toPackageFile(ModelContentPackageFile item) {
     PackageFile output = new PackageFile();
 
     output.setFile(item.getFile());
