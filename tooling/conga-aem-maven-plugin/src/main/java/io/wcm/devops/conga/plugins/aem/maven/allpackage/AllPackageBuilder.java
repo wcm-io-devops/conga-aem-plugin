@@ -221,7 +221,7 @@ public final class AllPackageBuilder {
     Set<Dependency> allPackagesFromFileSets = new HashSet<>();
     for (ContentPackageFileSet fileSet : fileSets) {
       for (ContentPackageFile pkg : fileSet.getContentPackages()) {
-        allPackagesFromFileSets.add(new Dependency(pkg.getGroup(), pkg.getName(), VersionRange.fromString(pkg.getVersion())));
+        addDependencyInformation(allPackagesFromFileSets, pkg);
       }
     }
 
@@ -364,6 +364,7 @@ public final class AllPackageBuilder {
       Set<Dependency> allPackagesFromFileSets) throws IOException {
 
     List<TemporaryContentPackageFile> result = new ArrayList<>();
+    List<TemporaryContentPackageFile> subPackages = new ArrayList<>();
 
     // create temp zip file to create rewritten copy of package
     File tempFile = File.createTempFile(FilenameUtils.getBaseName(pkg.getFile().getName()), ".zip");
@@ -386,9 +387,13 @@ public final class AllPackageBuilder {
                 Properties props = new Properties();
                 props.loadFromXML(is);
                 addSuffixToPackageName(props, pkg, environmentRunMode);
-                if (autoDependenciesMode != AutoDependenciesMode.OFF) {
-                  updateDependencies(props, previousPkg, environmentRunMode, allPackagesFromFileSets);
+
+                // update package dependencies
+                ContentPackageFile dependencyFile = previousPkg;
+                if (autoDependenciesMode == AutoDependenciesMode.OFF) {
+                  dependencyFile = null;
                 }
+                updateDependencies(props, dependencyFile, environmentRunMode, allPackagesFromFileSets);
 
                 // if package type is missing package properties, put in the type defined in model
                 if (props.get(NAME_PACKAGE_TYPE) == null) {
@@ -417,7 +422,7 @@ public final class AllPackageBuilder {
                       + " with invalid package type: '" + StringUtils.defaultString(tempSubPackage.getPackageType()) + "'");
                 }
                 if (StringUtils.isNoneBlank(tempSubPackage.getGroup(), tempSubPackage.getName())) {
-                  result.addAll(processContentPackage(tempSubPackage, previousPkg, environmentRunMode, allPackagesFromFileSets));
+                  subPackages.add(tempSubPackage);
                   processedEntry = true;
                 }
                 else {
@@ -436,6 +441,16 @@ public final class AllPackageBuilder {
             zipOut.closeEntry();
           }
         }
+      }
+
+      // add sub package metadata to set with dependency information
+      for (TemporaryContentPackageFile tempSubPackage : subPackages) {
+        addDependencyInformation(allPackagesFromFileSets, tempSubPackage);
+      }
+
+      // process sub packages and add to result
+      for (TemporaryContentPackageFile tempSubPackage : subPackages) {
+        result.addAll(processContentPackage(tempSubPackage, previousPkg, environmentRunMode, allPackagesFromFileSets));
       }
 
       result.add(new TemporaryContentPackageFile(tempFile, pkg.getVariants()));
@@ -504,6 +519,10 @@ public final class AllPackageBuilder {
     return Arrays.stream(deps)
         .filter(dep -> !allPackagesFromFileSets.contains(dep))
         .toArray(size -> new Dependency[size]);
+  }
+
+  private static void addDependencyInformation(Set<Dependency> allPackagesFromFileSets, ContentPackageFile pkg) {
+    allPackagesFromFileSets.add(new Dependency(pkg.getGroup(), pkg.getName(), VersionRange.fromString(pkg.getVersion())));
   }
 
   public String getGroupName() {

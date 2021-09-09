@@ -31,6 +31,13 @@ roles:
       created: '2021-06-09T07:05:54.784Z', description: Package containing an oak index definition for 'rep:ACL' nodetypes. This speeds up the performance of the Access Control Tool.,
       group: Netcentric, groupId: biz.netcentric.cq.tools.accesscontroltool, name: accesscontroltool-oakindex-package,
       packageType: application, requiresRoot: false, version: 3.0.0}
+  - path: packages/core.wcm.components.all-2.17.0.zip
+    postProcessors: [aem-contentpackage-properties]
+    aemContentPackageProperties: {allowIndexDefinitions: false, artifactId: core.wcm.components.all,
+      cloudManagerTarget: none, created: '2021-06-16T21:09:53.868Z', description: A
+        set of standardized components for AEM 6.3+ that can be used to speed up development
+        of websites., group: adobe/cq60, groupId: com.adobe.cq, name: core.wcm.components.all,
+      packageType: container, requiresRoot: false, version: 2.17.0}
   - path: packages/aem-cms-author-replicationagents.zip
     postProcessors: [aem-contentpackage, aem-contentpackage-properties]
     aemContentPackageProperties:

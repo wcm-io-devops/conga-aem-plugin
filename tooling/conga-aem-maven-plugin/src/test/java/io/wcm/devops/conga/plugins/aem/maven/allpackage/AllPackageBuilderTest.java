@@ -96,12 +96,19 @@ class AllPackageBuilderTest {
       File applicationInstallDir = new File(applicationDir, "install" + runmodeSuffix);
       assertFiles(applicationInstallDir, "accesscontroltool-apps-package" + runmodeSuffix + "-3.0.0.zip",
           "accesscontroltool-oakindex-package" + runmodeSuffix + "-3.0.0.zip",
+          "core.wcm.components.content" + runmodeSuffix + "-2.17.0.zip",
+          "core.wcm.components.extensions.amp.content" + runmodeSuffix + "-2.17.0.zip",
           "acs-aem-commons-ui.apps" + runmodeSuffix + "-4.10.0.zip",
           "aem-cms-system-config" + runmodeSuffix + ".zip");
       assertNameDependencies(applicationInstallDir, "accesscontroltool-apps-package" + runmodeSuffix + "-3.0.0.zip",
           "accesscontroltool-apps-package" + runmodeSuffix);
       assertNameDependencies(applicationInstallDir, "accesscontroltool-oakindex-package" + runmodeSuffix + "-3.0.0.zip",
           "accesscontroltool-oakindex-package" + runmodeSuffix);
+      assertNameDependencies(applicationInstallDir, "core.wcm.components.content" + runmodeSuffix + "-2.17.0.zip",
+          "core.wcm.components.content" + runmodeSuffix,
+          "day/cq60/product:cq-platform-content:1.3.248");
+      assertNameDependencies(applicationInstallDir, "core.wcm.components.extensions.amp.content" + runmodeSuffix + "-2.17.0.zip",
+          "core.wcm.components.extensions.amp.content" + runmodeSuffix);
       assertNameDependencies(applicationInstallDir, "acs-aem-commons-ui.apps" + runmodeSuffix + "-4.10.0.zip",
           "acs-aem-commons-ui.apps" + runmodeSuffix,
           "day/cq60/product:cq-content:6.3.64");
@@ -120,8 +127,7 @@ class AllPackageBuilderTest {
           "aem-cms-author-replicationagents" + runmodeSuffix + ".zip",
           "wcm-io-samples-sample-content" + runmodeSuffix + "-1.3.1-SNAPSHOT.zip");
       assertNameDependencies(contentInstallDir, "acs-aem-commons-ui.content" + runmodeSuffix + "-4.10.0.zip",
-          "acs-aem-commons-ui.content" + runmodeSuffix,
-          "adobe/consulting:acs-aem-commons-ui.apps:4.10.0");
+          "acs-aem-commons-ui.content" + runmodeSuffix);
       assertNameDependencies(contentInstallDir, "aem-cms-author-replicationagents" + runmodeSuffix + ".zip",
           "aem-cms-author-replicationagents" + runmodeSuffix);
       assertNameDependencies(contentInstallDir, "wcm-io-samples-sample-content" + runmodeSuffix + "-1.3.1-SNAPSHOT.zip",
@@ -134,10 +140,16 @@ class AllPackageBuilderTest {
     for (String runmodeSuffix : runmodeSuffixes) {
       File containerInstallDir = new File(containerDir, "install" + runmodeSuffix);
       assertFiles(containerInstallDir, "accesscontroltool-package" + runmodeSuffix + "-3.0.0.zip",
+          "core.wcm.components.all" + runmodeSuffix + "-2.17.0.zip",
+          "core.wcm.components.config" + runmodeSuffix + "-2.17.0.zip",
           "wcm-io-samples-aem-cms-config" + runmodeSuffix + ".zip",
           "wcm-io-samples-complete" + runmodeSuffix + "-1.3.1-SNAPSHOT.zip");
       assertNameDependencies(containerInstallDir, "accesscontroltool-package" + runmodeSuffix + "-3.0.0.zip",
           "accesscontroltool-package" + runmodeSuffix);
+      assertNameDependencies(containerInstallDir, "core.wcm.components.all" + runmodeSuffix + "-2.17.0.zip",
+          "core.wcm.components.all" + runmodeSuffix);
+      assertNameDependencies(containerInstallDir, "core.wcm.components.config" + runmodeSuffix + "-2.17.0.zip",
+          "core.wcm.components.config" + runmodeSuffix);
       assertNameDependencies(containerInstallDir, "wcm-io-samples-aem-cms-config" + runmodeSuffix + ".zip",
           "wcm-io-samples-aem-cms-config" + runmodeSuffix);
       assertNameDependencies(containerInstallDir, "wcm-io-samples-complete" + runmodeSuffix + "-1.3.1-SNAPSHOT.zip",
@@ -168,6 +180,8 @@ class AllPackageBuilderTest {
       File applicationInstallDir = new File(applicationDir, "install" + runmodeSuffix);
       assertFiles(applicationInstallDir, "accesscontroltool-apps-package" + runmodeSuffix + "-3.0.0.zip",
           "accesscontroltool-oakindex-package" + runmodeSuffix + "-3.0.0.zip",
+          "core.wcm.components.content" + runmodeSuffix + "-2.17.0.zip",
+          "core.wcm.components.extensions.amp.content" + runmodeSuffix + "-2.17.0.zip",
           "acs-aem-commons-ui.apps" + runmodeSuffix + "-4.10.0.zip",
           "aem-cms-system-config" + runmodeSuffix + ".zip");
       assertNameDependencies(applicationInstallDir, "accesscontroltool-apps-package" + runmodeSuffix + "-3.0.0.zip",
@@ -176,6 +190,12 @@ class AllPackageBuilderTest {
       assertNameDependencies(applicationInstallDir, "accesscontroltool-oakindex-package" + runmodeSuffix + "-3.0.0.zip",
           "accesscontroltool-oakindex-package" + runmodeSuffix,
           "Netcentric:accesscontroltool-package" + runmodeSuffix + ":3.0.0");
+      assertNameDependencies(applicationInstallDir, "core.wcm.components.content" + runmodeSuffix + "-2.17.0.zip",
+          "core.wcm.components.content" + runmodeSuffix,
+          "day/cq60/product:cq-platform-content:1.3.248,Netcentric:accesscontroltool-oakindex-package" + runmodeSuffix + ":3.0.0");
+      assertNameDependencies(applicationInstallDir, "core.wcm.components.extensions.amp.content" + runmodeSuffix + "-2.17.0.zip",
+          "core.wcm.components.extensions.amp.content" + runmodeSuffix,
+          "Netcentric:accesscontroltool-oakindex-package" + runmodeSuffix + ":3.0.0");
       assertNameDependencies(applicationInstallDir, "acs-aem-commons-ui.apps" + runmodeSuffix + "-4.10.0.zip",
           "acs-aem-commons-ui.apps" + runmodeSuffix,
           "day/cq60/product:cq-content:6.3.64");
@@ -199,7 +219,7 @@ class AllPackageBuilderTest {
           "adobe/consulting:acs-aem-commons-ui.apps" + runmodeSuffix + ":4.10.0");
       assertNameDependencies(contentInstallDir, "aem-cms-author-replicationagents" + runmodeSuffix + ".zip",
           "aem-cms-author-replicationagents" + runmodeSuffix,
-          "Netcentric:accesscontroltool-oakindex-package" + runmodeSuffix + ":3.0.0");
+          "adobe/cq60:core.wcm.components.all" + runmodeSuffix + ":2.17.0");
       assertNameDependencies(contentInstallDir, "wcm-io-samples-sample-content" + runmodeSuffix + "-1.3.1-SNAPSHOT.zip",
           "wcm-io-samples-sample-content" + runmodeSuffix,
           "wcm-io-samples:wcm-io-samples-complete" + runmodeSuffix + ":1.3.1-SNAPSHOT");
@@ -211,11 +231,19 @@ class AllPackageBuilderTest {
     for (String runmodeSuffix : runmodeSuffixes) {
       File containerInstallDir = new File(containerDir, "install" + runmodeSuffix);
       assertFiles(containerInstallDir, "accesscontroltool-package" + runmodeSuffix + "-3.0.0.zip",
+          "core.wcm.components.all" + runmodeSuffix + "-2.17.0.zip",
+          "core.wcm.components.config" + runmodeSuffix + "-2.17.0.zip",
           "wcm-io-samples-aem-cms-config" + runmodeSuffix + ".zip",
           "wcm-io-samples-complete" + runmodeSuffix + "-1.3.1-SNAPSHOT.zip");
       assertNameDependencies(containerInstallDir, "accesscontroltool-package" + runmodeSuffix + "-3.0.0.zip",
           "accesscontroltool-package" + runmodeSuffix,
           "adobe/consulting:acs-aem-commons-ui.content" + runmodeSuffix + ":4.10.0");
+      assertNameDependencies(containerInstallDir, "core.wcm.components.all" + runmodeSuffix + "-2.17.0.zip",
+          "core.wcm.components.all" + runmodeSuffix,
+          "Netcentric:accesscontroltool-oakindex-package" + runmodeSuffix + ":3.0.0");
+      assertNameDependencies(containerInstallDir, "core.wcm.components.config" + runmodeSuffix + "-2.17.0.zip",
+          "core.wcm.components.config" + runmodeSuffix,
+          "Netcentric:accesscontroltool-oakindex-package" + runmodeSuffix + ":3.0.0");
       assertNameDependencies(containerInstallDir, "wcm-io-samples-aem-cms-config" + runmodeSuffix + ".zip",
           "wcm-io-samples-aem-cms-config" + runmodeSuffix,
           "wcm-io-samples:aem-cms-system-config" + runmodeSuffix + ":1.3.1-SNAPSHOT");
@@ -248,6 +276,8 @@ class AllPackageBuilderTest {
       File applicationInstallDir = new File(applicationDir, "install" + runmodeSuffix);
       assertFiles(applicationInstallDir, "accesscontroltool-apps-package" + runmodeSuffix + "-3.0.0.zip",
           "accesscontroltool-oakindex-package" + runmodeSuffix + "-3.0.0.zip",
+          "core.wcm.components.content" + runmodeSuffix + "-2.17.0.zip",
+          "core.wcm.components.extensions.amp.content" + runmodeSuffix + "-2.17.0.zip",
           "acs-aem-commons-ui.apps" + runmodeSuffix + "-4.10.0.zip",
           "aem-cms-system-config" + runmodeSuffix + ".zip");
       assertNameDependencies(applicationInstallDir, "accesscontroltool-apps-package" + runmodeSuffix + "-3.0.0.zip",
@@ -256,6 +286,12 @@ class AllPackageBuilderTest {
       assertNameDependencies(applicationInstallDir, "accesscontroltool-oakindex-package" + runmodeSuffix + "-3.0.0.zip",
           "accesscontroltool-oakindex-package" + runmodeSuffix,
           "Netcentric:accesscontroltool-package" + runmodeSuffix + ":3.0.0");
+      assertNameDependencies(applicationInstallDir, "core.wcm.components.content" + runmodeSuffix + "-2.17.0.zip",
+          "core.wcm.components.content" + runmodeSuffix,
+          "day/cq60/product:cq-platform-content:1.3.248,Netcentric:accesscontroltool-oakindex-package" + runmodeSuffix + ":3.0.0");
+      assertNameDependencies(applicationInstallDir, "core.wcm.components.extensions.amp.content" + runmodeSuffix + "-2.17.0.zip",
+          "core.wcm.components.extensions.amp.content" + runmodeSuffix,
+          "Netcentric:accesscontroltool-oakindex-package" + runmodeSuffix + ":3.0.0");
       assertNameDependencies(applicationInstallDir, "acs-aem-commons-ui.apps" + runmodeSuffix + "-4.10.0.zip",
           "acs-aem-commons-ui.apps" + runmodeSuffix,
           "day/cq60/product:cq-content:6.3.64");
@@ -263,7 +299,7 @@ class AllPackageBuilderTest {
           "aem-cms-system-config" + runmodeSuffix,
           "day/cq60/product:cq-ui-wcm-editor-content:1.1.224",
           "adobe/cq/product:cq-remotedam-client-ui-components:1.1.6",
-          "Netcentric:accesscontroltool-oakindex-package" + runmodeSuffix + ":3.0.0");
+          "adobe/cq60:core.wcm.components.all" + runmodeSuffix + ":2.17.0");
     }
 
     File contentDir = new File(appsDir, "content");
@@ -290,11 +326,19 @@ class AllPackageBuilderTest {
     for (String runmodeSuffix : runmodeSuffixes) {
       File containerInstallDir = new File(containerDir, "install" + runmodeSuffix);
       assertFiles(containerInstallDir, "accesscontroltool-package" + runmodeSuffix + "-3.0.0.zip",
+          "core.wcm.components.all" + runmodeSuffix + "-2.17.0.zip",
+          "core.wcm.components.config" + runmodeSuffix + "-2.17.0.zip",
           "wcm-io-samples-aem-cms-config" + runmodeSuffix + ".zip",
           "wcm-io-samples-complete" + runmodeSuffix + "-1.3.1-SNAPSHOT.zip");
       assertNameDependencies(containerInstallDir, "accesscontroltool-package" + runmodeSuffix + "-3.0.0.zip",
           "accesscontroltool-package" + runmodeSuffix,
           "adobe/consulting:acs-aem-commons-ui.apps" + runmodeSuffix + ":4.10.0");
+      assertNameDependencies(containerInstallDir, "core.wcm.components.all" + runmodeSuffix + "-2.17.0.zip",
+          "core.wcm.components.all" + runmodeSuffix,
+          "Netcentric:accesscontroltool-oakindex-package" + runmodeSuffix + ":3.0.0");
+      assertNameDependencies(containerInstallDir, "core.wcm.components.config" + runmodeSuffix + "-2.17.0.zip",
+          "core.wcm.components.config" + runmodeSuffix,
+          "Netcentric:accesscontroltool-oakindex-package" + runmodeSuffix + ":3.0.0");
       assertNameDependencies(containerInstallDir, "wcm-io-samples-aem-cms-config" + runmodeSuffix + ".zip",
           "wcm-io-samples-aem-cms-config" + runmodeSuffix,
           "wcm-io-samples:aem-cms-system-config" + runmodeSuffix + ":1.3.1-SNAPSHOT");
@@ -327,6 +371,8 @@ class AllPackageBuilderTest {
       File applicationInstallDir = new File(applicationDir, "install" + runmodeSuffix);
       assertFiles(applicationInstallDir, "accesscontroltool-apps-package" + runmodeSuffix + "-3.0.0.zip",
           "accesscontroltool-oakindex-package" + runmodeSuffix + "-3.0.0.zip",
+          "core.wcm.components.content" + runmodeSuffix + "-2.17.0.zip",
+          "core.wcm.components.extensions.amp.content" + runmodeSuffix + "-2.17.0.zip",
           "acs-aem-commons-ui.apps" + runmodeSuffix + "-4.10.0.zip",
           "aem-cms-system-config" + runmodeSuffix + ".zip");
       assertNameDependencies(applicationInstallDir, "accesscontroltool-apps-package" + runmodeSuffix + "-3.0.0.zip",
@@ -335,6 +381,12 @@ class AllPackageBuilderTest {
       assertNameDependencies(applicationInstallDir, "accesscontroltool-oakindex-package" + runmodeSuffix + "-3.0.0.zip",
           "accesscontroltool-oakindex-package" + runmodeSuffix,
           "Netcentric:accesscontroltool-package" + runmodeSuffix + ":3.0.0");
+      assertNameDependencies(applicationInstallDir, "core.wcm.components.content" + runmodeSuffix + "-2.17.0.zip",
+          "core.wcm.components.content" + runmodeSuffix,
+          "day/cq60/product:cq-platform-content:1.3.248,Netcentric:accesscontroltool-oakindex-package" + runmodeSuffix + ":3.0.0");
+      assertNameDependencies(applicationInstallDir, "core.wcm.components.extensions.amp.content" + runmodeSuffix + "-2.17.0.zip",
+          "core.wcm.components.extensions.amp.content" + runmodeSuffix,
+          "Netcentric:accesscontroltool-oakindex-package" + runmodeSuffix + ":3.0.0");
       assertNameDependencies(applicationInstallDir, "acs-aem-commons-ui.apps" + runmodeSuffix + "-4.10.0.zip",
           "acs-aem-commons-ui.apps" + runmodeSuffix,
           "day/cq60/product:cq-content:6.3.64");
@@ -342,7 +394,7 @@ class AllPackageBuilderTest {
           "aem-cms-system-config" + runmodeSuffix,
           "day/cq60/product:cq-ui-wcm-editor-content:1.1.224",
           "adobe/cq/product:cq-remotedam-client-ui-components:1.1.6",
-          "Netcentric:accesscontroltool-oakindex-package" + runmodeSuffix + ":3.0.0");
+          "adobe/cq60:core.wcm.components.all" + runmodeSuffix + ":2.17.0");
     }
 
     File contentDir = new File(appsDir, "content");
@@ -367,11 +419,19 @@ class AllPackageBuilderTest {
     for (String runmodeSuffix : runmodeSuffixes) {
       File containerInstallDir = new File(containerDir, "install" + runmodeSuffix);
       assertFiles(containerInstallDir, "accesscontroltool-package" + runmodeSuffix + "-3.0.0.zip",
+          "core.wcm.components.all" + runmodeSuffix + "-2.17.0.zip",
+          "core.wcm.components.config" + runmodeSuffix + "-2.17.0.zip",
           "wcm-io-samples-aem-cms-config" + runmodeSuffix + ".zip",
           "wcm-io-samples-complete" + runmodeSuffix + "-1.3.1-SNAPSHOT.zip");
       assertNameDependencies(containerInstallDir, "accesscontroltool-package" + runmodeSuffix + "-3.0.0.zip",
           "accesscontroltool-package" + runmodeSuffix,
           "adobe/consulting:acs-aem-commons-ui.apps" + runmodeSuffix + ":4.10.0");
+      assertNameDependencies(containerInstallDir, "core.wcm.components.all" + runmodeSuffix + "-2.17.0.zip",
+          "core.wcm.components.all" + runmodeSuffix,
+          "Netcentric:accesscontroltool-oakindex-package" + runmodeSuffix + ":3.0.0");
+      assertNameDependencies(containerInstallDir, "core.wcm.components.config" + runmodeSuffix + "-2.17.0.zip",
+          "core.wcm.components.config" + runmodeSuffix,
+          "Netcentric:accesscontroltool-oakindex-package" + runmodeSuffix + ":3.0.0");
       assertNameDependencies(containerInstallDir, "wcm-io-samples-aem-cms-config" + runmodeSuffix + ".zip",
           "wcm-io-samples-aem-cms-config" + runmodeSuffix,
           "wcm-io-samples:aem-cms-system-config" + runmodeSuffix + ":1.3.1-SNAPSHOT");
