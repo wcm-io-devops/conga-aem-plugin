@@ -27,6 +27,12 @@
       <action type="update" dev="sseifert">
         conga-aem-maven-plugin:cloudmanager-all-package: Ensure dependencies of sub packages are managed as well.
       </action>
+      <action type="update" dev="sseifert">
+        Content Package Validator: Update to filevault-package-maven-plugin 1.1.8.
+      </action>
+      <action type="update" dev="sseifert">
+        Content Package Validator: Load default node types for validation from biz.netcentric.aem:aem-nodetypes and io.wcm.tooling.nodetypes:io.wcm.tooling.nodetypes.wcmio.
+      </action>
     </release>
 
     <release version="1.14.6" date="2021-06-27">

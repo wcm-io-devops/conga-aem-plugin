@@ -87,7 +87,7 @@
       <dependency>
         <groupId>org.apache.jackrabbit</groupId>
         <artifactId>filevault-package-maven-plugin</artifactId>
-        <version>1.1.2</version>
+        <version>1.1.8</version>
       </dependency>
   
       <dependency>
@@ -152,6 +152,18 @@
         <groupId>org.apache.jackrabbit</groupId>
         <artifactId>oak-commons</artifactId>
         <version>1.8.0</version>
+      </dependency>
+
+      <!-- Node type validation -->
+      <dependency>
+        <groupId>biz.netcentric.aem</groupId>
+        <artifactId>aem-nodetypes</artifactId>
+        <version>2020.11.0</version>
+      </dependency>
+      <dependency>
+        <groupId>io.wcm.tooling.nodetypes</groupId>
+        <artifactId>io.wcm.tooling.nodetypes.wcmio</artifactId>
+        <version>1.0.0</version>
       </dependency>
 
       <!-- Testing -->
