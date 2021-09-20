@@ -1,0 +1,313 @@
+{
+  "jcr:primaryType": "nt:unstructured",
+  "test-index": {
+    "jcr:primaryType": "oak:QueryIndexDefinition",
+    "compatVersion": 2,
+    "includedPaths": ["/"],
+    "queryPaths": ["/content"],
+    "type": "lucene",
+    "async": "async",
+    "evaluatePathRestrictions": true,
+    "reindex": true,
+    "aggregates": {
+      "jcr:primaryType": "nt:unstructured",
+      "cq:Page": {
+        "jcr:primaryType": "nt:unstructured",
+        "includePageContent": {
+          "jcr:primaryType": "nt:unstructured",
+          "relativeNode": true,
+          "path": "jcr:content"
+        }
+      },
+      "cq:PageContent": {
+        "jcr:primaryType": "nt:unstructured",
+        "includeLevel0Properties": {
+          "jcr:primaryType": "nt:unstructured",
+          "path": "*"
+        },
+        "includeLevel1Properties": {
+          "jcr:primaryType": "nt:unstructured",
+          "path": "*/*"
+        },
+        "includeLevel2Properties": {
+          "jcr:primaryType": "nt:unstructured",
+          "path": "*/*/*"
+        },
+        "includeLevel3Properties": {
+          "jcr:primaryType": "nt:unstructured",
+          "path": "*/*/*/*"
+        },
+        "includeLevel4Properties": {
+          "jcr:primaryType": "nt:unstructured",
+          "path": "*/*/*/*/*"
+        },
+        "includeLevel5Properties": {
+          "jcr:primaryType": "nt:unstructured",
+          "path": "*/*/*/*/*/*"
+        },
+        "includeLevel6Properties": {
+          "jcr:primaryType": "nt:unstructured",
+          "path": "*/*/*/*/*/*/*"
+        },
+        "includeLevel7Properties": {
+          "jcr:primaryType": "nt:unstructured",
+          "path": "*/*/*/*/*/*/*/*"
+        },
+        "includeLevel8Properties": {
+          "jcr:primaryType": "nt:unstructured",
+          "path": "*/*/*/*/*/*/*/*/*"
+        },
+        "includeLevel9Properties": {
+          "jcr:primaryType": "nt:unstructured",
+          "path": "*/*/*/*/*/*/*/*/*/*"
+        },
+        "includeLevel10Properties": {
+          "jcr:primaryType": "nt:unstructured",
+          "path": "*/*/*/*/*/*/*/*/*/*/*"
+        },
+        "includeLevel11Properties": {
+          "jcr:primaryType": "nt:unstructured",
+          "path": "*/*/*/*/*/*/*/*/*/*/*/*"
+        },
+        "includeLevel12Properties": {
+          "jcr:primaryType": "nt:unstructured",
+          "path": "*/*/*/*/*/*/*/*/*/*/*/*/*"
+        }
+      }
+    },
+    "facets": {
+      "jcr:primaryType": "nt:unstructured",
+      "secure": "insecure",
+      "jcr:content": {
+        "jcr:primaryType": "nt:unstructured",
+        "multivalued": true,
+        "cq:tags": {
+          "jcr:primaryType": "nt:unstructured",
+          "multivalued": true
+        },
+        "metadata": {
+          "jcr:primaryType": "nt:unstructured",
+          "multivalued": true,
+          "cq:tags": {
+            "jcr:primaryType": "nt:unstructured",
+            "multivalued": true
+          }
+        }
+      }
+    },
+    "indexRules": {
+      "jcr:primaryType": "nt:unstructured",
+      "cq:Page": {
+        "jcr:primaryType": "nt:unstructured",
+        "properties": {
+          "jcr:primaryType": "nt:unstructured",
+          "cqTemplate": {
+            "jcr:primaryType": "nt:unstructured",
+            "propertyIndex": true,
+            "name": "jcr:content/cq:template",
+            "type": "String"
+          },
+          "cqTags": {
+            "jcr:primaryType": "nt:unstructured",
+            "facets": true,
+            "propertyIndex": true,
+            "name": "jcr:content/cq:tags",
+            "type": "String"
+          },
+          "cqLastModified": {
+            "jcr:primaryType": "nt:unstructured",
+            "ordered": true,
+            "propertyIndex": true,
+            "name": "jcr:content/cq:lastModified",
+            "type": "Date"
+          },
+          "jcrLastModified": {
+            "jcr:primaryType": "nt:unstructured",
+            "ordered": true,
+            "propertyIndex": true,
+            "name": "jcr:content/jcr:lastModified",
+            "type": "Date"
+          },
+          "jcrCreated": {
+            "jcr:primaryType": "nt:unstructured",
+            "ordered": true,
+            "propertyIndex": true,
+            "name": "jcr:content/jcr:created",
+            "type": "Date"
+          },
+          "jcrTitle": {
+            "jcr:primaryType": "nt:unstructured",
+            "nodeScopeIndex": true,
+            "propertyIndex": false,
+            "analyzed": true,
+            "useInExcerpt": true,
+            "name": "jcr:title",
+            "type": "String"
+          },
+          "jcrDescription": {
+            "jcr:primaryType": "nt:unstructured",
+            "nodeScopeIndex": true,
+            "propertyIndex": false,
+            "analyzed": true,
+            "useInExcerpt": true,
+            "name": "jcr:description",
+            "type": "String"
+          },
+          "liveSyncConfigPrimaryType": {
+            "jcr:primaryType": "nt:unstructured",
+            "propertyIndex": true,
+            "name": "jcr:content/cq:LiveSyncConfig/jcr:primaryType",
+            "type": "Name"
+          },
+          "textLevel0": {
+            "jcr:primaryType": "nt:unstructured",
+            "nodeScopeIndex": true,
+            "propertyIndex": false,
+            "analyzed": true,
+            "useInExcerpt": true,
+            "name": "jcr:content/root/content/text",
+            "type": "String"
+          },
+          "textLevel1": {
+            "jcr:primaryType": "nt:unstructured",
+            "nodeScopeIndex": true,
+            "propertyIndex": false,
+            "analyzed": true,
+            "useInExcerpt": true,
+            "name": "jcr:content/root/content/*/text",
+            "type": "String",
+            "isRegex": true
+          },
+          "textLevel2": {
+            "jcr:primaryType": "nt:unstructured",
+            "nodeScopeIndex": true,
+            "propertyIndex": false,
+            "analyzed": true,
+            "useInExcerpt": true,
+            "name": "jcr:content/root/content/*/*/text",
+            "type": "String",
+            "isRegex": true
+          },
+          "textLevel3": {
+            "jcr:primaryType": "nt:unstructured",
+            "nodeScopeIndex": true,
+            "propertyIndex": false,
+            "analyzed": true,
+            "useInExcerpt": true,
+            "name": "jcr:content/root/content/*/*/*/text",
+            "type": "String",
+            "isRegex": true
+          },
+          "textLevel4": {
+            "jcr:primaryType": "nt:unstructured",
+            "nodeScopeIndex": true,
+            "propertyIndex": false,
+            "analyzed": true,
+            "useInExcerpt": true,
+            "name": "jcr:content/root/content/*/*/*/*/text",
+            "type": "String",
+            "isRegex": true
+          },
+          "articleDate": {
+            "jcr:primaryType": "nt:unstructured",
+            "ordered": true,
+            "propertyIndex": true,
+            "name": "jcr:content/articleDate",
+            "type": "Date"
+          },
+           "articleAuthor": {
+            "jcr:primaryType": "nt:unstructured",
+            "ordered": true,
+            "propertyIndex": true,
+            "name": "jcr:content/articleAuthor",
+            "type": "String"
+          },
+          "browserTitle": {
+            "jcr:primaryType": "nt:unstructured",
+            "propertyIndex": true,
+            "name": "jcr:content/browserTitle",
+            "type": "String"
+          },
+          "subTitle": {
+            "jcr:primaryType": "nt:unstructured",
+            "propertyIndex": true,
+            "name": "jcr:content/subTitle",
+            "type": "String"
+          },
+          "hideInSearch": {
+            "jcr:primaryType": "nt:unstructured",
+            "propertyIndex": true,
+            "name": "jcr:content/hideInSearch",
+            "type": "Boolean"
+          },
+          "isgrouppage": {
+            "jcr:primaryType": "nt:unstructured",
+            "propertyIndex": true,
+            "name": "jcr:content/isgrouppage",
+            "type": "Boolean"
+          }
+        }
+      },
+      "nt:hierarchyNode": {
+        "jcr:primaryType": "nt:unstructured",
+        "properties": {
+          "jcr:primaryType": "nt:unstructured",
+          "dcFormat": {
+            "jcr:primaryType": "nt:unstructured",
+            "propertyIndex": true,
+            "name": "jcr:content/metadata/dc:format",
+            "type": "String"
+          },
+          "cqTags": {
+            "jcr:primaryType": "nt:unstructured",
+            "nodeScopeIndex": true,
+            "facets": true,
+            "propertyIndex": true,
+            "useInSpellcheck": true,
+            "name": "jcr:content/metadata/cq:tags"
+          },
+          "jcrLastModified": {
+            "jcr:primaryType": "nt:unstructured",
+            "ordered": true,
+            "propertyIndex": true,
+            "name": "jcr:content/jcr:lastModified",
+            "type": "Date"
+          },
+          "jcrCreated": {
+            "jcr:primaryType": "nt:unstructured",
+            "ordered": true,
+            "propertyIndex": true,
+            "name": "jcr:content/jcr:created",
+            "type": "Date"
+          }
+        }
+      }
+    },
+    "analyzers": {
+      "jcr:primaryType": "nt:unstructured",
+      "default": {
+        "jcr:primaryType": "nt:unstructured",
+        "charFilters": {
+          "jcr:primaryType": "nt:unstructured",
+          "HTMLStrip": {
+            "jcr:primaryType": "nt:unstructured"
+          },
+          "Mapping": {
+            "jcr:primaryType": "nt:unstructured"
+          }
+        },
+        "filters": {
+          "jcr:primaryType": "nt:unstructured",
+          "LowerCase": {
+            "jcr:primaryType": "nt:unstructured"
+          }
+        },
+        "tokenizer": {
+          "jcr:primaryType": "nt:unstructured",
+          "name": "Standard"
+        }
+      }
+    }
+  }
+
+}

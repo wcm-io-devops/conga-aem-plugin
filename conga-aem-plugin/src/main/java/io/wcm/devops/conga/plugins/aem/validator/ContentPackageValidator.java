@@ -35,6 +35,8 @@ import org.apache.jackrabbit.filevault.maven.packaging.ValidatorSettings;
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugin.MojoFailureException;
 
+import com.google.common.collect.ImmutableMap;
+
 import io.wcm.devops.conga.generator.spi.ImplicitApplyOptions;
 import io.wcm.devops.conga.generator.spi.ValidationException;
 import io.wcm.devops.conga.generator.spi.ValidatorPlugin;
@@ -42,6 +44,7 @@ import io.wcm.devops.conga.generator.spi.context.FileContext;
 import io.wcm.devops.conga.generator.spi.context.ValidatorContext;
 import io.wcm.devops.conga.generator.util.FileUtil;
 import io.wcm.devops.conga.model.util.MapExpander;
+import io.wcm.devops.conga.model.util.MapMerger;
 import io.wcm.devops.conga.tooling.maven.plugin.util.MavenContext;
 import io.wcm.tooling.commons.packmgr.util.ContentPackageProperties;
 
@@ -58,6 +61,10 @@ public class ContentPackageValidator implements ValidatorPlugin {
   private static final String FILE_EXTENSION = "zip";
 
   private static final String OPTION_VALIDATORS_SETTINGS = "contentPackage.validatorsSettings";
+
+  // apply default validation for AEM and wcm.io node types
+  private static final Map<String, Object> DEFAULT_VALIDATORS_SETTINGS = ImmutableMap.of("jackrabbit-nodetypes",
+      ImmutableMap.of("options", ImmutableMap.of("cnds", "tccl:aem.cnd,tccl:wcmio.cnd")));
 
   @Override
   public String getName() {
@@ -114,9 +121,11 @@ public class ContentPackageValidator implements ValidatorPlugin {
     setProperty(mojo, "repositorySystem", mavenContext.getRepositorySystem());
     setProperty(mojo, "resolutionErrorHandler", mavenContext.getResolutionErrorHandler());
     setProperty(mojo, "buildContext", mavenContext.getBuildContext());
+    setProperty(mojo, "attachedArtifacts", Collections.emptyList());
 
     Object validatorsSettings = MapExpander.getDeep(context.getOptions(), OPTION_VALIDATORS_SETTINGS);
-    setProperty(mojo, "validatorsSettings", toValidatorsSettings(toMap(validatorsSettings)));
+    Map<String,Object> validatorSettingsMap = MapMerger.merge(toMap(validatorsSettings), DEFAULT_VALIDATORS_SETTINGS);
+    setProperty(mojo, "validatorsSettings", toValidatorsSettings(validatorSettingsMap));
 
     mojo.execute();
   }

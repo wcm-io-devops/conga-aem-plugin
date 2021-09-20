@@ -82,6 +82,24 @@ files:
       filters:
       - filter: /etc/replication/agents.author
 
+# Oak Index
+- file: aem-cms-oak-index.json
+  dir: packages
+  template: aem-cms-oak-index.json.hbs
+  postProcessors:
+    - aem-contentpackage
+  postProcessorOptions:
+    contentPackage:
+      name: schindler-aem-aem-cms-oak-index
+      packageType: application
+      rootPath: /oak:index
+      allowIndexDefinitions: true
+  validatorOptions:
+    contentPackage.validatorsSettings:
+      jackrabbit-packagetype:
+        options:
+          immutableRootNodeNames: apps,libs,oak:index
+
 # Download AEM content package and extract properties
 - url: mvn:io.wcm/io.wcm.caconfig.editor.package//zip
   dir: packages
