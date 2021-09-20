@@ -23,7 +23,7 @@
     xsi:schemaLocation="http://maven.apache.org/changes/1.0.0 https://maven.apache.org/plugins/maven-changes-plugin/xsd/changes-1.0.0.xsd">
   <body>
 
-    <release version="1.15.0" date="2021-09-20">
+    <release version="2.15.0" date="2021-09-20">
       <action type="add" dev="sseifert">
         Content Package Validator: Load default node types for validation from biz.netcentric.aem:aem-nodetypes and io.wcm.tooling.nodetypes:io.wcm.tooling.nodetypes.wcmio.
       </action>
@@ -33,6 +33,9 @@
       <action type="update" dev="sseifert">
         conga-aem-maven-plugin:cloudmanager-all-package: Ensure dependencies of sub packages are managed as well.
       </action>
+      <action type="update" dev="sseifert"><![CDATA[
+        <i>PLEASE NOTE:</i> The release number was accidentially updated to 2.x - but the release is 100% backward compatible to the 1.x releases.
+      ]]></action>
     </release>
 
     <release version="1.14.6" date="2021-06-27">
