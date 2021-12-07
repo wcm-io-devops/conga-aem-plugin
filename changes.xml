@@ -33,6 +33,9 @@
       <action type="add" dev="sseifert">
         conga-aem-maven-plugin: Add jcl-over-slf4j bridge to be able to capture HTTP client debug messages with Maven debug logging.
       </action>
+      <action type="update" dev="sseifert">
+        Content Package Validator: Update to filevault-package-maven-plugin 1.2.2.
+      </action>
     </release>
 
     <release version="2.15.0" date="2021-09-20">
