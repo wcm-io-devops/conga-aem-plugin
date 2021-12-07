@@ -97,7 +97,7 @@ public final class InstallPackagesMojo extends AbstractContentPackageMojo {
       getLog().warn("No file found for installing.");
     }
     else {
-      PackageInstaller installer = new PackageInstaller(getPackageManagerProperties(), getLoggerWrapper());
+      PackageInstaller installer = new PackageInstaller(getPackageManagerProperties());
       installer.installFiles(items);
     }
   }
