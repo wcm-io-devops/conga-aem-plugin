@@ -24,8 +24,11 @@
   <body>
 
     <release version="2.15.2" date="not released">
-      <action type="update" dev="sseifert">
-        Update to latest CRX Package Manager Helper.
+      <action type="add" dev="sseifert">
+        conga-aem-maven-plugin: Add support for IMS/Auth 2 authentication for AEMaaCS (via oauth2AccessToken).
+      </action>
+      <action type="add" dev="sseifert">
+        conga-aem-maven-plugin: Add jcl-over-slf4j bridge to be able to capture HTTP client debug messages with Maven debug logging.
       </action>
     </release>
 

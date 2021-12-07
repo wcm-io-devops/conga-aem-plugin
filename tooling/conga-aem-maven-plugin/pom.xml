@@ -106,6 +106,13 @@
       <artifactId>io.wcm.tooling.commons.crx-packmgr-helper</artifactId>
       <scope>compile</scope>
     </dependency>
+    <!-- Add logging bridge to capture debug logging from Apache HTTP client 4 -->
+    <dependency>
+      <groupId>org.slf4j</groupId>
+      <artifactId>jcl-over-slf4j</artifactId>
+      <version>1.7.32</version>
+      <scope>compile</scope>
+    </dependency>
 
     <dependency>
       <groupId>org.slf4j</groupId>
