@@ -31,6 +31,9 @@
         conga-aem-maven-plugin: New configuration parameter packageManagerOutputLogLevel to allow to change log level for package manager output (which may get huge for big packages) from INFO to DEBUG.
       </action>
       <action type="add" dev="sseifert">
+        conga-aem-maven-plugin: Flag replicate allows to replicate a package to publish instance after uploading it to author instance.
+      </action>
+      <action type="add" dev="sseifert">
         conga-aem-maven-plugin: Add jcl-over-slf4j bridge to be able to capture HTTP client debug messages with Maven debug logging.
       </action>
       <action type="update" dev="sseifert">

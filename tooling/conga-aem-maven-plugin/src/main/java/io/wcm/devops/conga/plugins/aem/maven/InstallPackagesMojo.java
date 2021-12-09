@@ -76,6 +76,12 @@ public final class InstallPackagesMojo extends AbstractContentPackageMojo {
   @Parameter(property = "vault.delayAfterInstallSec")
   private Integer delayAfterInstallSec;
 
+  /**
+   * Replicate package(s) to publish instance after upload.
+   */
+  @Parameter(property = "vault.replicatePackage")
+  private boolean replicate;
+
   @Override
   public void execute() throws MojoExecutionException, MojoFailureException {
     if (isSkip()) {
@@ -88,18 +94,22 @@ public final class InstallPackagesMojo extends AbstractContentPackageMojo {
 
     getLog().info("Get AEM content packages from " + getCanonicalPath(nodeDirectory));
 
+    // collect files to install
     ModelParser modelParser = new ModelParser();
     List<PackageFile> items = modelParser.getContentPackagesForNode(nodeDirectory).stream()
         .map(this::toPackageFile)
         .collect(Collectors.toList());
 
+    // ensure any file exist
     if (items.isEmpty()) {
       getLog().warn("No file found for installing.");
+      return;
     }
-    else {
-      PackageInstaller installer = new PackageInstaller(getPackageManagerProperties());
-      installer.installFiles(items);
-    }
+
+    // install files
+    PackageInstaller installer = new PackageInstaller(getPackageManagerProperties());
+    installer.setReplicate(this.replicate);
+    installer.installFiles(items);
   }
 
   private PackageFile toPackageFile(ModelContentPackageFile item) {
