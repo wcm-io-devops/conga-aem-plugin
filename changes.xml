@@ -23,7 +23,25 @@
     xsi:schemaLocation="http://maven.apache.org/changes/1.0.0 https://maven.apache.org/plugins/maven-changes-plugin/xsd/changes-1.0.0.xsd">
   <body>
 
-    <release version="1.15.0" date="2021-09-20">
+    <release version="2.16.0" date="2021-12-13">
+      <action type="add" dev="sseifert">
+        conga-aem-maven-plugin: Add support for IMS/Auth 2 authentication for AEMaaCS (via oauth2AccessToken).
+      </action>
+      <action type="add" dev="sseifert" issue="WTOOL-71">
+        conga-aem-maven-plugin: New configuration parameter packageManagerOutputLogLevel to allow to change log level for package manager output (which may get huge for big packages) from INFO to DEBUG.
+      </action>
+      <action type="add" dev="sseifert">
+        conga-aem-maven-plugin: Flag replicate allows to replicate a package to publish instance after uploading it to author instance.
+      </action>
+      <action type="add" dev="sseifert">
+        conga-aem-maven-plugin: Add jcl-over-slf4j bridge to be able to capture HTTP client debug messages with Maven debug logging.
+      </action>
+      <action type="update" dev="sseifert">
+        Content Package Validator: Update to filevault-package-maven-plugin 1.2.2.
+      </action>
+    </release>
+
+    <release version="2.15.0" date="2021-09-20">
       <action type="add" dev="sseifert">
         Content Package Validator: Load default node types for validation from biz.netcentric.aem:aem-nodetypes and io.wcm.tooling.nodetypes:io.wcm.tooling.nodetypes.wcmio.
       </action>
@@ -33,6 +51,9 @@
       <action type="update" dev="sseifert">
         conga-aem-maven-plugin:cloudmanager-all-package: Ensure dependencies of sub packages are managed as well.
       </action>
+      <action type="update" dev="sseifert"><![CDATA[
+        <i>PLEASE NOTE:</i> The release number was accidentially updated to 2.x - but the release is 100% backward compatible to the 1.x releases.
+      ]]></action>
     </release>
 
     <release version="1.14.6" date="2021-06-27">
