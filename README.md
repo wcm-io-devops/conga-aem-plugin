@@ -1,7 +1,8 @@
 <img src="https://wcm.io/images/favicon-16@2x.png"/> CONGA Plugin for AEM
 ======
 [![Build](https://github.com/wcm-io-devops/conga-aem-plugin/workflows/Build/badge.svg?branch=develop)](https://github.com/wcm-io-devops/conga-aem-plugin/actions?query=workflow%3ABuild+branch%3Adevelop)
-[![Code Coverage](https://codecov.io/gh/wcm-io-devops/conga-aem-plugin/branch/develop/graph/badge.svg)](https://codecov.io/gh/wcm-io-devops/conga-aem-plugin)
+[![Maven Central](https://maven-badges.herokuapp.com/maven-central/io.wcm.devops.conga.plugins/io.wcm.devops.conga.plugins.aem/badge.svg)](https://maven-badges.herokuapp.com/maven-central/io.wcm.devops.conga.plugins/io.wcm.devops.conga.plugins.aem)
+[![Coverage](https://sonarcloud.io/api/project_badges/measure?project=wcm-io-devops_conga-aem-plugin&metric=coverage)](https://sonarcloud.io/summary/new_code?id=wcm-io-devops_conga-aem-plugin)
 
 Documentation: https://devops.wcm.io/conga/plugins/aem/<br/>
 Issues: https://wcm-io.atlassian.net/projects/WDCONGA<br/>
