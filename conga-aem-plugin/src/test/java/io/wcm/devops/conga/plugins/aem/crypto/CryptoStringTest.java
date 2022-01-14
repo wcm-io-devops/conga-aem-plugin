@@ -26,10 +26,10 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import org.junit.jupiter.api.Test;
 
-public class CryptoStringTest {
+class CryptoStringTest {
 
   @Test
-  public void testIsCryptoString() {
+  void testIsCryptoString() {
     assertTrue(CryptoString.isCryptoString("{abc}"));
 
     assertFalse(CryptoString.isCryptoString(null));
@@ -41,7 +41,7 @@ public class CryptoStringTest {
   }
 
   @Test
-  public void testConversion() {
+  void testConversion() {
     byte[] input = new byte[] { 0x01, 0x02, 0x03, 0x04, (byte)0x99, (byte)0xFF };
 
     String encrypted = CryptoString.toString(input);
@@ -53,28 +53,28 @@ public class CryptoStringTest {
 
 
   @Test
-  public void testToByteArrayNull() throws Exception {
+  void testToByteArrayNull() throws Exception {
     assertThrows(IllegalArgumentException.class, () -> {
       CryptoString.toByteArray(null);
     });
   }
 
   @Test
-  public void testToByteArrayIllegalString() throws Exception {
+  void testToByteArrayIllegalString() throws Exception {
     assertThrows(IllegalArgumentException.class, () -> {
       CryptoString.toByteArray("abc");
     });
   }
 
   @Test
-  public void testToStringNull() throws Exception {
+  void testToStringNull() throws Exception {
     assertThrows(IllegalArgumentException.class, () -> {
       CryptoString.toString(null);
     });
   }
 
   @Test
-  public void testToStringEmptyArray() throws Exception {
+  void testToStringEmptyArray() throws Exception {
     assertThrows(IllegalArgumentException.class, () -> {
       CryptoString.toString(new byte[0]);
     });

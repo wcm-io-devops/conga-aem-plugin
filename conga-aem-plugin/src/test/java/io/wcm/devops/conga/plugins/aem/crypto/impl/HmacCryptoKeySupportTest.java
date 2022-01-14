@@ -28,10 +28,10 @@ import org.junit.jupiter.api.Test;
 
 import io.wcm.devops.conga.plugins.aem.crypto.CryptoKeySupport;
 
-public class HmacCryptoKeySupportTest {
+class HmacCryptoKeySupportTest {
 
   @Test
-  public void testKeySupport() throws Exception {
+  void testKeySupport() throws Exception {
     CryptoKeySupport keysupport = new HmacCryptoKeySupport();
 
     Key generatedKey = keysupport.generateKey();

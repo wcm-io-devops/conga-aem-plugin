@@ -30,12 +30,12 @@ import io.wcm.devops.conga.generator.spi.ValidatorPlugin;
 import io.wcm.devops.conga.generator.spi.context.FileContext;
 import io.wcm.devops.conga.generator.util.PluginManagerImpl;
 
-public class ContentPackageValidatorTest {
+class ContentPackageValidatorTest {
 
   private ValidatorPlugin underTest;
 
   @BeforeEach
-  public void setUp() {
+  void setUp() {
     underTest = new PluginManagerImpl().get(ContentPackageValidator.NAME, ValidatorPlugin.class);
   }
 
@@ -43,7 +43,7 @@ public class ContentPackageValidatorTest {
    * We can only test the use case with package without packageType here, we have no maven context.
    */
   @Test
-  public void testContentPackageWithoutPackageType() throws Exception {
+  void testContentPackageWithoutPackageType() throws Exception {
     File file = new File(getClass().getResource("/package/example.zip").toURI());
     FileContext fileContext = new FileContext().file(file);
     assertTrue(underTest.accepts(fileContext, null));

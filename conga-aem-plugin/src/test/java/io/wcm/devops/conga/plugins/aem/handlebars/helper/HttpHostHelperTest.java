@@ -30,45 +30,45 @@ import org.junit.jupiter.api.Test;
 import io.wcm.devops.conga.generator.spi.handlebars.HelperPlugin;
 import io.wcm.devops.conga.generator.util.PluginManagerImpl;
 
-public class HttpHostHelperTest {
+class HttpHostHelperTest {
 
   private HelperPlugin<Object> helper;
 
   @SuppressWarnings("unchecked")
   @BeforeEach
-  public void setUp() {
+  void setUp() {
     helper = new PluginManagerImpl().get(HttpHostHelper.NAME, HelperPlugin.class);
   }
 
   @Test
-  public void testNull() throws Exception {
+  void testNull() throws Exception {
     Object httpHost = executeHelper(helper, null, new MockOptions());
     assertNull(httpHost);
   }
 
   @Test
-  public void testContextWithPort() throws Exception {
+  void testContextWithPort() throws Exception {
     Object httpHost = executeHelper(helper, "localhost:8080", new MockOptions());
     assertTrue(httpHost instanceof String);
     assertEquals("localhost:8080", httpHost);
   }
 
   @Test
-  public void testContextWithoutPort() throws Exception {
+  void testContextWithoutPort() throws Exception {
     Object httpHost = executeHelper(helper, "localhost", new MockOptions());
     assertTrue(httpHost instanceof String);
     assertEquals("localhost", httpHost);
   }
 
   @Test
-  public void testWithCustomPort() throws Exception {
+  void testWithCustomPort() throws Exception {
     Object httpHost = executeHelper(helper, "localhost", new MockOptions().withHash(AbstractHostHelper.HASH_OPTION_PORT, 8081));
     assertTrue(httpHost instanceof String);
     assertEquals("localhost:8081", httpHost);
   }
 
   @Test
-  public void testWithDefaultPort() throws Exception {
+  void testWithDefaultPort() throws Exception {
     Object httpHost = executeHelper(helper, "localhost", new MockOptions().withHash(AbstractHostHelper.HASH_OPTION_PORT, HttpHostHelper.DEFAULT_PORT));
     assertTrue(httpHost instanceof String);
     assertEquals("localhost", httpHost);

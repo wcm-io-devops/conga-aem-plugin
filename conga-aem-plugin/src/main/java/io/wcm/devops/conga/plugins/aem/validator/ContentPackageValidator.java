@@ -135,7 +135,8 @@ public class ContentPackageValidator implements ValidatorPlugin {
     setProperty(object, object.getClass(), propertyName, value);
   }
 
-  private void setProperty(Object object, Class clazz, String propertyName, Object value)
+  @SuppressWarnings("PMD.AvoidAccessibilityAlteration")
+  private void setProperty(Object object, Class<?> clazz, String propertyName, Object value)
       throws IllegalArgumentException, IllegalAccessException {
     try {
       Field field = clazz.getDeclaredField(propertyName);
@@ -144,7 +145,7 @@ public class ContentPackageValidator implements ValidatorPlugin {
     }
     catch (NoSuchFieldException ex) {
       // check super class
-      Class superClass = clazz.getSuperclass();
+      Class<?> superClass = clazz.getSuperclass();
       if (superClass != null) {
         setProperty(object, superClass, propertyName, value);
       }

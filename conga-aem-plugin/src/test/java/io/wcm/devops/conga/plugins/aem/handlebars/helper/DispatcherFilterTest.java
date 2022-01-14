@@ -30,52 +30,52 @@ import org.junit.jupiter.api.Test;
 
 import com.google.common.collect.ImmutableMap;
 
-public class DispatcherFilterTest {
+class DispatcherFilterTest {
 
   @Test
-  public void testEmpty() {
+  void testEmpty() {
     assertThrows(IllegalArgumentException.class, () -> {
       new DispatcherFilter(ImmutableMap.of());
     });
   }
 
   @Test
-  public void testOnlyType() {
+  void testOnlyType() {
     assertThrows(IllegalArgumentException.class, () -> {
       new DispatcherFilter(ImmutableMap.of("type", "allow"));
     });
   }
 
   @Test
-  public void testTypeMissing() {
+  void testTypeMissing() {
     assertThrows(IllegalArgumentException.class, () -> {
       new DispatcherFilter(ImmutableMap.of("glob", "abc"));
     });
   }
 
   @Test
-  public void testIllegalType() {
+  void testIllegalType() {
     assertThrows(IllegalArgumentException.class, () -> {
       new DispatcherFilter(ImmutableMap.of("glob", "abc", "type", "this_is_not_a_valid_value"));
     });
   }
 
   @Test
-  public void testIllegalRegexp() {
+  void testIllegalRegexp() {
     assertThrows(IllegalArgumentException.class, () -> {
       new DispatcherFilter(ImmutableMap.of("glob", "(abc", "type", "allow"));
     });
   }
 
   @Test
-  public void testInvalidParam() {
+  void testInvalidParam() {
     assertThrows(IllegalArgumentException.class, () -> {
       new DispatcherFilter(ImmutableMap.of("glob", "abc", "type", "allow", "invalidParam", "value"));
     });
   }
 
   @Test
-  public void testUrl() {
+  void testUrl() {
     DispatcherFilter underTest = new DispatcherFilter(ImmutableMap.of("url", "/abc", "type", "allow"));
     assertEquals(DispatcherFilterType.ALLOW, underTest.getType());
     assertNull(underTest.getMethod());
@@ -91,7 +91,7 @@ public class DispatcherFilterTest {
   }
 
   @Test
-  public void testAll() {
+  void testAll() {
     Map<String, Object> map = new HashMap<>();
     map.put("type", "deny");
     map.put("method", "method1");

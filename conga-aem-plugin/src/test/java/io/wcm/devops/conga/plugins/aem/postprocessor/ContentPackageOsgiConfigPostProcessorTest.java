@@ -57,7 +57,7 @@ import io.wcm.devops.conga.generator.spi.context.PostProcessorContext;
 import io.wcm.devops.conga.generator.util.PluginManagerImpl;
 import io.wcm.devops.conga.plugins.sling.postprocessor.ProvisioningOsgiConfigPostProcessor;
 
-public class ContentPackageOsgiConfigPostProcessorTest {
+class ContentPackageOsgiConfigPostProcessorTest {
 
   private PostProcessorPlugin underTest;
 
@@ -69,12 +69,12 @@ public class ContentPackageOsgiConfigPostProcessorTest {
       PROPERTY_PACKAGE_ROOT_PATH, "/apps/test/config");
 
   @BeforeEach
-  public void setUp() {
+  void setUp() {
     underTest = new PluginManagerImpl().get(ContentPackageOsgiConfigPostProcessor.NAME, PostProcessorPlugin.class);
   }
 
   @Test
-  public void testPostProcess() throws Exception {
+  void testPostProcess() throws Exception {
     // prepare provisioning file
     File target = new File("target/" + ContentPackageOsgiConfigPostProcessor.NAME + "-test");
     if (target.exists()) {
@@ -147,7 +147,7 @@ public class ContentPackageOsgiConfigPostProcessorTest {
   }
 
   @Test
-  public void testPostProcess_EmptyProvisioning() throws Exception {
+  void testPostProcess_EmptyProvisioning() throws Exception {
     // prepare provisioning file
     File target = new File("target/" + ContentPackageOsgiConfigPostProcessor.NAME + "-test-empty");
     if (target.exists()) {

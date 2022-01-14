@@ -173,7 +173,7 @@ public final class ContentPackageUtil {
       @SuppressWarnings("null")
       String fileHeaderString = StringUtils.trim(fileHeader.getCommentLines().stream()
           .filter(line -> !StringUtils.contains(line, "*****"))
-          .map(line -> StringUtils.trim(line))
+          .map(StringUtils::trim)
           .collect(Collectors.joining("\n")));
       result.append(fileHeaderString);
     }

@@ -29,18 +29,18 @@ import com.google.common.collect.ImmutableMap;
 import io.wcm.devops.conga.generator.spi.handlebars.HelperPlugin;
 import io.wcm.devops.conga.generator.util.PluginManagerImpl;
 
-public class AemHttpdFilterHelperTest {
+class AemHttpdFilterHelperTest {
 
   private HelperPlugin<Object> helper;
 
   @SuppressWarnings("unchecked")
   @BeforeEach
-  public void setUp() {
+  void setUp() {
     helper = new PluginManagerImpl().get(AemHttpdFilterHelper.NAME, HelperPlugin.class);
   }
 
   @Test
-  public void testLocation() throws Exception {
+  void testLocation() throws Exception {
     assertHelper("<Location \"/abc\">\n" +
         "  <IfVersion < 2.4>\n" +
         "    Allow from all\n" +
@@ -53,7 +53,7 @@ public class AemHttpdFilterHelperTest {
   }
 
   @Test
-  public void testLocationMatch() throws Exception {
+  void testLocationMatch() throws Exception {
     assertHelper("<LocationMatch \"/abc(/.*)?\">\n" +
         "  <IfVersion < 2.4>\n" +
         "    Order Deny,Allow\n" +
@@ -67,7 +67,7 @@ public class AemHttpdFilterHelperTest {
   }
 
   @Test
-  public void testLocationDenyAllowAdmin_NoHash() throws Exception {
+  void testLocationDenyAllowAdmin_NoHash() throws Exception {
     assertHelper("<Location \"/abc\">\n" +
         "  <IfVersion < 2.4>\n" +
         "    Order Deny,Allow\n" +
@@ -81,7 +81,7 @@ public class AemHttpdFilterHelperTest {
   }
 
   @Test
-  public void testLocationDenyAllowAdmin() throws Exception {
+  void testLocationDenyAllowAdmin() throws Exception {
     assertHelper("<Location \"/abc\">\n" +
         "  <IfVersion < 2.4>\n" +
         "    Order Deny,Allow\n" +
