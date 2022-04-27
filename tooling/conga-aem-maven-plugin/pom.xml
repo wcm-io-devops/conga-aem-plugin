@@ -38,8 +38,12 @@
   <description>wcm.io DevOps CONGA - CONfiguration GenerAtor Maven Plugin for AEM</description>
 
   <properties>
-    <maven.version>3.0.5</maven.version>
+    <maven.version>3.3.9</maven.version>
     <site.url.module.prefix>tooling/conga-aem-maven-plugin</site.url.module.prefix>
+
+    <!-- Enable recording of coverage during execution of maven-invoker-plugin -->
+    <jacoco.propertyName>invoker.mavenOpts</jacoco.propertyName>
+    <jacoco.includes>org.jacoco.maven.*</jacoco.includes>
   </properties>
 
   <prerequisites>
@@ -170,6 +174,88 @@
             <id>generated-helpmojo</id>
             <goals>
               <goal>helpmojo</goal>
+            </goals>
+          </execution>
+        </executions>
+      </plugin>
+
+      <!-- Merge Jacoco results from unit tests and integration tests -->
+      <plugin>
+        <groupId>org.jacoco</groupId>
+        <artifactId>jacoco-maven-plugin</artifactId>
+        <executions>
+          <execution>
+            <id>before-unit-test-execution</id>
+            <goals>
+              <goal>prepare-agent</goal>
+            </goals>
+            <configuration>
+              <destFile>${project.build.directory}/jacoco-output/jacoco-unit-tests.exec</destFile>
+              <propertyName>surefire.jacoco.args</propertyName>
+            </configuration>
+          </execution>
+          <execution>
+            <id>before-integration-test-execution</id>
+            <goals>
+              <goal>prepare-agent-integration</goal>
+             </goals>
+            <configuration>
+              <destFile>${project.build.directory}/jacoco-output/jacoco-integration-tests.exec</destFile>
+              <propertyName>invoker.jacoco.args</propertyName>
+            </configuration>
+          </execution>
+          <execution>
+            <id>merge-unit-and-integration</id>
+            <phase>post-integration-test</phase>
+            <goals>
+              <goal>merge</goal>
+            </goals>
+            <configuration>
+              <fileSets>
+                <fileSet>
+                  <directory>${project.build.directory}/jacoco-output</directory>
+                  <includes>
+                    <include>*.exec</include>
+                  </includes>
+                </fileSet>
+              </fileSets>
+            </configuration>
+          </execution>
+        </executions>
+      </plugin>
+
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-surefire-plugin</artifactId>
+        <configuration>
+          <argLine>${surefire.jacoco.args}</argLine>
+        </configuration>
+      </plugin>
+
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-invoker-plugin</artifactId>
+        <version>3.2.2</version>
+        <configuration>
+          <projectsDirectory>src/it</projectsDirectory>
+          <cloneProjectsTo>${project.build.directory}/it</cloneProjectsTo>
+          <pomIncludes>
+            <pomInclude>*/pom.xml</pomInclude>
+          </pomIncludes>
+          <postBuildHookScript>verify</postBuildHookScript>
+          <streamLogsOnFailures>true</streamLogsOnFailures>
+          <extraArtifacts>
+            <extraArtifact>org.jacoco:org.jacoco.agent:${jacoco-maven-plugin.version}:jar:runtime</extraArtifact>
+          </extraArtifacts>
+          <mavenOpts>${invoker.jacoco.args}</mavenOpts>
+        </configuration>
+        <executions>
+          <execution>
+            <id>integration-test</id>
+            <goals>
+              <goal>install</goal>
+              <goal>integration-test</goal>
+              <goal>verify</goal>
             </goals>
           </execution>
         </executions>
