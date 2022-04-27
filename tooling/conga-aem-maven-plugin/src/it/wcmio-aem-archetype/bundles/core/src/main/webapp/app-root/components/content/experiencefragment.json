@@ -1,0 +1,6 @@
+{
+  "jcr:primaryType": "cq:Component",
+  "jcr:title": "Experience Fragment",
+  "componentGroup": "wcmio-aem-archetype Content",
+  "sling:resourceSuperType": "wcm-io/wcm/core/components/experiencefragment/v2/experiencefragment"
+}

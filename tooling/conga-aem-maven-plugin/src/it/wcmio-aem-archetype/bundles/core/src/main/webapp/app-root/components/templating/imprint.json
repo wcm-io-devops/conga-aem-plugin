@@ -1,0 +1,9 @@
+{
+  "jcr:primaryType": "cq:Component",
+  "jcr:title": "Imprint (Custom)",
+  "componentGroup": "wcmio-aem-archetype Templating",
+
+  "cq:editConfig": {
+    "jcr:primaryType": "cq:EditConfig"
+  }
+}

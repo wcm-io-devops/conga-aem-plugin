@@ -1,0 +1,65 @@
+# AEM configuration for AEM Cloud Service (DEV/STAGE/PROD)
+
+nodes:
+
+- node: aem-author
+  roles:
+  - role: wcmio-aem-archetype-aem-cms
+    variant: aem-author
+
+- node: aem-publish
+  roles:
+  - role: wcmio-aem-archetype-aem-cms
+    variant: aem-publish
+
+- node: aem-dispatcher
+  roles:
+  - role: aem-dispatcher-cloud
+    variant: aem-publish
+  config:
+    dispatcher:
+      # Allow access to model.json
+      filter:
+      - _merge_
+      - url: /content(/.*)?
+        extension: json
+        selectors: model
+        type: allow
+
+
+config:
+  contentPackage.group: it
+  app:
+    # Default log level for application code
+    logLevel: warn
+    # Whether to deploy conf content with editable template definitions
+    confContent: true
+    # Whether to deploy sample content
+    sampleContent: true
+
+  httpd:
+    headers:
+      # Set default expiration time for text/html responses (also affects dispatcher caching/invalidation)
+      htmlExpirationTimeMin: 0
+
+  # Replication configuration not required for AEM cloud service
+  replication:
+    author.generatePackage: false
+    publish.generatePackage: false
+
+
+tenants:
+- tenant: wcmio-aem-archetype
+  config:
+    httpd:
+      # Simplified server name setup that can be deployed to any host name using "*" as server alias
+      serverName: publish
+      serverAliasNames:
+      - "*"
+      # Alternative: Use this setup to configure individual hostnames for dev/stage/prod in the cloud
+      #cloudManagerConditional:
+      #  dev.serverName: publish-XXX.adobeaemcloud.com
+      #  stage.serverName: publish-XXX.adobeaemcloud.com
+      #  prod.serverName: publish-XXX.adobeaemcloud.com
+      rootRedirect.url: /en.html
+    sling.mapping.rootPath: /content/wcmio-aem-archetype

@@ -1,0 +1,329 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 https://maven.apache.org/xsd/maven-4.0.0.xsd">
+  <modelVersion>4.0.0</modelVersion>
+
+  <parent>
+    <groupId>io.wcm.maven</groupId>
+    <artifactId>io.wcm.maven.aem-global-parent</artifactId>
+    <version>2.0.6</version>
+    <relativePath/>
+  </parent>
+
+  <groupId>io.wcm.devops.conga.plugins.aem.it</groupId>
+  <artifactId>io.wcm.devops.conga.plugins.aem.it.aemsample.parent</artifactId>
+  <version>1.0.0-SNAPSHOT</version>
+  <packaging>pom</packaging>
+
+  <name>wcmio-aem-archetype Parent</name>
+
+  <properties>
+
+    <!-- Java version -->
+    <java.version>1.8</java.version>
+    <build.compiler.release>8</build.compiler.release>
+
+    <!-- AEM instance parameters -->
+    <sling.url>http://localhost:4502</sling.url>
+    <sling.publish.url>http://localhost:4503</sling.publish.url>
+
+    <!-- Set to 'enabled' to activate org.eclipse.jdt.core.compiler.annotation.nullanalysis feature in eclipse settings -->
+    <eclipse.settings.nullanalysis>enabled</eclipse.settings.nullanalysis>
+
+    <!-- Enable reproducible builds -->
+    <project.build.outputTimestamp>2021-01-01T00:00:00Z</project.build.outputTimestamp>
+
+  </properties>
+
+  <dependencies>
+
+    <!-- Nullability annotations -->
+    <dependency>
+      <groupId>org.jetbrains</groupId>
+      <artifactId>annotations</artifactId>
+      <scope>provided</scope>
+    </dependency>
+
+    <!-- OSGi bundle and versioning annotations -->
+    <dependency>
+      <groupId>org.osgi</groupId>
+      <artifactId>org.osgi.annotation.bundle</artifactId>
+      <scope>provided</scope>
+    </dependency>
+    <dependency>
+      <groupId>org.osgi</groupId>
+      <artifactId>org.osgi.annotation.versioning</artifactId>
+      <scope>provided</scope>
+    </dependency>
+
+    <!-- OSGi DS and metatype annotations -->
+    <dependency>
+      <groupId>org.osgi</groupId>
+      <artifactId>org.osgi.service.component.annotations</artifactId>
+      <scope>provided</scope>
+    </dependency>
+    <dependency>
+      <groupId>org.osgi</groupId>
+      <artifactId>org.osgi.service.metatype.annotations</artifactId>
+      <scope>provided</scope>
+    </dependency>
+    <dependency>
+      <groupId>org.apache.sling</groupId>
+      <artifactId>org.apache.sling.servlets.annotations</artifactId>
+      <scope>provided</scope>
+    </dependency>
+
+  </dependencies>
+
+  <dependencyManagement>
+    <dependencies>
+
+      <!-- wcm.io -->
+      <dependency>
+        <groupId>io.wcm</groupId>
+        <artifactId>io.wcm.caconfig.extensions</artifactId>
+        <version>1.9.0</version>
+      </dependency>
+      <dependency>
+        <groupId>io.wcm</groupId>
+        <artifactId>io.wcm.caconfig.editor</artifactId>
+        <version>1.11.0</version>
+      </dependency>
+      <dependency>
+        <groupId>io.wcm</groupId>
+        <artifactId>io.wcm.caconfig.editor</artifactId>
+        <version>1.11.0</version>
+        <classifier>content</classifier>
+        <type>zip</type>
+      </dependency>
+      <dependency>
+        <groupId>io.wcm</groupId>
+        <artifactId>io.wcm.sling.models</artifactId>
+        <version>1.6.0</version>
+      </dependency>
+      <dependency>
+        <groupId>io.wcm</groupId>
+        <artifactId>io.wcm.sling.commons</artifactId>
+        <version>1.4.0</version>
+      </dependency>
+      <dependency>
+        <groupId>io.wcm</groupId>
+        <artifactId>io.wcm.handler.commons</artifactId>
+        <version>1.4.4</version>
+      </dependency>
+      <dependency>
+        <groupId>io.wcm</groupId>
+        <artifactId>io.wcm.handler.url</artifactId>
+        <version>1.7.0</version>
+      </dependency>
+      <dependency>
+        <groupId>io.wcm</groupId>
+        <artifactId>io.wcm.handler.url</artifactId>
+        <version>1.7.0</version>
+        <classifier>content</classifier>
+        <type>zip</type>
+      </dependency>
+      <dependency>
+        <groupId>io.wcm</groupId>
+        <artifactId>io.wcm.handler.link</artifactId>
+        <version>1.9.2</version>
+      </dependency>
+      <dependency>
+        <groupId>io.wcm</groupId>
+        <artifactId>io.wcm.handler.link</artifactId>
+        <version>1.9.2</version>
+        <classifier>content</classifier>
+        <type>zip</type>
+      </dependency>
+      <dependency>
+        <groupId>io.wcm</groupId>
+        <artifactId>io.wcm.handler.media</artifactId>
+        <version>1.14.0</version>
+      </dependency>
+      <dependency>
+        <groupId>io.wcm</groupId>
+        <artifactId>io.wcm.handler.media</artifactId>
+        <version>1.14.0</version>
+        <classifier>content</classifier>
+        <type>zip</type>
+      </dependency>
+      <dependency>
+        <groupId>io.wcm</groupId>
+        <artifactId>io.wcm.handler.richtext</artifactId>
+        <version>1.5.8</version>
+      </dependency>
+      <dependency>
+        <groupId>io.wcm</groupId>
+        <artifactId>io.wcm.handler.richtext</artifactId>
+        <version>1.5.8</version>
+        <classifier>content</classifier>
+        <type>zip</type>
+      </dependency>
+      <dependency>
+        <groupId>io.wcm</groupId>
+        <artifactId>io.wcm.wcm.commons</artifactId>
+        <version>1.9.0</version>
+      </dependency>
+      <dependency>
+        <groupId>io.wcm</groupId>
+        <artifactId>io.wcm.wcm.commons</artifactId>
+        <version>1.9.0</version>
+        <classifier>content</classifier>
+        <type>zip</type>
+      </dependency>
+      <dependency>
+        <groupId>io.wcm</groupId>
+        <artifactId>io.wcm.wcm.core.components</artifactId>
+        <version>1.10.0-2.18.6</version>
+      </dependency>
+      <dependency>
+        <groupId>io.wcm</groupId>
+        <artifactId>io.wcm.wcm.core.components</artifactId>
+        <version>1.10.0-2.18.6</version>
+        <classifier>content</classifier>
+        <type>zip</type>
+      </dependency>
+      <dependency>
+        <groupId>io.wcm</groupId>
+        <artifactId>io.wcm.wcm.parsys</artifactId>
+        <version>1.6.8</version>
+      </dependency>
+      <dependency>
+        <groupId>io.wcm</groupId>
+        <artifactId>io.wcm.wcm.parsys</artifactId>
+        <version>1.6.8</version>
+        <classifier>content</classifier>
+        <type>zip</type>
+      </dependency>
+      <dependency>
+        <groupId>io.wcm</groupId>
+        <artifactId>io.wcm.wcm.ui.granite</artifactId>
+        <version>1.9.2</version>
+      </dependency>
+      <dependency>
+        <groupId>io.wcm</groupId>
+        <artifactId>io.wcm.wcm.ui.granite</artifactId>
+        <version>1.9.2</version>
+        <classifier>content</classifier>
+        <type>zip</type>
+      </dependency>
+      <dependency>
+        <groupId>io.wcm</groupId>
+        <artifactId>io.wcm.wcm.ui.clientlibs</artifactId>
+        <version>1.2.2</version>
+      </dependency>
+      <dependency>
+        <groupId>io.wcm</groupId>
+        <artifactId>io.wcm.wcm.ui.clientlibs</artifactId>
+        <version>1.2.2</version>
+        <classifier>content</classifier>
+        <type>zip</type>
+      </dependency>
+      <dependency>
+        <groupId>io.wcm.devops.conga.definitions</groupId>
+        <artifactId>io.wcm.devops.conga.definitions.aem</artifactId>
+        <version>1.12.0</version>
+      </dependency>
+
+      <!-- wcm.io Testing -->
+      <dependency>
+        <groupId>io.wcm</groupId>
+        <artifactId>io.wcm.testing.aem-mock.junit5</artifactId>
+        <version>4.1.8</version>
+      </dependency>
+      <dependency>
+        <groupId>org.apache.sling</groupId>
+        <artifactId>org.apache.sling.testing.logging-mock</artifactId>
+        <version>2.0.0</version>
+      </dependency>
+      <dependency>
+        <groupId>org.apache.sling</groupId>
+        <artifactId>org.apache.sling.testing.caconfig-mock-plugin</artifactId>
+        <version>1.4.0</version>
+      </dependency>
+      <dependency>
+        <groupId>io.wcm</groupId>
+        <artifactId>io.wcm.testing.wcm-io-mock.caconfig</artifactId>
+        <version>1.2.0</version>
+      </dependency>
+      <dependency>
+        <groupId>io.wcm</groupId>
+        <artifactId>io.wcm.testing.wcm-io-mock.sling</artifactId>
+        <version>1.1.0</version>
+      </dependency>
+      <dependency>
+        <groupId>io.wcm</groupId>
+        <artifactId>io.wcm.testing.wcm-io-mock.wcm</artifactId>
+        <version>1.2.0</version>
+      </dependency>
+      <dependency>
+        <groupId>io.wcm</groupId>
+        <artifactId>io.wcm.testing.wcm-io-mock.handler</artifactId>
+        <version>1.4.0</version>
+      </dependency>
+
+      <!-- AEM dependencies -->
+      <dependency>
+        <groupId>io.wcm.maven</groupId>
+        <artifactId>io.wcm.maven.aem-cloud-dependencies</artifactId>
+        <version>2022.4.7100.20220421T124010Z-220400.0000</version>
+        <type>pom</type>
+        <scope>import</scope>
+      </dependency>
+
+      <!-- Testing -->
+      <dependency>
+        <groupId>org.junit</groupId>
+        <artifactId>junit-bom</artifactId>
+        <version>5.8.2</version>
+        <type>pom</type>
+        <scope>import</scope>
+      </dependency>
+      <dependency>
+        <groupId>org.mockito</groupId>
+        <artifactId>mockito-core</artifactId>
+        <version>4.4.0</version>
+      </dependency>
+      <dependency>
+        <groupId>org.mockito</groupId>
+        <artifactId>mockito-junit-jupiter</artifactId>
+        <version>4.4.0</version>
+      </dependency>
+
+    </dependencies>
+  </dependencyManagement>
+
+  <build>
+    <pluginManagement>
+      <plugins>
+
+        <plugin>
+          <groupId>org.apache.maven.plugins</groupId>
+          <artifactId>maven-release-plugin</artifactId>
+          <configuration>
+            <autoVersionSubmodules>true</autoVersionSubmodules>
+          </configuration>
+        </plugin>
+
+        <plugin>
+          <groupId>io.wcm.devops.conga</groupId>
+          <artifactId>conga-maven-plugin</artifactId>
+          <dependencies>
+            <dependency>
+              <groupId>io.wcm.devops.conga.plugins</groupId>
+              <artifactId>io.wcm.devops.conga.plugins.aem</artifactId>
+              <version>@project.version@</version>
+            </dependency>
+          </dependencies>
+        </plugin>
+
+        <plugin>
+          <groupId>io.wcm.devops.conga.plugins</groupId>
+          <artifactId>conga-aem-maven-plugin</artifactId>
+          <version>@project.version@</version>
+        </plugin>
+
+      </plugins>
+    </pluginManagement>
+  </build>
+
+</project>
