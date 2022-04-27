@@ -57,6 +57,7 @@ import org.apache.maven.plugin.logging.SystemStreamLog;
 import com.google.common.collect.ImmutableSet;
 
 import io.wcm.devops.conga.plugins.aem.maven.AutoDependenciesMode;
+import io.wcm.devops.conga.plugins.aem.maven.PackageTypeValidation;
 import io.wcm.devops.conga.plugins.aem.maven.model.ContentPackageFile;
 import io.wcm.tooling.commons.contentpackagebuilder.ContentPackage;
 import io.wcm.tooling.commons.contentpackagebuilder.ContentPackageBuilder;
@@ -87,6 +88,7 @@ public final class AllPackageBuilder {
   private final String packageName;
   private String version;
   private AutoDependenciesMode autoDependenciesMode = AutoDependenciesMode.OFF;
+  private PackageTypeValidation packageTypeValidation = PackageTypeValidation.STRICT;
   private Log log;
 
   private static final String RUNMODE_DEFAULT = "$default$";
@@ -115,6 +117,15 @@ public final class AllPackageBuilder {
    */
   public AllPackageBuilder autoDependenciesMode(AutoDependenciesMode value) {
     this.autoDependenciesMode = value;
+    return this;
+  }
+
+  /**
+   * @param value How to validate package types to be included in "all" package.
+   * @return this
+   */
+  public AllPackageBuilder packageTypeValidation(PackageTypeValidation value) {
+    this.packageTypeValidation = value;
     return this;
   }
 
@@ -160,10 +171,34 @@ public final class AllPackageBuilder {
       environmentRunModes.addAll(cloudManagerTarget);
     }
 
-    // generate warnings for each invalid content packages that is skipped
+    List<ContentPackageFile> validContentPackages;
+    switch (packageTypeValidation) {
+      case STRICT:
+        validContentPackages = getValidContentPackagesStrictValidation(contentPackages);
+        break;
+      case WARN:
+        validContentPackages = getValidContentPackagesWarnValidation(contentPackages);
+        break;
+      default:
+        throw new IllegalArgumentException("Unsupported package type validation: " + packageTypeValidation);
+    }
+
+    if (!validContentPackages.isEmpty()) {
+      fileSets.add(new ContentPackageFileSet(validContentPackages, environmentRunModes));
+    }
+  }
+
+  /**
+   * Get valid content packages in strict mode: Ignore content packages without package type (with warning),
+   * fail build if Content package with "mixed" mode is found.
+   * @param contentPackages Content packages
+   * @return Valid content packages
+   */
+  private List<ContentPackageFile> getValidContentPackagesStrictValidation(List<? extends ContentPackageFile> contentPackages) {
+    // generate warning for each content packages without package type that is skipped
     contentPackages.stream()
         .filter(pkg -> !hasPackageType(pkg))
-        .forEach(pkg -> getLog().warn("Skipping content package without package type: " + getCanonicalPath(pkg.getFile())));
+        .forEach(pkg -> getLog().warn("Skipping content package without package type: {}" + getCanonicalPath(pkg.getFile())));
 
     // fail build if content packages with non-allowed package types exist
     List<ContentPackageFile> invalidPackageTypeContentPackages = contentPackages.stream()
@@ -177,14 +212,32 @@ public final class AllPackageBuilder {
               .collect(Collectors.joining(", ")));
     }
 
-    // collect AEM content packages for this node
-    List<ContentPackageFile> validContentPackages = contentPackages.stream()
+    // collect AEM content packages with package type
+    return contentPackages.stream()
         .filter(AllPackageBuilder::hasPackageType)
         .collect(Collectors.toList());
+  }
 
-    if (!validContentPackages.isEmpty()) {
-      fileSets.add(new ContentPackageFileSet(validContentPackages, environmentRunModes));
-    }
+  /**
+   * Get all content packages, generate warnings if package type is missing or "mixed" mode package type is used.
+   * @param contentPackages Content packages
+   * @return Valid content packages
+   */
+  private List<ContentPackageFile> getValidContentPackagesWarnValidation(List<? extends ContentPackageFile> contentPackages) {
+    // generate warning for each content packages without package type
+    contentPackages.stream()
+        .filter(pkg -> !hasPackageType(pkg))
+        .forEach(pkg -> getLog().warn("Found content package without package type: " + getCanonicalPath(pkg.getFile())));
+
+    // generate warning for each content packages with invalid package type
+    contentPackages.stream()
+        .filter(AllPackageBuilder::hasPackageType)
+        .filter(pkg -> !isValidPackageType(pkg))
+        .forEach(pkg -> getLog().warn("Found content package with invalid package type: "
+            + getCanonicalPath(pkg.getFile()) + " -> " + pkg.getPackageType()));
+
+    // return all content packages
+    return contentPackages.stream().collect(Collectors.toList());
   }
 
   /**
@@ -329,8 +382,8 @@ public final class AllPackageBuilder {
    * @param rootPath Root path
    * @return Package path
    */
-  private static String buildPackagePath(ContentPackageFile pkg, String rootPath, String environmentRunMode) {
-    if (!isValidPackageType(pkg)) {
+  private String buildPackagePath(ContentPackageFile pkg, String rootPath, String environmentRunMode) {
+    if (packageTypeValidation == PackageTypeValidation.STRICT && !isValidPackageType(pkg)) {
       throw new IllegalArgumentException("Package " + pkg.getPackageInfo() + " has invalid package type: '" + pkg.getPackageType() + "'.");
     }
 

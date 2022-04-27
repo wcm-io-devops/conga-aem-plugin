@@ -99,6 +99,21 @@ public final class CloudManagerAllPackageMojo extends AbstractCloudManagerMojo {
   private AutoDependenciesMode autoDependenciesMode;
 
   /**
+   * How to validate package types to be included in "all" package.
+   * <p>
+   * Possible values:
+   * </p>
+   * <ul>
+   * <li><code>STRICT</code>: Strict mode: Ignores packages without content type (with warning), fails build if "mixed"
+   * package types are used. For AEMaaCS it is mandatory to use this mode.</li>
+   * <li><code>WARN</code>: Includes all packages, but generated warnings about packages without content type or "mixed"
+   * package types.</li>
+   * </ul>
+   */
+  @Parameter(property = "conga.cloudManager.allPackage.packageTypeValidation", defaultValue = "STRICT")
+  private PackageTypeValidation packageTypeValidation;
+
+  /**
    * Automatically generate dependencies between content packages based on file order in CONGA configuration.
    * @deprecated Please use autoDependenciesMode instead.
    */
@@ -211,6 +226,7 @@ public final class CloudManagerAllPackageMojo extends AbstractCloudManagerMojo {
     return new AllPackageBuilder(targetFile, this.group, packageName)
         .version(project.getVersion())
         .autoDependenciesMode(this.autoDependenciesMode)
+        .packageTypeValidation(this.packageTypeValidation)
         .logger(getLog());
   }
 
