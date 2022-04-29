@@ -21,6 +21,7 @@ package io.wcm.devops.conga.plugins.aem.maven.model;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.yaml.snakeyaml.DumperOptions;
 import org.yaml.snakeyaml.LoaderOptions;
 import org.yaml.snakeyaml.Yaml;
 import org.yaml.snakeyaml.constructor.Constructor;
@@ -30,6 +31,8 @@ import io.wcm.devops.conga.generator.spi.yaml.YamlConstructorPlugin;
 import io.wcm.devops.conga.generator.spi.yaml.context.YamlConstructorContext;
 import io.wcm.devops.conga.generator.util.PluginManager;
 import io.wcm.devops.conga.generator.util.PluginManagerImpl;
+import org.yaml.snakeyaml.representer.Representer;
+import org.yaml.snakeyaml.resolver.Resolver;
 
 final class YamlUtil {
 
@@ -47,10 +50,10 @@ final class YamlUtil {
         .logger(log);
 
     LoaderOptions loadingConfig = new LoaderOptions();
-    loadingConfig.setMaxAliasesForCollections(100);
+    loadingConfig.setMaxAliasesForCollections(200);
 
     // apply YAML plugins for modifying YAML constructor
-    Constructor constructor = new Constructor(loadingConfig);
+    Constructor constructor = new Constructor();
     YamlConstructorContext context = new YamlConstructorContext()
         .pluginContextOptions(options)
         .yamlConstructor(constructor);
@@ -58,7 +61,8 @@ final class YamlUtil {
       plugin.register(context);
     }
 
-    return new Yaml(constructor);
+    return new Yaml(constructor, new Representer(), new DumperOptions(),
+      loadingConfig, new Resolver());
   }
 
 }
