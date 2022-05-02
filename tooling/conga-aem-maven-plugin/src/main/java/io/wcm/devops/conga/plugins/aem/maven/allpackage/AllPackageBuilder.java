@@ -450,7 +450,11 @@ public final class AllPackageBuilder {
 
                 // if package type is missing package properties, put in the type defined in model
                 if (props.get(NAME_PACKAGE_TYPE) == null) {
-                  props.put(NAME_PACKAGE_TYPE, pkg.getPackageType());
+                  String packageType = pkg.getPackageType();
+                  if (packageType == null) {
+                    packageType = PackageType.MIXED.name();
+                  }
+                  props.put(NAME_PACKAGE_TYPE, packageType);
                 }
 
                 ZipEntry zipOutEntry = new ZipEntry(zipInEntry.getName());
