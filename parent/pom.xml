@@ -47,12 +47,12 @@
       <dependency>
         <groupId>io.wcm.devops.conga</groupId>
         <artifactId>io.wcm.devops.conga.generator</artifactId>
-        <version>1.14.4</version>
+        <version>1.14.7-SNAPSHOT</version>
       </dependency>
       <dependency>
         <groupId>io.wcm.devops.conga</groupId>
         <artifactId>conga-maven-plugin</artifactId>
-        <version>1.14.4</version>
+        <version>1.14.7-SNAPSHOT</version>
       </dependency>
   
       <dependency>
