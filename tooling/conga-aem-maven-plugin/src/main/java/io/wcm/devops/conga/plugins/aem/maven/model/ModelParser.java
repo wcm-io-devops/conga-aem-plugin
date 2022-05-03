@@ -52,37 +52,42 @@ public final class ModelParser {
    */
   public static final String MODEL_FILE = "model.yaml";
 
+  private static final String PROP_ROLES = "roles";
+  private static final String PROP_ROLE = "role";
+  private static final String PROP_CONFIG = "config";
+  private static final String PROP_FILES = "files";
+
   private final Yaml yaml;
+  private final File nodeDir;
+  private final Map<String, Object> modelData;
 
   /**
-   * Constructor
+   * @param nodeDir Node directory
    */
-  public ModelParser() {
+  public ModelParser(File nodeDir) {
     this.yaml = YamlUtil.createYaml();
+    this.nodeDir = nodeDir;
+    this.modelData = getModelData();
   }
 
   /**
-   * Parses model.yaml file for given node and returns all content packages references in this fileData.
-   * @param nodeDir Node directory
+   * Returns all content packages references in this fileData.
    * @return List of content packages
    */
-  public List<ModelContentPackageFile> getContentPackagesForNode(File nodeDir) {
-    Map<String, Object> data = getModelData(nodeDir);
-    return collectPackages(data, nodeDir);
+  public List<ModelContentPackageFile> getContentPackagesForNode() {
+    return collectPackages();
   }
 
   /**
    * Checks if the node has the given node role assigned.
-   * @param nodeDir Node directory
    * @param roleName Node role name
    * @return true if role is assigned
    */
   @SuppressWarnings("unchecked")
-  public boolean hasRole(File nodeDir, String roleName) {
-    Map<String, Object> data = getModelData(nodeDir);
-    List<Map<String, Object>> roles = (List<Map<String, Object>>)data.get("roles");
+  public boolean hasRole(String roleName) {
+    List<Map<String, Object>> roles = (List<Map<String, Object>>)modelData.get(PROP_ROLES);
     for (Map<String, Object> role : roles) {
-      if (StringUtils.equals(Objects.toString(role.get("role"), null), roleName)) {
+      if (StringUtils.equals(Objects.toString(role.get(PROP_ROLE), null), roleName)) {
         return true;
       }
     }
@@ -91,40 +96,45 @@ public final class ModelParser {
 
   /**
    * Collects all assigned "cloudManager.target" values (lists or single values) to any role from the node.
-   * @param nodeDir Node directory
    * @return List of cloud manager environment names or "none"
    */
   @SuppressWarnings("unchecked")
-  public Set<String> getCloudManagerTarget(File nodeDir) {
+  public Set<String> getCloudManagerTarget() {
     Set<String> targets = new LinkedHashSet<>();
-    Map<String, Object> data = getModelData(nodeDir);
-    List<Map<String, Object>> roles = (List<Map<String, Object>>)data.get("roles");
+    List<Map<String, Object>> roles = (List<Map<String, Object>>)modelData.get(PROP_ROLES);
     for (Map<String, Object> role : roles) {
-      Map<String, Object> config = (Map<String, Object>)role.get("config");
+      Map<String, Object> config = (Map<String, Object>)role.get(PROP_CONFIG);
       if (config != null) {
         Object targetValue = MapExpander.getDeep(config, "cloudManager.target");
         if (targetValue != null) {
-          if (targetValue instanceof String) {
-            String target = (String)targetValue;
-            if (StringUtils.isNotBlank(target)) {
-              targets.add(target);
-            }
-          }
-          else if (targetValue instanceof List) {
-            targets.addAll(((List<String>)targetValue).stream()
-                .filter(StringUtils::isNotBlank)
-                .collect(Collectors.toList()));
-          }
-          else {
-            throw new RuntimeException("Invalid cloudManager.target value: " + targetValue);
-          }
+          return toStringSet(targetValue);
         }
       }
     }
     return targets;
   }
 
-  private Map<String, Object> getModelData(File nodeDir) {
+  @SuppressWarnings("unchecked")
+  private static Set<String> toStringSet(Object value) {
+    Set<String> result = new LinkedHashSet<>();
+    if (value instanceof String) {
+      String target = (String)value;
+      if (StringUtils.isNotBlank(target)) {
+        result.add(target);
+      }
+    }
+    else if (value instanceof List) {
+      result.addAll(((List<String>)value).stream()
+          .filter(StringUtils::isNotBlank)
+          .collect(Collectors.toList()));
+    }
+    else {
+      throw new IllegalArgumentException("Value is neither string nor string list: " + value);
+    }
+    return result;
+  }
+
+  private Map<String, Object> getModelData() {
     File modelFile = new File(nodeDir, MODEL_FILE);
     if (!modelFile.exists() || !modelFile.isFile()) {
       throw new RuntimeException("Model file not found: " + getCanonicalPath(modelFile));
@@ -146,16 +156,16 @@ public final class ModelParser {
   }
 
   @SuppressWarnings("unchecked")
-  private List<ModelContentPackageFile> collectPackages(Map<String, Object> data, File nodeDir) {
+  private List<ModelContentPackageFile> collectPackages() {
     List<ModelContentPackageFile> items = new ArrayList<>();
-    List<Map<String, Object>> roles = (List<Map<String, Object>>)data.get("roles");
+    List<Map<String, Object>> roles = (List<Map<String, Object>>)modelData.get(PROP_ROLES);
     if (roles != null) {
       for (Map<String, Object> role : roles) {
-        List<Map<String, Object>> files = (List<Map<String, Object>>)role.get("files");
+        List<Map<String, Object>> files = (List<Map<String, Object>>)role.get(PROP_FILES);
         if (files != null) {
           for (Map<String, Object> file : files) {
             if (file.get(ContentPackagePropertiesPostProcessor.MODEL_OPTIONS_PROPERTY) != null) {
-              items.add(toContentPackageFile(file, role, nodeDir));
+              items.add(toContentPackageFile(file, role));
             }
           }
         }
@@ -165,7 +175,7 @@ public final class ModelParser {
   }
 
   private ModelContentPackageFile toContentPackageFile(Map<String, Object> fileData,
-      Map<String, Object> roleData, File nodeDir) {
+      Map<String, Object> roleData) {
     String path = Objects.toString(fileData.get("path"), null);
     File file = new File(nodeDir, path);
     return new ModelContentPackageFile(file, fileData, roleData);

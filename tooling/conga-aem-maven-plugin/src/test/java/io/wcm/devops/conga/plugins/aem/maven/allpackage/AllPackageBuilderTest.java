@@ -77,7 +77,7 @@ class AllPackageBuilderTest {
   @ParameterizedTest
   @MethodSource("cloudManagerTargetVariants")
   void testBuild(Set<String> cloudManagerTarget, List<String> runmodeSuffixes) throws Exception {
-    List<? extends ContentPackageFile> contentPackages = new ModelParser().getContentPackagesForNode(nodeDir);
+    List<? extends ContentPackageFile> contentPackages = new ModelParser(nodeDir).getContentPackagesForNode();
     File targetFile = new File(targetDir, "all.zip");
 
     AllPackageBuilder builder = new AllPackageBuilder(targetFile, "test-group", "test-pkg");
@@ -160,7 +160,7 @@ class AllPackageBuilderTest {
   @ParameterizedTest
   @MethodSource("cloudManagerTargetVariants")
   void testBuild_IMMUTABLE_MUTABLE_COMBINED(Set<String> cloudManagerTarget, List<String> runmodeSuffixes) throws Exception {
-    List<? extends ContentPackageFile> contentPackages = new ModelParser().getContentPackagesForNode(nodeDir);
+    List<? extends ContentPackageFile> contentPackages = new ModelParser(nodeDir).getContentPackagesForNode();
     File targetFile = new File(targetDir, "all.zip");
 
     AllPackageBuilder builder = new AllPackageBuilder(targetFile, "test-group", "test-pkg")
@@ -256,7 +256,7 @@ class AllPackageBuilderTest {
   @ParameterizedTest
   @MethodSource("cloudManagerTargetVariants")
   void testBuild_IMMUTABLE_MUTABLE_SEPARATE(Set<String> cloudManagerTarget, List<String> runmodeSuffixes) throws Exception {
-    List<? extends ContentPackageFile> contentPackages = new ModelParser().getContentPackagesForNode(nodeDir);
+    List<? extends ContentPackageFile> contentPackages = new ModelParser(nodeDir).getContentPackagesForNode();
     File targetFile = new File(targetDir, "all.zip");
 
     AllPackageBuilder builder = new AllPackageBuilder(targetFile, "test-group", "test-pkg")
@@ -351,7 +351,7 @@ class AllPackageBuilderTest {
   @ParameterizedTest
   @MethodSource("cloudManagerTargetVariants")
   void testBuild_IMMUTABLE_ONLY(Set<String> cloudManagerTarget, List<String> runmodeSuffixes) throws Exception {
-    List<? extends ContentPackageFile> contentPackages = new ModelParser().getContentPackagesForNode(nodeDir);
+    List<? extends ContentPackageFile> contentPackages = new ModelParser(nodeDir).getContentPackagesForNode();
     File targetFile = new File(targetDir, "all.zip");
 
     AllPackageBuilder builder = new AllPackageBuilder(targetFile, "test-group", "test-pkg")

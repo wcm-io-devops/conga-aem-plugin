@@ -233,14 +233,14 @@ public final class CloudManagerAllPackageMojo extends AbstractCloudManagerMojo {
   }
 
   private void visitEnvironmentsNodes(EnvironmentNodeVisitor visitor) throws MojoExecutionException, MojoFailureException {
-    ModelParser modelParser = new ModelParser();
     List<File> environmentDirs = getEnvironmentDir();
     for (File environmentDir : environmentDirs) {
       List<File> nodeDirs = getNodeDirs(environmentDir);
       for (File nodeDir : nodeDirs) {
-        Set<String> cloudManagerTarget = modelParser.getCloudManagerTarget(nodeDir);
+        ModelParser modelParser = new ModelParser(nodeDir);
+        Set<String> cloudManagerTarget = modelParser.getCloudManagerTarget();
         if (!cloudManagerTarget.contains(CLOUDMANAGER_TARGET_NONE)) {
-          List<? extends ContentPackageFile> contentPackages = modelParser.getContentPackagesForNode(nodeDir);
+          List<? extends ContentPackageFile> contentPackages = modelParser.getContentPackagesForNode();
           visitor.visit(environmentDir, nodeDir, cloudManagerTarget, contentPackages);
         }
       }

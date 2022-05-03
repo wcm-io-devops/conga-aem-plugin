@@ -36,20 +36,22 @@ import com.google.common.collect.ImmutableSet;
 
 class ModelParserTest {
 
-  private ModelParser underTest;
   private File nodeDir;
   private File dispatcherNodeDir;
+  private ModelParser nodeModelParser;
+  private ModelParser dispatcherNodeModelParser;
 
   @BeforeEach
   void setUp() {
-    underTest = new ModelParser();
     nodeDir = new File("src/test/resources/node");
+    nodeModelParser = new ModelParser(nodeDir);
     dispatcherNodeDir = new File("src/test/resources/node-dispatcher");
+    dispatcherNodeModelParser = new ModelParser(dispatcherNodeDir);
   }
 
   @Test
   void testGetContentPackagesForNode() {
-    List<ModelContentPackageFile> contentPackages = underTest.getContentPackagesForNode(nodeDir);
+    List<ModelContentPackageFile> contentPackages = nodeModelParser.getContentPackagesForNode();
 
     assertEquals(11, contentPackages.size());
 
@@ -89,14 +91,14 @@ class ModelParserTest {
 
   @Test
   void testHasRole() {
-    assertTrue(underTest.hasRole(dispatcherNodeDir, "aem-dispatcher-cloud"));
-    assertFalse(underTest.hasRole(nodeDir, "aem-dispatcher-cloud"));
+    assertTrue(dispatcherNodeModelParser.hasRole("aem-dispatcher-cloud"));
+    assertFalse(nodeModelParser.hasRole("aem-dispatcher-cloud"));
   }
 
   @Test
   void testGetCloudManagerTarget() {
-    assertEquals(ImmutableSet.of("stage", "prod"), underTest.getCloudManagerTarget(nodeDir));
-    assertTrue(underTest.getCloudManagerTarget(dispatcherNodeDir).isEmpty());
+    assertEquals(ImmutableSet.of("stage", "prod"), nodeModelParser.getCloudManagerTarget());
+    assertTrue(dispatcherNodeModelParser.getCloudManagerTarget().isEmpty());
   }
 
 }

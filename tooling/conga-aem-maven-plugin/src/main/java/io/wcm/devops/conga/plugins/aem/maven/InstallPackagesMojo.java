@@ -95,8 +95,8 @@ public final class InstallPackagesMojo extends AbstractContentPackageMojo {
     getLog().info("Get AEM content packages from " + getCanonicalPath(nodeDirectory));
 
     // collect files to install
-    ModelParser modelParser = new ModelParser();
-    List<PackageFile> items = modelParser.getContentPackagesForNode(nodeDirectory).stream()
+    ModelParser modelParser = new ModelParser(nodeDirectory);
+    List<PackageFile> items = modelParser.getContentPackagesForNode().stream()
         .map(this::toPackageFile)
         .collect(Collectors.toList());
 
