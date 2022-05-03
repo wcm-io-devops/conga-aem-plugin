@@ -144,7 +144,7 @@ public final class InstallPackagesMojo extends AbstractContentPackageMojo {
       }
       else if (item instanceof BundleFile) {
         BundleFile bundleFile = (BundleFile)item;
-        if (item.getInstall() == null || item.getInstall()) {
+        if (bundleFile.getInstall() == null || bundleFile.getInstall()) {
           installBundleViaSlingPlugin(bundleFile.getFile());
         }
       }
@@ -158,26 +158,30 @@ public final class InstallPackagesMojo extends AbstractContentPackageMojo {
     PackageFile output = new PackageFile();
 
     output.setFile(item.getFile());
-    if (item.getInstall() != null) {
-      output.setInstall(item.getInstall());
+    Boolean installParam = item.getInstall();
+    if (installParam != null) {
+      output.setInstall(installParam);
     }
     else {
       output.setInstall(this.install);
     }
-    if (item.getForce() != null) {
-      output.setForce(item.getForce());
+    Boolean forcePAram = item.getForce();
+    if (forcePAram != null) {
+      output.setForce(forcePAram);
     }
     else {
       output.setForce(this.force);
     }
-    if (item.getRecursive() != null) {
-      output.setRecursive(item.getRecursive());
+    Boolean recursiveParam = item.getRecursive();
+    if (recursiveParam != null) {
+      output.setRecursive(recursiveParam);
     }
     else {
       output.setRecursive(this.recursive);
     }
-    if (item.getDelayAfterInstallSec() != null) {
-      output.setDelayAfterInstallSec(item.getDelayAfterInstallSec());
+    Integer delayAfterInstallSecParam = item.getDelayAfterInstallSec();
+    if (delayAfterInstallSecParam != null) {
+      output.setDelayAfterInstallSec(delayAfterInstallSecParam);
     }
     else if (this.delayAfterInstallSec != null) {
       output.setDelayAfterInstallSec(this.delayAfterInstallSec);

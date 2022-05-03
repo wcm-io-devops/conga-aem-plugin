@@ -52,7 +52,6 @@ public final class BundleFile implements InstallableFile {
     return this.file;
   }
 
-  @Override
   public Boolean getInstall() {
     return this.install;
   }

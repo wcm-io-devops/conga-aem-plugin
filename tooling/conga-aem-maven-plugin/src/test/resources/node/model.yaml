@@ -188,8 +188,6 @@ roles:
       packageType: content, requiresRoot: false, version: 1.3.1-SNAPSHOT}
   - path: bundles/io.wcm.wcm.ui.granite-1.9.2.jar
     install: false
-    delayAfterInstallSec: 30
-    httpSocketTimeoutSec: 60  
   - {path: non-bundles/io.wcm.tooling.spotbugs.annotations-1.0.3.jar}
   config:
     replication:

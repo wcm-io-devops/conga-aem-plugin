@@ -45,7 +45,7 @@ import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.ImmutableSet;
 
 import io.wcm.devops.conga.plugins.aem.maven.AutoDependenciesMode;
-import io.wcm.devops.conga.plugins.aem.maven.model.ContentPackageFile;
+import io.wcm.devops.conga.plugins.aem.maven.model.InstallableFile;
 import io.wcm.devops.conga.plugins.aem.maven.model.ModelParser;
 
 class AllPackageBuilderTest {
@@ -77,11 +77,11 @@ class AllPackageBuilderTest {
   @ParameterizedTest
   @MethodSource("cloudManagerTargetVariants")
   void testBuild(Set<String> cloudManagerTarget, List<String> runmodeSuffixes) throws Exception {
-    List<? extends ContentPackageFile> contentPackages = new ModelParser(nodeDir).getContentPackagesForNode();
+    List<InstallableFile> files = new ModelParser(nodeDir).getInstallableFilesForNode();
     File targetFile = new File(targetDir, "all.zip");
 
     AllPackageBuilder builder = new AllPackageBuilder(targetFile, "test-group", "test-pkg");
-    builder.add(contentPackages, cloudManagerTarget);
+    builder.add(files, cloudManagerTarget);
     assertTrue(builder.build(ImmutableMap.of("prop1", "value1")));
 
     ZipUtil.unpack(targetFile, targetUnpackDir);
@@ -99,7 +99,9 @@ class AllPackageBuilderTest {
           "core.wcm.components.content" + runmodeSuffix + "-2.17.0.zip",
           "core.wcm.components.extensions.amp.content" + runmodeSuffix + "-2.17.0.zip",
           "acs-aem-commons-ui.apps" + runmodeSuffix + "-4.10.0.zip",
-          "aem-cms-system-config" + runmodeSuffix + ".zip");
+          "aem-cms-system-config" + runmodeSuffix + ".zip",
+          "io.wcm.caconfig.editor-1.11.0.jar",
+          "io.wcm.wcm.ui.granite-1.9.2.jar");
       assertNameDependencies(applicationInstallDir, "accesscontroltool-apps-package" + runmodeSuffix + "-3.0.0.zip",
           "accesscontroltool-apps-package" + runmodeSuffix);
       assertNameDependencies(applicationInstallDir, "accesscontroltool-oakindex-package" + runmodeSuffix + "-3.0.0.zip",
@@ -160,12 +162,12 @@ class AllPackageBuilderTest {
   @ParameterizedTest
   @MethodSource("cloudManagerTargetVariants")
   void testBuild_IMMUTABLE_MUTABLE_COMBINED(Set<String> cloudManagerTarget, List<String> runmodeSuffixes) throws Exception {
-    List<? extends ContentPackageFile> contentPackages = new ModelParser(nodeDir).getContentPackagesForNode();
+    List<InstallableFile> files = new ModelParser(nodeDir).getInstallableFilesForNode();
     File targetFile = new File(targetDir, "all.zip");
 
     AllPackageBuilder builder = new AllPackageBuilder(targetFile, "test-group", "test-pkg")
         .autoDependenciesMode(AutoDependenciesMode.IMMUTABLE_MUTABLE_COMBINED);
-    builder.add(contentPackages, cloudManagerTarget);
+    builder.add(files, cloudManagerTarget);
     assertTrue(builder.build(null));
 
     ZipUtil.unpack(targetFile, targetUnpackDir);
@@ -183,7 +185,9 @@ class AllPackageBuilderTest {
           "core.wcm.components.content" + runmodeSuffix + "-2.17.0.zip",
           "core.wcm.components.extensions.amp.content" + runmodeSuffix + "-2.17.0.zip",
           "acs-aem-commons-ui.apps" + runmodeSuffix + "-4.10.0.zip",
-          "aem-cms-system-config" + runmodeSuffix + ".zip");
+          "aem-cms-system-config" + runmodeSuffix + ".zip",
+          "io.wcm.caconfig.editor-1.11.0.jar",
+          "io.wcm.wcm.ui.granite-1.9.2.jar");
       assertNameDependencies(applicationInstallDir, "accesscontroltool-apps-package" + runmodeSuffix + "-3.0.0.zip",
           "accesscontroltool-apps-package" + runmodeSuffix,
           "adobe/consulting:acs-aem-commons-ui.content" + runmodeSuffix + ":4.10.0");
@@ -256,12 +260,12 @@ class AllPackageBuilderTest {
   @ParameterizedTest
   @MethodSource("cloudManagerTargetVariants")
   void testBuild_IMMUTABLE_MUTABLE_SEPARATE(Set<String> cloudManagerTarget, List<String> runmodeSuffixes) throws Exception {
-    List<? extends ContentPackageFile> contentPackages = new ModelParser(nodeDir).getContentPackagesForNode();
+    List<InstallableFile> files = new ModelParser(nodeDir).getInstallableFilesForNode();
     File targetFile = new File(targetDir, "all.zip");
 
     AllPackageBuilder builder = new AllPackageBuilder(targetFile, "test-group", "test-pkg")
         .autoDependenciesMode(AutoDependenciesMode.IMMUTABLE_MUTABLE_SEPARATE);
-    builder.add(contentPackages, cloudManagerTarget);
+    builder.add(files, cloudManagerTarget);
     assertTrue(builder.build(null));
 
     ZipUtil.unpack(targetFile, targetUnpackDir);
@@ -279,7 +283,9 @@ class AllPackageBuilderTest {
           "core.wcm.components.content" + runmodeSuffix + "-2.17.0.zip",
           "core.wcm.components.extensions.amp.content" + runmodeSuffix + "-2.17.0.zip",
           "acs-aem-commons-ui.apps" + runmodeSuffix + "-4.10.0.zip",
-          "aem-cms-system-config" + runmodeSuffix + ".zip");
+          "aem-cms-system-config" + runmodeSuffix + ".zip",
+          "io.wcm.caconfig.editor-1.11.0.jar",
+          "io.wcm.wcm.ui.granite-1.9.2.jar");
       assertNameDependencies(applicationInstallDir, "accesscontroltool-apps-package" + runmodeSuffix + "-3.0.0.zip",
           "accesscontroltool-apps-package" + runmodeSuffix,
           "adobe/consulting:acs-aem-commons-ui.apps" + runmodeSuffix + ":4.10.0");
@@ -351,12 +357,12 @@ class AllPackageBuilderTest {
   @ParameterizedTest
   @MethodSource("cloudManagerTargetVariants")
   void testBuild_IMMUTABLE_ONLY(Set<String> cloudManagerTarget, List<String> runmodeSuffixes) throws Exception {
-    List<? extends ContentPackageFile> contentPackages = new ModelParser(nodeDir).getContentPackagesForNode();
+    List<InstallableFile> files = new ModelParser(nodeDir).getInstallableFilesForNode();
     File targetFile = new File(targetDir, "all.zip");
 
     AllPackageBuilder builder = new AllPackageBuilder(targetFile, "test-group", "test-pkg")
         .autoDependenciesMode(AutoDependenciesMode.IMMUTABLE_ONLY);
-    builder.add(contentPackages, cloudManagerTarget);
+    builder.add(files, cloudManagerTarget);
     assertTrue(builder.build(null));
 
     ZipUtil.unpack(targetFile, targetUnpackDir);
@@ -374,7 +380,9 @@ class AllPackageBuilderTest {
           "core.wcm.components.content" + runmodeSuffix + "-2.17.0.zip",
           "core.wcm.components.extensions.amp.content" + runmodeSuffix + "-2.17.0.zip",
           "acs-aem-commons-ui.apps" + runmodeSuffix + "-4.10.0.zip",
-          "aem-cms-system-config" + runmodeSuffix + ".zip");
+          "aem-cms-system-config" + runmodeSuffix + ".zip",
+          "io.wcm.caconfig.editor-1.11.0.jar",
+          "io.wcm.wcm.ui.granite-1.9.2.jar");
       assertNameDependencies(applicationInstallDir, "accesscontroltool-apps-package" + runmodeSuffix + "-3.0.0.zip",
           "accesscontroltool-apps-package" + runmodeSuffix,
           "adobe/consulting:acs-aem-commons-ui.apps" + runmodeSuffix + ":4.10.0");

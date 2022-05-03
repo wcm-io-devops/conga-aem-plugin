@@ -39,7 +39,6 @@ import java.util.Objects;
 import java.util.Set;
 import java.util.jar.JarFile;
 import java.util.jar.Manifest;
-import java.util.stream.Collectors;
 
 import org.apache.commons.lang3.StringUtils;
 import org.osgi.framework.Constants;
@@ -78,19 +77,6 @@ public final class ModelParser {
     this.yaml = YamlUtil.createYaml();
     this.nodeDir = nodeDir;
     this.modelData = getModelData();
-  }
-
-  /**
-   * Returns all content packages referenced in this model file.
-   * @return List of content packages.
-   * @deprecated Use {@link #getInstallableFilesForNode()} instead.
-   */
-  @Deprecated
-  public List<ModelContentPackageFile> getContentPackagesForNode() {
-    return getInstallableFilesForNode().stream()
-        .filter(ModelContentPackageFile.class::isInstance)
-        .map(ModelContentPackageFile.class::cast)
-        .collect(Collectors.toList());
   }
 
   /**

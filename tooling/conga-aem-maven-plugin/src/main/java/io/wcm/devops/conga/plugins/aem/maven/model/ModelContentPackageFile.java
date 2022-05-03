@@ -29,12 +29,14 @@ import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 
+import org.jetbrains.annotations.Nullable;
+
 import io.wcm.devops.conga.plugins.aem.postprocessor.ContentPackagePropertiesPostProcessor;
 
 /**
  * Represents a content package file generated or referenced by CONGA.
  */
-public final class ModelContentPackageFile implements ContentPackageFile, InstallableFile {
+public final class ModelContentPackageFile implements ContentPackageFile {
 
   private final File file;
 
@@ -84,23 +86,26 @@ public final class ModelContentPackageFile implements ContentPackageFile, Instal
     return this.file;
   }
 
-  @Override
   public Boolean getInstall() {
     return this.install;
   }
 
+  @Nullable
   public Boolean getForce() {
     return this.force;
   }
 
+  @Nullable
   public Boolean getRecursive() {
     return this.recursive;
   }
 
+  @Nullable
   public Integer getDelayAfterInstallSec() {
     return this.delayAfterInstallSec;
   }
 
+  @Nullable
   public Integer getHttpSocketTimeoutSec() {
     return this.httpSocketTimeoutSec;
   }

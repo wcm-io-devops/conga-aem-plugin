@@ -32,7 +32,7 @@ import org.junit.jupiter.api.TestInfo;
 
 import com.google.common.collect.ImmutableSet;
 
-import io.wcm.devops.conga.plugins.aem.maven.model.ContentPackageFile;
+import io.wcm.devops.conga.plugins.aem.maven.model.InstallableFile;
 import io.wcm.devops.conga.plugins.aem.maven.model.ModelParser;
 
 class AllPackageBuilderMixedPackageTypeTest {
@@ -53,14 +53,14 @@ class AllPackageBuilderMixedPackageTypeTest {
 
   @Test
   void testBuild() throws Exception {
-    List<? extends ContentPackageFile> contentPackages = new ModelParser(nodeDir).getContentPackagesForNode();
+    List<InstallableFile> files = new ModelParser(nodeDir).getInstallableFilesForNode();
     File targetFile = new File(targetDir, "all.zip");
 
     AllPackageBuilder builder = new AllPackageBuilder(targetFile, "test-group", "test-pkg");
 
     // should fail to to "mixed" packageType
     assertThrows(IllegalArgumentException.class, () -> {
-      builder.add(contentPackages, ImmutableSet.of());
+      builder.add(files, ImmutableSet.of());
     });
   }
 
