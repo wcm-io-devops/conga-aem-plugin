@@ -27,6 +27,9 @@
       <action type="add" dev="sseifert">
         conga-aem-maven-plugin: Add new parameter packageTypeValidation which controls how to handle packages with invalid or without package types.
       </action>
+      <action type="add" dev="sseifert">
+        conga-aem-maven-plugin: Support to include OSGi bundles referenced in CONGA definitions to be directly included in "all" content package, or deployed to a local AEM instance.
+      </action>
       <action type="update" dev="sseifert">
         Content Package Validator: Update to filevault-package-maven-plugin 1.3.0.
       </action>
