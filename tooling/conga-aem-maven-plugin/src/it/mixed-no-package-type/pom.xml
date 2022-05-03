@@ -3,7 +3,7 @@
   #%L
   wcm.io
   %%
-  Copyright (C) 2015 wcm.io
+  Copyright (C) 2022 wcm.io
   %%
   Licensed under the Apache License, Version 2.0 (the "License");
   you may not use this file except in compliance with the License.
@@ -30,24 +30,16 @@
     <relativePath/>
   </parent>
 
-  <groupId>io.wcm.devops.conga.plugins</groupId>
-  <artifactId>io.wcm.devops.conga.plugins.aem.example</artifactId>
+  <groupId>io.wcm.devops.conga.plugins.aem.it</groupId>
+  <artifactId>io.wcm.devops.conga.plugins.aem.it.mixed-no-package-type</artifactId>
   <packaging>config</packaging>
   <version>1-SNAPSHOT</version>
 
-  <name>CONGA AEM Plugin Example</name>
-  <description>Example definitions and templates.</description>
+  <name>Mixed/No Package Type</name>
+  <description>Test case with packages with "mixed" package types, and packages without package type and "all" package.</description>
 
   <dependencies>
 
-    <!-- Example content package to download and extract metadata -->
-    <dependency>
-      <groupId>io.wcm</groupId>
-      <artifactId>io.wcm.caconfig.editor.package</artifactId>
-      <version>1.0.0</version>
-      <type>zip</type>
-    </dependency>
-    
     <!-- ACS AEM Commons -->
     <dependency>
       <groupId>com.adobe.acs</groupId>
@@ -87,14 +79,29 @@
           </dependency>
 
         </dependencies>
-        <configuration>
+      </plugin>
 
-          <!-- Path to AEM crytpo key (recommendation: encrypt it with Ansible Vault) -->
-          <pluginConfig>
-            aem-plugin;cryptoAesKeyUrl=classpath:/crypto/master
-          </pluginConfig>
+      <plugin>
+        <groupId>io.wcm.devops.conga.plugins</groupId>
+        <artifactId>conga-aem-maven-plugin</artifactId>
+        <version>@project.version@</version>
+        <executions>
 
-        </configuration>
+          <!-- Generate "all" packages including all packages from CONGA configuration for deployment via Adobe Cloud Manager -->
+          <execution>
+            <id>cloudmanager-all-package</id>
+            <phase>generate-resources</phase>
+            <goals>
+              <goal>cloudmanager-all-package</goal>
+            </goals>
+            <configuration>
+              <group>it</group>
+              <!-- Allow packages with mixed mode and without package type -->
+              <packageTypeValidation>WARN</packageTypeValidation>
+            </configuration>
+          </execution>
+
+        </executions>
       </plugin>
 
       <!-- do not deploy this example into maven repository -->

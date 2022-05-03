@@ -20,22 +20,26 @@
 package io.wcm.devops.conga.plugins.aem.maven.allpackage;
 
 import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.Collections;
 import java.util.List;
+import java.util.Set;
 
 import org.apache.commons.io.FileUtils;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.TestInfo;
 
-import com.google.common.collect.ImmutableSet;
-
+import io.wcm.devops.conga.plugins.aem.maven.PackageTypeValidation;
 import io.wcm.devops.conga.plugins.aem.maven.model.InstallableFile;
 import io.wcm.devops.conga.plugins.aem.maven.model.ModelParser;
 
 class AllPackageBuilderMixedPackageTypeTest {
+
+  private static final Set<String> NO_RUNMODES = Collections.emptySet();
 
   private File nodeDir;
   private File targetDir;
@@ -52,16 +56,31 @@ class AllPackageBuilderMixedPackageTypeTest {
   }
 
   @Test
-  void testBuild() throws Exception {
+  void testBuild_Strict() throws Exception {
     List<InstallableFile> files = new ModelParser(nodeDir).getInstallableFilesForNode();
     File targetFile = new File(targetDir, "all.zip");
 
-    AllPackageBuilder builder = new AllPackageBuilder(targetFile, "test-group", "test-pkg");
+    AllPackageBuilder builder = new AllPackageBuilder(targetFile, "test-group", "test-pkg")
+        .packageTypeValidation(PackageTypeValidation.STRICT);
 
-    // should fail to to "mixed" packageType
+    // should fail due to "mixed" packageType
     assertThrows(IllegalArgumentException.class, () -> {
-      builder.add(files, ImmutableSet.of());
+      builder.add(files, NO_RUNMODES);
     });
+  }
+
+  @Test
+  void testBuild_Warn() throws Exception {
+    List<InstallableFile> files = new ModelParser(nodeDir).getInstallableFilesForNode();
+    File targetFile = new File(targetDir, "all.zip");
+
+    AllPackageBuilder builder = new AllPackageBuilder(targetFile, "test-group", "test-pkg")
+        .packageTypeValidation(PackageTypeValidation.WARN);
+
+    // should not fail due to "mixed" packageType
+    builder.add(files, NO_RUNMODES);
+
+    assertTrue(builder.build(Collections.emptyMap()));
   }
 
 }

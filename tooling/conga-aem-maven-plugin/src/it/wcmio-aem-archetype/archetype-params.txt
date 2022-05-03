@@ -20,7 +20,7 @@ mvn org.apache.maven.plugins:maven-archetype-plugin:3.1.0:generate -Dinteractive
   -DoptionWcmioHandler=y \
   -DoptionSlingModelsLatest=n \
   -DoptionContextAwareConfigLatest=n \
-  -DoptionAcsCommons=n \
+  -DoptionAcsCommons=y \
   -DoptionFrontend=n \
   -DoptionNodeJsPlugin=n \
   -DoptionIntegrationTests=n

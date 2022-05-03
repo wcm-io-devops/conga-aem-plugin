@@ -133,6 +133,12 @@ files:
         custom.property1: value1
         custom.property2: 123
 
+# ACS AEM Commons
+- url: mvn:com.adobe.acs/acs-aem-commons-ui.apps//zip/min
+  dir: packages
+- url: mvn:com.adobe.acs/acs-aem-commons-ui.content//zip/min
+  dir: packages
+
 
 # Defines configuration parameters and default values
 config:
