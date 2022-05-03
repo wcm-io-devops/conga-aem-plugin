@@ -418,8 +418,9 @@ public final class AllPackageBuilder {
     String path = rootPath + "/" + pkg.getPackageType() + "/install" + runModeSuffix;
 
     String versionSuffix = "";
-    if (pkg.getVersion() != null && pkg.getFile().getName().contains(pkg.getVersion())) {
-      versionSuffix = "-" + pkg.getVersion();
+    String packageVersion = pkg.getVersion();
+    if (packageVersion != null && pkg.getFile().getName().contains(packageVersion)) {
+      versionSuffix = "-" + packageVersion;
     }
     String fileName = pkg.getName() + versionSuffix
         + "." + FilenameUtils.getExtension(pkg.getFile().getName());

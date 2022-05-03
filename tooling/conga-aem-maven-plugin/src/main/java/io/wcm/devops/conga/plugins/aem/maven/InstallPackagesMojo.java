@@ -218,8 +218,8 @@ public final class InstallPackagesMojo extends AbstractContentPackageMojo {
       mojoExecution.setConfiguration(config);
 
       buildPluginManager.executeMojo(session, mojoExecution);
-    } /*CHECKSTYLE:OFF*/
-    catch (Throwable ex) { /*CHECKSTYLE_ON*/
+    }
+    catch (Exception ex) {
       throw new MojoExecutionException("Faild to execute plugin: " + plugin, ex);
     }
   }

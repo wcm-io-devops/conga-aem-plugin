@@ -43,7 +43,7 @@ public interface ContentPackageFile extends InstallableFile {
   /**
    * @return Package version
    */
-  @NotNull
+  @Nullable
   String getVersion();
 
   /**
