@@ -29,6 +29,9 @@
     <!-- Set to 'enabled' to activate org.eclipse.jdt.core.compiler.annotation.nullanalysis feature in eclipse settings -->
     <eclipse.settings.nullanalysis>enabled</eclipse.settings.nullanalysis>
 
+    <!-- Versions -->
+    <acs.aem.commons.version>5.2.0</acs.aem.commons.version>
+
     <!-- Enable reproducible builds -->
     <project.build.outputTimestamp>2021-01-01T00:00:00Z</project.build.outputTimestamp>
 
@@ -270,6 +273,27 @@
         <scope>import</scope>
       </dependency>
 
+      <!-- ACS AEM Commons -->
+      <dependency>
+        <groupId>com.adobe.acs</groupId>
+        <artifactId>acs-aem-commons-bundle</artifactId>
+        <version>${acs.aem.commons.version}</version>
+      </dependency>
+      <dependency>
+        <groupId>com.adobe.acs</groupId>
+        <artifactId>acs-aem-commons-ui.apps</artifactId>
+        <version>${acs.aem.commons.version}</version>
+        <classifier>min</classifier>
+        <type>zip</type>
+      </dependency>
+      <dependency>
+        <groupId>com.adobe.acs</groupId>
+        <artifactId>acs-aem-commons-ui.content</artifactId>
+        <version>${acs.aem.commons.version}</version>
+        <classifier>min</classifier>
+        <type>zip</type>
+      </dependency>
+
       <!-- Testing -->
       <dependency>
         <groupId>org.junit</groupId>
@@ -301,6 +325,15 @@
           <artifactId>maven-release-plugin</artifactId>
           <configuration>
             <autoVersionSubmodules>true</autoVersionSubmodules>
+          </configuration>
+        </plugin>
+
+        <plugin>
+          <groupId>org.apache.maven.plugins</groupId>
+          <artifactId>maven-javadoc-plugin</artifactId>
+          <configuration>
+            <!-- Avoid https://bugs.openjdk.java.net/browse/JDK-8212233 while building for Java 8 -->
+            <detectJavaApiLink>false</detectJavaApiLink> 
           </configuration>
         </plugin>
 

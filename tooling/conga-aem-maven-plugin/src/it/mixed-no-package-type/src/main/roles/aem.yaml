@@ -1,0 +1,30 @@
+templateDir: aem
+
+files:
+
+# Define a AEM content package with "mixed" package type
+- file: content-sample.json
+  dir: packages
+  template: content-sample.json.hbs
+  # Transform JSON file to AEM content package
+  postProcessors:
+  - aem-contentpackage
+  postProcessorOptions:
+    contentPackage:
+      name: content-sample
+      packageType: mixed
+      rootPath: /content/sample
+
+# ACS AEM Commons
+- url: mvn:com.adobe.acs/acs-aem-commons-ui.apps//zip/min
+  dir: packages
+- url: mvn:com.adobe.acs/acs-aem-commons-ui.content//zip/min
+  dir: packages
+
+
+# Defines configuration parameters and default values
+config:
+
+  contentPackage:
+    group: sample
+    version: "${version}"

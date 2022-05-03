@@ -49,6 +49,22 @@
       <scope>compile</scope>
     </dependency>
 
+    <!-- ACS AEM Commons -->
+    <dependency>
+      <groupId>com.adobe.acs</groupId>
+      <artifactId>acs-aem-commons-ui.apps</artifactId>
+      <classifier>min</classifier>
+      <type>zip</type>
+      <scope>compile</scope>
+    </dependency>
+    <dependency>
+      <groupId>com.adobe.acs</groupId>
+      <artifactId>acs-aem-commons-ui.content</artifactId>
+      <classifier>min</classifier>
+      <type>zip</type>
+      <scope>compile</scope>
+    </dependency>
+
     <!-- wcm.io - Content packages with Sling-Initial-Content, see https://wcm-io.atlassian.net/l/c/d2FuEgf8 for details -->
     <dependency>
       <groupId>io.wcm</groupId>
