@@ -255,7 +255,21 @@ public final class CloudManagerAllPackageMojo extends AbstractCloudManagerMojo {
       for (File nodeDir : nodeDirs) {
         ModelParser modelParser = new ModelParser(nodeDir);
         Set<String> cloudManagerTarget = modelParser.getCloudManagerTarget();
-        if (!cloudManagerTarget.contains(CLOUDMANAGER_TARGET_NONE)) {
+
+        boolean validNodeForAllPackage = false;
+        if (cloudManagerTarget.contains(CLOUDMANAGER_TARGET_NONE)) {
+          if (isEnvironmentConfiguredExplicitely(environmentDir.getName())) {
+            // cloud manager target is set to "none" - but environment is configured explicitly, so include it
+            validNodeForAllPackage = true;
+            cloudManagerTarget.remove(CLOUDMANAGER_TARGET_NONE);
+          }
+        }
+        else {
+          // cloud manager target is not set to "none" - include node
+          validNodeForAllPackage = true;
+        }
+
+        if (validNodeForAllPackage) {
           List<InstallableFile> files = modelParser.getInstallableFilesForNode();
           visitor.visit(environmentDir, nodeDir, cloudManagerTarget, files);
         }
