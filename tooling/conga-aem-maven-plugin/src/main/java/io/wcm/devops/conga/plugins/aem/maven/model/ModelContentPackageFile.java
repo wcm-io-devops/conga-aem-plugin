@@ -97,12 +97,10 @@ public final class ModelContentPackageFile implements ContentPackageFile, Instal
     return this.recursive;
   }
 
-  @Override
   public Integer getDelayAfterInstallSec() {
     return this.delayAfterInstallSec;
   }
 
-  @Override
   public Integer getHttpSocketTimeoutSec() {
     return this.httpSocketTimeoutSec;
   }

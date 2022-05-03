@@ -88,8 +88,8 @@ public final class ModelParser {
   @Deprecated
   public List<ModelContentPackageFile> getContentPackagesForNode() {
     return getInstallableFilesForNode().stream()
-        .filter(file -> file instanceof ModelContentPackageFile)
-        .map(file -> (ModelContentPackageFile)file)
+        .filter(ModelContentPackageFile.class::isInstance)
+        .map(ModelContentPackageFile.class::cast)
         .collect(Collectors.toList());
   }
 

@@ -82,8 +82,6 @@ class ModelParserTest {
     BundleFile bundle12 = (BundleFile)files.get(12);
     assertEquals(ImmutableList.of("aem-author"), bundle12.getVariants());
     assertEquals(false, bundle12.getInstall());
-    assertEquals(30, bundle12.getDelayAfterInstallSec());
-    assertEquals(60, bundle12.getHttpSocketTimeoutSec());
   }
 
   private void assertPackage(InstallableFile file, String path, String packageType, Boolean force) {

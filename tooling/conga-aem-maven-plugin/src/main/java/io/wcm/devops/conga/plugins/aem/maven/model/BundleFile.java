@@ -31,8 +31,6 @@ public final class BundleFile implements InstallableFile {
   private final File file;
 
   private final Boolean install;
-  private final Integer delayAfterInstallSec;
-  private final Integer httpSocketTimeoutSec;
 
   private final List<String> variants;
 
@@ -45,8 +43,6 @@ public final class BundleFile implements InstallableFile {
     this.file = file;
 
     this.install = (Boolean)fileData.get("install");
-    this.delayAfterInstallSec = (Integer)fileData.get("delayAfterInstallSec");
-    this.httpSocketTimeoutSec = (Integer)fileData.get("httpSocketTimeoutSec");
 
     this.variants = variants;
   }
@@ -59,16 +55,6 @@ public final class BundleFile implements InstallableFile {
   @Override
   public Boolean getInstall() {
     return this.install;
-  }
-
-  @Override
-  public Integer getDelayAfterInstallSec() {
-    return this.delayAfterInstallSec;
-  }
-
-  @Override
-  public Integer getHttpSocketTimeoutSec() {
-    return this.httpSocketTimeoutSec;
   }
 
   @Override

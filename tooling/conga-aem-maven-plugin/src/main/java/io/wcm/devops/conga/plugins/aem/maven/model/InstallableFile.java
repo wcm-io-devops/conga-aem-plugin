@@ -42,14 +42,4 @@ public interface InstallableFile {
    */
   Boolean getInstall();
 
-  /**
-   * @return If non-null a delay value to wait after installation.
-   */
-  Integer getDelayAfterInstallSec();
-
-  /**
-   * @return If non-null HTTP socket timeout
-   */
-  Integer getHttpSocketTimeoutSec();
-
 }
