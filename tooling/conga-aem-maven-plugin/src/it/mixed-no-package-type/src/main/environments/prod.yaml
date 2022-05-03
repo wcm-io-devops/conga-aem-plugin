@@ -1,0 +1,8 @@
+# Defines an environment
+
+nodes:
+
+# Example nodes
+- node: aem
+  roles:
+  - role: aem
