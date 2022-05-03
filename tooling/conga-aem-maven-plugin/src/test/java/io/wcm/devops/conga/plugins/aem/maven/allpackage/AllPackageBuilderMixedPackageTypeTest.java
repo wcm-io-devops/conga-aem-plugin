@@ -34,7 +34,7 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.TestInfo;
 
 import io.wcm.devops.conga.plugins.aem.maven.PackageTypeValidation;
-import io.wcm.devops.conga.plugins.aem.maven.model.ContentPackageFile;
+import io.wcm.devops.conga.plugins.aem.maven.model.InstallableFile;
 import io.wcm.devops.conga.plugins.aem.maven.model.ModelParser;
 
 class AllPackageBuilderMixedPackageTypeTest {
@@ -57,7 +57,7 @@ class AllPackageBuilderMixedPackageTypeTest {
 
   @Test
   void testBuild_Strict() throws Exception {
-    List<? extends ContentPackageFile> contentPackages = new ModelParser().getContentPackagesForNode(nodeDir);
+    List<InstallableFile> files = new ModelParser(nodeDir).getInstallableFilesForNode();
     File targetFile = new File(targetDir, "all.zip");
 
     AllPackageBuilder builder = new AllPackageBuilder(targetFile, "test-group", "test-pkg")
@@ -65,20 +65,20 @@ class AllPackageBuilderMixedPackageTypeTest {
 
     // should fail due to "mixed" packageType
     assertThrows(IllegalArgumentException.class, () -> {
-      builder.add(contentPackages, NO_RUNMODES);
+      builder.add(files, NO_RUNMODES);
     });
   }
 
   @Test
   void testBuild_Warn() throws Exception {
-    List<? extends ContentPackageFile> contentPackages = new ModelParser().getContentPackagesForNode(nodeDir);
+    List<InstallableFile> files = new ModelParser(nodeDir).getInstallableFilesForNode();
     File targetFile = new File(targetDir, "all.zip");
 
     AllPackageBuilder builder = new AllPackageBuilder(targetFile, "test-group", "test-pkg")
         .packageTypeValidation(PackageTypeValidation.WARN);
 
     // should not fail due to "mixed" packageType
-    builder.add(contentPackages, NO_RUNMODES);
+    builder.add(files, NO_RUNMODES);
 
     assertTrue(builder.build(Collections.emptyMap()));
   }

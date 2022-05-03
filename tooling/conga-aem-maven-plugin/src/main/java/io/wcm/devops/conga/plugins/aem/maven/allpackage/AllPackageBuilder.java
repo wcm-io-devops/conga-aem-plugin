@@ -58,7 +58,9 @@ import com.google.common.collect.ImmutableSet;
 
 import io.wcm.devops.conga.plugins.aem.maven.AutoDependenciesMode;
 import io.wcm.devops.conga.plugins.aem.maven.PackageTypeValidation;
+import io.wcm.devops.conga.plugins.aem.maven.model.BundleFile;
 import io.wcm.devops.conga.plugins.aem.maven.model.ContentPackageFile;
+import io.wcm.devops.conga.plugins.aem.maven.model.InstallableFile;
 import io.wcm.tooling.commons.contentpackagebuilder.ContentPackage;
 import io.wcm.tooling.commons.contentpackagebuilder.ContentPackageBuilder;
 import io.wcm.tooling.commons.contentpackagebuilder.PackageFilter;
@@ -97,7 +99,8 @@ public final class AllPackageBuilder {
       PackageType.CONTAINER.name().toLowerCase(),
       PackageType.CONTENT.name().toLowerCase());
 
-  private final List<ContentPackageFileSet> fileSets = new ArrayList<>();
+  private final List<ContentPackageFileSet> contentPackageFileSets = new ArrayList<>();
+  private final List<BundleFileSet> bundleFileSets = new ArrayList<>();
 
   /**
    * @param targetFile Target file
@@ -155,12 +158,13 @@ public final class AllPackageBuilder {
   }
 
   /**
-   * Add content packages to be contained in "all" content package.
-   * @param contentPackages Content packages (invalid will be filtered out)
+   * Add content packages and OSGi bundles to be contained in "all" content package.
+   * @param files Content packages (invalid will be filtered out) and OSGi bundles
    * @param cloudManagerTarget Target environments/run modes the packages should be attached to
    * @throws IllegalArgumentException If and invalid package type is detected
    */
-  public void add(List<? extends ContentPackageFile> contentPackages, Set<String> cloudManagerTarget) {
+  public void add(List<InstallableFile> files, Set<String> cloudManagerTarget) {
+    List<ContentPackageFile> contentPackages = filterFiles(files, ContentPackageFile.class);
 
     // collect list of cloud manager environment run modes
     List<String> environmentRunModes = new ArrayList<>();
@@ -184,7 +188,13 @@ public final class AllPackageBuilder {
     }
 
     if (!validContentPackages.isEmpty()) {
-      fileSets.add(new ContentPackageFileSet(validContentPackages, environmentRunModes));
+      contentPackageFileSets.add(new ContentPackageFileSet(validContentPackages, environmentRunModes));
+    }
+
+    // add OSGi bundles
+    List<BundleFile> bundles = filterFiles(files, BundleFile.class);
+    if (!bundles.isEmpty()) {
+      bundleFileSets.add(new BundleFileSet(bundles, environmentRunModes));
     }
   }
 
@@ -240,6 +250,13 @@ public final class AllPackageBuilder {
     return contentPackages.stream().collect(Collectors.toList());
   }
 
+  private static <T> List<T> filterFiles(List<? extends InstallableFile> files, Class<T> fileClass) {
+    return files.stream()
+        .filter(fileClass::isInstance)
+        .map(fileClass::cast)
+        .collect(Collectors.toList());
+  }
+
   /**
    * Build "all" content package.
    * @param properties Specifies additional properties to be set in the properties.xml file.
@@ -248,7 +265,7 @@ public final class AllPackageBuilder {
    */
   public boolean build(Map<String, String> properties) throws IOException {
 
-    if (fileSets.isEmpty()) {
+    if (contentPackageFileSets.isEmpty()) {
       return false;
     }
 
@@ -272,7 +289,7 @@ public final class AllPackageBuilder {
 
     // build set with dependencies instances for each package contained in all filesets
     Set<Dependency> allPackagesFromFileSets = new HashSet<>();
-    for (ContentPackageFileSet fileSet : fileSets) {
+    for (ContentPackageFileSet fileSet : contentPackageFileSets) {
       for (ContentPackageFile pkg : fileSet.getContentPackages()) {
         addDependencyInformation(allPackagesFromFileSets, pkg);
       }
@@ -281,7 +298,7 @@ public final class AllPackageBuilder {
     // build content package
     // if auto dependencies is active: build separate "dependency chains" between mutable and immutable packages
     try (ContentPackage contentPackage = builder.build(targetFile)) {
-      for (ContentPackageFileSet fileSet : fileSets) {
+      for (ContentPackageFileSet fileSet : contentPackageFileSets) {
         for (String environmentRunMode : fileSet.getEnvironmentRunModes()) {
           List<ContentPackageFile> previousPackages = new ArrayList<>();
           for (ContentPackageFile pkg : fileSet.getContentPackages()) {
@@ -318,6 +335,14 @@ public final class AllPackageBuilder {
             }
 
             previousPackages.add(pkg);
+          }
+        }
+      }
+      for (BundleFileSet bundleFileSet : bundleFileSets) {
+        for (String environmentRunMode : bundleFileSet.getEnvironmentRunModes()) {
+          for (BundleFile bundleFile : bundleFileSet.getBundles()) {
+            String path = buildBundlePath(bundleFile, rootPath, environmentRunMode);
+            contentPackage.addFile(path, bundleFile.getFile());
           }
         }
       }
@@ -359,15 +384,15 @@ public final class AllPackageBuilder {
 
   /**
    * Generate suffix for instance and environment run modes.
-   * @param pkg Content package
+   * @param file Content package
    * @return Package path
    */
-  private static String buildRunModeSuffix(ContentPackageFile pkg, String environmentRunMode) {
+  private static String buildRunModeSuffix(InstallableFile file, String environmentRunMode) {
     StringBuilder runModeSuffix = new StringBuilder();
-    if (RunModeUtil.isOnlyAuthor(pkg)) {
+    if (RunModeUtil.isOnlyAuthor(file)) {
       runModeSuffix.append(".").append(RUNMODE_AUTHOR);
     }
-    else if (RunModeUtil.isOnlyPublish(pkg)) {
+    else if (RunModeUtil.isOnlyPublish(file)) {
       runModeSuffix.append(".").append(RUNMODE_PUBLISH);
     }
     if (!StringUtils.equals(environmentRunMode, RUNMODE_DEFAULT)) {
@@ -393,12 +418,28 @@ public final class AllPackageBuilder {
     String path = rootPath + "/" + pkg.getPackageType() + "/install" + runModeSuffix;
 
     String versionSuffix = "";
-    if (pkg.getVersion() != null && pkg.getFile().getName().contains(pkg.getVersion())) {
-      versionSuffix = "-" + pkg.getVersion();
+    String packageVersion = pkg.getVersion();
+    if (packageVersion != null && pkg.getFile().getName().contains(packageVersion)) {
+      versionSuffix = "-" + packageVersion;
     }
     String fileName = pkg.getName() + versionSuffix
         + "." + FilenameUtils.getExtension(pkg.getFile().getName());
     return path + "/" + fileName;
+  }
+
+  /**
+   * Build path to be used for embedded bundle.
+   * @param bundleFile Bundle
+   * @param rootPath Root path
+   * @return Package path
+   */
+  private static String buildBundlePath(BundleFile bundleFile, String rootPath, String environmentRunMode) {
+    String runModeSuffix = buildRunModeSuffix(bundleFile, environmentRunMode);
+
+    // add run mode suffix to both install folder path and package file name
+    String path = rootPath + "/application/install" + runModeSuffix;
+
+    return path + "/" + bundleFile.getFile().getName();
   }
 
   /**
@@ -449,8 +490,9 @@ public final class AllPackageBuilder {
                 updateDependencies(props, dependencyFile, environmentRunMode, allPackagesFromFileSets);
 
                 // if package type is missing package properties, put in the type defined in model
-                if (props.get(NAME_PACKAGE_TYPE) == null && pkg.getPackageType() != null) {
-                  props.put(NAME_PACKAGE_TYPE, pkg.getPackageType());
+                String packageType = pkg.getPackageType();
+                if (props.get(NAME_PACKAGE_TYPE) == null && packageType != null) {
+                  props.put(NAME_PACKAGE_TYPE, packageType);
                 }
 
                 ZipEntry zipOutEntry = new ZipEntry(zipInEntry.getName());

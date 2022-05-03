@@ -2,7 +2,7 @@
  * #%L
  * wcm.io
  * %%
- * Copyright (C) 2021 wcm.io
+ * Copyright (C) 2022 wcm.io
  * %%
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -19,43 +19,26 @@
  */
 package io.wcm.devops.conga.plugins.aem.maven.model;
 
-import org.apache.commons.lang3.StringUtils;
+import java.io.File;
+import java.util.List;
+
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
 
 /**
- * Generic representation of content package file.
+ * Generic representation of an installable file (content package or OSGi bundle).
  */
-public interface ContentPackageFile extends InstallableFile {
+public interface InstallableFile {
 
   /**
-   * @return Package name
+   * @return Content package file.
    */
   @NotNull
-  String getName();
+  File getFile();
 
   /**
-   * @return Package group
+   * @return Variants/Run modes for content package
    */
   @NotNull
-  String getGroup();
-
-  /**
-   * @return Package version
-   */
-  @Nullable
-  String getVersion();
-
-  /**
-   * @return Package type
-   */
-  @Nullable
-  String getPackageType();
-
-  default String getPackageInfo() {
-    return StringUtils.defaultString(getGroup())
-        + ":" + StringUtils.defaultString(getName())
-        + ":" + StringUtils.defaultString(getVersion());
-  }
+  List<String> getVariants();
 
 }

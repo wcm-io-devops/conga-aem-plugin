@@ -94,6 +94,16 @@ abstract class AbstractCloudManagerMojo extends AbstractMojo {
   }
 
   /**
+   * Checks if the given environment was configured explicitly in plugin configuration.
+   * @param environment Environment name
+   * @return true if configured explicitly
+   */
+  protected boolean isEnvironmentConfiguredExplicitely(String environment) {
+    Set<String> selectedEnvironments = toSet(this.environments);
+    return selectedEnvironments.contains(environment);
+  }
+
+  /**
    * Get matching node directories from environment.
    * @param environmentDir Environment directory
    * @return List of directories
