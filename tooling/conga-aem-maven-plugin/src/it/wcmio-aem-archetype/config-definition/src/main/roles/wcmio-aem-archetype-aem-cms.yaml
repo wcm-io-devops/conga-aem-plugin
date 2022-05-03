@@ -13,6 +13,16 @@ templateDir: wcmio-aem-archetype-aem-cms
 files:
 
 
+# ACS AEM Commons
+- url: mvn:com.adobe.acs/acs-aem-commons-ui.apps//zip/min
+  dir: packages
+  postProcessorOptions:
+    contentPackage.packageType: application
+- url: mvn:com.adobe.acs/acs-aem-commons-ui.content//zip/min
+  dir: packages
+  postProcessorOptions:
+    contentPackage.packageType: content
+
 # AEM OSGi System Configuration
 - file: wcmio-aem-archetype-aem-cms-config.provisioning
   dir: packages

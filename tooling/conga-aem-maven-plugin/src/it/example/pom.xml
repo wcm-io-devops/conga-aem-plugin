@@ -47,6 +47,24 @@
       <version>1.0.0</version>
       <type>zip</type>
     </dependency>
+    
+    <!-- ACS AEM Commons -->
+    <dependency>
+      <groupId>com.adobe.acs</groupId>
+      <artifactId>acs-aem-commons-ui.apps</artifactId>
+      <classifier>min</classifier>
+      <version>5.0.10</version>
+      <type>zip</type>
+      <scope>compile</scope>
+    </dependency>
+    <dependency>
+      <groupId>com.adobe.acs</groupId>
+      <artifactId>acs-aem-commons-ui.content</artifactId>
+      <classifier>min</classifier>
+      <version>5.0.10</version>
+      <type>zip</type>
+      <scope>compile</scope>
+    </dependency>
 
   </dependencies>
 

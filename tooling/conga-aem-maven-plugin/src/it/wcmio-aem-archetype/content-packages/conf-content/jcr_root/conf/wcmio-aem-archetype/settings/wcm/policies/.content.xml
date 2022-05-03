@@ -16,7 +16,7 @@
                             <jcr:content
                                 jcr:primaryType="nt:unstructured"
                                 jcr:mixinTypes="[cq:ReplicationStatus]"
-                                cq:lastReplicated="{Date}2022-04-27T00:00:00.000+02:00"
+                                cq:lastReplicated="{Date}2022-05-03T00:00:00.000+02:00"
                                 cq:lastReplicationAction="Activate"/>
                         </root-container>
                         <experience-fragment
@@ -27,7 +27,7 @@
                             <jcr:content
                                 jcr:primaryType="nt:unstructured"
                                 jcr:mixinTypes="[cq:ReplicationStatus]"
-                                cq:lastReplicated="{Date}2022-04-27T00:00:00.000+02:00"
+                                cq:lastReplicated="{Date}2022-05-03T00:00:00.000+02:00"
                                 cq:lastReplicationAction="Activate"/>
                             <cq:authoring jcr:primaryType="nt:unstructured">
                                 <assetToComponentMapping jcr:primaryType="nt:unstructured">
@@ -48,7 +48,7 @@
                             <jcr:content
                                 jcr:primaryType="nt:unstructured"
                                 jcr:mixinTypes="[cq:ReplicationStatus]"
-                                cq:lastReplicated="{Date}2022-04-27T00:00:00.000+02:00"
+                                cq:lastReplicated="{Date}2022-05-03T00:00:00.000+02:00"
                                 cq:lastReplicationAction="Activate"/>
                             <cq:authoring jcr:primaryType="nt:unstructured">
                                 <assetToComponentMapping jcr:primaryType="nt:unstructured">

@@ -449,7 +449,7 @@ public final class AllPackageBuilder {
                 updateDependencies(props, dependencyFile, environmentRunMode, allPackagesFromFileSets);
 
                 // if package type is missing package properties, put in the type defined in model
-                if (props.get(NAME_PACKAGE_TYPE) == null) {
+                if (props.get(NAME_PACKAGE_TYPE) == null && pkg.getPackageType() != null) {
                   props.put(NAME_PACKAGE_TYPE, pkg.getPackageType());
                 }
 
