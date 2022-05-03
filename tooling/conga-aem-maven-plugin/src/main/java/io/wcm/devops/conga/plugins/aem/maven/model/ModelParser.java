@@ -20,6 +20,9 @@
 package io.wcm.devops.conga.plugins.aem.maven.model;
 
 import static io.wcm.devops.conga.generator.util.FileUtil.getCanonicalPath;
+import static io.wcm.devops.conga.plugins.aem.maven.model.ParserUtil.children;
+import static io.wcm.devops.conga.plugins.aem.maven.model.ParserUtil.getVariants;
+import static io.wcm.devops.conga.plugins.aem.maven.model.ParserUtil.toStringSet;
 
 import java.io.File;
 import java.io.FileInputStream;
@@ -34,9 +37,14 @@ import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 import java.util.Set;
+import java.util.jar.JarFile;
+import java.util.jar.Manifest;
 import java.util.stream.Collectors;
 
 import org.apache.commons.lang3.StringUtils;
+import org.osgi.framework.Constants;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.yaml.snakeyaml.Yaml;
 
 import io.wcm.devops.conga.model.util.MapExpander;
@@ -57,6 +65,8 @@ public final class ModelParser {
   private static final String PROP_CONFIG = "config";
   private static final String PROP_FILES = "files";
 
+  private static final Logger log = LoggerFactory.getLogger(ModelParser.class);
+
   private final Yaml yaml;
   private final File nodeDir;
   private final Map<String, Object> modelData;
@@ -71,11 +81,38 @@ public final class ModelParser {
   }
 
   /**
-   * Returns all content packages references in this fileData.
-   * @return List of content packages
+   * Returns all content packages referenced in this model file.
+   * @return List of content packages.
+   * @deprecated Use {@link #getInstallableFilesForNode()} instead.
    */
+  @Deprecated
   public List<ModelContentPackageFile> getContentPackagesForNode() {
-    return collectPackages();
+    return getInstallableFilesForNode().stream()
+        .filter(file -> file instanceof ModelContentPackageFile)
+        .map(file -> (ModelContentPackageFile)file)
+        .collect(Collectors.toList());
+  }
+
+  /**
+   * Returns all content packages and OSGi bundles referenced in this model file.
+   * @return List of content packages and OSGi bundles.
+   */
+  public List<InstallableFile> getInstallableFilesForNode() {
+    List<InstallableFile> items = new ArrayList<>();
+    for (Map<String, Object> role : children(modelData, PROP_ROLES)) {
+      List<String> variants = getVariants(role);
+      for (Map<String, Object> fileData : children(role, PROP_FILES)) {
+        String path = Objects.toString(fileData.get("path"), null);
+        File file = new File(nodeDir, path);
+        if (isContentPackage(fileData)) {
+          items.add(new ModelContentPackageFile(file, fileData, variants));
+        }
+        else if (isOsgiBundle(file)) {
+          items.add(new BundleFile(file, fileData, variants));
+        }
+      }
+    }
+    return items;
   }
 
   /**
@@ -83,10 +120,8 @@ public final class ModelParser {
    * @param roleName Node role name
    * @return true if role is assigned
    */
-  @SuppressWarnings("unchecked")
   public boolean hasRole(String roleName) {
-    List<Map<String, Object>> roles = (List<Map<String, Object>>)modelData.get(PROP_ROLES);
-    for (Map<String, Object> role : roles) {
+    for (Map<String, Object> role : children(modelData, PROP_ROLES)) {
       if (StringUtils.equals(Objects.toString(role.get(PROP_ROLE), null), roleName)) {
         return true;
       }
@@ -101,37 +136,16 @@ public final class ModelParser {
   @SuppressWarnings("unchecked")
   public Set<String> getCloudManagerTarget() {
     Set<String> targets = new LinkedHashSet<>();
-    List<Map<String, Object>> roles = (List<Map<String, Object>>)modelData.get(PROP_ROLES);
-    for (Map<String, Object> role : roles) {
+    for (Map<String, Object> role : children(modelData, PROP_ROLES)) {
       Map<String, Object> config = (Map<String, Object>)role.get(PROP_CONFIG);
       if (config != null) {
         Object targetValue = MapExpander.getDeep(config, "cloudManager.target");
         if (targetValue != null) {
-          return toStringSet(targetValue);
+          targets.addAll(toStringSet(targetValue));
         }
       }
     }
     return targets;
-  }
-
-  @SuppressWarnings("unchecked")
-  private static Set<String> toStringSet(Object value) {
-    Set<String> result = new LinkedHashSet<>();
-    if (value instanceof String) {
-      String target = (String)value;
-      if (StringUtils.isNotBlank(target)) {
-        result.add(target);
-      }
-    }
-    else if (value instanceof List) {
-      result.addAll(((List<String>)value).stream()
-          .filter(StringUtils::isNotBlank)
-          .collect(Collectors.toList()));
-    }
-    else {
-      throw new IllegalArgumentException("Value is neither string nor string list: " + value);
-    }
-    return result;
   }
 
   private Map<String, Object> getModelData() {
@@ -155,30 +169,21 @@ public final class ModelParser {
     }
   }
 
-  @SuppressWarnings("unchecked")
-  private List<ModelContentPackageFile> collectPackages() {
-    List<ModelContentPackageFile> items = new ArrayList<>();
-    List<Map<String, Object>> roles = (List<Map<String, Object>>)modelData.get(PROP_ROLES);
-    if (roles != null) {
-      for (Map<String, Object> role : roles) {
-        List<Map<String, Object>> files = (List<Map<String, Object>>)role.get(PROP_FILES);
-        if (files != null) {
-          for (Map<String, Object> file : files) {
-            if (file.get(ContentPackagePropertiesPostProcessor.MODEL_OPTIONS_PROPERTY) != null) {
-              items.add(toContentPackageFile(file, role));
-            }
-          }
-        }
-      }
-    }
-    return items;
+  private boolean isContentPackage(Map<String, Object> fileData) {
+    return fileData.get(ContentPackagePropertiesPostProcessor.MODEL_OPTIONS_PROPERTY) != null;
   }
 
-  private ModelContentPackageFile toContentPackageFile(Map<String, Object> fileData,
-      Map<String, Object> roleData) {
-    String path = Objects.toString(fileData.get("path"), null);
-    File file = new File(nodeDir, path);
-    return new ModelContentPackageFile(file, fileData, roleData);
+  private boolean isOsgiBundle(File file) {
+    try (JarFile jarFile = new JarFile(file)) {
+      Manifest manifest = jarFile.getManifest();
+      if (manifest != null) {
+        return manifest.getMainAttributes().getValue(Constants.BUNDLE_SYMBOLICNAME) != null;
+      }
+    }
+    catch (IOException ex) {
+      log.debug("Unable to check for OSGi bundle: {}", file, ex);
+    }
+    return false;
   }
 
 }
