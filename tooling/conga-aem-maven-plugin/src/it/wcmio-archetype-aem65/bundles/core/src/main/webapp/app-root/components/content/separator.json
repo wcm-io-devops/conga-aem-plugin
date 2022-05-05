@@ -1,0 +1,6 @@
+{
+  "jcr:primaryType": "cq:Component",
+  "jcr:title": "Separator",
+  "componentGroup": "wcmio-archetype-aem65 Content",
+  "sling:resourceSuperType": "wcm-io/wcm/core/components/separator/v1/separator"
+}

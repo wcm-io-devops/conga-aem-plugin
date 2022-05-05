@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<workspaceFilter version="1.0">
+    <filter root="/content/dam/wcmio-archetype-aem65">
+        <!-- Exclude folder thumbnails - they will be generated automatically -->
+        <exclude pattern="^.*/jcr:content/folderThumbnail(/.*)?$"/>
+    </filter>
+    <filter root="/content/wcmio-archetype-aem65"/>
+    <filter root="/content/experience-fragments/wcmio-archetype-aem65"/>
+    <filter root="/conf/wcmio-archetype-aem65">
+        <include pattern="/conf/wcmio-archetype-aem65/.*"/>
+        <exclude pattern="/conf/wcmio-archetype-aem65/rep:policy(/.*)?"/>
+        <exclude pattern="/conf/wcmio-archetype-aem65/settings/wcm(/.*)?"/>
+    </filter>
+</workspaceFilter>

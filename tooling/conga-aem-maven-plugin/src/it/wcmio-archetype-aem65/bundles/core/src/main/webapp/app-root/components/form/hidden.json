@@ -1,0 +1,6 @@
+{
+  "jcr:primaryType": "cq:Component",
+  "jcr:title": "Form Hidden",
+  "componentGroup": "wcmio-archetype-aem65 Form",
+  "sling:resourceSuperType": "wcm-io/wcm/core/components/form/hidden/v2/hidden"
+}

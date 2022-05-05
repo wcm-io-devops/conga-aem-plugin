@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<workspaceFilter version="1.0">
+    <filter root="/conf/wcmio-archetype-cloud">
+        <include pattern="/conf/wcmio-archetype-cloud"/>
+        <include pattern="/conf/wcmio-archetype-cloud/rep:policy(/.*)?"/>
+    </filter>
+    <filter root="/conf/wcmio-archetype-cloud/settings/wcm">
+        <exclude pattern="^.*/dam:thumbnails(/.*)?$"/>
+    </filter>
+</workspaceFilter>

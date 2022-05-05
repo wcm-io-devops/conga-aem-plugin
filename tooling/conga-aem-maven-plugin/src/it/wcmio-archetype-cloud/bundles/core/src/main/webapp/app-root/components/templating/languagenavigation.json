@@ -1,0 +1,6 @@
+{
+  "jcr:primaryType": "cq:Component",
+  "jcr:title": "Language Navigation",
+  "componentGroup": "wcmio-archetype-cloud Templating",
+  "sling:resourceSuperType": "wcm-io/wcm/core/components/languagenavigation/v2/languagenavigation"
+}

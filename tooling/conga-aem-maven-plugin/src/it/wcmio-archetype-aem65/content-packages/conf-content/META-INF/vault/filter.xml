@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<workspaceFilter version="1.0">
+    <filter root="/conf/wcmio-archetype-aem65">
+        <include pattern="/conf/wcmio-archetype-aem65"/>
+        <include pattern="/conf/wcmio-archetype-aem65/rep:policy(/.*)?"/>
+    </filter>
+    <filter root="/conf/wcmio-archetype-aem65/settings/wcm">
+        <exclude pattern="^.*/dam:thumbnails(/.*)?$"/>
+    </filter>
+</workspaceFilter>

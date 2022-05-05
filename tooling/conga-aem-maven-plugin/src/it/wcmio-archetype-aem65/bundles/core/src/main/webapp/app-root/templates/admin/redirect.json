@@ -1,0 +1,14 @@
+{
+  "jcr:primaryType": "cq:Template",
+  "jcr:title": "wcmio-archetype-aem65 Redirect",
+  "ranking": 110,
+
+  "allowedPaths": "^/content/wcmio-archetype-aem65/.+$",
+  "allowedParents": ["^/apps/wcmio-archetype-aem65/core/templates/.*$","^/conf/wcmio-archetype-aem65/settings/wcm/templates/.*$"],
+  "allowedChildren": ["^/apps/wcmio-archetype-aem65/core/templates/.*$","^/conf/wcmio-archetype-aem65/settings/wcm/templates/.*$"],
+
+  "jcr:content": {
+    "jcr:primaryType": "cq:PageContent",
+    "sling:resourceType": "wcmio-archetype-aem65/core/components/admin/page/redirect"
+  }
+}

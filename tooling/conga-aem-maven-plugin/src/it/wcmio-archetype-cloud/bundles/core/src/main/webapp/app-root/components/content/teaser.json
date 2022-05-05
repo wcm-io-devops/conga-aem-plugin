@@ -1,0 +1,6 @@
+{
+  "jcr:primaryType": "cq:Component",
+  "jcr:title": "Teaser",
+  "componentGroup": "wcmio-archetype-cloud Content",
+  "sling:resourceSuperType": "wcm-io/wcm/core/components/teaser/v2/teaser"
+}

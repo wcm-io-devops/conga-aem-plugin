@@ -1,0 +1,20 @@
+{
+  "jcr:primaryType": "cq:ClientLibraryFolder",
+  "categories": [
+    "wcmio-archetype-cloud.all"
+  ],
+  "embed": [
+    "core.wcm.components.commons.datalayer.v1",
+    "core.wcm.components.commons.site.container",
+    "core.wcm.components.carousel.v1",
+    "core.wcm.components.tabs.v1",
+    "core.wcm.components.accordion.v1",
+    "wcmio-archetype-cloud.3rdparty",
+    "wcmio-archetype-cloud.app"
+  ],
+  "jsProcessor": [
+    "default:none",
+    "min:gcc;compilationLevel=whitespace"
+  ],
+  "allowProxy": true
+}

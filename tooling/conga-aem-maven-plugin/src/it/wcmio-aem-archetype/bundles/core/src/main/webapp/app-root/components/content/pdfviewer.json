@@ -1,6 +1,0 @@
-{
-  "jcr:primaryType": "cq:Component",
-  "jcr:title": "PDF Viewer",
-  "componentGroup": "wcmio-aem-archetype Content",
-  "sling:resourceSuperType": "wcm-io/wcm/core/components/pdfviewer/v1/pdfviewer"
-}

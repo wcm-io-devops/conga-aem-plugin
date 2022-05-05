@@ -1,7 +1,0 @@
-{
-  "jcr:primaryType": "cq:ClientLibraryFolder",
-  "categories": [
-    "wcmio-aem-archetype.3rdparty"
-  ],
-  "allowProxy": true
-}

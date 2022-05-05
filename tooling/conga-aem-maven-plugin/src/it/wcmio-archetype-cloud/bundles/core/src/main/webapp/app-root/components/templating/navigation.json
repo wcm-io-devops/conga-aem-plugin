@@ -1,0 +1,6 @@
+{
+  "jcr:primaryType": "cq:Component",
+  "jcr:title": "Navigation",
+  "componentGroup": "wcmio-archetype-cloud Templating",
+  "sling:resourceSuperType": "wcm-io/wcm/core/components/navigation/v2/navigation"
+}
