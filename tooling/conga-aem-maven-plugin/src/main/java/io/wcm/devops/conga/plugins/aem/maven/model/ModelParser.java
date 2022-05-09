@@ -40,6 +40,7 @@ import java.util.Set;
 import java.util.jar.JarFile;
 import java.util.jar.Manifest;
 
+import org.apache.commons.io.FilenameUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.osgi.framework.Constants;
 import org.slf4j.Logger;
@@ -160,6 +161,9 @@ public final class ModelParser {
   }
 
   private boolean isOsgiBundle(File file) {
+    if (!StringUtils.equals(FilenameUtils.getExtension((file.getName())), "jar")) {
+      return false;
+    }
     try (JarFile jarFile = new JarFile(file)) {
       Manifest manifest = jarFile.getManifest();
       if (manifest != null) {
