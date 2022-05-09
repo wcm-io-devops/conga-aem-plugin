@@ -415,7 +415,7 @@ public final class AllPackageBuilder {
     String runModeSuffix = buildRunModeSuffix(pkg, environmentRunMode);
 
     // add run mode suffix to both install folder path and package file name
-    String path = rootPath + "/" + pkg.getPackageType() + "/install" + runModeSuffix;
+    String path = rootPath + "/" + StringUtils.defaultString(pkg.getPackageType(), "misc") + "/install" + runModeSuffix;
 
     String versionSuffix = "";
     String packageVersion = pkg.getVersion();
