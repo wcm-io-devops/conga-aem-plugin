@@ -34,3 +34,11 @@ roles:
       group: adobe/consulting, groupId: com.adobe.acs, name: acs-aem-commons-ui.content,
       path: /etc/packages/adobe/consulting/acs-aem-commons-ui.content.zip, requiresRoot: false,
       version: 5.0.10}
+  - path: packages/assetshare.ui.apps-1.9.4.zip
+    postProcessors: [aem-contentpackage-properties]
+    aemContentPackageProperties: {acHandling: merge_preserve, artifactId: assetshare.ui.apps,
+      created: '2020-03-04T21:00:48.654-0500', createdBy: dgonzale, dependencies: '',
+      description: Asset Share Commons is an open-source asset share implementation
+        for Adobe Experience Manager. This requires a minimum of AEM 6.3 SP1., group: asset-share-commons,
+      groupId: com.adobe.aem.commons, name: asset-share-commons.ui.apps, path: /etc/packages/asset-share-commons/asset-share-commons.ui.apps.zip,
+      requiresRoot: false, version: 1.9.4}

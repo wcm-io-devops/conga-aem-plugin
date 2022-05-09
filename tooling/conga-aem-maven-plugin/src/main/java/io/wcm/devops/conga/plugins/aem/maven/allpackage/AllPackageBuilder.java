@@ -512,7 +512,7 @@ public final class AllPackageBuilder {
                 // then process it as well, remove if from the content package is was contained it
                 // and add it as "1st level package" to the all package
                 TemporaryContentPackageFile tempSubPackage = new TemporaryContentPackageFile(tempSubPackageFile, pkg.getVariants());
-                if (!isValidPackageType(tempSubPackage)) {
+                if (packageTypeValidation == PackageTypeValidation.STRICT && !isValidPackageType(tempSubPackage)) {
                   throw new IllegalArgumentException("Package " + pkg.getPackageInfo() + " contains sub package " + tempSubPackage.getPackageInfo()
                       + " with invalid package type: '" + StringUtils.defaultString(tempSubPackage.getPackageType()) + "'");
                 }
