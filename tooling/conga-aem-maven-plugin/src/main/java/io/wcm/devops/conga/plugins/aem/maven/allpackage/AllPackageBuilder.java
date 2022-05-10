@@ -297,7 +297,6 @@ public final class AllPackageBuilder {
 
     // build content package
     // if auto dependencies is active: build separate "dependency chains" between mutable and immutable packages
-    Set<String> packageFilePaths = new HashSet<>();
     try (ContentPackage contentPackage = builder.build(targetFile)) {
       for (ContentPackageFileSet fileSet : contentPackageFileSets) {
         for (String environmentRunMode : fileSet.getEnvironmentRunModes()) {
@@ -323,16 +322,9 @@ public final class AllPackageBuilder {
             try {
               for (TemporaryContentPackageFile processedFile : processedFiles) {
                 String path = buildPackagePath(processedFile, rootPath, environmentRunMode);
-                if (packageFilePaths.add(path)) {
-                  contentPackage.addFile(path, processedFile.getFile());
-                  if (log.isDebugEnabled()) {
-                    log.debug("  Add " + processedFile.getPackageInfoWithDependencies());
-                  }
-                }
-                else {
-                  if (log.isDebugEnabled()) {
-                    log.debug("  Ignore duplicate: " + processedFile.getPackageInfoWithDependencies());
-                  }
+                contentPackage.addFile(path, processedFile.getFile());
+                if (log.isDebugEnabled()) {
+                  log.debug("  Add " + processedFile.getPackageInfoWithDependencies());
                 }
               }
             }
