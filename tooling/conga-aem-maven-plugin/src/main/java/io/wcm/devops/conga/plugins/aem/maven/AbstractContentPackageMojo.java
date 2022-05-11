@@ -40,6 +40,8 @@ import io.wcm.tooling.commons.packmgr.install.VendorInstallerFactory;
  */
 abstract class AbstractContentPackageMojo extends AbstractMojo {
 
+  private static final String CONSOLE_URL = "/system/console";
+
   /**
    * <p>
    * The URL of the HTTP service API of the CRX package manager.
@@ -243,6 +245,18 @@ abstract class AbstractContentPackageMojo extends AbstractMojo {
     // if not set use hostname from serviceURL and add default path to bundle status
     String baseUrl = VendorInstallerFactory.getBaseUrl(buildPackageManagerUrl());
     return baseUrl + "/system/console/bundles/.json";
+  }
+
+  protected String buildConsoleUrl() {
+    return VendorInstallerFactory.getBaseUrl(this.serviceURL) + CONSOLE_URL;
+  }
+
+  protected String getConsoleUser() {
+    return this.consoleUserId;
+  }
+
+  protected String getConsolePassword() {
+    return this.consolePassword;
   }
 
 }

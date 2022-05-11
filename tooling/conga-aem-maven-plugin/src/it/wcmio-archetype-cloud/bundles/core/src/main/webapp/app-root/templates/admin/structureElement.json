@@ -1,0 +1,13 @@
+{
+  "jcr:primaryType": "cq:Template",
+  "jcr:title": "wcmio-archetype-cloud Structure Element",
+  "ranking": 100,
+
+  "allowedPaths": "^/content/wcmio-archetype-cloud(/.+)?$",
+  "allowedChildren": ["^/apps/wcmio-archetype-cloud/core/templates/.*$","^/conf/wcmio-archetype-cloud/settings/wcm/templates/.*$"],
+
+  "jcr:content": {
+    "jcr:primaryType": "cq:PageContent",
+    "sling:resourceType": "wcmio-archetype-cloud/core/components/admin/page/structureElement"
+  }
+}

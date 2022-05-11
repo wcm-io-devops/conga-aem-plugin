@@ -27,59 +27,59 @@ import org.junit.jupiter.api.Test;
 
 import com.google.common.collect.ImmutableMap;
 
-public class HttpdFilterTest {
+class HttpdFilterTest {
 
   @Test
-  public void testEmpty() {
+  void testEmpty() {
     assertThrows(IllegalArgumentException.class, () -> {
       new HttpdFilter(ImmutableMap.of());
     });
   }
 
   @Test
-  public void testOnlyType() {
+  void testOnlyType() {
     assertThrows(IllegalArgumentException.class, () -> {
       new HttpdFilter(ImmutableMap.of("type", "allow"));
     });
   }
 
   @Test
-  public void testTypeMissing() {
+  void testTypeMissing() {
     assertThrows(IllegalArgumentException.class, () -> {
       new HttpdFilter(ImmutableMap.of("location", "/abc"));
     });
   }
 
   @Test
-  public void testIllegalType() {
+  void testIllegalType() {
     assertThrows(IllegalArgumentException.class, () -> {
       new HttpdFilter(ImmutableMap.of("location", "/abc", "type", "this_is_not_a_valid_value"));
     });
   }
 
   @Test
-  public void testIllegalRegexp() {
+  void testIllegalRegexp() {
     assertThrows(IllegalArgumentException.class, () -> {
       new HttpdFilter(ImmutableMap.of("locationMatch", "(abc", "type", "allow"));
     });
   }
 
   @Test
-  public void testInvalidParam() {
+  void testInvalidParam() {
     assertThrows(IllegalArgumentException.class, () -> {
       new HttpdFilter(ImmutableMap.of("location", "/abc", "type", "allow", "invalidParam", "value"));
     });
   }
 
   @Test
-  public void testMoreThanOneTargetParam() {
+  void testMoreThanOneTargetParam() {
     assertThrows(IllegalArgumentException.class, () -> {
       new HttpdFilter(ImmutableMap.of("location", "/abc", "locationMatch", "/abc(/.*)?", "type", "allow"));
     });
   }
 
   @Test
-  public void testLocation() {
+  void testLocation() {
     HttpdFilter underTest = new HttpdFilter(ImmutableMap.of("location", "/abc", "type", "allow"));
     assertEquals(HttpdFilterType.ALLOW, underTest.getType());
     assertEquals("/abc", underTest.getLocation());
@@ -88,7 +88,7 @@ public class HttpdFilterTest {
   }
 
   @Test
-  public void testLocationMatch() {
+  void testLocationMatch() {
     HttpdFilter underTest = new HttpdFilter(ImmutableMap.of("locationMatch", "/abc(/.*)?", "type", "allow"));
     assertEquals(HttpdFilterType.ALLOW, underTest.getType());
     assertNull(underTest.getLocation());

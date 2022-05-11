@@ -31,10 +31,10 @@ import io.wcm.devops.conga.plugins.aem.crypto.CryptoKeySupport;
 import io.wcm.devops.conga.plugins.aem.crypto.CryptoString;
 import io.wcm.devops.conga.plugins.aem.crypto.CryptoSupport;
 
-public class AesCryptoSupportTest {
+class AesCryptoSupportTest {
 
   @Test
-  public void testKeySupport() throws Exception {
+  void testKeySupport() throws Exception {
     CryptoKeySupport keysupport = new AesCryptoSupport();
 
     Key generatedKey = keysupport.generateKey();
@@ -50,7 +50,7 @@ public class AesCryptoSupportTest {
   }
 
   @Test
-  public void testEncryptDecrypt() throws Exception {
+  void testEncryptDecrypt() throws Exception {
     CryptoSupport crypto = new AesCryptoSupport();
     Key key = crypto.generateKey();
 

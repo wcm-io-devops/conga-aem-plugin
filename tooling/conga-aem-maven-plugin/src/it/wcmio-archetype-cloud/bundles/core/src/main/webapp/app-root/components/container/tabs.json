@@ -1,0 +1,6 @@
+{
+  "jcr:primaryType": "cq:Component",
+  "jcr:title": "Tabs",
+  "componentGroup": "wcmio-archetype-cloud Container",
+  "sling:resourceSuperType": "wcm-io/wcm/core/components/tabs/v1/tabs"
+}

@@ -1,0 +1,6 @@
+{
+  "jcr:primaryType": "cq:Component",
+  "jcr:title": "Container",
+  "componentGroup": "wcmio-archetype-aem65 Container",
+  "sling:resourceSuperType": "wcm-io/wcm/core/components/container/v1/container"
+}

@@ -32,24 +32,24 @@ import com.google.common.collect.ImmutableMap;
 import io.wcm.devops.conga.generator.spi.handlebars.HelperPlugin;
 import io.wcm.devops.conga.generator.util.PluginManagerImpl;
 
-public class AemDispatcherFilterHelperTest {
+class AemDispatcherFilterHelperTest {
 
   private HelperPlugin<Object> helper;
 
   @SuppressWarnings("unchecked")
   @BeforeEach
-  public void setUp() {
+  void setUp() {
     helper = new PluginManagerImpl().get(AemDispatcherFilterHelper.NAME, HelperPlugin.class);
   }
 
   @Test
-  public void testUrl() throws Exception {
+  void testUrl() throws Exception {
     assertHelper("{ /type \"allow\" /url '/abc(/.*)?' }",
         helper, ImmutableMap.of("type", "allow", "url", "/abc(/.*)?"), new MockOptions());
   }
 
   @Test
-  public void testAll() throws Exception {
+  void testAll() throws Exception {
     Map<String, Object> map = new HashMap<>();
     map.put("type", "deny");
     map.put("method", "method1");

@@ -29,7 +29,7 @@ import org.junit.jupiter.api.Test;
 import io.wcm.devops.conga.generator.spi.handlebars.HelperPlugin;
 import io.wcm.devops.conga.generator.util.PluginManagerImpl;
 
-public class OakAuthorizableUuidHelperTest {
+class OakAuthorizableUuidHelperTest {
 
   private static final String AUTHORIZABLE_ID = "myuser";
   private static final String AUHORZIZABLE_UUID = "5d5a582e-5adf-396e-96e1-474c700b481a";
@@ -38,18 +38,18 @@ public class OakAuthorizableUuidHelperTest {
 
   @SuppressWarnings("unchecked")
   @BeforeEach
-  public void setUp() {
+  void setUp() {
     helper = new PluginManagerImpl().get(OakAuthorizableUuidHelper.NAME, HelperPlugin.class);
   }
 
   @Test
-  public void testNull() throws Exception {
+  void testNull() throws Exception {
     Object passwordHash = executeHelper(helper, null, new MockOptions());
     assertNull(passwordHash);
   }
 
   @Test
-  public void testHash() throws Exception {
+  void testHash() throws Exception {
     assertHelper(AUHORZIZABLE_UUID, helper, AUTHORIZABLE_ID, new MockOptions());
   }
 

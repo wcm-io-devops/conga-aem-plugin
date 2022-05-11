@@ -23,7 +23,7 @@ import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
 
-import io.wcm.devops.conga.plugins.aem.maven.model.ContentPackageFile;
+import io.wcm.devops.conga.plugins.aem.maven.model.InstallableFile;
 
 final class RunModeUtil {
 
@@ -36,21 +36,21 @@ final class RunModeUtil {
 
   /**
    * Checks if the given variants map to author run mode, but not to publish run mode.
-   * @param pkg Content package
+   * @param file Content package
    * @return true if only author run modes
    */
-  public static boolean isOnlyAuthor(ContentPackageFile pkg) {
-    Set<String> runModes = mapVariantsToRunModes(pkg.getVariants());
+  public static boolean isOnlyAuthor(InstallableFile file) {
+    Set<String> runModes = mapVariantsToRunModes(file.getVariants());
     return runModes.contains(RUNMODE_AUTHOR) && !runModes.contains(RUNMODE_PUBLISH);
   }
 
   /**
    * Checks if the given variants map to publish run mode, but not to author run mode.
-   * @param pkg Content package
+   * @param file Content package
    * @return true if only publish run modes
    */
-  public static boolean isOnlyPublish(ContentPackageFile pkg) {
-    Set<String> runModes = mapVariantsToRunModes(pkg.getVariants());
+  public static boolean isOnlyPublish(InstallableFile file) {
+    Set<String> runModes = mapVariantsToRunModes(file.getVariants());
     return runModes.contains(RUNMODE_PUBLISH) && !runModes.contains(RUNMODE_AUTHOR);
   }
 

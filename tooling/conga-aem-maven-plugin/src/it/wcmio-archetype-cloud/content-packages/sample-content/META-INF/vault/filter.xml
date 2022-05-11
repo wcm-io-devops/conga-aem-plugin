@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<workspaceFilter version="1.0">
+    <filter root="/content/dam/wcmio-archetype-cloud">
+        <!-- Exclude folder thumbnails - they will be generated automatically -->
+        <exclude pattern="^.*/jcr:content/folderThumbnail(/.*)?$"/>
+    </filter>
+    <filter root="/content/wcmio-archetype-cloud"/>
+    <filter root="/content/experience-fragments/wcmio-archetype-cloud"/>
+    <filter root="/conf/wcmio-archetype-cloud">
+        <include pattern="/conf/wcmio-archetype-cloud/.*"/>
+        <exclude pattern="/conf/wcmio-archetype-cloud/rep:policy(/.*)?"/>
+        <exclude pattern="/conf/wcmio-archetype-cloud/settings/wcm(/.*)?"/>
+    </filter>
+</workspaceFilter>

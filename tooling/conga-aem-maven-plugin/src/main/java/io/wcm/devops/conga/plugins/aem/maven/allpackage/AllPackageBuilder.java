@@ -57,7 +57,10 @@ import org.apache.maven.plugin.logging.SystemStreamLog;
 import com.google.common.collect.ImmutableSet;
 
 import io.wcm.devops.conga.plugins.aem.maven.AutoDependenciesMode;
+import io.wcm.devops.conga.plugins.aem.maven.PackageTypeValidation;
+import io.wcm.devops.conga.plugins.aem.maven.model.BundleFile;
 import io.wcm.devops.conga.plugins.aem.maven.model.ContentPackageFile;
+import io.wcm.devops.conga.plugins.aem.maven.model.InstallableFile;
 import io.wcm.tooling.commons.contentpackagebuilder.ContentPackage;
 import io.wcm.tooling.commons.contentpackagebuilder.ContentPackageBuilder;
 import io.wcm.tooling.commons.contentpackagebuilder.PackageFilter;
@@ -87,6 +90,7 @@ public final class AllPackageBuilder {
   private final String packageName;
   private String version;
   private AutoDependenciesMode autoDependenciesMode = AutoDependenciesMode.OFF;
+  private PackageTypeValidation packageTypeValidation = PackageTypeValidation.STRICT;
   private Log log;
 
   private static final String RUNMODE_DEFAULT = "$default$";
@@ -95,7 +99,8 @@ public final class AllPackageBuilder {
       PackageType.CONTAINER.name().toLowerCase(),
       PackageType.CONTENT.name().toLowerCase());
 
-  private final List<ContentPackageFileSet> fileSets = new ArrayList<>();
+  private final List<ContentPackageFileSet> contentPackageFileSets = new ArrayList<>();
+  private final List<BundleFileSet> bundleFileSets = new ArrayList<>();
 
   /**
    * @param targetFile Target file
@@ -115,6 +120,15 @@ public final class AllPackageBuilder {
    */
   public AllPackageBuilder autoDependenciesMode(AutoDependenciesMode value) {
     this.autoDependenciesMode = value;
+    return this;
+  }
+
+  /**
+   * @param value How to validate package types to be included in "all" package.
+   * @return this
+   */
+  public AllPackageBuilder packageTypeValidation(PackageTypeValidation value) {
+    this.packageTypeValidation = value;
     return this;
   }
 
@@ -144,12 +158,13 @@ public final class AllPackageBuilder {
   }
 
   /**
-   * Add content packages to be contained in "all" content package.
-   * @param contentPackages Content packages (invalid will be filtered out)
+   * Add content packages and OSGi bundles to be contained in "all" content package.
+   * @param files Content packages (invalid will be filtered out) and OSGi bundles
    * @param cloudManagerTarget Target environments/run modes the packages should be attached to
    * @throws IllegalArgumentException If and invalid package type is detected
    */
-  public void add(List<? extends ContentPackageFile> contentPackages, Set<String> cloudManagerTarget) {
+  public void add(List<InstallableFile> files, Set<String> cloudManagerTarget) {
+    List<ContentPackageFile> contentPackages = filterFiles(files, ContentPackageFile.class);
 
     // collect list of cloud manager environment run modes
     List<String> environmentRunModes = new ArrayList<>();
@@ -160,10 +175,40 @@ public final class AllPackageBuilder {
       environmentRunModes.addAll(cloudManagerTarget);
     }
 
-    // generate warnings for each invalid content packages that is skipped
+    List<ContentPackageFile> validContentPackages;
+    switch (packageTypeValidation) {
+      case STRICT:
+        validContentPackages = getValidContentPackagesStrictValidation(contentPackages);
+        break;
+      case WARN:
+        validContentPackages = getValidContentPackagesWarnValidation(contentPackages);
+        break;
+      default:
+        throw new IllegalArgumentException("Unsupported package type validation: " + packageTypeValidation);
+    }
+
+    if (!validContentPackages.isEmpty()) {
+      contentPackageFileSets.add(new ContentPackageFileSet(validContentPackages, environmentRunModes));
+    }
+
+    // add OSGi bundles
+    List<BundleFile> bundles = filterFiles(files, BundleFile.class);
+    if (!bundles.isEmpty()) {
+      bundleFileSets.add(new BundleFileSet(bundles, environmentRunModes));
+    }
+  }
+
+  /**
+   * Get valid content packages in strict mode: Ignore content packages without package type (with warning),
+   * fail build if Content package with "mixed" mode is found.
+   * @param contentPackages Content packages
+   * @return Valid content packages
+   */
+  private List<ContentPackageFile> getValidContentPackagesStrictValidation(List<? extends ContentPackageFile> contentPackages) {
+    // generate warning for each content packages without package type that is skipped
     contentPackages.stream()
         .filter(pkg -> !hasPackageType(pkg))
-        .forEach(pkg -> getLog().warn("Skipping content package without package type: " + getCanonicalPath(pkg.getFile())));
+        .forEach(pkg -> getLog().warn("Skipping content package without package type: {}" + getCanonicalPath(pkg.getFile())));
 
     // fail build if content packages with non-allowed package types exist
     List<ContentPackageFile> invalidPackageTypeContentPackages = contentPackages.stream()
@@ -177,14 +222,39 @@ public final class AllPackageBuilder {
               .collect(Collectors.joining(", ")));
     }
 
-    // collect AEM content packages for this node
-    List<ContentPackageFile> validContentPackages = contentPackages.stream()
+    // collect AEM content packages with package type
+    return contentPackages.stream()
         .filter(AllPackageBuilder::hasPackageType)
         .collect(Collectors.toList());
+  }
 
-    if (!validContentPackages.isEmpty()) {
-      fileSets.add(new ContentPackageFileSet(validContentPackages, environmentRunModes));
-    }
+  /**
+   * Get all content packages, generate warnings if package type is missing or "mixed" mode package type is used.
+   * @param contentPackages Content packages
+   * @return Valid content packages
+   */
+  private List<ContentPackageFile> getValidContentPackagesWarnValidation(List<? extends ContentPackageFile> contentPackages) {
+    // generate warning for each content packages without package type
+    contentPackages.stream()
+        .filter(pkg -> !hasPackageType(pkg))
+        .forEach(pkg -> getLog().warn("Found content package without package type: " + getCanonicalPath(pkg.getFile())));
+
+    // generate warning for each content packages with invalid package type
+    contentPackages.stream()
+        .filter(AllPackageBuilder::hasPackageType)
+        .filter(pkg -> !isValidPackageType(pkg))
+        .forEach(pkg -> getLog().warn("Found content package with invalid package type: "
+            + getCanonicalPath(pkg.getFile()) + " -> " + pkg.getPackageType()));
+
+    // return all content packages
+    return contentPackages.stream().collect(Collectors.toList());
+  }
+
+  private static <T> List<T> filterFiles(List<? extends InstallableFile> files, Class<T> fileClass) {
+    return files.stream()
+        .filter(fileClass::isInstance)
+        .map(fileClass::cast)
+        .collect(Collectors.toList());
   }
 
   /**
@@ -195,7 +265,7 @@ public final class AllPackageBuilder {
    */
   public boolean build(Map<String, String> properties) throws IOException {
 
-    if (fileSets.isEmpty()) {
+    if (contentPackageFileSets.isEmpty()) {
       return false;
     }
 
@@ -219,7 +289,7 @@ public final class AllPackageBuilder {
 
     // build set with dependencies instances for each package contained in all filesets
     Set<Dependency> allPackagesFromFileSets = new HashSet<>();
-    for (ContentPackageFileSet fileSet : fileSets) {
+    for (ContentPackageFileSet fileSet : contentPackageFileSets) {
       for (ContentPackageFile pkg : fileSet.getContentPackages()) {
         addDependencyInformation(allPackagesFromFileSets, pkg);
       }
@@ -228,7 +298,7 @@ public final class AllPackageBuilder {
     // build content package
     // if auto dependencies is active: build separate "dependency chains" between mutable and immutable packages
     try (ContentPackage contentPackage = builder.build(targetFile)) {
-      for (ContentPackageFileSet fileSet : fileSets) {
+      for (ContentPackageFileSet fileSet : contentPackageFileSets) {
         for (String environmentRunMode : fileSet.getEnvironmentRunModes()) {
           List<ContentPackageFile> previousPackages = new ArrayList<>();
           for (ContentPackageFile pkg : fileSet.getContentPackages()) {
@@ -265,6 +335,14 @@ public final class AllPackageBuilder {
             }
 
             previousPackages.add(pkg);
+          }
+        }
+      }
+      for (BundleFileSet bundleFileSet : bundleFileSets) {
+        for (String environmentRunMode : bundleFileSet.getEnvironmentRunModes()) {
+          for (BundleFile bundleFile : bundleFileSet.getBundles()) {
+            String path = buildBundlePath(bundleFile, rootPath, environmentRunMode);
+            contentPackage.addFile(path, bundleFile.getFile());
           }
         }
       }
@@ -306,15 +384,15 @@ public final class AllPackageBuilder {
 
   /**
    * Generate suffix for instance and environment run modes.
-   * @param pkg Content package
+   * @param file Content package
    * @return Package path
    */
-  private static String buildRunModeSuffix(ContentPackageFile pkg, String environmentRunMode) {
+  private static String buildRunModeSuffix(InstallableFile file, String environmentRunMode) {
     StringBuilder runModeSuffix = new StringBuilder();
-    if (RunModeUtil.isOnlyAuthor(pkg)) {
+    if (RunModeUtil.isOnlyAuthor(file)) {
       runModeSuffix.append(".").append(RUNMODE_AUTHOR);
     }
-    else if (RunModeUtil.isOnlyPublish(pkg)) {
+    else if (RunModeUtil.isOnlyPublish(file)) {
       runModeSuffix.append(".").append(RUNMODE_PUBLISH);
     }
     if (!StringUtils.equals(environmentRunMode, RUNMODE_DEFAULT)) {
@@ -329,23 +407,39 @@ public final class AllPackageBuilder {
    * @param rootPath Root path
    * @return Package path
    */
-  private static String buildPackagePath(ContentPackageFile pkg, String rootPath, String environmentRunMode) {
-    if (!isValidPackageType(pkg)) {
+  private String buildPackagePath(ContentPackageFile pkg, String rootPath, String environmentRunMode) {
+    if (packageTypeValidation == PackageTypeValidation.STRICT && !isValidPackageType(pkg)) {
       throw new IllegalArgumentException("Package " + pkg.getPackageInfo() + " has invalid package type: '" + pkg.getPackageType() + "'.");
     }
 
     String runModeSuffix = buildRunModeSuffix(pkg, environmentRunMode);
 
     // add run mode suffix to both install folder path and package file name
-    String path = rootPath + "/" + pkg.getPackageType() + "/install" + runModeSuffix;
+    String path = rootPath + "/" + StringUtils.defaultString(pkg.getPackageType(), "misc") + "/install" + runModeSuffix;
 
     String versionSuffix = "";
-    if (pkg.getVersion() != null && pkg.getFile().getName().contains(pkg.getVersion())) {
-      versionSuffix = "-" + pkg.getVersion();
+    String packageVersion = pkg.getVersion();
+    if (packageVersion != null && pkg.getFile().getName().contains(packageVersion)) {
+      versionSuffix = "-" + packageVersion;
     }
     String fileName = pkg.getName() + versionSuffix
         + "." + FilenameUtils.getExtension(pkg.getFile().getName());
     return path + "/" + fileName;
+  }
+
+  /**
+   * Build path to be used for embedded bundle.
+   * @param bundleFile Bundle
+   * @param rootPath Root path
+   * @return Package path
+   */
+  private static String buildBundlePath(BundleFile bundleFile, String rootPath, String environmentRunMode) {
+    String runModeSuffix = buildRunModeSuffix(bundleFile, environmentRunMode);
+
+    // add run mode suffix to both install folder path and package file name
+    String path = rootPath + "/application/install" + runModeSuffix;
+
+    return path + "/" + bundleFile.getFile().getName();
   }
 
   /**
@@ -396,8 +490,9 @@ public final class AllPackageBuilder {
                 updateDependencies(props, dependencyFile, environmentRunMode, allPackagesFromFileSets);
 
                 // if package type is missing package properties, put in the type defined in model
-                if (props.get(NAME_PACKAGE_TYPE) == null) {
-                  props.put(NAME_PACKAGE_TYPE, pkg.getPackageType());
+                String packageType = pkg.getPackageType();
+                if (props.get(NAME_PACKAGE_TYPE) == null && packageType != null) {
+                  props.put(NAME_PACKAGE_TYPE, packageType);
                 }
 
                 ZipEntry zipOutEntry = new ZipEntry(zipInEntry.getName());
@@ -417,7 +512,7 @@ public final class AllPackageBuilder {
                 // then process it as well, remove if from the content package is was contained it
                 // and add it as "1st level package" to the all package
                 TemporaryContentPackageFile tempSubPackage = new TemporaryContentPackageFile(tempSubPackageFile, pkg.getVariants());
-                if (!isValidPackageType(tempSubPackage)) {
+                if (packageTypeValidation == PackageTypeValidation.STRICT && !isValidPackageType(tempSubPackage)) {
                   throw new IllegalArgumentException("Package " + pkg.getPackageInfo() + " contains sub package " + tempSubPackage.getPackageInfo()
                       + " with invalid package type: '" + StringUtils.defaultString(tempSubPackage.getPackageType()) + "'");
                 }

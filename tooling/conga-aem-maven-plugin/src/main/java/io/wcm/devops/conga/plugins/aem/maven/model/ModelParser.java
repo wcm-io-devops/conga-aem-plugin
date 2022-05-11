@@ -20,6 +20,9 @@
 package io.wcm.devops.conga.plugins.aem.maven.model;
 
 import static io.wcm.devops.conga.generator.util.FileUtil.getCanonicalPath;
+import static io.wcm.devops.conga.plugins.aem.maven.model.ParserUtil.children;
+import static io.wcm.devops.conga.plugins.aem.maven.model.ParserUtil.getVariants;
+import static io.wcm.devops.conga.plugins.aem.maven.model.ParserUtil.toStringSet;
 
 import java.io.File;
 import java.io.FileInputStream;
@@ -34,9 +37,14 @@ import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 import java.util.Set;
-import java.util.stream.Collectors;
+import java.util.jar.JarFile;
+import java.util.jar.Manifest;
 
+import org.apache.commons.io.FilenameUtils;
 import org.apache.commons.lang3.StringUtils;
+import org.osgi.framework.Constants;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.yaml.snakeyaml.Yaml;
 
 import io.wcm.devops.conga.model.util.MapExpander;
@@ -52,37 +60,56 @@ public final class ModelParser {
    */
   public static final String MODEL_FILE = "model.yaml";
 
+  private static final String PROP_ROLES = "roles";
+  private static final String PROP_ROLE = "role";
+  private static final String PROP_CONFIG = "config";
+  private static final String PROP_FILES = "files";
+
+  private static final Logger log = LoggerFactory.getLogger(ModelParser.class);
+
   private final Yaml yaml;
+  private final File nodeDir;
+  private final Map<String, Object> modelData;
 
   /**
-   * Constructor
+   * @param nodeDir Node directory
    */
-  public ModelParser() {
+  public ModelParser(File nodeDir) {
     this.yaml = YamlUtil.createYaml();
+    this.nodeDir = nodeDir;
+    this.modelData = getModelData();
   }
 
   /**
-   * Parses model.yaml file for given node and returns all content packages references in this fileData.
-   * @param nodeDir Node directory
-   * @return List of content packages
+   * Returns all content packages and OSGi bundles referenced in this model file.
+   * @return List of content packages and OSGi bundles.
    */
-  public List<ModelContentPackageFile> getContentPackagesForNode(File nodeDir) {
-    Map<String, Object> data = getModelData(nodeDir);
-    return collectPackages(data, nodeDir);
+  public List<InstallableFile> getInstallableFilesForNode() {
+    List<InstallableFile> items = new ArrayList<>();
+    for (Map<String, Object> role : children(modelData, PROP_ROLES)) {
+      List<String> variants = getVariants(role);
+      for (Map<String, Object> fileData : children(role, PROP_FILES)) {
+        String path = Objects.toString(fileData.get("path"), null);
+        File file = new File(nodeDir, path);
+        if (isContentPackage(fileData)) {
+          items.add(new ModelContentPackageFile(file, fileData, variants));
+        }
+        else if (isOsgiBundle(file)) {
+          items.add(new BundleFile(file, fileData, variants));
+        }
+      }
+    }
+    return items;
   }
 
   /**
    * Checks if the node has the given node role assigned.
-   * @param nodeDir Node directory
    * @param roleName Node role name
    * @return true if role is assigned
    */
-  @SuppressWarnings("unchecked")
-  public boolean hasRole(File nodeDir, String roleName) {
-    Map<String, Object> data = getModelData(nodeDir);
-    List<Map<String, Object>> roles = (List<Map<String, Object>>)data.get("roles");
-    for (Map<String, Object> role : roles) {
-      if (StringUtils.equals(Objects.toString(role.get("role"), null), roleName)) {
+  public boolean hasRole(String roleName) {
+    for (Map<String, Object> role : children(modelData, PROP_ROLES)) {
+      if (StringUtils.equals(Objects.toString(role.get(PROP_ROLE), null), roleName)) {
         return true;
       }
     }
@@ -91,40 +118,24 @@ public final class ModelParser {
 
   /**
    * Collects all assigned "cloudManager.target" values (lists or single values) to any role from the node.
-   * @param nodeDir Node directory
    * @return List of cloud manager environment names or "none"
    */
   @SuppressWarnings("unchecked")
-  public Set<String> getCloudManagerTarget(File nodeDir) {
+  public Set<String> getCloudManagerTarget() {
     Set<String> targets = new LinkedHashSet<>();
-    Map<String, Object> data = getModelData(nodeDir);
-    List<Map<String, Object>> roles = (List<Map<String, Object>>)data.get("roles");
-    for (Map<String, Object> role : roles) {
-      Map<String, Object> config = (Map<String, Object>)role.get("config");
+    for (Map<String, Object> role : children(modelData, PROP_ROLES)) {
+      Map<String, Object> config = (Map<String, Object>)role.get(PROP_CONFIG);
       if (config != null) {
         Object targetValue = MapExpander.getDeep(config, "cloudManager.target");
         if (targetValue != null) {
-          if (targetValue instanceof String) {
-            String target = (String)targetValue;
-            if (StringUtils.isNotBlank(target)) {
-              targets.add(target);
-            }
-          }
-          else if (targetValue instanceof List) {
-            targets.addAll(((List<String>)targetValue).stream()
-                .filter(StringUtils::isNotBlank)
-                .collect(Collectors.toList()));
-          }
-          else {
-            throw new RuntimeException("Invalid cloudManager.target value: " + targetValue);
-          }
+          targets.addAll(toStringSet(targetValue));
         }
       }
     }
     return targets;
   }
 
-  private Map<String, Object> getModelData(File nodeDir) {
+  private Map<String, Object> getModelData() {
     File modelFile = new File(nodeDir, MODEL_FILE);
     if (!modelFile.exists() || !modelFile.isFile()) {
       throw new RuntimeException("Model file not found: " + getCanonicalPath(modelFile));
@@ -145,30 +156,24 @@ public final class ModelParser {
     }
   }
 
-  @SuppressWarnings("unchecked")
-  private List<ModelContentPackageFile> collectPackages(Map<String, Object> data, File nodeDir) {
-    List<ModelContentPackageFile> items = new ArrayList<>();
-    List<Map<String, Object>> roles = (List<Map<String, Object>>)data.get("roles");
-    if (roles != null) {
-      for (Map<String, Object> role : roles) {
-        List<Map<String, Object>> files = (List<Map<String, Object>>)role.get("files");
-        if (files != null) {
-          for (Map<String, Object> file : files) {
-            if (file.get(ContentPackagePropertiesPostProcessor.MODEL_OPTIONS_PROPERTY) != null) {
-              items.add(toContentPackageFile(file, role, nodeDir));
-            }
-          }
-        }
-      }
-    }
-    return items;
+  private boolean isContentPackage(Map<String, Object> fileData) {
+    return fileData.get(ContentPackagePropertiesPostProcessor.MODEL_OPTIONS_PROPERTY) != null;
   }
 
-  private ModelContentPackageFile toContentPackageFile(Map<String, Object> fileData,
-      Map<String, Object> roleData, File nodeDir) {
-    String path = Objects.toString(fileData.get("path"), null);
-    File file = new File(nodeDir, path);
-    return new ModelContentPackageFile(file, fileData, roleData);
+  private boolean isOsgiBundle(File file) {
+    if (!StringUtils.equals(FilenameUtils.getExtension((file.getName())), "jar")) {
+      return false;
+    }
+    try (JarFile jarFile = new JarFile(file)) {
+      Manifest manifest = jarFile.getManifest();
+      if (manifest != null) {
+        return manifest.getMainAttributes().getValue(Constants.BUNDLE_SYMBOLICNAME) != null;
+      }
+    }
+    catch (IOException ex) {
+      log.debug("Unable to check for OSGi bundle: {}", file, ex);
+    }
+    return false;
   }
 
 }

@@ -1,0 +1,6 @@
+{
+  "jcr:primaryType": "cq:Component",
+  "jcr:title": "Form Options",
+  "componentGroup": "wcmio-archetype-cloud Form",
+  "sling:resourceSuperType": "wcm-io/wcm/core/components/form/options/v2/options"
+}

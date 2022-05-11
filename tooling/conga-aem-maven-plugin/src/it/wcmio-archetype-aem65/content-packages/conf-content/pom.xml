@@ -1,0 +1,97 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 https://maven.apache.org/xsd/maven-4.0.0.xsd">
+  <modelVersion>4.0.0</modelVersion>
+
+  <parent>
+    <groupId>io.wcm.devops.conga.plugins.aem.it</groupId>
+    <artifactId>io.wcm.devops.conga.plugins.aem.it.aem65.parent</artifactId>
+    <version>1.0.0-SNAPSHOT</version>
+    <relativePath>../../parent/pom.xml</relativePath>
+  </parent>
+
+  <groupId>io.wcm.devops.conga.plugins.aem.it</groupId>
+  <artifactId>io.wcm.devops.conga.plugins.aem.it.aem65.conf-content</artifactId>
+  <version>1.0.0-SNAPSHOT</version>
+  <packaging>content-package</packaging>
+
+  <name>wcmio-archetype-aem65 Package conf-content</name>
+  <description>AEM Application conf content</description>
+
+  <properties>
+    <contentPackage.name>wcmio-archetype-aem65-conf-content</contentPackage.name>
+    <contentPackage.group>it</contentPackage.group>
+  </properties>
+
+  <build>
+    <finalName>${contentPackage.name}-${project.version}</finalName>
+    <resources>
+      <resource>
+        <directory>jcr_root</directory>
+      </resource>
+    </resources>
+
+    <plugins>
+      <plugin>
+        <groupId>org.apache.jackrabbit</groupId>
+        <artifactId>filevault-package-maven-plugin</artifactId>
+        <extensions>true</extensions>
+        <configuration>
+          <name>${contentPackage.name}</name>
+          <group>${contentPackage.group}</group>
+          <packageType>content</packageType>
+          <accessControlHandling>merge</accessControlHandling>
+          <validatorsSettings>
+            <jackrabbit-filter>
+              <options>
+                <validRoots>
+                  /conf/wcmio-archetype-aem65/settings,
+                  /conf
+                </validRoots>
+                <severityForUncoveredAncestorNodes>debug</severityForUncoveredAncestorNodes>
+              </options>
+            </jackrabbit-filter>
+          </validatorsSettings>
+        </configuration>
+      </plugin>
+
+      <plugin>
+        <groupId>io.wcm.maven.plugins</groupId>
+        <artifactId>wcmio-content-package-maven-plugin</artifactId>
+        <configuration>
+          <!--
+            Set replication status for all cq:Page and cq:Template nodes to "Activated"
+            It is assumed that this package is deployed always on author and publish instances, thus
+            it's not required to activate template definitions manually after each deployment.
+            If this is not case, remove this configuration.
+          -->
+          <markReplicationActivated>true</markReplicationActivated>
+          <markReplicationActivatedIncludeNodes>
+            <path>^/conf/.+/settings/wcm/policies/.+/jcr:content$</path>
+            <path>^/conf/.+/settings/wcm/templates/[^/]+(/policies|/structure)?/jcr:content$</path>
+          </markReplicationActivatedIncludeNodes>
+          <dateLastReplicated>2022-05-05T00:00:00.000+02:00</dateLastReplicated>
+        </configuration>
+      </plugin>
+
+      <!-- Do not generate eclipse project files -->
+      <plugin>
+        <groupId>io.wcm.devops.maven.plugins</groupId>
+        <artifactId>eclipse-maven-plugin</artifactId>
+        <configuration>
+          <skip>true</skip>
+        </configuration>
+      </plugin>
+
+      <!-- Do not generate sources JAR -->
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-source-plugin</artifactId>
+        <configuration>
+          <skipSource>true</skipSource>
+        </configuration>
+      </plugin>
+
+    </plugins>
+  </build>
+
+</project>

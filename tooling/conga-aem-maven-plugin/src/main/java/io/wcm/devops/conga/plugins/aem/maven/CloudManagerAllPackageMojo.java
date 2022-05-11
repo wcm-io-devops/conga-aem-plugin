@@ -36,7 +36,7 @@ import org.apache.maven.project.MavenProject;
 import org.apache.maven.project.MavenProjectHelper;
 
 import io.wcm.devops.conga.plugins.aem.maven.allpackage.AllPackageBuilder;
-import io.wcm.devops.conga.plugins.aem.maven.model.ContentPackageFile;
+import io.wcm.devops.conga.plugins.aem.maven.model.InstallableFile;
 import io.wcm.devops.conga.plugins.aem.maven.model.ModelParser;
 
 /**
@@ -97,6 +97,21 @@ public final class CloudManagerAllPackageMojo extends AbstractCloudManagerMojo {
    */
   @Parameter(property = "conga.cloudManager.allPackage.autoDependenciesMode")
   private AutoDependenciesMode autoDependenciesMode;
+
+  /**
+   * How to validate package types to be included in "all" package.
+   * <p>
+   * Possible values:
+   * </p>
+   * <ul>
+   * <li><code>STRICT</code>: Strict mode: Ignores packages without content type (with warning), fails build if "mixed"
+   * package types are used. For AEMaaCS it is mandatory to use this mode.</li>
+   * <li><code>WARN</code>: Includes all packages, but generated warnings about packages without content type or "mixed"
+   * package types.</li>
+   * </ul>
+   */
+  @Parameter(property = "conga.cloudManager.allPackage.packageTypeValidation", defaultValue = "STRICT")
+  private PackageTypeValidation packageTypeValidation;
 
   /**
    * Automatically generate dependencies between content packages based on file order in CONGA configuration.
@@ -165,12 +180,12 @@ public final class CloudManagerAllPackageMojo extends AbstractCloudManagerMojo {
    * Build an "all" package for each environment and node.
    */
   private void buildAllPackagesPerEnvironmentNode() throws MojoExecutionException, MojoFailureException {
-    visitEnvironmentsNodes((environmentDir, nodeDir, cloudManagerTarget, contentPackages) -> {
+    visitEnvironmentsNodes((environmentDir, nodeDir, cloudManagerTarget, files) -> {
       String packageName = environmentDir.getName() + "." + nodeDir.getName() + "." + this.name;
       AllPackageBuilder builder = createBuilder(packageName);
 
       try {
-        builder.add(contentPackages, cloudManagerTarget);
+        builder.add(files, cloudManagerTarget);
       }
       catch (IllegalArgumentException ex) {
         throw new MojoFailureException(ex.getMessage(), ex);
@@ -187,9 +202,9 @@ public final class CloudManagerAllPackageMojo extends AbstractCloudManagerMojo {
     String packageName = this.name;
     AllPackageBuilder builder = createBuilder(packageName);
 
-    visitEnvironmentsNodes((environmentDir, nodeDir, cloudManagerTarget, contentPackages) -> {
+    visitEnvironmentsNodes((environmentDir, nodeDir, cloudManagerTarget, files) -> {
       try {
-        builder.add(contentPackages, cloudManagerTarget);
+        builder.add(files, cloudManagerTarget);
       }
       catch (IllegalArgumentException ex) {
         throw new MojoFailureException(ex.getMessage(), ex);
@@ -211,6 +226,7 @@ public final class CloudManagerAllPackageMojo extends AbstractCloudManagerMojo {
     return new AllPackageBuilder(targetFile, this.group, packageName)
         .version(project.getVersion())
         .autoDependenciesMode(this.autoDependenciesMode)
+        .packageTypeValidation(this.packageTypeValidation)
         .logger(getLog());
   }
 
@@ -233,15 +249,29 @@ public final class CloudManagerAllPackageMojo extends AbstractCloudManagerMojo {
   }
 
   private void visitEnvironmentsNodes(EnvironmentNodeVisitor visitor) throws MojoExecutionException, MojoFailureException {
-    ModelParser modelParser = new ModelParser();
     List<File> environmentDirs = getEnvironmentDir();
     for (File environmentDir : environmentDirs) {
       List<File> nodeDirs = getNodeDirs(environmentDir);
       for (File nodeDir : nodeDirs) {
-        Set<String> cloudManagerTarget = modelParser.getCloudManagerTarget(nodeDir);
-        if (!cloudManagerTarget.contains(CLOUDMANAGER_TARGET_NONE)) {
-          List<? extends ContentPackageFile> contentPackages = modelParser.getContentPackagesForNode(nodeDir);
-          visitor.visit(environmentDir, nodeDir, cloudManagerTarget, contentPackages);
+        ModelParser modelParser = new ModelParser(nodeDir);
+        Set<String> cloudManagerTarget = modelParser.getCloudManagerTarget();
+
+        boolean validNodeForAllPackage = false;
+        if (cloudManagerTarget.contains(CLOUDMANAGER_TARGET_NONE)) {
+          if (isEnvironmentConfiguredExplicitely(environmentDir.getName())) {
+            // cloud manager target is set to "none" - but environment is configured explicitly, so include it
+            validNodeForAllPackage = true;
+            cloudManagerTarget.remove(CLOUDMANAGER_TARGET_NONE);
+          }
+        }
+        else {
+          // cloud manager target is not set to "none" - include node
+          validNodeForAllPackage = true;
+        }
+
+        if (validNodeForAllPackage) {
+          List<InstallableFile> files = modelParser.getInstallableFilesForNode();
+          visitor.visit(environmentDir, nodeDir, cloudManagerTarget, files);
         }
       }
     }
@@ -249,7 +279,7 @@ public final class CloudManagerAllPackageMojo extends AbstractCloudManagerMojo {
 
   interface EnvironmentNodeVisitor {
     void visit(File environmentDir, File nodeDir, Set<String> cloudManagerTarget,
-        List<? extends ContentPackageFile> contentPackages) throws MojoExecutionException, MojoFailureException;
+        List<InstallableFile> files) throws MojoExecutionException, MojoFailureException;
   }
 
 }

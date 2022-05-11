@@ -5,10 +5,8 @@ For basic CONGA usage see [CONGA documentation][conga-usage].
 
 ### CONGA AEM Plugin
 
-An example using the CONGA AEM plugin-specific features is in this GIT repository:<br/>
-https://github.com/wcm-io-devops/conga-aem-plugin
-
-In a subdirectory `example`.
+An example using the CONGA AEM plugin-specific features:<br/>
+https://github.com/wcm-io-devops/conga-aem-plugin/tree/develop/tooling/conga-aem-maven-plugin/src/it/example
 
 
 ### CONGA Maven AEM Plugin

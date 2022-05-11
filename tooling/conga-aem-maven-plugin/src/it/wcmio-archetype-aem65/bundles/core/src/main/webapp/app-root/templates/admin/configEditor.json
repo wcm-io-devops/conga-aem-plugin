@@ -1,0 +1,13 @@
+{
+  "jcr:primaryType": "cq:Template",
+  "jcr:title": "wcmio-archetype-aem65 Configuration Editor",
+  "ranking": 120,
+
+  "allowedPaths": "^/content/wcmio-archetype-aem65(/.+)*/tools(/.+)?$",
+  "allowedChildren": "",
+
+  "jcr:content": {
+    "jcr:primaryType": "cq:PageContent",
+    "sling:resourceType": "wcmio-archetype-aem65/core/components/admin/page/configEditor"
+  }
+}

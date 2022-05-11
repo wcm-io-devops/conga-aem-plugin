@@ -35,17 +35,17 @@ import io.wcm.devops.conga.generator.spi.ValidatorPlugin;
 import io.wcm.devops.conga.generator.spi.context.FileContext;
 import io.wcm.devops.conga.generator.util.PluginManagerImpl;
 
-public class AnyValidatorTest {
+class AnyValidatorTest {
 
   private ValidatorPlugin underTest;
 
   @BeforeEach
-  public void setUp() {
+  void setUp() {
     underTest = new PluginManagerImpl().get(AnyValidator.NAME, ValidatorPlugin.class);
   }
 
   @Test
-  public void testValidPublish() throws Exception {
+  void testValidPublish() throws Exception {
     File file = new File(getClass().getResource("/any/dispatcher.any").toURI());
     FileContext fileContext = new FileContext().file(file).charset(StandardCharsets.ISO_8859_1);
     assertTrue(underTest.accepts(fileContext, null));
@@ -53,7 +53,7 @@ public class AnyValidatorTest {
   }
 
   @Test
-  public void testValidAuthor() throws Exception {
+  void testValidAuthor() throws Exception {
     File file = new File(getClass().getResource("/any/author_dispatcher.any").toURI());
     FileContext fileContext = new FileContext().file(file).charset(StandardCharsets.ISO_8859_1);
     assertTrue(underTest.accepts(fileContext, null));
@@ -61,7 +61,7 @@ public class AnyValidatorTest {
   }
 
   @Test
-  public void testInvalid() throws Exception {
+  void testInvalid() throws Exception {
     File file = new File(getClass().getResource("/any/invalidAny.any").toURI());
     FileContext fileContext = new FileContext().file(file).charset(StandardCharsets.ISO_8859_1);
     assertTrue(underTest.accepts(fileContext, null));
@@ -71,14 +71,14 @@ public class AnyValidatorTest {
   }
 
   @Test
-  public void testInvalidFileExtension() throws Exception {
+  void testInvalidFileExtension() throws Exception {
     File file = new File(getClass().getResource("/any/noAny.txt").toURI());
     FileContext fileContext = new FileContext().file(file).charset(StandardCharsets.ISO_8859_1);
     assertFalse(underTest.accepts(fileContext, null));
   }
 
   @Test
-  public void testReplaceTicks() {
+  void testReplaceTicks() {
     assertEquals("/prop1 \"value1\"", AnyValidator.replaceTicks("/prop1 'value1'"));
     assertEquals("/group { /p1 \"v1\"\n/p2 \"v2\" /p3 \"v3\" }", AnyValidator.replaceTicks("/group { /p1 'v1'\n/p2 \"v2\" /p3 'v3' }"));
   }

@@ -45,7 +45,7 @@ import io.wcm.devops.conga.generator.util.PluginManager;
 import io.wcm.devops.conga.generator.util.PluginManagerImpl;
 import io.wcm.devops.conga.plugins.aem.crypto.CryptoString;
 
-public class AemCryptoEncryptHelperTest {
+class AemCryptoEncryptHelperTest {
 
   private static final String INPUT = "mytext";
   private static final String ENCRYPTED = "{bb71ce8b28ac304c269d7f9a4697f30d7f335a3f279c7834e8f72389d86539ce}";
@@ -55,7 +55,7 @@ public class AemCryptoEncryptHelperTest {
 
   @SuppressWarnings("unchecked")
   @BeforeEach
-  public void setUp() {
+  void setUp() {
     PluginManager pluginManager = new PluginManagerImpl();
     helper = pluginManager.get(AemCryptoEncryptHelper.NAME, HelperPlugin.class);
 
@@ -67,20 +67,20 @@ public class AemCryptoEncryptHelperTest {
   }
 
   @Test
-  public void testNull() throws Exception {
+  void testNull() throws Exception {
     Object passwordHash = executeHelper(helper, null, new MockOptions());
     assertNull(passwordHash);
   }
 
   @Test
-  public void testWithoutKey() throws Exception {
+  void testWithoutKey() throws Exception {
     assertThrows(IOException.class, () -> {
       executeHelper(helper, INPUT, new MockOptions(), pluginContext);
     });
   }
 
   @Test
-  public void testWithoutKey_Skip() throws Exception {
+  void testWithoutKey_Skip() throws Exception {
     pluginContext.getGenericPluginConfig().put(PLUGIN_NAME,
         ImmutableMap.of(PARAMETER_CRYPTO_SKIP, true));
 
@@ -88,7 +88,7 @@ public class AemCryptoEncryptHelperTest {
   }
 
   @Test
-  public void testEncrypt() throws Exception {
+  void testEncrypt() throws Exception {
     pluginContext.getGenericPluginConfig().put(PLUGIN_NAME,
         ImmutableMap.of(PARAMETER_CRYPTO_AES_KEY_URL, "classpath:/crypto/master"));
 
@@ -97,7 +97,7 @@ public class AemCryptoEncryptHelperTest {
   }
 
   @Test
-  public void testEncrypt_Skip() throws Exception {
+  void testEncrypt_Skip() throws Exception {
     pluginContext.getGenericPluginConfig().put(PLUGIN_NAME,
         ImmutableMap.of(PARAMETER_CRYPTO_AES_KEY_URL, "classpath:/crypto/master",
             PARAMETER_CRYPTO_SKIP, "true"));
@@ -106,12 +106,12 @@ public class AemCryptoEncryptHelperTest {
   }
 
   @Test
-  public void testAlreadyEncrypted() throws Exception {
+  void testAlreadyEncrypted() throws Exception {
     assertHelper(ENCRYPTED, helper, ENCRYPTED, new MockOptions(), pluginContext);
   }
 
   @Test
-  public void testFallbackWithoutKey() throws Exception {
+  void testFallbackWithoutKey() throws Exception {
     assertHelper(INPUT, helper, INPUT, new MockOptions().withHash(HASH_IGNORE_MISSING_KEY, true), pluginContext);
   }
 

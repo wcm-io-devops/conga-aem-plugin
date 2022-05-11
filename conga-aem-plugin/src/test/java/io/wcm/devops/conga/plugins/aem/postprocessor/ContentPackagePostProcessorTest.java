@@ -59,17 +59,17 @@ import io.wcm.devops.conga.generator.util.PluginManager;
 import io.wcm.devops.conga.generator.util.PluginManagerImpl;
 import io.wcm.devops.conga.plugins.sling.postprocessor.ProvisioningOsgiConfigPostProcessor;
 
-public class ContentPackagePostProcessorTest {
+class ContentPackagePostProcessorTest {
 
   private PostProcessorPlugin underTest;
 
   @BeforeEach
-  public void setUp() {
+  void setUp() {
     underTest = new PluginManagerImpl().get(ContentPackagePostProcessor.NAME, PostProcessorPlugin.class);
   }
 
   @Test
-  public void testPostProcess() throws Exception {
+  void testPostProcess() throws Exception {
     Map<String, Object> options = new HashMap<String, Object>();
     options.put(PROPERTY_PACKAGE_GROUP, "myGroup");
     options.put(PROPERTY_PACKAGE_NAME, "myName");

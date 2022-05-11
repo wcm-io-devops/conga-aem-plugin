@@ -69,9 +69,9 @@ public final class CloudManagerDispatcherConfigMojo extends AbstractCloudManager
     List<File> environmentDirs = getEnvironmentDir();
     for (File environmentDir : environmentDirs) {
       List<File> nodeDirs = getNodeDirs(environmentDir);
-      ModelParser modelParser = new ModelParser();
       for (File nodeDir : nodeDirs) {
-        if (modelParser.hasRole(nodeDir, ROLE_AEM_DISPATCHER_CLOUD)) {
+        ModelParser modelParser = new ModelParser(nodeDir);
+        if (modelParser.hasRole(ROLE_AEM_DISPATCHER_CLOUD)) {
           buildDispatcherConfig(environmentDir, nodeDir);
           dispatcherNodeCount++;
         }

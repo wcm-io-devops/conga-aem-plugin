@@ -31,7 +31,7 @@ import org.junit.jupiter.api.Test;
 import io.wcm.devops.conga.generator.spi.handlebars.HelperPlugin;
 import io.wcm.devops.conga.generator.util.PluginManagerImpl;
 
-public class OakPasswordHashHelperTest {
+class OakPasswordHashHelperTest {
 
   private static final String PASSWORD_PLAIN = "mypassword";
   private static final String PASSWORD_HASH = "{SHA-256}c274ffe336bfc0dd-1000-f7673915a3cf354742c70e5aa11744589c0e22d66861ce4f65e84592ea67f7f1";
@@ -40,25 +40,25 @@ public class OakPasswordHashHelperTest {
 
   @SuppressWarnings("unchecked")
   @BeforeEach
-  public void setUp() {
+  void setUp() {
     helper = new PluginManagerImpl().get(OakPasswordHashHelper.NAME, HelperPlugin.class);
   }
 
   @Test
-  public void testNull() throws Exception {
+  void testNull() throws Exception {
     Object passwordHash = executeHelper(helper, null, new MockOptions());
     assertNull(passwordHash);
   }
 
   @Test
-  public void testHash() throws Exception {
+  void testHash() throws Exception {
     Object passwordHash = executeHelper(helper, PASSWORD_PLAIN, new MockOptions());
     assertTrue(passwordHash instanceof String);
     assertTrue(PasswordUtil.isSame(passwordHash.toString(), PASSWORD_PLAIN));
   }
 
   @Test
-  public void testAlreadyHashed() throws Exception {
+  void testAlreadyHashed() throws Exception {
     Object passwordHash = executeHelper(helper, PASSWORD_HASH, new MockOptions());
     assertEquals(PASSWORD_HASH, passwordHash);
   }

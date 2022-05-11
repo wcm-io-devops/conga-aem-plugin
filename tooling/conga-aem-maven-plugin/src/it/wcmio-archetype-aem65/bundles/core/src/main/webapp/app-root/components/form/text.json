@@ -1,0 +1,6 @@
+{
+  "jcr:primaryType": "cq:Component",
+  "jcr:title": "Form Text",
+  "componentGroup": "wcmio-archetype-aem65 Form",
+  "sling:resourceSuperType": "wcm-io/wcm/core/components/form/text/v2/text"
+}

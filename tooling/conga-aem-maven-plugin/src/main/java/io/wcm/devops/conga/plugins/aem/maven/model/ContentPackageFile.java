@@ -19,45 +19,38 @@
  */
 package io.wcm.devops.conga.plugins.aem.maven.model;
 
-import java.io.File;
-import java.util.List;
-
 import org.apache.commons.lang3.StringUtils;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 /**
  * Generic representation of content package file.
  */
-public interface ContentPackageFile {
-
-  /**
-   * @return Content package file.
-   */
-  File getFile();
+public interface ContentPackageFile extends InstallableFile {
 
   /**
    * @return Package name
    */
+  @NotNull
   String getName();
 
   /**
    * @return Package group
    */
+  @NotNull
   String getGroup();
 
   /**
    * @return Package version
    */
+  @Nullable
   String getVersion();
 
   /**
    * @return Package type
    */
+  @Nullable
   String getPackageType();
-
-  /**
-   * @return Variants/Run modes for content package
-   */
-  List<String> getVariants();
 
   default String getPackageInfo() {
     return StringUtils.defaultString(getGroup())

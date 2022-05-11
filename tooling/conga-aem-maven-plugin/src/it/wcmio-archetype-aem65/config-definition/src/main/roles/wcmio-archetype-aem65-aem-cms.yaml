@@ -1,0 +1,82 @@
+# Project-specific AEM configuration
+
+# Inherit default AEM functionality from "AEM Definitions", see http://devops.wcm.io/conga/definitions/aem/
+inherits:
+- role: aem-cms
+
+variants:
+- variant: aem-author
+- variant: aem-publish
+
+templateDir: wcmio-archetype-aem65-aem-cms
+
+files:
+
+
+# AEM Core WCM components
+- url: mvn:com.adobe.cq/core.wcm.components.all//zip
+  dir: packages
+
+# AEM OSGi System Configuration
+- file: wcmio-archetype-aem65-aem-cms-config.provisioning
+  dir: packages
+  template: wcmio-archetype-aem65-aem-cms-config.provisioning.hbs
+  postProcessors:
+  - aem-contentpackage-osgiconfig
+  postProcessorOptions:
+    contentPackage:
+      name: wcmio-archetype-aem65-aem-cms-config
+      rootPath: /apps/wcmio-archetype-aem65/config
+      filters:
+      - filter: /apps/wcmio-archetype-aem65
+        rules:
+        - rule: include
+          pattern: /apps/wcmio-archetype-aem65/config(\..*)?(/.*)?
+        - rule: exclude
+          pattern: /apps/wcmio-archetype-aem65/config/rewriter(/.*)?
+
+# Include URL handler in Sling Rewriter configuration
+- file: wcmio-archetype-aem65-aem-cms-rewriter-config.json
+  dir: packages
+  template: wcmio-archetype-aem65-aem-cms-rewriter-config.json.hbs
+  validatorOptions:
+    contentPackage.validatorsSettings:
+      jackrabbit-filter:
+        options:
+          validRoots: /apps/wcmio-archetype-aem65/config
+  postProcessors:
+  - aem-contentpackage
+  postProcessorOptions:
+    contentPackage:
+      name: wcmio-archetype-aem65-aem-cms-rewriter-config
+      packageType: application
+      rootPath: /apps/wcmio-archetype-aem65/config/rewriter
+
+# Application packages
+- url: mvn:io.wcm.devops.conga.plugins.aem.it/io.wcm.devops.conga.plugins.aem.it.aem65.complete//zip
+  dir: packages
+
+# Application conf content package
+- url: mvn:io.wcm.devops.conga.plugins.aem.it/io.wcm.devops.conga.plugins.aem.it.aem65.conf-content//zip
+  dir: packages
+  condition: ${app.confContent}
+
+# Application sample content package
+- url: mvn:io.wcm.devops.conga.plugins.aem.it/io.wcm.devops.conga.plugins.aem.it.aem65.sample-content//zip
+  dir: packages
+  condition: ${app.sampleContent}
+
+
+# Defines configuration parameters and default values
+config:
+  contentPackage:
+    group: it
+    version: ${version}
+
+  app:
+    confContent: true
+    sampleContent: false
+
+  # Log levels
+  log:
+    projectSpecificLogLevel: warn

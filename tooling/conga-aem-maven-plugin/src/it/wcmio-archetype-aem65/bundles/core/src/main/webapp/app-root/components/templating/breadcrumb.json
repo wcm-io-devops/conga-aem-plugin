@@ -1,0 +1,6 @@
+{
+  "jcr:primaryType": "cq:Component",
+  "jcr:title": "Breadcrumb",
+  "componentGroup": "wcmio-archetype-aem65 Templating",
+  "sling:resourceSuperType": "wcm-io/wcm/core/components/breadcrumb/v3/breadcrumb"
+}

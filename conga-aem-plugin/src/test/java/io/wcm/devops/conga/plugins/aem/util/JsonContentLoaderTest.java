@@ -34,13 +34,13 @@ import org.junit.jupiter.api.Test;
 
 import io.wcm.tooling.commons.contentpackagebuilder.element.ContentElement;
 
-public class JsonContentLoaderTest {
+class JsonContentLoaderTest {
 
   private JsonContentLoader underTest;
   private ContentElement content;
 
   @BeforeEach
-  public void setUp() throws Exception {
+  void setUp() throws Exception {
     underTest = new JsonContentLoader();
     try (InputStream is = getClass().getResourceAsStream("/json/content.json")) {
       content = underTest.load(is);
@@ -48,12 +48,12 @@ public class JsonContentLoaderTest {
   }
 
   @Test
-  public void testPageJcrPrimaryType() {
+  void testPageJcrPrimaryType() {
     assertEquals("cq:Page", content.getProperties().get("jcr:primaryType"));
   }
 
   @Test
-  public void testPageContentProperties() {
+  void testPageContentProperties() {
     ContentElement element = content.getChild("toolbar/profiles/jcr:content");
     Map<String, Object> props = element.getProperties();
     assertEquals(true, props.get("hideInNav"));
@@ -74,13 +74,13 @@ public class JsonContentLoaderTest {
   }
 
   @Test
-  public void testContentProperties() {
+  void testContentProperties() {
     ContentElement element = content.getChild("jcr:content/header");
     assertEquals("/content/dam/sample/header.png", element.getProperties().get("imageReference"));
   }
 
   @Test
-  public void testCalendarEcmaFormat() {
+  void testCalendarEcmaFormat() {
     ContentElement element = content.getChild("jcr:content");
 
     Calendar calendar = (Calendar)element.getProperties().get("cq:lastModified");
@@ -98,7 +98,7 @@ public class JsonContentLoaderTest {
   }
 
   @Test
-  public void testUTF8Chars() {
+  void testUTF8Chars() {
     ContentElement element = content.getChild("jcr:content");
 
     assertEquals("äöüß€", element.getProperties().get("utf8Property"));

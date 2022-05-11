@@ -1,0 +1,13 @@
+{
+  "jcr:primaryType": "cq:Template",
+  "jcr:title": "wcmio-archetype-cloud Configuration Editor",
+  "ranking": 120,
+
+  "allowedPaths": "^/content/wcmio-archetype-cloud(/.+)*/tools(/.+)?$",
+  "allowedChildren": "",
+
+  "jcr:content": {
+    "jcr:primaryType": "cq:PageContent",
+    "sling:resourceType": "wcmio-archetype-cloud/core/components/admin/page/configEditor"
+  }
+}

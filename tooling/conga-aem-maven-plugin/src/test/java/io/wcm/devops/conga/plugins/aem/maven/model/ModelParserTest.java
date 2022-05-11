@@ -36,51 +36,67 @@ import com.google.common.collect.ImmutableSet;
 
 class ModelParserTest {
 
-  private ModelParser underTest;
   private File nodeDir;
   private File dispatcherNodeDir;
+  private ModelParser nodeModelParser;
+  private ModelParser dispatcherNodeModelParser;
 
   @BeforeEach
   void setUp() {
-    underTest = new ModelParser();
     nodeDir = new File("src/test/resources/node");
+    nodeModelParser = new ModelParser(nodeDir);
     dispatcherNodeDir = new File("src/test/resources/node-dispatcher");
+    dispatcherNodeModelParser = new ModelParser(dispatcherNodeDir);
   }
 
   @Test
   void testGetContentPackagesForNode() {
-    List<ModelContentPackageFile> contentPackages = underTest.getContentPackagesForNode(nodeDir);
+    List<InstallableFile> files = nodeModelParser.getInstallableFilesForNode();
 
-    assertEquals(11, contentPackages.size());
+    assertEquals(13, files.size());
 
-    assertPackage(contentPackages.get(0), "packages/acs-aem-commons-ui.apps-4.10.0-min.zip", "application", null);
-    assertPackage(contentPackages.get(1), "packages/acs-aem-commons-ui.content-4.10.0-min.zip", "content", null);
-    assertPackage(contentPackages.get(2), "packages/accesscontroltool-package-3.0.0-cloud.zip", "container", null);
-    assertPackage(contentPackages.get(3), "packages/accesscontroltool-oakindex-package-3.0.0-cloud.zip", "application", null);
-    assertPackage(contentPackages.get(4), "packages/core.wcm.components.all-2.17.0.zip", "container", null);
-    assertPackage(contentPackages.get(5), "packages/aem-cms-author-replicationagents.zip", "content", true);
-    assertPackage(contentPackages.get(6), "packages/aem-cms-system-config.zip", "application", true);
-    assertPackage(contentPackages.get(7), "packages/wcm-io-samples-aem-cms-config.zip", "container", true);
-    assertPackage(contentPackages.get(8), "packages/wcm-io-samples-aem-cms-author-systemusers.zip", null, true);
-    assertPackage(contentPackages.get(9), "packages/wcm-io-samples-complete-1.3.1-SNAPSHOT.zip", "container", null);
-    assertPackage(contentPackages.get(10), "packages/wcm-io-samples-sample-content-1.3.1-SNAPSHOT.zip", "content", null);
+    assertBundle(files.get(0), "bundles/io.wcm.caconfig.editor-1.11.0.jar");
+    assertPackage(files.get(1), "packages/acs-aem-commons-ui.apps-4.10.0-min.zip", "application", null);
+    assertPackage(files.get(2), "packages/acs-aem-commons-ui.content-4.10.0-min.zip", "content", null);
+    assertPackage(files.get(3), "packages/accesscontroltool-package-3.0.0-cloud.zip", "container", null);
+    assertPackage(files.get(4), "packages/accesscontroltool-oakindex-package-3.0.0-cloud.zip", "application", null);
+    assertPackage(files.get(5), "packages/core.wcm.components.all-2.17.0.zip", "container", null);
+    assertPackage(files.get(6), "packages/aem-cms-author-replicationagents.zip", "content", true);
+    assertPackage(files.get(7), "packages/aem-cms-system-config.zip", "application", true);
+    assertPackage(files.get(8), "packages/wcm-io-samples-aem-cms-config.zip", "container", true);
+    assertPackage(files.get(9), "packages/wcm-io-samples-aem-cms-author-systemusers.zip", null, true);
+    assertPackage(files.get(10), "packages/wcm-io-samples-complete-1.3.1-SNAPSHOT.zip", "container", null);
+    assertPackage(files.get(11), "packages/wcm-io-samples-sample-content-1.3.1-SNAPSHOT.zip", "content", null);
+    assertBundle(files.get(12), "bundles/io.wcm.wcm.ui.granite-1.9.2.jar");
 
-    ModelContentPackageFile pkg1 = contentPackages.get(5);
-    assertEquals(ImmutableList.of("aem-author"), pkg1.getVariants());
-    assertEquals(false, pkg1.getInstall());
-    assertEquals(true, pkg1.getRecursive());
-    assertEquals(30, pkg1.getDelayAfterInstallSec());
-    assertEquals(60, pkg1.getHttpSocketTimeoutSec());
-    assertEquals("wcm-io-samples", pkg1.getGroup());
-    assertEquals("aem-cms-author-replicationagents", pkg1.getName());
-    assertEquals("1.3.1-SNAPSHOT", pkg1.getVersion());
+    ModelContentPackageFile pkg6 = (ModelContentPackageFile)files.get(6);
+    assertEquals(ImmutableList.of("aem-author"), pkg6.getVariants());
+    assertEquals(false, pkg6.getInstall());
+    assertEquals(true, pkg6.getRecursive());
+    assertEquals(30, pkg6.getDelayAfterInstallSec());
+    assertEquals(60, pkg6.getHttpSocketTimeoutSec());
+    assertEquals("wcm-io-samples", pkg6.getGroup());
+    assertEquals("aem-cms-author-replicationagents", pkg6.getName());
+    assertEquals("1.3.1-SNAPSHOT", pkg6.getVersion());
+
+    BundleFile bundle12 = (BundleFile)files.get(12);
+    assertEquals(ImmutableList.of("aem-author"), bundle12.getVariants());
+    assertEquals(false, bundle12.getInstall());
   }
 
-  private void assertPackage(ModelContentPackageFile pkg, String path, String packageType, Boolean force) {
+  private void assertPackage(InstallableFile file, String path, String packageType, Boolean force) {
+    assertTrue(file instanceof ModelContentPackageFile);
+    ModelContentPackageFile pkg = (ModelContentPackageFile)file;
     String actualPath = StringUtils.substringAfter(getPath(pkg.getFile()), getPath(nodeDir) + "/");
     assertEquals(path, actualPath, "package path");
     assertEquals(packageType, pkg.getPackageType(), packageType);
     assertEquals(force, pkg.getForce());
+  }
+
+  private void assertBundle(InstallableFile file, String path) {
+    assertTrue(file instanceof BundleFile);
+    String actualPath = StringUtils.substringAfter(getPath(file.getFile()), getPath(nodeDir) + "/");
+    assertEquals(path, actualPath, "package path");
   }
 
   private String getPath(File file) {
@@ -89,14 +105,14 @@ class ModelParserTest {
 
   @Test
   void testHasRole() {
-    assertTrue(underTest.hasRole(dispatcherNodeDir, "aem-dispatcher-cloud"));
-    assertFalse(underTest.hasRole(nodeDir, "aem-dispatcher-cloud"));
+    assertTrue(dispatcherNodeModelParser.hasRole("aem-dispatcher-cloud"));
+    assertFalse(nodeModelParser.hasRole("aem-dispatcher-cloud"));
   }
 
   @Test
   void testGetCloudManagerTarget() {
-    assertEquals(ImmutableSet.of("stage", "prod"), underTest.getCloudManagerTarget(nodeDir));
-    assertTrue(underTest.getCloudManagerTarget(dispatcherNodeDir).isEmpty());
+    assertEquals(ImmutableSet.of("stage", "prod"), nodeModelParser.getCloudManagerTarget());
+    assertTrue(dispatcherNodeModelParser.getCloudManagerTarget().isEmpty());
   }
 
 }

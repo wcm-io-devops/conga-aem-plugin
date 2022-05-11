@@ -37,17 +37,17 @@ import io.wcm.devops.conga.generator.spi.context.FileContext;
 import io.wcm.devops.conga.generator.spi.context.FileHeaderContext;
 import io.wcm.devops.conga.generator.util.PluginManagerImpl;
 
-public class AnyFileHeaderTest {
+class AnyFileHeaderTest {
 
   private FileHeaderPlugin underTest;
 
   @BeforeEach
-  public void setUp() {
+  void setUp() {
     underTest = new PluginManagerImpl().get(AnyFileHeader.NAME, FileHeaderPlugin.class);
   }
 
   @Test
-  public void testApply() throws Exception {
+  void testApply() throws Exception {
     File file = new File("target/generation-test/fileHeader.any");
     FileUtils.write(file, "myany { }", StandardCharsets.UTF_8);
 

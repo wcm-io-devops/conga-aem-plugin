@@ -1,0 +1,130 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+  #%L
+  wcm.io
+  %%
+  Copyright (C) 2022 wcm.io
+  %%
+  Licensed under the Apache License, Version 2.0 (the "License");
+  you may not use this file except in compliance with the License.
+  You may obtain a copy of the License at
+
+       http://www.apache.org/licenses/LICENSE-2.0
+
+  Unless required by applicable law or agreed to in writing, software
+  distributed under the License is distributed on an "AS IS" BASIS,
+  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+  See the License for the specific language governing permissions and
+  limitations under the License.
+  #L%
+  -->
+
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 https://maven.apache.org/xsd/maven-4.0.0.xsd">
+  <modelVersion>4.0.0</modelVersion>
+
+  <parent>
+    <groupId>io.wcm.maven</groupId>
+    <artifactId>io.wcm.maven.global-parent</artifactId>
+    <version>44</version>
+    <relativePath/>
+  </parent>
+
+  <groupId>io.wcm.devops.conga.plugins.aem.it</groupId>
+  <artifactId>io.wcm.devops.conga.plugins.aem.it.mixed-no-package-type</artifactId>
+  <packaging>config</packaging>
+  <version>1-SNAPSHOT</version>
+
+  <name>Mixed/No Package Type</name>
+  <description>Test case with packages with "mixed" package types, and packages without package type and "all" package.</description>
+
+  <dependencies>
+
+    <!-- ACS AEM Commons -->
+    <dependency>
+      <groupId>com.adobe.acs</groupId>
+      <artifactId>acs-aem-commons-ui.apps</artifactId>
+      <classifier>min</classifier>
+      <version>5.0.10</version>
+      <type>zip</type>
+      <scope>compile</scope>
+    </dependency>
+    <dependency>
+      <groupId>com.adobe.acs</groupId>
+      <artifactId>acs-aem-commons-ui.content</artifactId>
+      <classifier>min</classifier>
+      <version>5.0.10</version>
+      <type>zip</type>
+      <scope>compile</scope>
+    </dependency>
+
+  </dependencies>
+
+  <build>
+
+    <plugins>
+
+      <plugin>
+        <groupId>io.wcm.devops.conga</groupId>
+        <artifactId>conga-maven-plugin</artifactId>
+        <version>1.14.8</version>
+        <extensions>true</extensions>
+        <dependencies>
+
+          <!-- Activate further CONGA plugins for special file types -->
+          <dependency>
+            <groupId>io.wcm.devops.conga.plugins</groupId>
+            <artifactId>io.wcm.devops.conga.plugins.aem</artifactId>
+            <version>@project.version@</version>
+          </dependency>
+
+        </dependencies>
+      </plugin>
+
+      <plugin>
+        <groupId>io.wcm.devops.conga.plugins</groupId>
+        <artifactId>conga-aem-maven-plugin</artifactId>
+        <version>@project.version@</version>
+        <executions>
+
+          <!-- Generate "all" packages including all packages from CONGA configuration for deployment via Adobe Cloud Manager -->
+          <execution>
+            <id>cloudmanager-all-package</id>
+            <phase>generate-resources</phase>
+            <goals>
+              <goal>cloudmanager-all-package</goal>
+            </goals>
+            <configuration>
+              <group>it</group>
+              <!-- Allow packages with mixed mode and without package type -->
+              <packageTypeValidation>WARN</packageTypeValidation>
+            </configuration>
+          </execution>
+
+        </executions>
+      </plugin>
+
+      <!-- do not deploy this example into maven repository -->
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-deploy-plugin</artifactId>
+        <inherited>false</inherited>
+        <configuration>
+          <skip>true</skip>
+        </configuration>
+      </plugin>
+
+      <!-- do not generate site for this project -->
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-site-plugin</artifactId>
+        <configuration>
+          <skip>true</skip>
+          <skipDeploy>true</skipDeploy>
+        </configuration>
+      </plugin>
+
+    </plugins>
+  </build>
+
+</project>
