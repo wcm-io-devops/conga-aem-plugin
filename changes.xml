@@ -23,7 +23,7 @@
     xsi:schemaLocation="http://maven.apache.org/changes/1.0.0 https://maven.apache.org/plugins/maven-changes-plugin/xsd/changes-1.0.0.xsd">
   <body>
 
-    <release version="2.17.0" date="not released">
+    <release version="2.17.0" date="2022-05-11">
       <action type="add" dev="sseifert">
         conga-aem-maven-plugin: Add new parameter packageTypeValidation which controls how to handle packages with invalid or without package types.
       </action>

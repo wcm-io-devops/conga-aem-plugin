@@ -47,12 +47,12 @@
       <dependency>
         <groupId>io.wcm.devops.conga</groupId>
         <artifactId>io.wcm.devops.conga.generator</artifactId>
-        <version>1.14.7-SNAPSHOT</version>
+        <version>1.14.8</version>
       </dependency>
       <dependency>
         <groupId>io.wcm.devops.conga</groupId>
         <artifactId>conga-maven-plugin</artifactId>
-        <version>1.14.7-SNAPSHOT</version>
+        <version>1.14.8</version>
       </dependency>
   
       <dependency>
@@ -64,7 +64,7 @@
       <dependency>
         <groupId>io.wcm.devops.conga.plugins</groupId>
         <artifactId>io.wcm.devops.conga.plugins.ansible</artifactId>
-        <version>1.3.2</version>
+        <version>1.4.0</version>
       </dependency>
   
       <dependency>
