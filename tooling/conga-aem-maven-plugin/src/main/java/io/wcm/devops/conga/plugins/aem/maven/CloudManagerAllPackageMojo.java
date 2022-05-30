@@ -192,7 +192,6 @@ public final class CloudManagerAllPackageMojo extends AbstractCloudManagerMojo {
       catch (IllegalArgumentException ex) {
         throw new MojoFailureException(ex.getMessage(), ex);
       }
-      buildAllPackage(builder);
     });
     for (AllPackageBuilder builder : builderPerEnvironment.values()) {
       buildAllPackage(builder);
