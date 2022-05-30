@@ -19,11 +19,13 @@
  */
 package io.wcm.devops.conga.plugins.aem.maven.allpackage;
 
-import java.util.ArrayList;
 import java.util.Collection;
+import java.util.LinkedHashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 import java.util.Set;
+import java.util.function.Function;
 import java.util.stream.Collectors;
 
 import org.apache.commons.lang3.StringUtils;
@@ -82,36 +84,39 @@ final class RunModeUtil {
   }
 
   /**
-   * Flattens and optimizes multiple file sets into a single one, eliminating identical duplicate file references that
-   * are present for both author and publish run mode. The order of the list is driven by the first list(s). Files
-   * only present in the latter list(s) are appended to the end.
-   * @param fileSets File sets with files with run modes
-   * @return Flattened list of bundles with run modes. If a file is present for both author and publish runmode, no
-   *         author/publish runmode is set.
+   * Builds an optimized list of file sets separated for each environment run mode, but combined for author and publish
+   * variant files. Those files are reduced to single items if they are present in both author and publish variants. The
+   * order of the resulting file sets if driven by the first file set(s) in the list, additional files from other file
+   * sets are added at the end of the result list(s).
+   * @param fileSets Existing list of filesets
+   * @param fileSetFactory Creates a new (empty) file set for given environment run mode
+   * @return Optimized list of file sets (one per environment run mode)
    */
-  public static <T extends InstallableFile> Collection<InstallableFileWithEnvironmentRunModes<T>> eliminateAuthorPublishDuplicates(
-      List<? extends FileSet<T>> fileSets) {
-    List<InstallableFileWithEnvironmentRunModes<T>> result = new ArrayList<>();
-    // build distinct list of all files with combined run modes from variants, but separated by environment run modes
+  public static <T extends InstallableFile, S extends FileSet<T>> Collection<S> eliminateAuthorPublishDuplicates(
+      List<S> fileSets, Function<String, S> fileSetFactory) {
+    Map<String, S> result = new LinkedHashMap<>();
     fileSets.forEach(fileSet -> {
-      fileSet.getFiles().forEach(file -> {
-        Optional<InstallableFileWithEnvironmentRunModes<T>> existingFile = result.stream()
-            .filter(item -> item.getEnvironmentRunModes().equals(fileSet.getEnvironmentRunModes())
-                && isSameFileNameHash(item.getFile(), file))
-            .findFirst();
-        if (existingFile.isPresent()) {
-          // if file was already added from other file set: eliminate duplicated, but add run modes
-          existingFile.get().getFile().getVariants().addAll(file.getVariants());
-        }
-        else {
-          result.add(new InstallableFileWithEnvironmentRunModes<>(file, fileSet.getEnvironmentRunModes()));
-        }
-
+      fileSet.getEnvironmentRunModes().forEach(environmentRunMode -> {
+        FileSet<T> resultFileSet = result.computeIfAbsent(environmentRunMode, fileSetFactory);
+        fileSet.getFiles().forEach(file -> {
+          Optional<T> existingFile = resultFileSet.getFiles().stream()
+              .filter(item -> isSameFileNameHash(item, file))
+              .findFirst();
+          if (existingFile.isPresent()) {
+            // if file was already added from other file set: eliminate duplicate, but add run modes
+            existingFile.get().getVariants().addAll(file.getVariants());
+          }
+          else {
+            resultFileSet.getFiles().add(file);
+          }
+        });
       });
     });
     // eliminate author+publish run modes if both are set on same file
-    result.forEach(file -> removeAuthorPublishRunModeIfBothPresent(file.getFile().getVariants()));
-    return result;
+    result.values().forEach(fileSet -> {
+      fileSet.getFiles().forEach(file -> removeAuthorPublishRunModeIfBothPresent(file.getVariants()));
+    });
+    return result.values();
   }
 
   private static boolean isSameFileNameHash(InstallableFile file1, InstallableFile file2) {

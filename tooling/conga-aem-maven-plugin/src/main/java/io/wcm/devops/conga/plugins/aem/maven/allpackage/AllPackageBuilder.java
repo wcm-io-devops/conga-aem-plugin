@@ -22,6 +22,7 @@ package io.wcm.devops.conga.plugins.aem.maven.allpackage;
 import static io.wcm.devops.conga.generator.util.FileUtil.getCanonicalPath;
 import static io.wcm.devops.conga.plugins.aem.maven.allpackage.RunModeUtil.RUNMODE_AUTHOR;
 import static io.wcm.devops.conga.plugins.aem.maven.allpackage.RunModeUtil.RUNMODE_PUBLISH;
+import static io.wcm.devops.conga.plugins.aem.maven.allpackage.RunModeUtil.eliminateAuthorPublishDuplicates;
 import static org.apache.jackrabbit.vault.packaging.PackageProperties.NAME_DEPENDENCIES;
 import static org.apache.jackrabbit.vault.packaging.PackageProperties.NAME_NAME;
 import static org.apache.jackrabbit.vault.packaging.PackageProperties.NAME_PACKAGE_TYPE;
@@ -33,6 +34,7 @@ import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.Enumeration;
 import java.util.HashSet;
 import java.util.List;
@@ -59,6 +61,7 @@ import com.google.common.collect.ImmutableSet;
 
 import io.wcm.devops.conga.plugins.aem.maven.AutoDependenciesMode;
 import io.wcm.devops.conga.plugins.aem.maven.PackageTypeValidation;
+import io.wcm.devops.conga.plugins.aem.maven.RunModeOptimization;
 import io.wcm.devops.conga.plugins.aem.maven.model.BundleFile;
 import io.wcm.devops.conga.plugins.aem.maven.model.ContentPackageFile;
 import io.wcm.devops.conga.plugins.aem.maven.model.InstallableFile;
@@ -94,6 +97,7 @@ public final class AllPackageBuilder {
   private final String packageName;
   private String version;
   private AutoDependenciesMode autoDependenciesMode = AutoDependenciesMode.OFF;
+  private RunModeOptimization runModeOptimization = RunModeOptimization.OFF;
   private PackageTypeValidation packageTypeValidation = PackageTypeValidation.STRICT;
   private Log log;
 
@@ -124,6 +128,15 @@ public final class AllPackageBuilder {
    */
   public AllPackageBuilder autoDependenciesMode(AutoDependenciesMode value) {
     this.autoDependenciesMode = value;
+    return this;
+  }
+
+  /**
+   * @param value Configure run mode optimization.
+   * @return this
+   */
+  public AllPackageBuilder runModeOptimization(RunModeOptimization value) {
+    this.runModeOptimization = value;
     return this;
   }
 
@@ -309,7 +322,17 @@ public final class AllPackageBuilder {
       }
     }
 
-    for (ContentPackageFileSet fileSet : contentPackageFileSets) {
+    Collection<ContentPackageFileSet> processedFileSets;
+    if (runModeOptimization == RunModeOptimization.ELIMINATE_DUPLICATES) {
+      // eliminate duplicates which are same for author and publish
+      processedFileSets = eliminateAuthorPublishDuplicates(contentPackageFileSets,
+        environmentRunMode -> new ContentPackageFileSet(new ArrayList<>(), Collections.singletonList(environmentRunMode)));
+    }
+    else {
+      processedFileSets = contentPackageFileSets;
+    }
+
+    for (ContentPackageFileSet fileSet : processedFileSets) {
       for (String environmentRunMode : fileSet.getEnvironmentRunModes()) {
         List<ContentPackageFile> previousPackages = new ArrayList<>();
         for (ContentPackageFile pkg : fileSet.getFiles()) {
@@ -352,12 +375,22 @@ public final class AllPackageBuilder {
   }
 
   private void buildAddBundles(ContentPackage contentPackage, String rootPath) throws IOException {
-    // eliminate duplicates which are same for author and publish
-    Collection<InstallableFileWithEnvironmentRunModes<BundleFile>> files = RunModeUtil.eliminateAuthorPublishDuplicates(bundleFileSets);
-    for (InstallableFileWithEnvironmentRunModes<BundleFile> file : files) {
-      for (String environmentRunMode : file.getEnvironmentRunModes()) {
-        String path = buildBundlePath(file.getFile(), rootPath, environmentRunMode);
-        contentPackage.addFile(path, file.getFile().getFile());
+    Collection<BundleFileSet> processedFileSets;
+    if (runModeOptimization == RunModeOptimization.ELIMINATE_DUPLICATES) {
+      // eliminate duplicates which are same for author and publish
+      processedFileSets = eliminateAuthorPublishDuplicates(bundleFileSets,
+          environmentRunMode -> new BundleFileSet(new ArrayList<>(), Collections.singletonList(environmentRunMode)));
+    }
+    else {
+      processedFileSets = bundleFileSets;
+    }
+
+    for (BundleFileSet bundleFileSet : processedFileSets) {
+      for (String environmentRunMode : bundleFileSet.getEnvironmentRunModes()) {
+        for (BundleFile bundleFile : bundleFileSet.getFiles()) {
+          String path = buildBundlePath(bundleFile, rootPath, environmentRunMode);
+          contentPackage.addFile(path, bundleFile.getFile());
+        }
       }
     }
   }
