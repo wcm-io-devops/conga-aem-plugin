@@ -208,7 +208,7 @@ public final class AllPackageBuilder {
     // generate warning for each content packages without package type that is skipped
     contentPackages.stream()
         .filter(pkg -> !hasPackageType(pkg))
-        .forEach(pkg -> getLog().warn("Skipping content package without package type: {}" + getCanonicalPath(pkg.getFile())));
+        .forEach(pkg -> getLog().warn("Skipping content package without package type: " + getCanonicalPath(pkg.getFile())));
 
     // fail build if content packages with non-allowed package types exist
     List<ContentPackageFile> invalidPackageTypeContentPackages = contentPackages.stream()
