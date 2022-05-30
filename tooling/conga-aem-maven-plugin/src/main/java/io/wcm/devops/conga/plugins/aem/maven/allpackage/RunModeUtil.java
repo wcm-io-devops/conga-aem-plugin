@@ -19,7 +19,10 @@
  */
 package io.wcm.devops.conga.plugins.aem.maven.allpackage;
 
+import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
+import java.util.Optional;
 import java.util.Set;
 import java.util.stream.Collectors;
 
@@ -74,6 +77,47 @@ final class RunModeUtil {
       return RUNMODE_PUBLISH;
     }
     return variant;
+  }
+
+  /**
+   * Flattens and optimizes multiple file sets into a single one, eliminating identical duplicate file references that
+   * are present for both author and publish run mode. The order of the list is driven by the first list(s). Files
+   * only present in the latter list(s) are appended to the end.
+   * @param fileSets File sets with files with run modes
+   * @return Flattened list of bundles with run modes. If a file is present for both author and publish runmode, no
+   *         author/publish runmode is set.
+   */
+  public static <T extends FileWithRunMode> Collection<T> eliminateAuthorPublishDuplicates(List<? extends FileSet<T>> fileSets) {
+    List<T> result = new ArrayList<>();
+    // build distinct list of all files with combined run modes
+    fileSets.stream()
+        .flatMap(FileSet::toFilesWithRunMode)
+        .forEach(file -> {
+          Optional<T> existingFile = result.stream()
+              .filter(item -> item.isSameFileNameHash(file))
+              .findFirst();
+          if (existingFile.isPresent()) {
+            // if file was already added from other file set: eliminate duplicated, but add run modes
+            existingFile.get().getEnvironmentRunModes().addAll(file.getEnvironmentRunModes());
+          }
+          else {
+            result.add(file);
+          }
+        });
+    // eliminate author+publish run modes if both are set on same file
+    result.forEach(file -> removeAuthorPublishRunmodeIfBothPresent(file.getEnvironmentRunModes()));
+    return result;
+  }
+
+  /**
+   * Removes author and publish runmodes from given set if both are present.
+   * @param runModes Run modes
+   */
+  private static void removeAuthorPublishRunmodeIfBothPresent(Set<String> runModes) {
+    if (runModes.contains(RUNMODE_AUTHOR) && runModes.contains(RUNMODE_PUBLISH)) {
+      runModes.remove(RUNMODE_AUTHOR);
+      runModes.remove(RUNMODE_PUBLISH);
+    }
   }
 
 }

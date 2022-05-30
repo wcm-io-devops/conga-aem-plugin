@@ -19,11 +19,13 @@
  */
 package io.wcm.devops.conga.plugins.aem.maven.allpackage;
 
+import java.util.Collection;
 import java.util.List;
+import java.util.stream.Stream;
 
 import io.wcm.devops.conga.plugins.aem.maven.model.BundleFile;
 
-class BundleFileSet {
+class BundleFileSet implements FileSet<BundleFileWithRunMode> {
 
   private final List<BundleFile> bundles;
   private final List<String> environmentRunModes;
@@ -37,8 +39,15 @@ class BundleFileSet {
     return this.bundles;
   }
 
-  public List<String> getEnvironmentRunModes() {
+  @Override
+  public Collection<String> getEnvironmentRunModes() {
     return this.environmentRunModes;
+  }
+
+  @Override
+  public Stream<BundleFileWithRunMode> toFilesWithRunMode() {
+    return bundles.stream()
+        .map(bundle -> new BundleFileWithRunMode(bundle, environmentRunModes));
   }
 
 }

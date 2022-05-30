@@ -17,28 +17,15 @@
  * limitations under the License.
  * #L%
  */
-package io.wcm.devops.conga.plugins.aem.maven.model;
+package io.wcm.devops.conga.plugins.aem.maven.allpackage;
 
-import java.io.File;
-import java.util.List;
+import java.util.Collection;
+import java.util.stream.Stream;
 
-import org.jetbrains.annotations.NotNull;
+interface FileSet<T extends FileWithRunMode> {
 
-/**
- * Generic representation of an installable file (content package or OSGi bundle).
- */
-public interface InstallableFile {
+  Collection<String> getEnvironmentRunModes();
 
-  /**
-   * @return File.
-   */
-  @NotNull
-  File getFile();
-
-  /**
-   * @return Variants/Run modes for file.
-   */
-  @NotNull
-  List<String> getVariants();
+  Stream<T> toFilesWithRunMode();
 
 }

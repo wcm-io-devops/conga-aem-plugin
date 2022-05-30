@@ -17,28 +17,23 @@
  * limitations under the License.
  * #L%
  */
-package io.wcm.devops.conga.plugins.aem.maven.model;
+package io.wcm.devops.conga.plugins.aem.maven.allpackage;
 
-import java.io.File;
-import java.util.List;
+import java.util.Collection;
 
-import org.jetbrains.annotations.NotNull;
+import io.wcm.devops.conga.plugins.aem.maven.model.ContentPackageFile;
 
-/**
- * Generic representation of an installable file (content package or OSGi bundle).
- */
-public interface InstallableFile {
+class ContentPackageFileWithRunMode extends FileWithRunMode {
 
-  /**
-   * @return File.
-   */
-  @NotNull
-  File getFile();
+  private final ContentPackageFile contentPackage;
 
-  /**
-   * @return Variants/Run modes for file.
-   */
-  @NotNull
-  List<String> getVariants();
+  ContentPackageFileWithRunMode(ContentPackageFile contentPackage, Collection<String> environmentRunModes) {
+    super(contentPackage.getFile(), environmentRunModes);
+    this.contentPackage = contentPackage;
+  }
+
+  ContentPackageFile getContentPackage() {
+    return this.contentPackage;
+  }
 
 }

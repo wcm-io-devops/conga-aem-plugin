@@ -32,6 +32,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collection;
 import java.util.Enumeration;
 import java.util.HashSet;
 import java.util.List;
@@ -76,11 +77,14 @@ import io.wcm.tooling.commons.contentpackagebuilder.PackageFilter;
  * <li>Enforces the order defined in CONGA by automatically adding dependencies to all packages reflecting the file
  * order in model.json</li>
  * <li>Because the dependency chain may be different for each runmode (author/publish), each package is added once for
- * each runmode (so usually twice, for author+publish)</li>
- * <li>To avoid conflicts with duplicate packages with different dependencies all package names are changed and a
- * runmode suffix (.author or .publish) is added, same applies to the install folder</li>
+ * each runmode. Internally this separate dependency change for author and publish is optimized to have each package
+ * included only once for author+publish, unless it has a different chain of dependencies for both runmodes, in which
+ * case it is included separately for each run mode.</li>
+ * <li>To avoid conflicts with duplicate packages with different dependency chains the names of packages that are
+ * included in different versions for author/publish are changed and a runmode suffix (.author or .publish) is added,
+ * and it is put in a corresponding install folder.</li>
  * <li>To avoid problems with nested sub packages, the sub packages are extracted from the packages and treated in the
- * same way as other packages</li>
+ * same way as other packages.</li>
  * </ul>
  */
 public final class AllPackageBuilder {
@@ -287,6 +291,16 @@ public final class AllPackageBuilder {
       properties.entrySet().forEach(entry -> builder.property(entry.getKey(), entry.getValue()));
     }
 
+    // build content package
+    try (ContentPackage contentPackage = builder.build(targetFile)) {
+      buildAddContentPackages(contentPackage, rootPath);
+      buildAddBundles(contentPackage, rootPath);
+    }
+
+    return true;
+  }
+
+  private void buildAddContentPackages(ContentPackage contentPackage, String rootPath) throws IOException {
     // build set with dependencies instances for each package contained in all filesets
     Set<Dependency> allPackagesFromFileSets = new HashSet<>();
     for (ContentPackageFileSet fileSet : contentPackageFileSets) {
@@ -295,60 +309,60 @@ public final class AllPackageBuilder {
       }
     }
 
-    // build content package
-    // if auto dependencies is active: build separate "dependency chains" between mutable and immutable packages
-    try (ContentPackage contentPackage = builder.build(targetFile)) {
-      for (ContentPackageFileSet fileSet : contentPackageFileSets) {
-        for (String environmentRunMode : fileSet.getEnvironmentRunModes()) {
-          List<ContentPackageFile> previousPackages = new ArrayList<>();
-          for (ContentPackageFile pkg : fileSet.getContentPackages()) {
+    for (ContentPackageFileSet fileSet : contentPackageFileSets) {
+      for (String environmentRunMode : fileSet.getEnvironmentRunModes()) {
+        List<ContentPackageFile> previousPackages = new ArrayList<>();
+        for (ContentPackageFile pkg : fileSet.getContentPackages()) {
 
-            ContentPackageFile previousPkg = null;
+          ContentPackageFile previousPkg = null;
 
-            if (autoDependenciesMode != AutoDependenciesMode.OFF
-                && (autoDependenciesMode != AutoDependenciesMode.IMMUTABLE_ONLY || !isMutable(pkg))) {
-              // get last previous package
-              // if not IMMUTABLE_MUTABLE_COMBINED active only that of the same mutability type
-              previousPkg = previousPackages.stream()
-                  .filter(item -> (autoDependenciesMode == AutoDependenciesMode.IMMUTABLE_MUTABLE_COMBINED) || mutableMatches(item, pkg))
-                  .reduce((first, second) -> second)
-                  .orElse(null);
-            }
+          if (autoDependenciesMode != AutoDependenciesMode.OFF
+              && (autoDependenciesMode != AutoDependenciesMode.IMMUTABLE_ONLY || !isMutable(pkg))) {
+            // get last previous package
+            // if not IMMUTABLE_MUTABLE_COMBINED active only that of the same mutability type
+            previousPkg = previousPackages.stream()
+                .filter(item -> (autoDependenciesMode == AutoDependenciesMode.IMMUTABLE_MUTABLE_COMBINED) || mutableMatches(item, pkg))
+                .reduce((first, second) -> second)
+                .orElse(null);
+          }
 
-            // set package name, wire previous package in package dependency
-            List<TemporaryContentPackageFile> processedFiles = processContentPackage(pkg, previousPkg, environmentRunMode, allPackagesFromFileSets);
+          // set package name, wire previous package in package dependency
+          List<TemporaryContentPackageFile> processedFiles = processContentPackage(pkg, previousPkg, environmentRunMode, allPackagesFromFileSets);
 
-            // add processed content packages to "all" content package - and delete the temporary files
-            try {
-              for (TemporaryContentPackageFile processedFile : processedFiles) {
-                String path = buildPackagePath(processedFile, rootPath, environmentRunMode);
-                contentPackage.addFile(path, processedFile.getFile());
-                if (log.isDebugEnabled()) {
-                  log.debug("  Add " + processedFile.getPackageInfoWithDependencies());
-                }
+          // add processed content packages to "all" content package - and delete the temporary files
+          try {
+            for (TemporaryContentPackageFile processedFile : processedFiles) {
+              String path = buildPackagePath(processedFile, rootPath, environmentRunMode);
+              contentPackage.addFile(path, processedFile.getFile());
+              if (log.isDebugEnabled()) {
+                log.debug("  Add " + processedFile.getPackageInfoWithDependencies());
               }
             }
-            finally {
-              processedFiles.stream()
-                  .map(TemporaryContentPackageFile::getFile)
-                  .forEach(FileUtils::deleteQuietly);
-            }
+          }
+          finally {
+            processedFiles.stream()
+                .map(TemporaryContentPackageFile::getFile)
+                .forEach(FileUtils::deleteQuietly);
+          }
 
-            previousPackages.add(pkg);
-          }
-        }
-      }
-      for (BundleFileSet bundleFileSet : bundleFileSets) {
-        for (String environmentRunMode : bundleFileSet.getEnvironmentRunModes()) {
-          for (BundleFile bundleFile : bundleFileSet.getBundles()) {
-            String path = buildBundlePath(bundleFile, rootPath, environmentRunMode);
-            contentPackage.addFile(path, bundleFile.getFile());
-          }
+          previousPackages.add(pkg);
         }
       }
     }
+  }
 
-    return true;
+  private void buildAddBundles(ContentPackage contentPackage, String rootPath) throws IOException {
+    // eliminate duplicates which are same for autor and publish
+    Collection<BundleFileWithRunMode> files = RunModeUtil.eliminateAuthorPublishDuplicates(bundleFileSets);
+
+    for (BundleFileSet bundleFileSet : bundleFileSets) {
+      for (String environmentRunMode : bundleFileSet.getEnvironmentRunModes()) {
+        for (BundleFile bundleFile : bundleFileSet.getBundles()) {
+          String path = buildBundlePath(bundleFile, rootPath, environmentRunMode);
+          contentPackage.addFile(path, bundleFile.getFile());
+        }
+      }
+    }
   }
 
   private static boolean hasPackageType(ContentPackageFile pkg) {
