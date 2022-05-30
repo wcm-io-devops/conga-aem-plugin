@@ -26,6 +26,8 @@ import java.io.IOException;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.SortedMap;
+import java.util.TreeMap;
 
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugin.MojoFailureException;
@@ -177,22 +179,24 @@ public final class CloudManagerAllPackageMojo extends AbstractCloudManagerMojo {
   }
 
   /**
-   * Build an "all" package for each environment and node.
+   * Build an "all" package for each environment, including all nodes of that environment in a single file.
    */
   private void buildAllPackagesPerEnvironmentNode() throws MojoExecutionException, MojoFailureException {
+    SortedMap<String, AllPackageBuilder> builderPerEnvironment = new TreeMap<>();
     visitEnvironmentsNodes((environmentDir, nodeDir, cloudManagerTarget, files) -> {
-      String packageName = environmentDir.getName() + "." + nodeDir.getName() + "." + this.name;
-      AllPackageBuilder builder = createBuilder(packageName);
-
+      String packageName = environmentDir.getName() + "." + this.name;
+      AllPackageBuilder builder = builderPerEnvironment.computeIfAbsent(packageName, this::createBuilder);
       try {
         builder.add(files, cloudManagerTarget);
       }
       catch (IllegalArgumentException ex) {
         throw new MojoFailureException(ex.getMessage(), ex);
       }
-
       buildAllPackage(builder);
     });
+    for (AllPackageBuilder builder : builderPerEnvironment.values()) {
+      buildAllPackage(builder);
+    }
   }
 
   /**
