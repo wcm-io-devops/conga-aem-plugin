@@ -41,8 +41,4 @@ class ExpectedDependency {
     return packageReference;
   }
 
-  static @NotNull ExpectedDependency dep(@NotNull String packageReference) {
-    return new ExpectedDependency(packageReference);
-  }
-
 }

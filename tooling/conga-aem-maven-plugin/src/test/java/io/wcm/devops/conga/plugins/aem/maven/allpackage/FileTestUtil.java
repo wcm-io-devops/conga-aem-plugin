@@ -25,12 +25,14 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.io.File;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.Set;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
-import org.apache.commons.lang3.StringUtils;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 import org.w3c.dom.Document;
 
 import com.google.common.collect.ImmutableSet;
@@ -40,6 +42,25 @@ public final class FileTestUtil {
   private FileTestUtil() {
     // static methods only
   }
+
+  static @NotNull ExpectedFile file(@NotNull String fileName) {
+    return new ExpectedFile(fileName);
+  }
+
+  static @NotNull ExpectedContentPackage contentPackage(@NotNull String packageName,
+      @NotNull ExpectedDependency @NotNull... dependencies) {
+    return new ExpectedContentPackage(packageName, null, Arrays.asList(dependencies));
+  }
+
+  static @NotNull ExpectedContentPackage contentPackage(@NotNull String packageName, @Nullable String version,
+      @NotNull ExpectedDependency @NotNull... dependencies) {
+    return new ExpectedContentPackage(packageName, version, Arrays.asList(dependencies));
+  }
+
+  static @NotNull ExpectedDependency dep(@NotNull String packageReference) {
+    return new ExpectedDependency(packageReference);
+  }
+
 
   /**
    * Assert existence of given content packages (with dependencies) and other files.
@@ -67,19 +88,22 @@ public final class FileTestUtil {
 
         // assert package name
         String expectedPackageName = cp.getPackageName(runmodeSuffix);
-        assertXpathEvaluatesTo(expectedPackageName, "/properties/entry[@key='name']", propsXml);
+        assertXpathEvaluatesTo(expectedPackageName, "/properties/entry[@key='name']", propsXml,
+            "Package name of " + file.getFileName(runmodeSuffix));
 
         // assert package version
         String expectedVersion = cp.getVersion();
         if (expectedVersion != null) {
-          assertXpathEvaluatesTo(expectedVersion, "/properties/entry[@key='version']", propsXml);
+          assertXpathEvaluatesTo(expectedVersion, "/properties/entry[@key='version']", propsXml,
+              "Package version of " + file.getFileName(runmodeSuffix));
         }
 
         // assert package dependencies
         String expectedDependencies = cp.getDependencies().stream()
             .map(dep -> dep.getPackageReference(runmodeSuffix))
             .collect(Collectors.joining(","));
-        assertXpathEvaluatesTo(expectedDependencies, "/properties/entry[@key='dependencies']", propsXml);
+        assertXpathEvaluatesTo(expectedDependencies, "/properties/entry[@key='dependencies']", propsXml,
+            "Package dependencies of " + file.getFileName(runmodeSuffix));
       }
     }
   }
@@ -102,44 +126,6 @@ public final class FileTestUtil {
           .collect(Collectors.toSet());
     }
     assertEquals(expectedDirectoryNames, actualDirectoryNames, "files in " + dir.getPath());
-  }
-
-  /**
-   * Assert existence of given files.
-   * @param dir Directory
-   * @param fileNames Expected file names in directory
-   */
-  @Deprecated
-  public static void assertFiles(File dir, String... fileNames) {
-    assertTrue(dir.exists(), "file exists: " + dir.getPath());
-    assertTrue(dir.isDirectory(), "is directory: " + dir.getPath());
-    Set<String> expectedFileNames = ImmutableSet.copyOf(fileNames);
-    String[] files = dir.list();
-    Set<String> actualFileNames = files != null ? ImmutableSet.copyOf(files) : ImmutableSet.of();
-    assertEquals(expectedFileNames, actualFileNames, "files in " + dir.getPath());
-  }
-
-  /**
-   * Assert content package name and list of package dependencies.
-   * @param dir Directory
-   * @param fileName Content package file name
-   * @param packageName Expected content package name
-   * @param dependencies Expected dependencies
-   * @throws Exception Exception
-   */
-  @Deprecated
-  public static void assertNameDependencies(File dir, String fileName, String packageName,
-      String... dependencies) throws Exception {
-    File zipFile = new File(dir, fileName);
-    Document filterXml = getXmlFromZip(zipFile, "META-INF/vault/properties.xml");
-
-    assertXpathEvaluatesTo(packageName, "/properties/entry[@key='name']", filterXml);
-
-    String expecedDependencies = "";
-    if (dependencies.length > 0) {
-      expecedDependencies = StringUtils.join(dependencies, ",");
-    }
-    assertXpathEvaluatesTo(expecedDependencies, "/properties/entry[@key='dependencies']", filterXml);
   }
 
 }

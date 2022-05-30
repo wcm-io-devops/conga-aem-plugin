@@ -41,8 +41,4 @@ class ExpectedFile {
     return fileName;
   }
 
-  static @NotNull ExpectedFile file(@NotNull String fileName) {
-    return new ExpectedFile(fileName);
-  }
-
 }

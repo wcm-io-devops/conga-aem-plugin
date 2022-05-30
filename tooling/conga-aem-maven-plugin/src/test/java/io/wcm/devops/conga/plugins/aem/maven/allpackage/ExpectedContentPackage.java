@@ -19,7 +19,6 @@
  */
 package io.wcm.devops.conga.plugins.aem.maven.allpackage;
 
-import java.util.Arrays;
 import java.util.Collection;
 
 import org.apache.commons.lang3.StringUtils;
@@ -59,10 +58,6 @@ class ExpectedContentPackage extends ExpectedFile {
 
   public @NotNull Collection<ExpectedDependency> getDependencies() {
     return this.dependencies;
-  }
-
-  static @NotNull ExpectedContentPackage contentPackage(@NotNull String packageName, @NotNull String version, @NotNull ExpectedDependency @NotNull... dependencies) {
-    return new ExpectedContentPackage(packageName, version, Arrays.asList(dependencies));
   }
 
 }
