@@ -63,12 +63,12 @@ public final class ContentPackageTestUtil {
     return documentBuilder.parse(new ByteArrayInputStream(data));
   }
 
-  public static void assertXpathEvaluatesTo(String expected, String xpath, Node node) throws Exception {
-    assertEquals(expected, XPATH_ENGINE.evaluate(xpath, node));
+  public static void assertXpathEvaluatesTo(String expected, String xpath, Node node, String message) throws Exception {
+    assertEquals(expected, XPATH_ENGINE.evaluate(xpath, node), message);
   }
 
-  public static void assertXpathEvaluatesTo(String expected, String xpath, Document doc) throws Exception {
-    assertXpathEvaluatesTo(expected, xpath, doc.getDocumentElement());
+  public static void assertXpathEvaluatesTo(String expected, String xpath, Document doc, String message) throws Exception {
+    assertXpathEvaluatesTo(expected, xpath, doc.getDocumentElement(), message);
   }
 
 }
