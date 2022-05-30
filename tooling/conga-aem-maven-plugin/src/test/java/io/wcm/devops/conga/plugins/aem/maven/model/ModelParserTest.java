@@ -43,7 +43,7 @@ class ModelParserTest {
 
   @BeforeEach
   void setUp() {
-    nodeDir = new File("src/test/resources/node");
+    nodeDir = new File("src/test/resources/node/aem-author");
     nodeModelParser = new ModelParser(nodeDir);
     dispatcherNodeDir = new File("src/test/resources/node-dispatcher");
     dispatcherNodeModelParser = new ModelParser(dispatcherNodeDir);
