@@ -61,13 +61,12 @@ final class RunModeUtil {
   }
 
   /**
-   * Maps well-known variant names from CONG AEM definitions to the corresponding run modes.
+   * Maps well-known variant names from CONGA AEM definitions to the corresponding run modes.
    * If the variant name is not well-known the variant name is used as run mode.
    * @param variant Variant
    * @return Run mode
    */
   private static String mapVariantToRunMode(String variant) {
-    //
     if ("aem-author".equals(variant)) {
       return RUNMODE_AUTHOR;
     }
