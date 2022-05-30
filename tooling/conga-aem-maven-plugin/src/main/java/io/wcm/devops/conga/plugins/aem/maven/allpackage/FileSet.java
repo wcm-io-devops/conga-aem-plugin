@@ -20,12 +20,14 @@
 package io.wcm.devops.conga.plugins.aem.maven.allpackage;
 
 import java.util.Collection;
-import java.util.stream.Stream;
+import java.util.List;
 
-interface FileSet<T extends FileWithRunMode> {
+import io.wcm.devops.conga.plugins.aem.maven.model.InstallableFile;
+
+interface FileSet<T extends InstallableFile> {
 
   Collection<String> getEnvironmentRunModes();
 
-  Stream<T> toFilesWithRunMode();
+  List<T> getFiles();
 
 }

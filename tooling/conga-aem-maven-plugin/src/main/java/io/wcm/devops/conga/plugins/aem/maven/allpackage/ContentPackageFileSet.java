@@ -20,11 +20,10 @@
 package io.wcm.devops.conga.plugins.aem.maven.allpackage;
 
 import java.util.List;
-import java.util.stream.Stream;
 
 import io.wcm.devops.conga.plugins.aem.maven.model.ContentPackageFile;
 
-class ContentPackageFileSet implements FileSet<ContentPackageFileWithRunMode> {
+class ContentPackageFileSet implements FileSet<ContentPackageFile> {
 
   private final List<ContentPackageFile> contentPackages;
   private final List<String> environmentRunModes;
@@ -34,19 +33,14 @@ class ContentPackageFileSet implements FileSet<ContentPackageFileWithRunMode> {
     this.environmentRunModes = environmentRunModes;
   }
 
-  public List<ContentPackageFile> getContentPackages() {
+  @Override
+  public List<ContentPackageFile> getFiles() {
     return this.contentPackages;
   }
 
   @Override
   public List<String> getEnvironmentRunModes() {
     return this.environmentRunModes;
-  }
-
-  @Override
-  public Stream<ContentPackageFileWithRunMode> toFilesWithRunMode() {
-    return contentPackages.stream()
-        .map(contentPackage -> new ContentPackageFileWithRunMode(contentPackage, environmentRunModes));
   }
 
 }

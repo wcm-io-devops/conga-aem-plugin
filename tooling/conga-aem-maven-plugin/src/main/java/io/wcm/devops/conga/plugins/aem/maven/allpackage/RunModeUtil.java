@@ -26,6 +26,8 @@ import java.util.Optional;
 import java.util.Set;
 import java.util.stream.Collectors;
 
+import org.apache.commons.lang3.StringUtils;
+
 import io.wcm.devops.conga.plugins.aem.maven.model.InstallableFile;
 
 final class RunModeUtil {
@@ -57,7 +59,7 @@ final class RunModeUtil {
     return runModes.contains(RUNMODE_PUBLISH) && !runModes.contains(RUNMODE_AUTHOR);
   }
 
-  private static Set<String> mapVariantsToRunModes(List<String> variants) {
+  private static Set<String> mapVariantsToRunModes(Collection<String> variants) {
     return variants.stream()
         .map(RunModeUtil::mapVariantToRunMode)
         .collect(Collectors.toSet());
@@ -87,33 +89,43 @@ final class RunModeUtil {
    * @return Flattened list of bundles with run modes. If a file is present for both author and publish runmode, no
    *         author/publish runmode is set.
    */
-  public static <T extends FileWithRunMode> Collection<T> eliminateAuthorPublishDuplicates(List<? extends FileSet<T>> fileSets) {
-    List<T> result = new ArrayList<>();
-    // build distinct list of all files with combined run modes
-    fileSets.stream()
-        .flatMap(FileSet::toFilesWithRunMode)
-        .forEach(file -> {
-          Optional<T> existingFile = result.stream()
-              .filter(item -> item.isSameFileNameHash(file))
-              .findFirst();
-          if (existingFile.isPresent()) {
-            // if file was already added from other file set: eliminate duplicated, but add run modes
-            existingFile.get().getEnvironmentRunModes().addAll(file.getEnvironmentRunModes());
-          }
-          else {
-            result.add(file);
-          }
-        });
+  public static <T extends InstallableFile> Collection<InstallableFileWithEnvironmentRunModes<T>> eliminateAuthorPublishDuplicates(
+      List<? extends FileSet<T>> fileSets) {
+    List<InstallableFileWithEnvironmentRunModes<T>> result = new ArrayList<>();
+    // build distinct list of all files with combined run modes from variants, but separated by environment run modes
+    fileSets.forEach(fileSet -> {
+      fileSet.getFiles().forEach(file -> {
+        Optional<InstallableFileWithEnvironmentRunModes<T>> existingFile = result.stream()
+            .filter(item -> item.getEnvironmentRunModes().equals(fileSet.getEnvironmentRunModes())
+                && isSameFileNameHash(item.getFile(), file))
+            .findFirst();
+        if (existingFile.isPresent()) {
+          // if file was already added from other file set: eliminate duplicated, but add run modes
+          existingFile.get().getFile().getVariants().addAll(file.getVariants());
+        }
+        else {
+          result.add(new InstallableFileWithEnvironmentRunModes<>(file, fileSet.getEnvironmentRunModes()));
+        }
+
+      });
+    });
     // eliminate author+publish run modes if both are set on same file
-    result.forEach(file -> removeAuthorPublishRunmodeIfBothPresent(file.getEnvironmentRunModes()));
+    result.forEach(file -> removeAuthorPublishRunModeIfBothPresent(file.getFile().getVariants()));
     return result;
+  }
+
+  private static boolean isSameFileNameHash(InstallableFile file1, InstallableFile file2) {
+    if (!StringUtils.equals(file1.getFile().getName(), file2.getFile().getName())) {
+      return false;
+    }
+    return file1.getHashCode().equals(file2.getHashCode());
   }
 
   /**
    * Removes author and publish runmodes from given set if both are present.
    * @param runModes Run modes
    */
-  private static void removeAuthorPublishRunmodeIfBothPresent(Set<String> runModes) {
+  private static void removeAuthorPublishRunModeIfBothPresent(Set<String> runModes) {
     if (runModes.contains(RUNMODE_AUTHOR) && runModes.contains(RUNMODE_PUBLISH)) {
       runModes.remove(RUNMODE_AUTHOR);
       runModes.remove(RUNMODE_PUBLISH);

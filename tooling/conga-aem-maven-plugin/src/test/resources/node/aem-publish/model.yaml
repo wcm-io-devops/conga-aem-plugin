@@ -3,7 +3,6 @@ roles:
   variant: aem-publish
   variants: [aem-publish]
   files:
-  - {path: bundles/io.wcm.caconfig.editor-1.11.0.jar}
   - path: packages/acs-aem-commons-ui.apps-4.10.0-min.zip
     postProcessors: [aem-contentpackage-properties]
     aemContentPackageProperties: {acHandling: merge, artifactId: acs-aem-commons-ui.apps,

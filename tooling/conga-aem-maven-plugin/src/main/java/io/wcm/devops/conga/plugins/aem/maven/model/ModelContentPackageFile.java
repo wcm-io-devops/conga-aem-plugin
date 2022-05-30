@@ -36,9 +36,7 @@ import io.wcm.devops.conga.plugins.aem.postprocessor.ContentPackagePropertiesPos
 /**
  * Represents a content package file generated or referenced by CONGA.
  */
-public final class ModelContentPackageFile implements ContentPackageFile {
-
-  private final File file;
+public final class ModelContentPackageFile extends AbstractInstallableFile implements ContentPackageFile {
 
   private final Boolean install;
   private final Boolean force;
@@ -51,8 +49,6 @@ public final class ModelContentPackageFile implements ContentPackageFile {
   private final String version;
   private final String packageType;
 
-  private final List<String> variants;
-
   /**
    * @param file Content package file
    * @param fileData File data
@@ -60,7 +56,7 @@ public final class ModelContentPackageFile implements ContentPackageFile {
    */
   @SuppressWarnings("unchecked")
   public ModelContentPackageFile(File file, Map<String, Object> fileData, List<String> variants) {
-    this.file = file;
+    super(file, variants);
 
     this.install = (Boolean)fileData.get("install");
     this.force = (Boolean)fileData.get("force");
@@ -77,13 +73,6 @@ public final class ModelContentPackageFile implements ContentPackageFile {
     this.group = Objects.toString(contentPackageProperties.get(NAME_GROUP), null);
     this.version = Objects.toString(contentPackageProperties.get(NAME_VERSION), null);
     this.packageType = Objects.toString(contentPackageProperties.get(NAME_PACKAGE_TYPE), null);
-
-    this.variants = variants;
-  }
-
-  @Override
-  public File getFile() {
-    return this.file;
   }
 
   public Boolean getInstall() {
@@ -128,16 +117,6 @@ public final class ModelContentPackageFile implements ContentPackageFile {
   @Override
   public String getPackageType() {
     return this.packageType;
-  }
-
-  @Override
-  public List<String> getVariants() {
-    return this.variants;
-  }
-
-  @Override
-  public String toString() {
-    return file.toString();
   }
 
 }

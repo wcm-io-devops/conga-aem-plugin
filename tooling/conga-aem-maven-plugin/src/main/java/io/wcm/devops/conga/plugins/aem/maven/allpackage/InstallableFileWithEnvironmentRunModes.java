@@ -21,19 +21,24 @@ package io.wcm.devops.conga.plugins.aem.maven.allpackage;
 
 import java.util.Collection;
 
-import io.wcm.devops.conga.plugins.aem.maven.model.BundleFile;
+import io.wcm.devops.conga.plugins.aem.maven.model.InstallableFile;
 
-class BundleFileWithRunMode extends FileWithRunMode {
+class InstallableFileWithEnvironmentRunModes<T extends InstallableFile> {
 
-  private final BundleFile bundle;
+  private final T file;
+  private final Collection<String> environmentRunModes;
 
-  BundleFileWithRunMode(BundleFile bundle, Collection<String> environmentRunModes) {
-    super(bundle.getFile(), environmentRunModes);
-    this.bundle = bundle;
+  InstallableFileWithEnvironmentRunModes(T file, Collection<String> environmentRunModes) {
+    this.file = file;
+    this.environmentRunModes = environmentRunModes;
   }
 
-  BundleFile getBundle() {
-    return this.bundle;
+  T getFile() {
+    return this.file;
+  }
+
+  Collection<String> getEnvironmentRunModes() {
+    return this.environmentRunModes;
   }
 
 }

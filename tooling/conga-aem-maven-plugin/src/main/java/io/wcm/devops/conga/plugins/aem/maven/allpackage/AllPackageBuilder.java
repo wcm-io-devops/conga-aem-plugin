@@ -304,7 +304,7 @@ public final class AllPackageBuilder {
     // build set with dependencies instances for each package contained in all filesets
     Set<Dependency> allPackagesFromFileSets = new HashSet<>();
     for (ContentPackageFileSet fileSet : contentPackageFileSets) {
-      for (ContentPackageFile pkg : fileSet.getContentPackages()) {
+      for (ContentPackageFile pkg : fileSet.getFiles()) {
         addDependencyInformation(allPackagesFromFileSets, pkg);
       }
     }
@@ -312,7 +312,7 @@ public final class AllPackageBuilder {
     for (ContentPackageFileSet fileSet : contentPackageFileSets) {
       for (String environmentRunMode : fileSet.getEnvironmentRunModes()) {
         List<ContentPackageFile> previousPackages = new ArrayList<>();
-        for (ContentPackageFile pkg : fileSet.getContentPackages()) {
+        for (ContentPackageFile pkg : fileSet.getFiles()) {
 
           ContentPackageFile previousPkg = null;
 
@@ -352,15 +352,12 @@ public final class AllPackageBuilder {
   }
 
   private void buildAddBundles(ContentPackage contentPackage, String rootPath) throws IOException {
-    // eliminate duplicates which are same for autor and publish
-    Collection<BundleFileWithRunMode> files = RunModeUtil.eliminateAuthorPublishDuplicates(bundleFileSets);
-
-    for (BundleFileSet bundleFileSet : bundleFileSets) {
-      for (String environmentRunMode : bundleFileSet.getEnvironmentRunModes()) {
-        for (BundleFile bundleFile : bundleFileSet.getBundles()) {
-          String path = buildBundlePath(bundleFile, rootPath, environmentRunMode);
-          contentPackage.addFile(path, bundleFile.getFile());
-        }
+    // eliminate duplicates which are same for author and publish
+    Collection<InstallableFileWithEnvironmentRunModes<BundleFile>> files = RunModeUtil.eliminateAuthorPublishDuplicates(bundleFileSets);
+    for (InstallableFileWithEnvironmentRunModes<BundleFile> file : files) {
+      for (String environmentRunMode : file.getEnvironmentRunModes()) {
+        String path = buildBundlePath(file.getFile(), rootPath, environmentRunMode);
+        contentPackage.addFile(path, file.getFile().getFile());
       }
     }
   }

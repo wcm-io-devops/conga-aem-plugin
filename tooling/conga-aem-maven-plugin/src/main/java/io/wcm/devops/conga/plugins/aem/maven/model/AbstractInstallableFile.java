@@ -17,7 +17,7 @@
  * limitations under the License.
  * #L%
  */
-package io.wcm.devops.conga.plugins.aem.maven.allpackage;
+package io.wcm.devops.conga.plugins.aem.maven.model;
 
 import java.io.File;
 import java.io.IOException;
@@ -25,7 +25,7 @@ import java.util.Collection;
 import java.util.LinkedHashSet;
 import java.util.Set;
 
-import org.apache.commons.lang3.StringUtils;
+import org.jetbrains.annotations.NotNull;
 
 import com.google.common.hash.HashCode;
 import com.google.common.hash.Hashing;
@@ -34,38 +34,44 @@ import com.google.common.io.Files;
 import io.wcm.devops.conga.generator.util.FileUtil;
 
 /**
- * Describes a file with a set of run modes and (lazily evaluated) hash code.
+ * Describes an installable file with a set of run modes and (lazily evaluated) hash code.
  */
-abstract class FileWithRunMode {
+public abstract class AbstractInstallableFile implements InstallableFile {
 
   private final File file;
-  private final Set<String> environmentRunModes;
+  private final Set<String> variants;
   private HashCode hashCode;
 
-  protected FileWithRunMode(File file, Collection<String> environmentRunModes) {
+  protected AbstractInstallableFile(File file, Collection<String> variants) {
     this.file = file;
-    this.environmentRunModes = new LinkedHashSet<>(environmentRunModes);
+    this.variants = new LinkedHashSet<>(variants);
   }
 
-  /**
-   * @return Set of run modes. It's allowed to manipulated the set from outside.
-   */
-  Set<String> getEnvironmentRunModes() {
-    return environmentRunModes;
+  @Override
+  @NotNull
+  public File getFile() {
+    return file;
   }
 
-  HashCode getHashCode() {
+
+  @Override
+  @NotNull
+  public Set<String> getVariants() {
+    return variants;
+  }
+
+  @Override
+  @NotNull
+  public HashCode getHashCode() {
     if (this.hashCode == null) {
       this.hashCode = getHashCode(file);
     }
     return this.hashCode;
   }
 
-  boolean isSameFileNameHash(FileWithRunMode other) {
-    if (!StringUtils.equals(file.getName(), other.file.getName())) {
-      return false;
-    }
-    return getHashCode().equals(other.getHashCode());
+  @Override
+  public String toString() {
+    return file.toString();
   }
 
   private static HashCode getHashCode(File file) {

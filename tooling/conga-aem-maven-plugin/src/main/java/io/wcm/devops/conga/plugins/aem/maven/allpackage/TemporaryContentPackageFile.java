@@ -27,18 +27,17 @@ import static org.apache.jackrabbit.vault.packaging.PackageProperties.NAME_VERSI
 
 import java.io.File;
 import java.io.IOException;
-import java.util.List;
+import java.util.Collection;
 import java.util.Map;
 
+import io.wcm.devops.conga.plugins.aem.maven.model.AbstractInstallableFile;
 import io.wcm.devops.conga.plugins.aem.maven.model.ContentPackageFile;
 import io.wcm.tooling.commons.packmgr.util.ContentPackageProperties;
 
 /**
  * References a temporary file representing an partially processed content package to be included in the "all" package.
  */
-final class TemporaryContentPackageFile implements ContentPackageFile {
-
-  private final File file;
+final class TemporaryContentPackageFile extends AbstractInstallableFile implements ContentPackageFile {
 
   private final String name;
   private final String group;
@@ -46,22 +45,14 @@ final class TemporaryContentPackageFile implements ContentPackageFile {
   private final String packageType;
   private final String dependencies;
 
-  private final List<String> variants;
-
-  TemporaryContentPackageFile(File file, List<String> variants) throws IOException {
-    this.file = file;
+  TemporaryContentPackageFile(File file, Collection<String> variants) throws IOException {
+    super(file, variants);
     Map<String, Object> props = ContentPackageProperties.get(file);
     this.name = (String)props.get(NAME_NAME);
     this.group = (String)props.get(NAME_GROUP);
     this.version = (String)props.get(NAME_VERSION);
     this.packageType = (String)props.get(NAME_PACKAGE_TYPE);
     this.dependencies = (String)props.get(NAME_DEPENDENCIES);
-    this.variants = variants;
-  }
-
-  @Override
-  public File getFile() {
-    return this.file;
   }
 
   @Override
@@ -86,16 +77,6 @@ final class TemporaryContentPackageFile implements ContentPackageFile {
 
   public String getDependencies() {
     return this.dependencies;
-  }
-
-  @Override
-  public List<String> getVariants() {
-    return this.variants;
-  }
-
-  @Override
-  public String toString() {
-    return file.toString();
   }
 
   public String getPackageInfoWithDependencies() {

@@ -20,9 +20,11 @@
 package io.wcm.devops.conga.plugins.aem.maven.model;
 
 import java.io.File;
-import java.util.List;
+import java.util.Set;
 
 import org.jetbrains.annotations.NotNull;
+
+import com.google.common.hash.HashCode;
 
 /**
  * Generic representation of an installable file (content package or OSGi bundle).
@@ -39,6 +41,12 @@ public interface InstallableFile {
    * @return Variants/Run modes for file.
    */
   @NotNull
-  List<String> getVariants();
+  Set<String> getVariants();
+
+  /**
+   * @return Hash code for file.
+   */
+  @NotNull
+  HashCode getHashCode();
 
 }
