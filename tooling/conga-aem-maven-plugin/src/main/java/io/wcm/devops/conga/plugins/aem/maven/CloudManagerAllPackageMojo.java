@@ -201,7 +201,7 @@ public final class CloudManagerAllPackageMojo extends AbstractCloudManagerMojo {
    */
   private void buildAllPackagesPerEnvironmentAndNode() throws MojoExecutionException, MojoFailureException {
     visitEnvironmentsNodes((environmentDir, nodeDir, cloudManagerTarget, files) -> {
-      String packageName = environmentDir.getName() + "." + this.name;
+      String packageName = environmentDir.getName() + "." + nodeDir.getName() + "." + this.name;
       AllPackageBuilder builder = createBuilder(packageName);
       try {
         builder.add(files, cloudManagerTarget);
