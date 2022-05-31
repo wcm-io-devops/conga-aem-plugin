@@ -96,7 +96,7 @@ files:
     - aem-contentpackage
   postProcessorOptions:
     contentPackage:
-      name: schindler-aem-aem-cms-oak-index
+      name: aem-aem-cms-oak-index
       packageType: application
       rootPath: /oak:index
       allowIndexDefinitions: true
