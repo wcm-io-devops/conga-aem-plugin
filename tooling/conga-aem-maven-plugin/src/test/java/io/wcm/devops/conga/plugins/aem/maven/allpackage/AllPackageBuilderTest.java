@@ -56,7 +56,7 @@ class AllPackageBuilderTest {
 
   @BeforeEach
   void setUp(TestInfo testInfo) throws IOException {
-    nodeDir = new File("src/test/resources/node");
+    nodeDir = new File("src/test/resources/node/aem-author");
     targetDir = new File("target/test-" + getClass().getSimpleName()
         + (testInfo.getTestMethod().isPresent() ? "_" + testInfo.getTestMethod().get().getName() : ":")
         + "_" + testInfo.getDisplayName());
@@ -76,7 +76,7 @@ class AllPackageBuilderTest {
 
   @ParameterizedTest
   @MethodSource("cloudManagerTargetVariants")
-  void testBuild(Set<String> cloudManagerTarget, List<String> runmodeSuffixes) throws Exception {
+  void testBuild_AUTODEPENDENCIES_OFF(Set<String> cloudManagerTarget, List<String> runmodeSuffixes) throws Exception {
     List<InstallableFile> files = new ModelParser(nodeDir).getInstallableFilesForNode();
     File targetFile = new File(targetDir, "all.zip");
 

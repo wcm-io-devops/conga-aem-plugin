@@ -28,6 +28,7 @@ import java.io.File;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.Set;
+import java.util.TreeSet;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
@@ -36,6 +37,7 @@ import org.jetbrains.annotations.Nullable;
 import org.w3c.dom.Document;
 
 import com.google.common.collect.ImmutableSet;
+import com.google.common.collect.ImmutableSortedSet;
 
 public final class FileTestUtil {
 
@@ -74,9 +76,9 @@ public final class FileTestUtil {
     // assert existing files match the expected files
     Set<String> expectedFileNames = Stream.of(expectedFiles)
         .map(file -> file.getFileName(runmodeSuffix))
-        .collect(Collectors.toSet());
+        .collect(Collectors.toCollection(TreeSet::new));
     String[] fileNames = dir.list();
-    Set<String> actualFileNames = fileNames != null ? ImmutableSet.copyOf(fileNames) : ImmutableSet.of();
+    Set<String> actualFileNames = fileNames != null ? ImmutableSortedSet.copyOf(fileNames) : ImmutableSet.of();
     assertEquals(expectedFileNames, actualFileNames, "files in " + dir.getPath());
 
     // extra check for content packages

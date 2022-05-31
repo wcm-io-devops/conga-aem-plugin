@@ -19,13 +19,12 @@
 
 
 CONGA_ENVIRONMENT="local"
-CONGA_NODE="aem-author"
 
 if [[ $0 == *":\\"* ]]; then
   DISPLAY_PAUSE_MESSAGE=true
 fi
 
-mvn -Pfast -Dvault.file=target/${CONGA_ENVIRONMENT}.${CONGA_NODE}.all.zip -Dvault.force=true clean install wcmio-content-package:install
+mvn -Pfast -Dconga.environments=${CONGA_ENVIRONMENT} -Dvault.file=target/${CONGA_ENVIRONMENT}.all.zip -Dvault.force=true clean install wcmio-content-package:install
 
 if [ "$DISPLAY_PAUSE_MESSAGE" = true ]; then
   echo ""
