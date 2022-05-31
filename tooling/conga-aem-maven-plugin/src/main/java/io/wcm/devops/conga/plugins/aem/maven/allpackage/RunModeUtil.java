@@ -42,6 +42,17 @@ final class RunModeUtil {
   }
 
   /**
+   * Checks if the given package is to be installed on both author and publish instances
+   * @param file Content package
+   * @return true if author and publish run mode (or no run mode = no restriction)
+   */
+  public static boolean isAuthorAndPublish(InstallableFile file) {
+    Set<String> runModes = mapVariantsToRunModes(file.getVariants());
+    return (!runModes.contains(RUNMODE_AUTHOR) && !runModes.contains(RUNMODE_PUBLISH))
+        || (runModes.contains(RUNMODE_AUTHOR) && runModes.contains(RUNMODE_PUBLISH));
+  }
+
+  /**
    * Checks if the given variants map to author run mode, but not to publish run mode.
    * @param file Content package
    * @return true if only author run modes

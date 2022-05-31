@@ -23,6 +23,9 @@ import static io.wcm.devops.conga.generator.util.FileUtil.getCanonicalPath;
 import static io.wcm.devops.conga.plugins.aem.maven.allpackage.RunModeUtil.RUNMODE_AUTHOR;
 import static io.wcm.devops.conga.plugins.aem.maven.allpackage.RunModeUtil.RUNMODE_PUBLISH;
 import static io.wcm.devops.conga.plugins.aem.maven.allpackage.RunModeUtil.eliminateAuthorPublishDuplicates;
+import static io.wcm.devops.conga.plugins.aem.maven.allpackage.RunModeUtil.isAuthorAndPublish;
+import static io.wcm.devops.conga.plugins.aem.maven.allpackage.RunModeUtil.isOnlyAuthor;
+import static io.wcm.devops.conga.plugins.aem.maven.allpackage.RunModeUtil.isOnlyPublish;
 import static org.apache.jackrabbit.vault.packaging.PackageProperties.NAME_DEPENDENCIES;
 import static org.apache.jackrabbit.vault.packaging.PackageProperties.NAME_NAME;
 import static org.apache.jackrabbit.vault.packaging.PackageProperties.NAME_PACKAGE_TYPE;
@@ -56,6 +59,8 @@ import org.apache.jackrabbit.vault.packaging.PackageType;
 import org.apache.jackrabbit.vault.packaging.VersionRange;
 import org.apache.maven.plugin.logging.Log;
 import org.apache.maven.plugin.logging.SystemStreamLog;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 import com.google.common.collect.ImmutableSet;
 
@@ -336,18 +341,7 @@ public final class AllPackageBuilder {
       for (String environmentRunMode : fileSet.getEnvironmentRunModes()) {
         List<ContentPackageFile> previousPackages = new ArrayList<>();
         for (ContentPackageFile pkg : fileSet.getFiles()) {
-
-          ContentPackageFile previousPkg = null;
-
-          if (autoDependenciesMode != AutoDependenciesMode.OFF
-              && (autoDependenciesMode != AutoDependenciesMode.IMMUTABLE_ONLY || !isMutable(pkg))) {
-            // get last previous package
-            // if not IMMUTABLE_MUTABLE_COMBINED active only that of the same mutability type
-            previousPkg = previousPackages.stream()
-                .filter(item -> (autoDependenciesMode == AutoDependenciesMode.IMMUTABLE_MUTABLE_COMBINED) || mutableMatches(item, pkg))
-                .reduce((first, second) -> second)
-                .orElse(null);
-          }
+          ContentPackageFile previousPkg = getDependencyChainPreviousPackage(pkg, previousPackages);
 
           // set package name, wire previous package in package dependency
           List<TemporaryContentPackageFile> processedFiles = processContentPackage(pkg, previousPkg, environmentRunMode, allPackagesFromFileSets);
@@ -372,6 +366,30 @@ public final class AllPackageBuilder {
         }
       }
     }
+  }
+
+  /**
+   * Gets the previous package in the order defined by CONGA to define as package dependency in current package.
+   * @param currentPackage Current package
+   * @param previousPackages List of previous packages
+   * @return Package to define as dependency, or null if no dependency should be defined
+   */
+  private @Nullable ContentPackageFile getDependencyChainPreviousPackage(@NotNull ContentPackageFile currentPackage,
+      @NotNull List<ContentPackageFile> previousPackages) {
+    if ((autoDependenciesMode == AutoDependenciesMode.OFF)
+        || (autoDependenciesMode == AutoDependenciesMode.IMMUTABLE_ONLY && isMutable(currentPackage))) {
+      return null;
+    }
+    // get last previous package
+    return previousPackages.stream()
+        // if not IMMUTABLE_MUTABLE_COMBINED active only that of the same mutability type
+        .filter(item -> (autoDependenciesMode == AutoDependenciesMode.IMMUTABLE_MUTABLE_COMBINED) || mutableMatches(item, currentPackage))
+        // make sure author-only or publish-only packages are only taken into account if the current package has same restriction
+        .filter(item -> isAuthorAndPublish(item)
+            || (isOnlyAuthor(item) && isOnlyAuthor(currentPackage))
+            || (isOnlyPublish(item) && isOnlyPublish(currentPackage)))
+        // get last in list
+        .reduce((first, second) -> second).orElse(null);
   }
 
   private void buildAddBundles(ContentPackage contentPackage, String rootPath) throws IOException {

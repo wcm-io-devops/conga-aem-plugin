@@ -161,12 +161,12 @@ class AllPackageBuilderAuthorPublishTest {
 
     File applicationInstallDir = new File(applicationDir, "install");
     assertFiles(applicationInstallDir, "",
-        contentPackage("core.wcm.components.content{runmode}", "2.17.0",
+        contentPackage("core.wcm.components.content", "2.17.0",
             dep("day/cq60/product:cq-platform-content:1.3.248")),
-        contentPackage("core.wcm.components.extensions.amp.content{runmode}", "2.17.0"),
-        contentPackage("acs-aem-commons-ui.apps{runmode}", "4.10.0",
+        contentPackage("core.wcm.components.extensions.amp.content", "2.17.0"),
+        contentPackage("acs-aem-commons-ui.apps", "4.10.0",
             dep("day/cq60/product:cq-content:6.3.64")),
-        contentPackage("aem-cms-system-config{runmode}",
+        contentPackage("aem-cms-system-config",
             dep("day/cq60/product:cq-ui-wcm-editor-content:1.1.224"),
             dep("adobe/cq/product:cq-remotedam-client-ui-components:1.1.6")),
         file("io.wcm.wcm.ui.granite-1.9.2.jar"));
@@ -181,8 +181,8 @@ class AllPackageBuilderAuthorPublishTest {
 
     File contentInstallDir = new File(contentDir, "install");
     assertFiles(contentInstallDir, "",
-        contentPackage("acs-aem-commons-ui.content{runmode}", "4.10.0"),
-        contentPackage("wcm-io-samples-sample-content{runmode}", "1.3.1-SNAPSHOT"));
+        contentPackage("acs-aem-commons-ui.content", "4.10.0"),
+        contentPackage("wcm-io-samples-sample-content", "1.3.1-SNAPSHOT"));
     File contentInstallDirAuthor = new File(contentDir, "install.author");
     assertFiles(contentInstallDirAuthor, ".author",
         contentPackage("aem-cms-author-replicationagents{runmode}"));
@@ -195,10 +195,10 @@ class AllPackageBuilderAuthorPublishTest {
 
     File containerInstallDir = new File(containerDir, "install");
     assertFiles(containerInstallDir, "",
-        contentPackage("core.wcm.components.all{runmode}", "2.17.0"),
-        contentPackage("core.wcm.components.config{runmode}", "2.17.0"),
-        contentPackage("wcm-io-samples-aem-cms-config{runmode}"),
-        contentPackage("wcm-io-samples-complete{runmode}", "1.3.1-SNAPSHOT"));
+        contentPackage("core.wcm.components.all", "2.17.0"),
+        contentPackage("core.wcm.components.config", "2.17.0"),
+        contentPackage("wcm-io-samples-aem-cms-config"),
+        contentPackage("wcm-io-samples-complete", "1.3.1-SNAPSHOT"));
     File containerInstallDirAuthor = new File(containerDir, "install.author");
     assertFiles(containerInstallDirAuthor, ".author",
         contentPackage("accesscontroltool-package{runmode}", "3.0.0"));
@@ -223,86 +223,61 @@ class AllPackageBuilderAuthorPublishTest {
     assertDirectories(appsDir, "application", "content", "container");
 
     File applicationDir = new File(appsDir, "application");
-    assertDirectories(applicationDir, "install", "install.author", "install.publish");
+    assertDirectories(applicationDir, "install", "install.author");
 
     File applicationInstallDir = new File(applicationDir, "install");
     assertFiles(applicationInstallDir, "",
+        contentPackage("core.wcm.components.content", "2.17.0",
+            dep("day/cq60/product:cq-platform-content:1.3.248"),
+            dep("adobe/consulting:acs-aem-commons-ui.content:4.10.0")),
+        contentPackage("core.wcm.components.extensions.amp.content", "2.17.0",
+            dep("adobe/consulting:acs-aem-commons-ui.content:4.10.0")),
+        contentPackage("acs-aem-commons-ui.apps", "4.10.0",
+            dep("day/cq60/product:cq-content:6.3.64")),
+        contentPackage("aem-cms-system-config",
+            dep("day/cq60/product:cq-ui-wcm-editor-content:1.1.224"),
+            dep("adobe/cq/product:cq-remotedam-client-ui-components:1.1.6"),
+            dep("adobe/cq60:core.wcm.components.all:2.17.0")),
         file("io.wcm.wcm.ui.granite-1.9.2.jar"));
     File applicationInstallDirAuthor = new File(applicationDir, "install.author");
     assertFiles(applicationInstallDirAuthor, ".author",
         contentPackage("accesscontroltool-apps-package{runmode}", "3.0.0",
-            dep("adobe/consulting:acs-aem-commons-ui.content{runmode}:4.10.0")),
+            dep("adobe/consulting:acs-aem-commons-ui.content:4.10.0")),
         contentPackage("accesscontroltool-oakindex-package{runmode}", "3.0.0",
             dep("Netcentric:accesscontroltool-package{runmode}:3.0.0")),
-        contentPackage("core.wcm.components.content{runmode}", "2.17.0",
-            dep("day/cq60/product:cq-platform-content:1.3.248"),
-            dep("Netcentric:accesscontroltool-oakindex-package{runmode}:3.0.0")),
-        contentPackage("core.wcm.components.extensions.amp.content{runmode}", "2.17.0",
-            dep("Netcentric:accesscontroltool-oakindex-package{runmode}:3.0.0")),
-        contentPackage("acs-aem-commons-ui.apps{runmode}", "4.10.0",
-            dep("day/cq60/product:cq-content:6.3.64")),
-        contentPackage("aem-cms-system-config{runmode}",
-            dep("day/cq60/product:cq-ui-wcm-editor-content:1.1.224"),
-            dep("adobe/cq/product:cq-remotedam-client-ui-components:1.1.6"),
-            dep("wcm-io-samples:aem-cms-author-replicationagents{runmode}:1.3.1-SNAPSHOT")),
         file("io.wcm.caconfig.editor-1.11.0.jar"));
-    File applicationInstallDirPublish = new File(applicationDir, "install.publish");
-    assertFiles(applicationInstallDirPublish, ".publish",
-        contentPackage("core.wcm.components.content{runmode}", "2.17.0",
-            dep("day/cq60/product:cq-platform-content:1.3.248"),
-            dep("adobe/consulting:acs-aem-commons-ui.content{runmode}:4.10.0")),
-        contentPackage("core.wcm.components.extensions.amp.content{runmode}", "2.17.0",
-            dep("adobe/consulting:acs-aem-commons-ui.content{runmode}:4.10.0")),
-        contentPackage("acs-aem-commons-ui.apps{runmode}", "4.10.0",
-            dep("day/cq60/product:cq-content:6.3.64")),
-        contentPackage("aem-cms-system-config{runmode}",
-            dep("day/cq60/product:cq-ui-wcm-editor-content:1.1.224"),
-            dep("adobe/cq/product:cq-remotedam-client-ui-components:1.1.6"),
-            dep("adobe/cq60:core.wcm.components.all{runmode}:2.17.0")));
 
     File contentDir = new File(appsDir, "content");
-    assertDirectories(contentDir, "install.author", "install.publish");
+    assertDirectories(contentDir, "install", "install.author", "install.publish");
 
+    File contentInstallDir = new File(contentDir, "install");
+    assertFiles(contentInstallDir, "",
+        contentPackage("acs-aem-commons-ui.content", "4.10.0",
+            dep("adobe/consulting:acs-aem-commons-ui.apps:4.10.0")),
+        contentPackage("wcm-io-samples-sample-content", "1.3.1-SNAPSHOT",
+            dep("wcm-io-samples:wcm-io-samples-complete:1.3.1-SNAPSHOT")));
     File contentInstallDirAuthor = new File(contentDir, "install.author");
     assertFiles(contentInstallDirAuthor, ".author",
-        contentPackage("acs-aem-commons-ui.content{runmode}", "4.10.0",
-            dep("adobe/consulting:acs-aem-commons-ui.apps{runmode}:4.10.0")),
         contentPackage("aem-cms-author-replicationagents{runmode}",
-            dep("adobe/cq60:core.wcm.components.all{runmode}:2.17.0")),
-        contentPackage("wcm-io-samples-sample-content{runmode}", "1.3.1-SNAPSHOT",
-            dep("wcm-io-samples:wcm-io-samples-complete{runmode}:1.3.1-SNAPSHOT")));
-    File contentInstallDirPublish = new File(contentDir, "install.publish");
-    assertFiles(contentInstallDirPublish, ".publish",
-        contentPackage("acs-aem-commons-ui.content{runmode}", "4.10.0",
-            dep("adobe/consulting:acs-aem-commons-ui.apps{runmode}:4.10.0")),
-        contentPackage("wcm-io-samples-sample-content{runmode}", "1.3.1-SNAPSHOT",
-            dep("wcm-io-samples:wcm-io-samples-complete{runmode}:1.3.1-SNAPSHOT")));
+            dep("adobe/cq60:core.wcm.components.all:2.17.0")));
 
     File containerDir = new File(appsDir, "container");
-    assertDirectories(containerDir, "install.author", "install.publish");
+    assertDirectories(containerDir, "install", "install.author");
 
+    File containerInstallDir = new File(containerDir, "install");
+    assertFiles(containerInstallDir, ".",
+        contentPackage("core.wcm.components.all", "2.17.0",
+            dep("adobe/consulting:acs-aem-commons-ui.content:4.10.0")),
+        contentPackage("core.wcm.components.config", "2.17.0",
+            dep("adobe/consulting:acs-aem-commons-ui.content:4.10.0")),
+        contentPackage("wcm-io-samples-aem-cms-config",
+            dep("wcm-io-samples:aem-cms-system-config:1.3.1-SNAPSHOT")),
+        contentPackage("wcm-io-samples-complete", "1.3.1-SNAPSHOT",
+            dep("wcm-io-samples:wcm-io-samples-aem-cms-config:1.3.1-SNAPSHOT")));
     File containerInstallDirAuthor = new File(containerDir, "install.author");
     assertFiles(containerInstallDirAuthor, ".author",
         contentPackage("accesscontroltool-package{runmode}", "3.0.0",
-            dep("adobe/consulting:acs-aem-commons-ui.content{runmode}:4.10.0")),
-        contentPackage("core.wcm.components.all{runmode}", "2.17.0",
-            dep("Netcentric:accesscontroltool-oakindex-package{runmode}:3.0.0")),
-        contentPackage("core.wcm.components.config{runmode}", "2.17.0",
-            dep("Netcentric:accesscontroltool-oakindex-package{runmode}:3.0.0")),
-        contentPackage("wcm-io-samples-aem-cms-config{runmode}",
-            dep("wcm-io-samples:aem-cms-system-config{runmode}:1.3.1-SNAPSHOT")),
-        contentPackage("wcm-io-samples-complete{runmode}", "1.3.1-SNAPSHOT",
-            dep("wcm-io-samples:wcm-io-samples-aem-cms-config{runmode}:1.3.1-SNAPSHOT")));
-    File containerInstallDirPublish = new File(containerDir, "install.publish");
-    assertFiles(containerInstallDirPublish, ".publish",
-        contentPackage("core.wcm.components.all{runmode}", "2.17.0",
-            dep("adobe/consulting:acs-aem-commons-ui.content{runmode}:4.10.0")),
-        contentPackage("core.wcm.components.config{runmode}", "2.17.0",
-            dep("adobe/consulting:acs-aem-commons-ui.content{runmode}:4.10.0")),
-        contentPackage("wcm-io-samples-aem-cms-config{runmode}",
-            dep("wcm-io-samples:aem-cms-system-config{runmode}:1.3.1-SNAPSHOT")),
-        contentPackage("wcm-io-samples-complete{runmode}", "1.3.1-SNAPSHOT",
-            dep("wcm-io-samples:wcm-io-samples-aem-cms-config{runmode}:1.3.1-SNAPSHOT")));
+            dep("adobe/consulting:acs-aem-commons-ui.content:4.10.0")));
   }
 
   @Test
@@ -324,84 +299,64 @@ class AllPackageBuilderAuthorPublishTest {
     assertDirectories(appsDir, "application", "content", "container");
 
     File applicationDir = new File(appsDir, "application");
-    assertDirectories(applicationDir, "install", "install.author", "install.publish");
+    assertDirectories(applicationDir, "install", "install.author");
 
     File applicationInstallDir = new File(applicationDir, "install");
     assertFiles(applicationInstallDir, "",
+        contentPackage("core.wcm.components.content", "2.17.0",
+            dep("day/cq60/product:cq-platform-content:1.3.248"),
+            dep("adobe/consulting:acs-aem-commons-ui.apps:4.10.0")),
+        contentPackage("core.wcm.components.extensions.amp.content", "2.17.0",
+            dep("adobe/consulting:acs-aem-commons-ui.apps:4.10.0")),
+        contentPackage("acs-aem-commons-ui.apps", "4.10.0",
+            dep("day/cq60/product:cq-content:6.3.64")),
+        contentPackage("aem-cms-system-config",
+            dep("day/cq60/product:cq-ui-wcm-editor-content:1.1.224"),
+            dep("adobe/cq/product:cq-remotedam-client-ui-components:1.1.6"),
+            dep("adobe/cq60:core.wcm.components.all:2.17.0")),
         file("io.wcm.wcm.ui.granite-1.9.2.jar"));
     File applicationInstallDirAuthor = new File(applicationDir, "install.author");
     assertFiles(applicationInstallDirAuthor, ".author",
         contentPackage("accesscontroltool-apps-package{runmode}", "3.0.0",
-            dep("adobe/consulting:acs-aem-commons-ui.apps{runmode}:4.10.0")),
+            dep("adobe/consulting:acs-aem-commons-ui.apps:4.10.0")),
         contentPackage("accesscontroltool-oakindex-package{runmode}", "3.0.0",
             dep("Netcentric:accesscontroltool-package{runmode}:3.0.0")),
-        contentPackage("core.wcm.components.content{runmode}", "2.17.0",
-            dep("day/cq60/product:cq-platform-content:1.3.248"),
-            dep("Netcentric:accesscontroltool-oakindex-package{runmode}:3.0.0")),
-        contentPackage("core.wcm.components.extensions.amp.content{runmode}", "2.17.0",
-            dep("Netcentric:accesscontroltool-oakindex-package{runmode}:3.0.0")),
-        contentPackage("acs-aem-commons-ui.apps{runmode}", "4.10.0",
-            dep("day/cq60/product:cq-content:6.3.64")),
-        contentPackage("aem-cms-system-config{runmode}",
-            dep("day/cq60/product:cq-ui-wcm-editor-content:1.1.224"),
-            dep("adobe/cq/product:cq-remotedam-client-ui-components:1.1.6"),
-            dep("adobe/cq60:core.wcm.components.all{runmode}:2.17.0")),
         file("io.wcm.caconfig.editor-1.11.0.jar"));
-    File applicationInstallDirPublish = new File(applicationDir, "install.publish");
-    assertFiles(applicationInstallDirPublish, ".publish",
-        contentPackage("core.wcm.components.content{runmode}", "2.17.0",
-            dep("day/cq60/product:cq-platform-content:1.3.248"),
-            dep("adobe/consulting:acs-aem-commons-ui.apps{runmode}:4.10.0")),
-        contentPackage("core.wcm.components.extensions.amp.content{runmode}", "2.17.0",
-            dep("adobe/consulting:acs-aem-commons-ui.apps{runmode}:4.10.0")),
-        contentPackage("acs-aem-commons-ui.apps{runmode}", "4.10.0",
-            dep("day/cq60/product:cq-content:6.3.64")),
-        contentPackage("aem-cms-system-config{runmode}",
-            dep("day/cq60/product:cq-ui-wcm-editor-content:1.1.224"),
-            dep("adobe/cq/product:cq-remotedam-client-ui-components:1.1.6"),
-            dep("adobe/cq60:core.wcm.components.all{runmode}:2.17.0")));
 
     File contentDir = new File(appsDir, "content");
-    assertDirectories(contentDir, "install.author", "install.publish");
+    assertDirectories(contentDir, "install", "install.author", "install.publish");
 
+    File contentInstallDir = new File(contentDir, "install");
+    assertFiles(contentInstallDir, "",
+        contentPackage("acs-aem-commons-ui.content", "4.10.0"),
+        contentPackage("wcm-io-samples-sample-content", "1.3.1-SNAPSHOT",
+            dep("adobe/consulting:acs-aem-commons-ui.content:4.10.0")));
     File contentInstallDirAuthor = new File(contentDir, "install.author");
     assertFiles(contentInstallDirAuthor, ".author",
-        contentPackage("acs-aem-commons-ui.content{runmode}", "4.10.0"),
         contentPackage("aem-cms-author-replicationagents{runmode}",
-            dep("adobe/consulting:acs-aem-commons-ui.content{runmode}:4.10.0")),
-        contentPackage("wcm-io-samples-sample-content{runmode}", "1.3.1-SNAPSHOT",
-            dep("wcm-io-samples:aem-cms-author-replicationagents{runmode}:1.3.1-SNAPSHOT")));
+            dep("adobe/consulting:acs-aem-commons-ui.content:4.10.0")));
     File contentInstallDirPublish = new File(contentDir, "install.publish");
     assertFiles(contentInstallDirPublish, ".publish",
-        contentPackage("acs-aem-commons-ui.content{runmode}", "4.10.0"),
-        contentPackage("wcm-io-samples-sample-content{runmode}", "1.3.1-SNAPSHOT",
-            dep("adobe/consulting:acs-aem-commons-ui.content{runmode}:4.10.0")));
+        contentPackage("aem-cms-publish-sling-mapping{runmode}",
+            dep("wcm-io-samples:wcm-io-samples-sample-content:1.3.1-SNAPSHOT")));
 
     File containerDir = new File(appsDir, "container");
-    assertDirectories(containerDir, "install.author", "install.publish");
+    assertDirectories(containerDir, "install", "install.author");
 
+    File containerInstallDir = new File(containerDir, "install");
+    assertFiles(containerInstallDir, "",
+        contentPackage("core.wcm.components.all", "2.17.0",
+            dep("adobe/consulting:acs-aem-commons-ui.apps:4.10.0")),
+        contentPackage("core.wcm.components.config", "2.17.0",
+            dep("adobe/consulting:acs-aem-commons-ui.apps:4.10.0")),
+        contentPackage("wcm-io-samples-aem-cms-config",
+            dep("wcm-io-samples:aem-cms-system-config:1.3.1-SNAPSHOT")),
+        contentPackage("wcm-io-samples-complete", "1.3.1-SNAPSHOT",
+            dep("wcm-io-samples:wcm-io-samples-aem-cms-config:1.3.1-SNAPSHOT")));
     File containerInstallDirAuthor = new File(containerDir, "install.author");
     assertFiles(containerInstallDirAuthor, ".author",
         contentPackage("accesscontroltool-package{runmode}", "3.0.0",
-            dep("adobe/consulting:acs-aem-commons-ui.apps{runmode}:4.10.0")),
-        contentPackage("core.wcm.components.all{runmode}", "2.17.0",
-            dep("Netcentric:accesscontroltool-oakindex-package{runmode}:3.0.0")),
-        contentPackage("core.wcm.components.config{runmode}", "2.17.0",
-            dep("Netcentric:accesscontroltool-oakindex-package{runmode}:3.0.0")),
-        contentPackage("wcm-io-samples-aem-cms-config{runmode}",
-            dep("wcm-io-samples:aem-cms-system-config{runmode}:1.3.1-SNAPSHOT")),
-        contentPackage("wcm-io-samples-complete{runmode}", "1.3.1-SNAPSHOT",
-            dep("wcm-io-samples:wcm-io-samples-aem-cms-config{runmode}:1.3.1-SNAPSHOT")));
-    File containerInstallDirPublish = new File(containerDir, "install.publish");
-    assertFiles(containerInstallDirPublish, ".publish",
-        contentPackage("core.wcm.components.all{runmode}", "2.17.0",
-            dep("adobe/consulting:acs-aem-commons-ui.apps{runmode}:4.10.0")),
-        contentPackage("core.wcm.components.config{runmode}", "2.17.0",
-            dep("adobe/consulting:acs-aem-commons-ui.apps{runmode}:4.10.0")),
-        contentPackage("wcm-io-samples-aem-cms-config{runmode}",
-            dep("wcm-io-samples:aem-cms-system-config{runmode}:1.3.1-SNAPSHOT")),
-        contentPackage("wcm-io-samples-complete{runmode}", "1.3.1-SNAPSHOT",
-            dep("wcm-io-samples:wcm-io-samples-aem-cms-config{runmode}:1.3.1-SNAPSHOT")));
+            dep("adobe/consulting:acs-aem-commons-ui.apps:4.10.0")));
   }
 
   @Test
@@ -423,81 +378,61 @@ class AllPackageBuilderAuthorPublishTest {
     assertDirectories(appsDir, "application", "content", "container");
 
     File applicationDir = new File(appsDir, "application");
-    assertDirectories(applicationDir, "install", "install.author", "install.publish");
+    assertDirectories(applicationDir, "install", "install.author");
 
     File applicationInstallDir = new File(applicationDir, "install");
     assertFiles(applicationInstallDir, "",
+        contentPackage("core.wcm.components.content", "2.17.0",
+            dep("day/cq60/product:cq-platform-content:1.3.248"),
+            dep("adobe/consulting:acs-aem-commons-ui.apps:4.10.0")),
+        contentPackage("core.wcm.components.extensions.amp.content", "2.17.0",
+            dep("adobe/consulting:acs-aem-commons-ui.apps:4.10.0")),
+        contentPackage("acs-aem-commons-ui.apps", "4.10.0",
+            dep("day/cq60/product:cq-content:6.3.64")),
+        contentPackage("aem-cms-system-config",
+            dep("day/cq60/product:cq-ui-wcm-editor-content:1.1.224"),
+            dep("adobe/cq/product:cq-remotedam-client-ui-components:1.1.6"),
+            dep("adobe/cq60:core.wcm.components.all:2.17.0")),
         file("io.wcm.wcm.ui.granite-1.9.2.jar"));
     File applicationInstallDirAuthor = new File(applicationDir, "install.author");
     assertFiles(applicationInstallDirAuthor, ".author",
         contentPackage("accesscontroltool-apps-package{runmode}", "3.0.0",
-            dep("adobe/consulting:acs-aem-commons-ui.apps{runmode}:4.10.0")),
+            dep("adobe/consulting:acs-aem-commons-ui.apps:4.10.0")),
         contentPackage("accesscontroltool-oakindex-package{runmode}", "3.0.0",
             dep("Netcentric:accesscontroltool-package{runmode}:3.0.0")),
-        contentPackage("core.wcm.components.content{runmode}", "2.17.0",
-            dep("day/cq60/product:cq-platform-content:1.3.248"),
-            dep("Netcentric:accesscontroltool-oakindex-package{runmode}:3.0.0")),
-        contentPackage("core.wcm.components.extensions.amp.content{runmode}", "2.17.0",
-            dep("Netcentric:accesscontroltool-oakindex-package{runmode}:3.0.0")),
-        contentPackage("acs-aem-commons-ui.apps{runmode}", "4.10.0",
-            dep("day/cq60/product:cq-content:6.3.64")),
-        contentPackage("aem-cms-system-config{runmode}",
-            dep("day/cq60/product:cq-ui-wcm-editor-content:1.1.224"),
-            dep("adobe/cq/product:cq-remotedam-client-ui-components:1.1.6"),
-            dep("adobe/cq60:core.wcm.components.all{runmode}:2.17.0")),
         file("io.wcm.caconfig.editor-1.11.0.jar"));
-    File applicationInstallDirPublish = new File(applicationDir, "install.publish");
-    assertFiles(applicationInstallDirPublish, ".publish",
-        contentPackage("core.wcm.components.content{runmode}", "2.17.0",
-            dep("day/cq60/product:cq-platform-content:1.3.248"),
-            dep("adobe/consulting:acs-aem-commons-ui.apps{runmode}:4.10.0")),
-        contentPackage("core.wcm.components.extensions.amp.content{runmode}", "2.17.0",
-            dep("adobe/consulting:acs-aem-commons-ui.apps{runmode}:4.10.0")),
-        contentPackage("acs-aem-commons-ui.apps{runmode}", "4.10.0",
-            dep("day/cq60/product:cq-content:6.3.64")),
-        contentPackage("aem-cms-system-config{runmode}",
-            dep("day/cq60/product:cq-ui-wcm-editor-content:1.1.224"),
-            dep("adobe/cq/product:cq-remotedam-client-ui-components:1.1.6"),
-            dep("adobe/cq60:core.wcm.components.all{runmode}:2.17.0")));
 
     File contentDir = new File(appsDir, "content");
-    assertDirectories(contentDir, "install.author", "install.publish");
+    assertDirectories(contentDir, "install", "install.author", "install.publish");
 
+    File contentInstallDir = new File(contentDir, "install");
+    assertFiles(contentInstallDir, "",
+        contentPackage("acs-aem-commons-ui.content", "4.10.0"),
+        contentPackage("wcm-io-samples-sample-content", "1.3.1-SNAPSHOT"));
     File contentInstallDirAuthor = new File(contentDir, "install.author");
     assertFiles(contentInstallDirAuthor, ".author",
-        contentPackage("acs-aem-commons-ui.content{runmode}", "4.10.0"),
-        contentPackage("aem-cms-author-replicationagents{runmode}"),
-        contentPackage("wcm-io-samples-sample-content{runmode}", "1.3.1-SNAPSHOT"));
+        contentPackage("aem-cms-author-replicationagents{runmode}"));
     File contentInstallDirPublish = new File(contentDir, "install.publish");
     assertFiles(contentInstallDirPublish, ".publish",
-        contentPackage("acs-aem-commons-ui.content{runmode}", "4.10.0"),
-        contentPackage("wcm-io-samples-sample-content{runmode}", "1.3.1-SNAPSHOT"));
+        contentPackage("aem-cms-publish-sling-mapping{runmode}"));
 
     File containerDir = new File(appsDir, "container");
-    assertDirectories(containerDir, "install.author", "install.publish");
+    assertDirectories(containerDir, "install", "install.author");
 
+    File containerInstallDir = new File(containerDir, "install");
+    assertFiles(containerInstallDir, "",
+        contentPackage("core.wcm.components.all", "2.17.0",
+            dep("adobe/consulting:acs-aem-commons-ui.apps:4.10.0")),
+        contentPackage("core.wcm.components.config", "2.17.0",
+            dep("adobe/consulting:acs-aem-commons-ui.apps:4.10.0")),
+        contentPackage("wcm-io-samples-aem-cms-config",
+            dep("wcm-io-samples:aem-cms-system-config:1.3.1-SNAPSHOT")),
+        contentPackage("wcm-io-samples-complete", "1.3.1-SNAPSHOT",
+            dep("wcm-io-samples:wcm-io-samples-aem-cms-config:1.3.1-SNAPSHOT")));
     File containerInstallDirAuthor = new File(containerDir, "install.author");
     assertFiles(containerInstallDirAuthor, ".author",
         contentPackage("accesscontroltool-package{runmode}", "3.0.0",
-            dep("adobe/consulting:acs-aem-commons-ui.apps{runmode}:4.10.0")),
-        contentPackage("core.wcm.components.all{runmode}", "2.17.0",
-            dep("Netcentric:accesscontroltool-oakindex-package{runmode}:3.0.0")),
-        contentPackage("core.wcm.components.config{runmode}", "2.17.0",
-            dep("Netcentric:accesscontroltool-oakindex-package{runmode}:3.0.0")),
-        contentPackage("wcm-io-samples-aem-cms-config{runmode}",
-            dep("wcm-io-samples:aem-cms-system-config{runmode}:1.3.1-SNAPSHOT")),
-        contentPackage("wcm-io-samples-complete{runmode}", "1.3.1-SNAPSHOT",
-            dep("wcm-io-samples:wcm-io-samples-aem-cms-config{runmode}:1.3.1-SNAPSHOT")));
-    File containerInstallDirPublish = new File(containerDir, "install.publish");
-    assertFiles(containerInstallDirPublish, ".publish",
-        contentPackage("core.wcm.components.all{runmode}", "2.17.0",
-            dep("adobe/consulting:acs-aem-commons-ui.apps{runmode}:4.10.0")),
-        contentPackage("core.wcm.components.config{runmode}", "2.17.0",
-            dep("adobe/consulting:acs-aem-commons-ui.apps{runmode}:4.10.0")),
-        contentPackage("wcm-io-samples-aem-cms-config{runmode}",
-            dep("wcm-io-samples:aem-cms-system-config{runmode}:1.3.1-SNAPSHOT")),
-        contentPackage("wcm-io-samples-complete{runmode}", "1.3.1-SNAPSHOT",
-            dep("wcm-io-samples:wcm-io-samples-aem-cms-config{runmode}:1.3.1-SNAPSHOT")));
+            dep("adobe/consulting:acs-aem-commons-ui.apps:4.10.0")));
   }
 
 }
