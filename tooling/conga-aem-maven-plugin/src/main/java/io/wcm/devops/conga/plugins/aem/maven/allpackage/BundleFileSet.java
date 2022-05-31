@@ -24,6 +24,9 @@ import java.util.List;
 
 import io.wcm.devops.conga.plugins.aem.maven.model.BundleFile;
 
+/**
+ * Set of bundle files.
+ */
 class BundleFileSet implements FileSet<BundleFile> {
 
   private final List<BundleFile> bundles;

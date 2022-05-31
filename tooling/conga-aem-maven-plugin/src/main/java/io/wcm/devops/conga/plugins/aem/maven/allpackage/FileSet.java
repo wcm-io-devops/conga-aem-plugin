@@ -24,6 +24,10 @@ import java.util.List;
 
 import io.wcm.devops.conga.plugins.aem.maven.model.InstallableFile;
 
+/**
+ * Interface sets of installable files.
+ * @param <T> Installable file type
+ */
 interface FileSet<T extends InstallableFile> {
 
   Collection<String> getEnvironmentRunModes();

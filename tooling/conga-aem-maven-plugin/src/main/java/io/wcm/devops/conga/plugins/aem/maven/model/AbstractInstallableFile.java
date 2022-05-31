@@ -53,7 +53,6 @@ public abstract class AbstractInstallableFile implements InstallableFile {
     return file;
   }
 
-
   @Override
   @NotNull
   public Set<String> getVariants() {

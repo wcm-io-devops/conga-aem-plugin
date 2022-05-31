@@ -23,6 +23,9 @@ import java.util.List;
 
 import io.wcm.devops.conga.plugins.aem.maven.model.ContentPackageFile;
 
+/**
+ * Set of content package files.
+ */
 class ContentPackageFileSet implements FileSet<ContentPackageFile> {
 
   private final List<ContentPackageFile> contentPackages;
