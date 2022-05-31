@@ -22,6 +22,10 @@ package io.wcm.devops.conga.plugins.aem.maven.allpackage;
 import static io.wcm.devops.conga.generator.util.FileUtil.getCanonicalPath;
 import static io.wcm.devops.conga.plugins.aem.maven.allpackage.RunModeUtil.RUNMODE_AUTHOR;
 import static io.wcm.devops.conga.plugins.aem.maven.allpackage.RunModeUtil.RUNMODE_PUBLISH;
+import static io.wcm.devops.conga.plugins.aem.maven.allpackage.RunModeUtil.eliminateAuthorPublishDuplicates;
+import static io.wcm.devops.conga.plugins.aem.maven.allpackage.RunModeUtil.isAuthorAndPublish;
+import static io.wcm.devops.conga.plugins.aem.maven.allpackage.RunModeUtil.isOnlyAuthor;
+import static io.wcm.devops.conga.plugins.aem.maven.allpackage.RunModeUtil.isOnlyPublish;
 import static org.apache.jackrabbit.vault.packaging.PackageProperties.NAME_DEPENDENCIES;
 import static org.apache.jackrabbit.vault.packaging.PackageProperties.NAME_NAME;
 import static org.apache.jackrabbit.vault.packaging.PackageProperties.NAME_PACKAGE_TYPE;
@@ -32,6 +36,8 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collection;
+import java.util.Collections;
 import java.util.Enumeration;
 import java.util.HashSet;
 import java.util.List;
@@ -53,11 +59,14 @@ import org.apache.jackrabbit.vault.packaging.PackageType;
 import org.apache.jackrabbit.vault.packaging.VersionRange;
 import org.apache.maven.plugin.logging.Log;
 import org.apache.maven.plugin.logging.SystemStreamLog;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 import com.google.common.collect.ImmutableSet;
 
 import io.wcm.devops.conga.plugins.aem.maven.AutoDependenciesMode;
 import io.wcm.devops.conga.plugins.aem.maven.PackageTypeValidation;
+import io.wcm.devops.conga.plugins.aem.maven.RunModeOptimization;
 import io.wcm.devops.conga.plugins.aem.maven.model.BundleFile;
 import io.wcm.devops.conga.plugins.aem.maven.model.ContentPackageFile;
 import io.wcm.devops.conga.plugins.aem.maven.model.InstallableFile;
@@ -76,11 +85,14 @@ import io.wcm.tooling.commons.contentpackagebuilder.PackageFilter;
  * <li>Enforces the order defined in CONGA by automatically adding dependencies to all packages reflecting the file
  * order in model.json</li>
  * <li>Because the dependency chain may be different for each runmode (author/publish), each package is added once for
- * each runmode (so usually twice, for author+publish)</li>
- * <li>To avoid conflicts with duplicate packages with different dependencies all package names are changed and a
- * runmode suffix (.author or .publish) is added, same applies to the install folder</li>
+ * each runmode. Internally this separate dependency change for author and publish is optimized to have each package
+ * included only once for author+publish, unless it has a different chain of dependencies for both runmodes, in which
+ * case it is included separately for each run mode.</li>
+ * <li>To avoid conflicts with duplicate packages with different dependency chains the names of packages that are
+ * included in different versions for author/publish are changed and a runmode suffix (.author or .publish) is added,
+ * and it is put in a corresponding install folder.</li>
  * <li>To avoid problems with nested sub packages, the sub packages are extracted from the packages and treated in the
- * same way as other packages</li>
+ * same way as other packages.</li>
  * </ul>
  */
 public final class AllPackageBuilder {
@@ -90,6 +102,7 @@ public final class AllPackageBuilder {
   private final String packageName;
   private String version;
   private AutoDependenciesMode autoDependenciesMode = AutoDependenciesMode.OFF;
+  private RunModeOptimization runModeOptimization = RunModeOptimization.OFF;
   private PackageTypeValidation packageTypeValidation = PackageTypeValidation.STRICT;
   private Log log;
 
@@ -120,6 +133,15 @@ public final class AllPackageBuilder {
    */
   public AllPackageBuilder autoDependenciesMode(AutoDependenciesMode value) {
     this.autoDependenciesMode = value;
+    return this;
+  }
+
+  /**
+   * @param value Configure run mode optimization.
+   * @return this
+   */
+  public AllPackageBuilder runModeOptimization(RunModeOptimization value) {
+    this.runModeOptimization = value;
     return this;
   }
 
@@ -208,7 +230,7 @@ public final class AllPackageBuilder {
     // generate warning for each content packages without package type that is skipped
     contentPackages.stream()
         .filter(pkg -> !hasPackageType(pkg))
-        .forEach(pkg -> getLog().warn("Skipping content package without package type: {}" + getCanonicalPath(pkg.getFile())));
+        .forEach(pkg -> getLog().warn("Skipping content package without package type: " + getCanonicalPath(pkg.getFile())));
 
     // fail build if content packages with non-allowed package types exist
     List<ContentPackageFile> invalidPackageTypeContentPackages = contentPackages.stream()
@@ -287,68 +309,108 @@ public final class AllPackageBuilder {
       properties.entrySet().forEach(entry -> builder.property(entry.getKey(), entry.getValue()));
     }
 
+    // build content package
+    try (ContentPackage contentPackage = builder.build(targetFile)) {
+      buildAddContentPackages(contentPackage, rootPath);
+      buildAddBundles(contentPackage, rootPath);
+    }
+
+    return true;
+  }
+
+  private void buildAddContentPackages(ContentPackage contentPackage, String rootPath) throws IOException {
     // build set with dependencies instances for each package contained in all filesets
     Set<Dependency> allPackagesFromFileSets = new HashSet<>();
     for (ContentPackageFileSet fileSet : contentPackageFileSets) {
-      for (ContentPackageFile pkg : fileSet.getContentPackages()) {
+      for (ContentPackageFile pkg : fileSet.getFiles()) {
         addDependencyInformation(allPackagesFromFileSets, pkg);
       }
     }
 
-    // build content package
-    // if auto dependencies is active: build separate "dependency chains" between mutable and immutable packages
-    try (ContentPackage contentPackage = builder.build(targetFile)) {
-      for (ContentPackageFileSet fileSet : contentPackageFileSets) {
-        for (String environmentRunMode : fileSet.getEnvironmentRunModes()) {
-          List<ContentPackageFile> previousPackages = new ArrayList<>();
-          for (ContentPackageFile pkg : fileSet.getContentPackages()) {
+    Collection<ContentPackageFileSet> processedFileSets;
+    if (runModeOptimization == RunModeOptimization.ELIMINATE_DUPLICATES) {
+      // eliminate duplicates which are same for author and publish
+      processedFileSets = eliminateAuthorPublishDuplicates(contentPackageFileSets,
+        environmentRunMode -> new ContentPackageFileSet(new ArrayList<>(), Collections.singletonList(environmentRunMode)));
+    }
+    else {
+      processedFileSets = contentPackageFileSets;
+    }
 
-            ContentPackageFile previousPkg = null;
+    for (ContentPackageFileSet fileSet : processedFileSets) {
+      for (String environmentRunMode : fileSet.getEnvironmentRunModes()) {
+        List<ContentPackageFile> previousPackages = new ArrayList<>();
+        for (ContentPackageFile pkg : fileSet.getFiles()) {
+          ContentPackageFile previousPkg = getDependencyChainPreviousPackage(pkg, previousPackages);
 
-            if (autoDependenciesMode != AutoDependenciesMode.OFF
-                && (autoDependenciesMode != AutoDependenciesMode.IMMUTABLE_ONLY || !isMutable(pkg))) {
-              // get last previous package
-              // if not IMMUTABLE_MUTABLE_COMBINED active only that of the same mutability type
-              previousPkg = previousPackages.stream()
-                  .filter(item -> (autoDependenciesMode == AutoDependenciesMode.IMMUTABLE_MUTABLE_COMBINED) || mutableMatches(item, pkg))
-                  .reduce((first, second) -> second)
-                  .orElse(null);
-            }
+          // set package name, wire previous package in package dependency
+          List<TemporaryContentPackageFile> processedFiles = processContentPackage(pkg, previousPkg, environmentRunMode, allPackagesFromFileSets);
 
-            // set package name, wire previous package in package dependency
-            List<TemporaryContentPackageFile> processedFiles = processContentPackage(pkg, previousPkg, environmentRunMode, allPackagesFromFileSets);
-
-            // add processed content packages to "all" content package - and delete the temporary files
-            try {
-              for (TemporaryContentPackageFile processedFile : processedFiles) {
-                String path = buildPackagePath(processedFile, rootPath, environmentRunMode);
-                contentPackage.addFile(path, processedFile.getFile());
-                if (log.isDebugEnabled()) {
-                  log.debug("  Add " + processedFile.getPackageInfoWithDependencies());
-                }
+          // add processed content packages to "all" content package - and delete the temporary files
+          try {
+            for (TemporaryContentPackageFile processedFile : processedFiles) {
+              String path = buildPackagePath(processedFile, rootPath, environmentRunMode);
+              contentPackage.addFile(path, processedFile.getFile());
+              if (log.isDebugEnabled()) {
+                log.debug("  Add " + processedFile.getPackageInfoWithDependencies());
               }
             }
-            finally {
-              processedFiles.stream()
-                  .map(TemporaryContentPackageFile::getFile)
-                  .forEach(FileUtils::deleteQuietly);
-            }
+          }
+          finally {
+            processedFiles.stream()
+                .map(TemporaryContentPackageFile::getFile)
+                .forEach(FileUtils::deleteQuietly);
+          }
 
-            previousPackages.add(pkg);
-          }
-        }
-      }
-      for (BundleFileSet bundleFileSet : bundleFileSets) {
-        for (String environmentRunMode : bundleFileSet.getEnvironmentRunModes()) {
-          for (BundleFile bundleFile : bundleFileSet.getBundles()) {
-            String path = buildBundlePath(bundleFile, rootPath, environmentRunMode);
-            contentPackage.addFile(path, bundleFile.getFile());
-          }
+          previousPackages.add(pkg);
         }
       }
     }
+  }
 
-    return true;
+  /**
+   * Gets the previous package in the order defined by CONGA to define as package dependency in current package.
+   * @param currentPackage Current package
+   * @param previousPackages List of previous packages
+   * @return Package to define as dependency, or null if no dependency should be defined
+   */
+  private @Nullable ContentPackageFile getDependencyChainPreviousPackage(@NotNull ContentPackageFile currentPackage,
+      @NotNull List<ContentPackageFile> previousPackages) {
+    if ((autoDependenciesMode == AutoDependenciesMode.OFF)
+        || (autoDependenciesMode == AutoDependenciesMode.IMMUTABLE_ONLY && isMutable(currentPackage))) {
+      return null;
+    }
+    // get last previous package
+    return previousPackages.stream()
+        // if not IMMUTABLE_MUTABLE_COMBINED active only that of the same mutability type
+        .filter(item -> (autoDependenciesMode == AutoDependenciesMode.IMMUTABLE_MUTABLE_COMBINED) || mutableMatches(item, currentPackage))
+        // make sure author-only or publish-only packages are only taken into account if the current package has same restriction
+        .filter(item -> isAuthorAndPublish(item)
+            || (isOnlyAuthor(item) && isOnlyAuthor(currentPackage))
+            || (isOnlyPublish(item) && isOnlyPublish(currentPackage)))
+        // get last in list
+        .reduce((first, second) -> second).orElse(null);
+  }
+
+  private void buildAddBundles(ContentPackage contentPackage, String rootPath) throws IOException {
+    Collection<BundleFileSet> processedFileSets;
+    if (runModeOptimization == RunModeOptimization.ELIMINATE_DUPLICATES) {
+      // eliminate duplicates which are same for author and publish
+      processedFileSets = eliminateAuthorPublishDuplicates(bundleFileSets,
+          environmentRunMode -> new BundleFileSet(new ArrayList<>(), Collections.singletonList(environmentRunMode)));
+    }
+    else {
+      processedFileSets = bundleFileSets;
+    }
+
+    for (BundleFileSet bundleFileSet : processedFileSets) {
+      for (String environmentRunMode : bundleFileSet.getEnvironmentRunModes()) {
+        for (BundleFile bundleFile : bundleFileSet.getFiles()) {
+          String path = buildBundlePath(bundleFile, rootPath, environmentRunMode);
+          contentPackage.addFile(path, bundleFile.getFile());
+        }
+      }
+    }
   }
 
   private static boolean hasPackageType(ContentPackageFile pkg) {
@@ -389,10 +451,10 @@ public final class AllPackageBuilder {
    */
   private static String buildRunModeSuffix(InstallableFile file, String environmentRunMode) {
     StringBuilder runModeSuffix = new StringBuilder();
-    if (RunModeUtil.isOnlyAuthor(file)) {
+    if (isOnlyAuthor(file)) {
       runModeSuffix.append(".").append(RUNMODE_AUTHOR);
     }
-    else if (RunModeUtil.isOnlyPublish(file)) {
+    else if (isOnlyPublish(file)) {
       runModeSuffix.append(".").append(RUNMODE_PUBLISH);
     }
     if (!StringUtils.equals(environmentRunMode, RUNMODE_DEFAULT)) {

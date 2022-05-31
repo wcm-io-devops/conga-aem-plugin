@@ -67,6 +67,10 @@ abstract class AbstractCloudManagerMojo extends AbstractMojo {
    * @return Target directory
    */
   protected File getTargetDir() {
+    // create directory if it does not exist already
+    if (!target.exists() && !target.mkdirs()) {
+      throw new IllegalStateException("Unable to create target dir: " + getCanonicalPath(target));
+    }
     return target;
   }
 

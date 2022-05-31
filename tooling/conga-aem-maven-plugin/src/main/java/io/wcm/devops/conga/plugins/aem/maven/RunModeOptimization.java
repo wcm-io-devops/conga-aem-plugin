@@ -17,36 +17,23 @@
  * limitations under the License.
  * #L%
  */
-package io.wcm.devops.conga.plugins.aem.maven.model;
-
-import java.io.File;
-import java.util.Set;
-
-import org.jetbrains.annotations.NotNull;
-
-import com.google.common.hash.HashCode;
+package io.wcm.devops.conga.plugins.aem.maven;
 
 /**
- * Generic representation of an installable file (content package or OSGi bundle).
+ * How to optimize author/publish run modes in resulting "all" package.
  */
-public interface InstallableFile {
+public enum RunModeOptimization {
 
   /**
-   * @return File.
+   * No optimization takes place. Content packages and bundles are duplicated for author/publish
+   * run modes to ensure strict following of dependency chain defined in CONGA.
    */
-  @NotNull
-  File getFile();
+  OFF,
 
   /**
-   * @return Variants/Run modes for file.
+   * Eliminates duplicates to ensure that content packages and bundles that are installed on both author and publish
+   * instances are contained only once in the "all" package.
    */
-  @NotNull
-  Set<String> getVariants();
-
-  /**
-   * @return Hash code for file.
-   */
-  @NotNull
-  HashCode getHashCode();
+  ELIMINATE_DUPLICATES
 
 }

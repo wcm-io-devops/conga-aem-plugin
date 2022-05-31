@@ -26,6 +26,8 @@ import java.io.IOException;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.SortedMap;
+import java.util.TreeMap;
 
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugin.MojoFailureException;
@@ -97,6 +99,21 @@ public final class CloudManagerAllPackageMojo extends AbstractCloudManagerMojo {
    */
   @Parameter(property = "conga.cloudManager.allPackage.autoDependenciesMode")
   private AutoDependenciesMode autoDependenciesMode;
+
+  /**
+   * How to optimize author/publish run modes in resulting "all" package.
+   * <p>
+   * Possible values:
+   * </p>
+   * <ul>
+   * <li><code>OFF</code>: No optimization takes place. Content packages and bundles are duplicated for author/publish
+   * run modes to ensure strict following of dependency chain defined in CONGA.</li>
+   * <li><code>ELIMINATE_DUPLICATES</code>: Eliminates duplicates to ensure that content packages and bundles that are
+   * installed on both author and publish instances are contained only once in the "all" package.</li>
+   * </ul>
+   */
+  @Parameter(property = "conga.cloudManager.allPackage.runModeOptimization", defaultValue = "OFF")
+  private RunModeOptimization runModeOptimization;
 
   /**
    * How to validate package types to be included in "all" package.
@@ -171,28 +188,49 @@ public final class CloudManagerAllPackageMojo extends AbstractCloudManagerMojo {
     if (singlePackage) {
       buildSingleAllPackage();
     }
+    else if (runModeOptimization == RunModeOptimization.ELIMINATE_DUPLICATES) {
+      buildAllPackagesPerEnvironment();
+    }
     else {
-      buildAllPackagesPerEnvironmentNode();
+      buildAllPackagesPerEnvironmentAndNode();
     }
   }
 
   /**
    * Build an "all" package for each environment and node.
    */
-  private void buildAllPackagesPerEnvironmentNode() throws MojoExecutionException, MojoFailureException {
+  private void buildAllPackagesPerEnvironmentAndNode() throws MojoExecutionException, MojoFailureException {
     visitEnvironmentsNodes((environmentDir, nodeDir, cloudManagerTarget, files) -> {
       String packageName = environmentDir.getName() + "." + nodeDir.getName() + "." + this.name;
       AllPackageBuilder builder = createBuilder(packageName);
-
       try {
         builder.add(files, cloudManagerTarget);
       }
       catch (IllegalArgumentException ex) {
         throw new MojoFailureException(ex.getMessage(), ex);
       }
-
       buildAllPackage(builder);
     });
+  }
+
+  /**
+   * Build an "all" package for each environment, including all nodes of that environment in a single file.
+   */
+  private void buildAllPackagesPerEnvironment() throws MojoExecutionException, MojoFailureException {
+    SortedMap<String, AllPackageBuilder> builderPerEnvironment = new TreeMap<>();
+    visitEnvironmentsNodes((environmentDir, nodeDir, cloudManagerTarget, files) -> {
+      String packageName = environmentDir.getName() + "." + this.name;
+      AllPackageBuilder builder = builderPerEnvironment.computeIfAbsent(packageName, this::createBuilder);
+      try {
+        builder.add(files, cloudManagerTarget);
+      }
+      catch (IllegalArgumentException ex) {
+        throw new MojoFailureException(ex.getMessage(), ex);
+      }
+    });
+    for (AllPackageBuilder builder : builderPerEnvironment.values()) {
+      buildAllPackage(builder);
+    }
   }
 
   /**
@@ -201,7 +239,6 @@ public final class CloudManagerAllPackageMojo extends AbstractCloudManagerMojo {
   private void buildSingleAllPackage() throws MojoExecutionException, MojoFailureException {
     String packageName = this.name;
     AllPackageBuilder builder = createBuilder(packageName);
-
     visitEnvironmentsNodes((environmentDir, nodeDir, cloudManagerTarget, files) -> {
       try {
         builder.add(files, cloudManagerTarget);
@@ -210,7 +247,6 @@ public final class CloudManagerAllPackageMojo extends AbstractCloudManagerMojo {
         throw new MojoFailureException(ex.getMessage(), ex);
       }
     });
-
     buildAllPackage(builder);
   }
 
@@ -226,6 +262,7 @@ public final class CloudManagerAllPackageMojo extends AbstractCloudManagerMojo {
     return new AllPackageBuilder(targetFile, this.group, packageName)
         .version(project.getVersion())
         .autoDependenciesMode(this.autoDependenciesMode)
+        .runModeOptimization(this.runModeOptimization)
         .packageTypeValidation(this.packageTypeValidation)
         .logger(getLog());
   }

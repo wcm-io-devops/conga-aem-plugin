@@ -26,13 +26,9 @@ import java.util.Map;
 /**
  * Represents an OSGi bundle file referenced by CONGA.
  */
-public final class BundleFile implements InstallableFile {
-
-  private final File file;
+public final class BundleFile extends AbstractInstallableFile {
 
   private final Boolean install;
-
-  private final List<String> variants;
 
   /**
    * @param file JAR file
@@ -40,30 +36,12 @@ public final class BundleFile implements InstallableFile {
    * @param variants Variants
    */
   public BundleFile(File file, Map<String, Object> fileData, List<String> variants) {
-    this.file = file;
-
+    super(file, variants);
     this.install = (Boolean)fileData.get("install");
-
-    this.variants = variants;
-  }
-
-  @Override
-  public File getFile() {
-    return this.file;
   }
 
   public Boolean getInstall() {
     return this.install;
-  }
-
-  @Override
-  public List<String> getVariants() {
-    return this.variants;
-  }
-
-  @Override
-  public String toString() {
-    return file.toString();
   }
 
 }
