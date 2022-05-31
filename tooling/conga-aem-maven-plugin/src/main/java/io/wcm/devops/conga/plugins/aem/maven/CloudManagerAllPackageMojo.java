@@ -112,7 +112,7 @@ public final class CloudManagerAllPackageMojo extends AbstractCloudManagerMojo {
    * installed on both author and publish instances are contained only once in the "all" package.</li>
    * </ul>
    */
-  @Parameter(property = "conga.cloudManager.allPackage.runModeOptimization", defaultValue = "ELIMINATE_DUPLICATES")
+  @Parameter(property = "conga.cloudManager.allPackage.runModeOptimization", defaultValue = "OFF")
   private RunModeOptimization runModeOptimization;
 
   /**

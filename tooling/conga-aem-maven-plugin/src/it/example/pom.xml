@@ -115,16 +115,16 @@
             </configuration>
           </execution>
           <execution>
-            <id>all-no-runmode-optimization</id>
+            <id>all-runmode-optimization</id>
             <phase>generate-resources</phase>
             <goals>
               <goal>cloudmanager-all-package</goal>
             </goals>
             <configuration>
               <group>it</group>
-              <runModeOptimization>OFF</runModeOptimization>
+              <runModeOptimization>ELIMINATE_DUPLICATES</runModeOptimization>
               <packageTypeValidation>WARN</packageTypeValidation>
-              <target>${project.build.directory}/all/no-runmode-optimization</target>
+              <target>${project.build.directory}/all/runmode-optimization</target>
             </configuration>
           </execution>
           <execution>
@@ -136,6 +136,7 @@
             <configuration>
               <group>it</group>
               <singlePackage>true</singlePackage>
+              <runModeOptimization>ELIMINATE_DUPLICATES</runModeOptimization>
               <packageTypeValidation>WARN</packageTypeValidation>
               <target>${project.build.directory}/all/single</target>
             </configuration>

@@ -25,8 +25,8 @@
 
     <release version="2.18.0" date="not released">
       <action type="add" dev="sseifert">
-        conga-aem-maven-plugin: Add parameter "runModeOptimization" to "cloudmanager-all-package" goal, set by default to ELIMINATE_DUPLICATES.
-        With this activated, only one content package is built per environment, including author and publish runmodes, but eliminating duplicates between those two modes as much as possible.
+        conga-aem-maven-plugin: Add parameter "runModeOptimization" to "cloudmanager-all-package" goal, set by default to OFF.
+        When set to ELIMINATE_DUPLICATES, only one content package is built per environment, including author and publish runmodes, eliminating duplicates between those two modes as much as possible.
       </action>
     </release>
 
