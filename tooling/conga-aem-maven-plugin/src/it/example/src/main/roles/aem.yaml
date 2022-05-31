@@ -1,5 +1,9 @@
 templateDir: aem
 
+variants:
+- variant: aem-author
+- variant: aem-publish
+
 files:
 
 # Define a AEM content package containing OSGi configurations from a Sling Provisioning file
@@ -45,6 +49,8 @@ files:
           pattern: /etc/map/http/.*
         - rule: exclude
           pattern: /etc/map/http/AppMeasurementBridge
+  variants:
+  - aem-publish
 
 # AEM Systems users with ACLs
 - file: aem-systemusers.json
@@ -134,10 +140,14 @@ files:
         custom.property2: 123
 
 # ACS AEM Commons
-- url: mvn:com.adobe.acs/acs-aem-commons-ui.apps//zip/min
+- url: mvn:com.adobe.acs/acs-aem-commons-ui.apps//zip
   dir: packages
-- url: mvn:com.adobe.acs/acs-aem-commons-ui.content//zip/min
+  postProcessorOptions:
+    contentPackage.packageType: application
+- url: mvn:com.adobe.acs/acs-aem-commons-ui.content//zip
   dir: packages
+  postProcessorOptions:
+    contentPackage.packageType: content
 
 
 # Defines configuration parameters and default values

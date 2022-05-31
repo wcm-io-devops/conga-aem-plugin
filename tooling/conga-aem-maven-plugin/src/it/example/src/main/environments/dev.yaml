@@ -24,8 +24,7 @@ tenants:
   - website
   - application
   config:
-    domain: mysite.de
-    website.hostname: www.${domain}
+    domain: dev.mysite.de
     httpd:
       serverPort: 8080
       serverPortSsl: 8443
@@ -36,8 +35,7 @@ tenants:
   roles:
   - website
   config:
-    domain: mysite.fr
-    website.hostname: www.${domain}
+    domain: dev.mysite.fr
 
 config:
   replication:

@@ -53,9 +53,7 @@ class AllPackageBuilderAuthorPublishTest {
   void setUp(TestInfo testInfo) throws IOException {
     nodeDirAuthor = new File("src/test/resources/node/aem-author");
     nodeDirPublish = new File("src/test/resources/node/aem-publish");
-    targetDir = new File("target/test-" + getClass().getSimpleName()
-        + (testInfo.getTestMethod().isPresent() ? "_" + testInfo.getTestMethod().get().getName() : ":")
-        + "_" + testInfo.getDisplayName());
+    targetDir = new File("target/test-" + getClass().getSimpleName() + "_" + testInfo.getDisplayName());
     targetUnpackDir = new File(targetDir, "unpack");
     FileUtils.deleteDirectory(targetDir);
     targetDir.mkdirs();
