@@ -197,22 +197,20 @@ public final class CloudManagerAllPackageMojo extends AbstractCloudManagerMojo {
   }
 
   /**
-   * Build a single "all" package containing packages from all environments and nodes.
+   * Build an "all" package for each environment and node.
    */
-  private void buildSingleAllPackage() throws MojoExecutionException, MojoFailureException {
-    String packageName = this.name;
-    AllPackageBuilder builder = createBuilder(packageName);
-
+  private void buildAllPackagesPerEnvironmentAndNode() throws MojoExecutionException, MojoFailureException {
     visitEnvironmentsNodes((environmentDir, nodeDir, cloudManagerTarget, files) -> {
+      String packageName = environmentDir.getName() + "." + this.name;
+      AllPackageBuilder builder = createBuilder(packageName);
       try {
         builder.add(files, cloudManagerTarget);
       }
       catch (IllegalArgumentException ex) {
         throw new MojoFailureException(ex.getMessage(), ex);
       }
+      buildAllPackage(builder);
     });
-
-    buildAllPackage(builder);
   }
 
   /**
@@ -236,20 +234,20 @@ public final class CloudManagerAllPackageMojo extends AbstractCloudManagerMojo {
   }
 
   /**
-   * Build an "all" package for each environment and node.
+   * Build a single "all" package containing packages from all environments and nodes.
    */
-  private void buildAllPackagesPerEnvironmentAndNode() throws MojoExecutionException, MojoFailureException {
+  private void buildSingleAllPackage() throws MojoExecutionException, MojoFailureException {
+    String packageName = this.name;
+    AllPackageBuilder builder = createBuilder(packageName);
     visitEnvironmentsNodes((environmentDir, nodeDir, cloudManagerTarget, files) -> {
-      String packageName = environmentDir.getName() + "." + this.name;
-      AllPackageBuilder builder = createBuilder(packageName);
       try {
         builder.add(files, cloudManagerTarget);
       }
       catch (IllegalArgumentException ex) {
         throw new MojoFailureException(ex.getMessage(), ex);
       }
-      buildAllPackage(builder);
     });
+    buildAllPackage(builder);
   }
 
   private AllPackageBuilder createBuilder(String packageName) {
