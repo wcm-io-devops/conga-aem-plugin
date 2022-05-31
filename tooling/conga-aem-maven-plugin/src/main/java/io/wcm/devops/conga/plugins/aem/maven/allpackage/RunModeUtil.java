@@ -106,8 +106,7 @@ final class RunModeUtil {
   public static <T extends InstallableFile, S extends FileSet<T>> Collection<S> eliminateAuthorPublishDuplicates(
       List<S> fileSets, Function<String, S> fileSetFactory) {
     Map<String, S> result = new LinkedHashMap<>();
-    fileSets.forEach(fileSet -> {
-      fileSet.getEnvironmentRunModes().forEach(environmentRunMode -> {
+    fileSets.forEach(fileSet -> fileSet.getEnvironmentRunModes().forEach(environmentRunMode -> {
         FileSet<T> resultFileSet = result.computeIfAbsent(environmentRunMode, fileSetFactory);
         fileSet.getFiles().forEach(file -> {
           Optional<T> existingFile = resultFileSet.getFiles().stream()
@@ -121,12 +120,10 @@ final class RunModeUtil {
             resultFileSet.getFiles().add(file);
           }
         });
-      });
-    });
+    }));
     // eliminate author+publish run modes if both are set on same file
-    result.values().forEach(fileSet -> {
-      fileSet.getFiles().forEach(file -> removeAuthorPublishRunModeIfBothPresent(file.getVariants()));
-    });
+    result.values().forEach(
+        fileSet -> fileSet.getFiles().forEach(file -> removeAuthorPublishRunModeIfBothPresent(file.getVariants())));
     return result.values();
   }
 
