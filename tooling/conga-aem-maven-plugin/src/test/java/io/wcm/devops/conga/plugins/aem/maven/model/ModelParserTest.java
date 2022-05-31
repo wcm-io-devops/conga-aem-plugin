@@ -31,7 +31,6 @@ import org.apache.commons.lang3.StringUtils;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
-import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableSet;
 
 class ModelParserTest {
@@ -70,7 +69,7 @@ class ModelParserTest {
     assertBundle(files.get(12), "bundles/io.wcm.wcm.ui.granite-1.9.2.jar");
 
     ModelContentPackageFile pkg6 = (ModelContentPackageFile)files.get(6);
-    assertEquals(ImmutableList.of("aem-author"), pkg6.getVariants());
+    assertEquals(ImmutableSet.of("aem-author"), pkg6.getVariants());
     assertEquals(false, pkg6.getInstall());
     assertEquals(true, pkg6.getRecursive());
     assertEquals(30, pkg6.getDelayAfterInstallSec());
@@ -80,7 +79,7 @@ class ModelParserTest {
     assertEquals("1.3.1-SNAPSHOT", pkg6.getVersion());
 
     BundleFile bundle12 = (BundleFile)files.get(12);
-    assertEquals(ImmutableList.of("aem-author"), bundle12.getVariants());
+    assertEquals(ImmutableSet.of("aem-author"), bundle12.getVariants());
     assertEquals(false, bundle12.getInstall());
   }
 
