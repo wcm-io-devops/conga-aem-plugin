@@ -451,10 +451,10 @@ public final class AllPackageBuilder {
    */
   private static String buildRunModeSuffix(InstallableFile file, String environmentRunMode) {
     StringBuilder runModeSuffix = new StringBuilder();
-    if (RunModeUtil.isOnlyAuthor(file)) {
+    if (isOnlyAuthor(file)) {
       runModeSuffix.append(".").append(RUNMODE_AUTHOR);
     }
-    else if (RunModeUtil.isOnlyPublish(file)) {
+    else if (isOnlyPublish(file)) {
       runModeSuffix.append(".").append(RUNMODE_PUBLISH);
     }
     if (!StringUtils.equals(environmentRunMode, RUNMODE_DEFAULT)) {

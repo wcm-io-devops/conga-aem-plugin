@@ -24,8 +24,9 @@
   <body>
 
     <release version="2.18.0" date="not released">
-      <action type="update" dev="sseifert">
-        conga-aem-maven-plugin: Generate a single "all" package per environment combinding files for author/publish run modes and generate only runmode-specific files.
+      <action type="add" dev="sseifert">
+        conga-aem-maven-plugin: Add parameter "runModeOptimization" to "cloudmanager-all-package" goal, set by default to ELIMINATE_DUPLICATES.
+        With this activated, only one content package is built per environment, including author and publish runmodes, but eliminating duplicates between those two modes as much as possible.
       </action>
     </release>
 
