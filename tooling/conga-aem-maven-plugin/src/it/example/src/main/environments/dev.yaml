@@ -45,3 +45,6 @@ config:
         url: http://localhost:4503
         transportUser: myuser
         transportPassword: mypassword
+
+  cloudManager.target:
+  - dev

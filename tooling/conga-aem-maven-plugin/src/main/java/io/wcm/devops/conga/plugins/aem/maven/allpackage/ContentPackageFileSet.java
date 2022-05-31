@@ -46,4 +46,9 @@ class ContentPackageFileSet implements FileSet<ContentPackageFile> {
     return this.environmentRunModes;
   }
 
+  @Override
+  public String toString() {
+    return environmentRunModes + ": " + contentPackages;
+  }
+
 }

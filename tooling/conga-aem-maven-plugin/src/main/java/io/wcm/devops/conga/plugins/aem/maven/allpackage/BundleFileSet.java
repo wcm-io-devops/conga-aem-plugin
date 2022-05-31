@@ -47,4 +47,9 @@ class BundleFileSet implements FileSet<BundleFile> {
     return this.environmentRunModes;
   }
 
+  @Override
+  public String toString() {
+    return environmentRunModes + ": " + bundles;
+  }
+
 }
