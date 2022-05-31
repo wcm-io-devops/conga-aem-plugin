@@ -198,8 +198,8 @@ execute_deploy() {
   if [ -n "${MAVEN_PROFILES}" ]; then
     MAVEN_ARGS+="--activate-profiles=${MAVEN_PROFILES} "
   fi
-  if [ -n "${CONGA_ENVIRONMENT}" ] && [ -n "${CONGA_NODE}" ]; then
-    MAVEN_ARGS+="-Dvault.file=target/${CONGA_ENVIRONMENT}.${CONGA_NODE}.all.zip -Dvault.force=true"
+  if [ -n "${CONGA_ENVIRONMENT}" ]; then
+    MAVEN_ARGS+="-Dvault.file=target/${CONGA_ENVIRONMENT}.all.zip -Dvault.force=true"
   fi
   if [ -n "${SLING_URL}" ]; then
     MAVEN_ARGS+="-Dsling.url=${SLING_URL} "
