@@ -131,6 +131,22 @@ public final class CloudManagerAllPackageMojo extends AbstractCloudManagerMojo {
   private PackageTypeValidation packageTypeValidation;
 
   /**
+   * How to embed packages in the "all" package.
+   * <p>
+   * Possible values:
+   * </p>
+   * <ul>
+   * <li><code>EMBED</code>: Includes content packages via /apps folder, to be picked up by OSGi installer.
+   * This is the recommended way and mandatory for AEMaaCS.</li>
+   * <li><code>SUB_PACKAGE</code>: Includes content packages via /etc/packages folder, to be picked up by Package
+   * Manager. This is an alternative mode for AEM 6.5 and below if you encounter issues with OSGi installer
+   * (like <a href="https://github.com/Netcentric/accesscontroltool/issues/451">this</a>).</li>
+   * </ul>
+   */
+  @Parameter(property = "conga.cloudManager.allPackage.embedPackageMode", defaultValue = "EMBED")
+  private EmbedPackageMode embedPackageMode;
+
+  /**
    * Automatically generate dependencies between content packages based on file order in CONGA configuration.
    * @deprecated Please use autoDependenciesMode instead.
    */
@@ -264,6 +280,7 @@ public final class CloudManagerAllPackageMojo extends AbstractCloudManagerMojo {
         .autoDependenciesMode(this.autoDependenciesMode)
         .runModeOptimization(this.runModeOptimization)
         .packageTypeValidation(this.packageTypeValidation)
+        .embedPackageMode(this.embedPackageMode)
         .logger(getLog());
   }
 

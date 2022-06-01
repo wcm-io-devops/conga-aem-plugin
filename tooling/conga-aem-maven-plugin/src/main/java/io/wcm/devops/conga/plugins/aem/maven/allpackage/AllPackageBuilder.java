@@ -65,6 +65,7 @@ import org.jetbrains.annotations.Nullable;
 import com.google.common.collect.ImmutableSet;
 
 import io.wcm.devops.conga.plugins.aem.maven.AutoDependenciesMode;
+import io.wcm.devops.conga.plugins.aem.maven.EmbedPackageMode;
 import io.wcm.devops.conga.plugins.aem.maven.PackageTypeValidation;
 import io.wcm.devops.conga.plugins.aem.maven.RunModeOptimization;
 import io.wcm.devops.conga.plugins.aem.maven.model.BundleFile;
@@ -104,6 +105,7 @@ public final class AllPackageBuilder {
   private AutoDependenciesMode autoDependenciesMode = AutoDependenciesMode.OFF;
   private RunModeOptimization runModeOptimization = RunModeOptimization.OFF;
   private PackageTypeValidation packageTypeValidation = PackageTypeValidation.STRICT;
+  private EmbedPackageMode embedPackageMode = EmbedPackageMode.EMBED;
   private Log log;
 
   private static final String RUNMODE_DEFAULT = "$default$";
@@ -151,6 +153,15 @@ public final class AllPackageBuilder {
    */
   public AllPackageBuilder packageTypeValidation(PackageTypeValidation value) {
     this.packageTypeValidation = value;
+    return this;
+  }
+
+  /**
+   * @param value How to embed packages in the "all" package.
+   * @return this
+   */
+  public AllPackageBuilder embedPackageMode(EmbedPackageMode value) {
+    this.embedPackageMode = value;
     return this;
   }
 
@@ -301,7 +312,7 @@ public final class AllPackageBuilder {
     }
 
     // define root path for "all" package
-    String rootPath = buildRootPath(groupName, packageName);
+    String rootPath = buildContentPackageRootPath(groupName, packageName, embedPackageMode);
     builder.filter(new PackageFilter(rootPath));
 
     // additional package properties
@@ -435,13 +446,22 @@ public final class AllPackageBuilder {
   }
 
   /**
-   * Build root path to be used for embedded package.
+   * Build root path to be used for embedded packages / sub packages.
    * @param groupName Group name
    * @param packageName Package name
+   * @param embedPackageMode Embed package mode
    * @return Package path
    */
-  private static String buildRootPath(String groupName, String packageName) {
-    return "/apps/" + groupName + "-" + packageName + "-packages";
+  private static String buildContentPackageRootPath(String groupName, String packageName,
+      EmbedPackageMode embedPackageMode) {
+    switch (embedPackageMode) {
+      case EMBED:
+        return "/apps/" + groupName + "-" + packageName + "-packages";
+      case SUB_PACKAGE:
+        return "/etc/packages/" + groupName + "-" + packageName;
+      default:
+        throw new IllegalArgumentException("Unsupported embed package mode: " + embedPackageMode);
+    }
   }
 
   /**
