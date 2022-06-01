@@ -116,7 +116,7 @@ public final class FileTestUtil {
    * @param fileNames Expected file names in directory
    */
   public static void assertDirectories(File dir, String... fileNames) {
-    assertTrue(dir.exists(), "file exists: " + dir.getPath());
+    assertTrue(dir.exists(), "directory exists: " + dir.getPath());
     assertTrue(dir.isDirectory(), "is directory: " + dir.getPath());
     Set<String> expectedDirectoryNames = ImmutableSet.copyOf(fileNames);
     Set<String> actualDirectoryNames = Collections.emptySet();
