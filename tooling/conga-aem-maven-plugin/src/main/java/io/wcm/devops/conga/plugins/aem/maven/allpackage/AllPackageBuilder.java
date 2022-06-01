@@ -482,7 +482,7 @@ public final class AllPackageBuilder {
     if (embedPackageMode == EmbedPackageMode.SUB_PACKAGE) {
       // in SUB_PACKAGE mode all packages are stored in the /etc/packages/xxx folder - it's not possible to assign any run modes
       // that's why that mode is not supported in singlePackage mode or with runModeOptimizatin=ELIMINATE_DUPLICATES
-      parentPath = rootPath;
+      parentPath = rootPath + '/' + pkg.getGroup();
     }
     else {
       // add run mode suffix to both install folder path and package file name

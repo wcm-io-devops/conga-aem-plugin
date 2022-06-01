@@ -29,6 +29,9 @@ import io.wcm.devops.conga.plugins.aem.maven.EmbedPackageMode;
  */
 class RootPaths {
 
+  @SuppressWarnings("java:S1075") // fixed repository path
+  private static final String ETC_PACKAGES_PATH = "/etc/packages";
+
   private final String contentPackagesRootPath;
   private final String bundlesRootPath;
 
@@ -39,7 +42,7 @@ class RootPaths {
         this.contentPackagesRootPath = this.bundlesRootPath;
         break;
       case SUB_PACKAGE:
-        this.contentPackagesRootPath = buildSubPackageRootPath(groupName, packageName);
+        this.contentPackagesRootPath = ETC_PACKAGES_PATH;
         break;
       default:
         throw new IllegalArgumentException("Invalid embed package mode: " + embedPackageMode);
@@ -63,12 +66,19 @@ class RootPaths {
   public List<String> getActualUsedRootPaths(
       List<ContentPackageFileSet> contentPackageFileSets, List<BundleFileSet> bundleFileSets) {
     List<String> result = new ArrayList<>();
+
+    // TODO: DANGER - this would include /etc/packages in the filter list - not a good idea
+    /*
     if (hasAnyFile(contentPackageFileSets)) {
       result.add(this.contentPackagesRootPath);
     }
     if (hasAnyFile(bundleFileSets)) {
       result.add(this.bundlesRootPath);
     }
+    */
+
+    result.add(this.bundlesRootPath);
+
     return result;
   }
 
@@ -85,16 +95,6 @@ class RootPaths {
    */
   private static String buildEmbedRootPath(String groupName, String packageName) {
     return "/apps/" + groupName + "-" + packageName + "-packages";
-  }
-
-  /**
-   * Build root path to be used for sub packages in /etc/packages.
-   * @param groupName Group name
-   * @param packageName Package name
-   * @return Package path
-   */
-  private static String buildSubPackageRootPath(String groupName, String packageName) {
-    return "/etc/packages/" + groupName + "-" + packageName;
   }
 
 }

@@ -69,31 +69,41 @@ class AllPackageBuilderEmbedModeTest {
 
     ZipUtil.unpack(targetFile, targetUnpackDir);
 
-    File packagesDir = new File(targetUnpackDir, "jcr_root/etc/packages/test-group-test-pkg");
-    assertTrue(packagesDir.exists(), "dir exists: " + packagesDir.getPath());
+    File packagesDir = new File(targetUnpackDir, "jcr_root/etc/packages");
+    assertDirectories(packagesDir, "sample", "adobe", "Netcentric");
 
-    File appsDir = new File(targetUnpackDir, "jcr_root/apps/test-group-test-pkg-packages");
-    assertDirectories(appsDir, "application");
-
-    assertFiles(packagesDir, ".author",
-        contentPackage("accesscontroltool-apps-package{runmode}", "3.0.0"),
-        contentPackage("accesscontroltool-oakindex-package{runmode}", "3.0.0"),
-        contentPackage("core.wcm.components.content{runmode}", "2.17.0",
-            dep("day/cq60/product:cq-platform-content:1.3.248")),
-        contentPackage("core.wcm.components.extensions.amp.content{runmode}", "2.17.0"),
-        contentPackage("acs-aem-commons-ui.apps{runmode}", "4.10.0",
-            dep("day/cq60/product:cq-content:6.3.64")),
+    File packagesDirSample = new File(packagesDir, "sample");
+    assertFiles(packagesDirSample, ".author",
         contentPackage("aem-cms-system-config{runmode}",
             dep("day/cq60/product:cq-ui-wcm-editor-content:1.1.224"),
             dep("adobe/cq/product:cq-remotedam-client-ui-components:1.1.6")),
-        contentPackage("acs-aem-commons-ui.content{runmode}", "4.10.0"),
         contentPackage("aem-cms-author-replicationagents{runmode}"),
         contentPackage("wcm-io-samples-sample-content{runmode}", "1.3.1-SNAPSHOT"),
-        contentPackage("accesscontroltool-package{runmode}", "3.0.0"),
-        contentPackage("core.wcm.components.all{runmode}", "2.17.0"),
-        contentPackage("core.wcm.components.config{runmode}", "2.17.0"),
         contentPackage("wcm-io-samples-aem-cms-config{runmode}"),
         contentPackage("wcm-io-samples-complete{runmode}", "1.3.1-SNAPSHOT"));
+
+    File packagesDirAdobeCoreComponents = new File(packagesDir, "adobe/cq60");
+    assertFiles(packagesDirAdobeCoreComponents, ".author",
+        contentPackage("core.wcm.components.content{runmode}", "2.17.0",
+            dep("day/cq60/product:cq-platform-content:1.3.248")),
+        contentPackage("core.wcm.components.extensions.amp.content{runmode}", "2.17.0"),
+        contentPackage("core.wcm.components.all{runmode}", "2.17.0"),
+        contentPackage("core.wcm.components.config{runmode}", "2.17.0"));
+
+    File packagesDirAdobeConsulting = new File(packagesDir, "adobe/consulting");
+    assertFiles(packagesDirAdobeConsulting, ".author",
+        contentPackage("acs-aem-commons-ui.apps{runmode}", "4.10.0",
+            dep("day/cq60/product:cq-content:6.3.64")),
+        contentPackage("acs-aem-commons-ui.content{runmode}", "4.10.0"));
+
+    File packagesDirNetcentric = new File(packagesDir, "Netcentric");
+    assertFiles(packagesDirNetcentric, ".author",
+        contentPackage("accesscontroltool-apps-package{runmode}", "3.0.0"),
+        contentPackage("accesscontroltool-oakindex-package{runmode}", "3.0.0"),
+        contentPackage("accesscontroltool-package{runmode}", "3.0.0"));
+
+    File appsDir = new File(targetUnpackDir, "jcr_root/apps/test-group-test-pkg-packages");
+    assertDirectories(appsDir, "application");
 
     File applicationDir = new File(appsDir, "application");
     assertDirectories(applicationDir, "install.author");
