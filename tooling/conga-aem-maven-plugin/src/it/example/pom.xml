@@ -141,6 +141,19 @@
               <target>${project.build.directory}/all/single</target>
             </configuration>
           </execution>
+          <execution>
+            <id>all-embed-subpackages</id>
+            <phase>generate-resources</phase>
+            <goals>
+              <goal>cloudmanager-all-package</goal>
+            </goals>
+            <configuration>
+              <group>it</group>
+              <embedPackageMode>SUB_PACKAGE</embedPackageMode>
+              <packageTypeValidation>WARN</packageTypeValidation>
+              <target>${project.build.directory}/all/embed-subpackages</target>
+            </configuration>
+          </execution>
 
         </executions>
       </plugin>

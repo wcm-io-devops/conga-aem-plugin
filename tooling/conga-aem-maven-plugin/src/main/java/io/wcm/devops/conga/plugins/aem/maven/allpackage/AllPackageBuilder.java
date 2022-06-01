@@ -311,9 +311,10 @@ public final class AllPackageBuilder {
       builder.version(version);
     }
 
-    // define root path for "all" package
-    String rootPath = buildContentPackageRootPath(groupName, packageName, embedPackageMode);
-    builder.filter(new PackageFilter(rootPath));
+    // define root paths inside "all" package
+    RootPaths rootPaths = new RootPaths(groupName, packageName, embedPackageMode);
+    rootPaths.getActualUsedRootPaths(contentPackageFileSets, bundleFileSets)
+        .forEach(rootPath -> builder.filter(new PackageFilter(rootPath)));
 
     // additional package properties
     if (properties != null) {
@@ -322,8 +323,8 @@ public final class AllPackageBuilder {
 
     // build content package
     try (ContentPackage contentPackage = builder.build(targetFile)) {
-      buildAddContentPackages(contentPackage, rootPath);
-      buildAddBundles(contentPackage, rootPath);
+      buildAddContentPackages(contentPackage, rootPaths.getContentPackagesRootPath());
+      buildAddBundles(contentPackage, rootPaths.getBundlesRootPath());
     }
 
     return true;
@@ -360,7 +361,7 @@ public final class AllPackageBuilder {
           // add processed content packages to "all" content package - and delete the temporary files
           try {
             for (TemporaryContentPackageFile processedFile : processedFiles) {
-              String path = buildPackagePath(processedFile, rootPath, environmentRunMode);
+              String path = buildContentPackagePath(processedFile, rootPath, environmentRunMode);
               contentPackage.addFile(path, processedFile.getFile());
               if (log.isDebugEnabled()) {
                 log.debug("  Add " + processedFile.getPackageInfoWithDependencies());
@@ -446,25 +447,6 @@ public final class AllPackageBuilder {
   }
 
   /**
-   * Build root path to be used for embedded packages / sub packages.
-   * @param groupName Group name
-   * @param packageName Package name
-   * @param embedPackageMode Embed package mode
-   * @return Package path
-   */
-  private static String buildContentPackageRootPath(String groupName, String packageName,
-      EmbedPackageMode embedPackageMode) {
-    switch (embedPackageMode) {
-      case EMBED:
-        return "/apps/" + groupName + "-" + packageName + "-packages";
-      case SUB_PACKAGE:
-        return "/etc/packages/" + groupName + "-" + packageName;
-      default:
-        throw new IllegalArgumentException("Unsupported embed package mode: " + embedPackageMode);
-    }
-  }
-
-  /**
    * Generate suffix for instance and environment run modes.
    * @param file Content package
    * @return Package path
@@ -489,24 +471,32 @@ public final class AllPackageBuilder {
    * @param rootPath Root path
    * @return Package path
    */
-  private String buildPackagePath(ContentPackageFile pkg, String rootPath, String environmentRunMode) {
+  private String buildContentPackagePath(ContentPackageFile pkg, String rootPath, String environmentRunMode) {
     if (packageTypeValidation == PackageTypeValidation.STRICT && !isValidPackageType(pkg)) {
       throw new IllegalArgumentException("Package " + pkg.getPackageInfo() + " has invalid package type: '" + pkg.getPackageType() + "'.");
     }
 
     String runModeSuffix = buildRunModeSuffix(pkg, environmentRunMode);
 
-    // add run mode suffix to both install folder path and package file name
-    String path = rootPath + "/" + StringUtils.defaultString(pkg.getPackageType(), "misc") + "/install" + runModeSuffix;
+    String parentPath;
+    if (embedPackageMode == EmbedPackageMode.SUB_PACKAGE) {
+      // in SUB_PACKAGE mode all packages are stored in the /etc/packages/xxx folder - it's not possible to assign any run modes
+      // that's why that mode is not supported in singlePackage mode or with runModeOptimizatin=ELIMINATE_DUPLICATES
+      parentPath = rootPath;
+    }
+    else {
+      // add run mode suffix to both install folder path and package file name
+      parentPath = rootPath + '/' + StringUtils.defaultString(pkg.getPackageType(), "misc") + "/install" + runModeSuffix;
+    }
 
     String versionSuffix = "";
     String packageVersion = pkg.getVersion();
     if (packageVersion != null && pkg.getFile().getName().contains(packageVersion)) {
-      versionSuffix = "-" + packageVersion;
+      versionSuffix = '-' + packageVersion;
     }
     String fileName = pkg.getName() + versionSuffix
-        + "." + FilenameUtils.getExtension(pkg.getFile().getName());
-    return path + "/" + fileName;
+        + '.' + FilenameUtils.getExtension(pkg.getFile().getName());
+    return parentPath + '/' + fileName;
   }
 
   /**

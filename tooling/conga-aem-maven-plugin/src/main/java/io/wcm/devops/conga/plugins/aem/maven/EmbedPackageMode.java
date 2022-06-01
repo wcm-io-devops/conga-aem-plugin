@@ -34,6 +34,7 @@ public enum EmbedPackageMode {
    * Includes content packages via /etc/packages folder, to be picked up by Package Manager.
    * This is an alternative mode for AEM 6.5 and below if you encounter issues with OSGi installer
    * (like <a href="https://github.com/Netcentric/accesscontroltool/issues/451">this</a>).
+   * This mode cannot be used with "singlePackage" mode or with runModeOptimization=ELEMINATE_DUPLICATES.
    */
   SUB_PACKAGE
 

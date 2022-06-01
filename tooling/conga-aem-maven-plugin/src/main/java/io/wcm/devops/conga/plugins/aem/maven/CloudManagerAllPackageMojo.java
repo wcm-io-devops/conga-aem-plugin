@@ -140,7 +140,8 @@ public final class CloudManagerAllPackageMojo extends AbstractCloudManagerMojo {
    * This is the recommended way and mandatory for AEMaaCS.</li>
    * <li><code>SUB_PACKAGE</code>: Includes content packages via /etc/packages folder, to be picked up by Package
    * Manager. This is an alternative mode for AEM 6.5 and below if you encounter issues with OSGi installer
-   * (like <a href="https://github.com/Netcentric/accesscontroltool/issues/451">this</a>).</li>
+   * (like <a href="https://github.com/Netcentric/accesscontroltool/issues/451">this</a>).
+   * This mode cannot be used with "singlePackage" mode or with runModeOptimization=ELEMINATE_DUPLICATES.</li>
    * </ul>
    */
   @Parameter(property = "conga.cloudManager.allPackage.embedPackageMode", defaultValue = "EMBED")
@@ -199,6 +200,13 @@ public final class CloudManagerAllPackageMojo extends AbstractCloudManagerMojo {
       else {
         this.autoDependenciesMode = AutoDependenciesMode.OFF;
       }
+    }
+
+    // validate parameters
+    if (embedPackageMode == EmbedPackageMode.SUB_PACKAGE
+        && (singlePackage || runModeOptimization == RunModeOptimization.ELIMINATE_DUPLICATES)) {
+      throw new MojoFailureException("embedPackageMode=SUB_PACKAGE is not compatible with singlePackage mode "
+          + "or runModeOptimization=ELIMINATE_DUPLICATES.");
     }
 
     if (singlePackage) {
