@@ -28,6 +28,9 @@
         conga-aem-maven-plugin: Add parameter "runModeOptimization" to "cloudmanager-all-package" goal, set by default to OFF.
         When set to ELIMINATE_DUPLICATES, only one content package is built per environment, including author and publish runmodes, eliminating duplicates between those two modes as much as possible.
       </action>
+      <action type="add" dev="sseifert">
+        conga-aem-maven-plugin: Check package manager installstatus.jsp before and after installation of content package to make sure packager manager is also completed with installing embedded packages.
+      </action>
     </release>
 
     <release version="2.17.0" date="2022-05-11">
