@@ -23,7 +23,10 @@ import java.util.List;
 
 import io.wcm.devops.conga.plugins.aem.maven.model.ContentPackageFile;
 
-class ContentPackageFileSet {
+/**
+ * Set of content package files.
+ */
+class ContentPackageFileSet implements FileSet<ContentPackageFile> {
 
   private final List<ContentPackageFile> contentPackages;
   private final List<String> environmentRunModes;
@@ -33,12 +36,19 @@ class ContentPackageFileSet {
     this.environmentRunModes = environmentRunModes;
   }
 
-  public List<ContentPackageFile> getContentPackages() {
+  @Override
+  public List<ContentPackageFile> getFiles() {
     return this.contentPackages;
   }
 
+  @Override
   public List<String> getEnvironmentRunModes() {
     return this.environmentRunModes;
+  }
+
+  @Override
+  public String toString() {
+    return environmentRunModes + ": " + contentPackages;
   }
 
 }

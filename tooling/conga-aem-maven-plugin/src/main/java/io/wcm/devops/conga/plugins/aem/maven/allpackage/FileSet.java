@@ -17,36 +17,21 @@
  * limitations under the License.
  * #L%
  */
-package io.wcm.devops.conga.plugins.aem.maven.model;
+package io.wcm.devops.conga.plugins.aem.maven.allpackage;
 
-import java.io.File;
-import java.util.Set;
+import java.util.Collection;
+import java.util.List;
 
-import org.jetbrains.annotations.NotNull;
-
-import com.google.common.hash.HashCode;
+import io.wcm.devops.conga.plugins.aem.maven.model.InstallableFile;
 
 /**
- * Generic representation of an installable file (content package or OSGi bundle).
+ * Interface sets of installable files.
+ * @param <T> Installable file type
  */
-public interface InstallableFile {
+interface FileSet<T extends InstallableFile> {
 
-  /**
-   * @return File.
-   */
-  @NotNull
-  File getFile();
+  Collection<String> getEnvironmentRunModes();
 
-  /**
-   * @return Variants/Run modes for file.
-   */
-  @NotNull
-  Set<String> getVariants();
-
-  /**
-   * @return Hash code for file.
-   */
-  @NotNull
-  HashCode getHashCode();
+  List<T> getFiles();
 
 }

@@ -23,6 +23,16 @@
     xsi:schemaLocation="http://maven.apache.org/changes/1.0.0 https://maven.apache.org/plugins/maven-changes-plugin/xsd/changes-1.0.0.xsd">
   <body>
 
+    <release version="2.18.0" date="2022-06-16">
+      <action type="add" dev="sseifert">
+        conga-aem-maven-plugin: Add parameter "runModeOptimization" to "cloudmanager-all-package" goal, set by default to OFF.
+        When set to ELIMINATE_DUPLICATES, only one content package is built per environment, including author and publish runmodes, eliminating duplicates between those two modes as much as possible.
+      </action>
+      <action type="add" dev="sseifert">
+        conga-aem-maven-plugin: Check package manager installstatus.jsp before and after installation of content package to make sure packager manager is also completed with installing embedded packages.
+      </action>
+    </release>
+
     <release version="2.17.0" date="2022-05-11">
       <action type="add" dev="sseifert">
         conga-aem-maven-plugin: Add new parameter packageTypeValidation which controls how to handle packages with invalid or without package types.

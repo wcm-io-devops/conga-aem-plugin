@@ -17,36 +17,28 @@
  * limitations under the License.
  * #L%
  */
-package io.wcm.devops.conga.plugins.aem.maven.model;
+package io.wcm.devops.conga.plugins.aem.maven.allpackage;
 
-import java.io.File;
-import java.util.Set;
+import static io.wcm.devops.conga.plugins.aem.maven.allpackage.ExpectedFile.RUNMODE_SUFFIX_PLACEHOLDER;
 
+import org.apache.commons.lang3.StringUtils;
 import org.jetbrains.annotations.NotNull;
 
-import com.google.common.hash.HashCode;
+class ExpectedDependency {
 
-/**
- * Generic representation of an installable file (content package or OSGi bundle).
- */
-public interface InstallableFile {
+  private final String packageReference;
 
-  /**
-   * @return File.
-   */
-  @NotNull
-  File getFile();
+  ExpectedDependency(@NotNull String packageReference) {
+    this.packageReference = packageReference;
+  }
 
-  /**
-   * @return Variants/Run modes for file.
-   */
-  @NotNull
-  Set<String> getVariants();
+  public @NotNull String getPackageReference(@NotNull String runModeSuffix) {
+    return StringUtils.replace(this.packageReference, RUNMODE_SUFFIX_PLACEHOLDER, runModeSuffix);
+  }
 
-  /**
-   * @return Hash code for file.
-   */
-  @NotNull
-  HashCode getHashCode();
+  @Override
+  public String toString() {
+    return packageReference;
+  }
 
 }
