@@ -27,6 +27,9 @@
       <action type="update" dev="sseifert">
         conga-aem-maven-plugin: Check bundle status before package manager install status as the latter may report errors if certain bundles are restarted.
       </action>
+      <action type="fix" dev="sseifert">
+        conga-aem-maven-plugin: Ensure last modification dates for content package ZIP file entries are kept the same when rebuilding the "all" package.
+      </action>
     </release>
 
     <release version="2.18.2" date="2022-06-20">
