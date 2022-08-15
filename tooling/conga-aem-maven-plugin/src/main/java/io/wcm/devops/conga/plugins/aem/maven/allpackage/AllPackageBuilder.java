@@ -557,7 +557,7 @@ public final class AllPackageBuilder {
                   props.put(NAME_PACKAGE_TYPE, packageType);
                 }
 
-                ZipEntry zipOutEntry = new ZipEntry(zipInEntry.getName());
+                ZipEntry zipOutEntry = newZipEntry(zipInEntry);
                 zipOut.putNextEntry(zipOutEntry);
                 props.storeToXML(zipOut, null);
                 processedEntry = true;
@@ -589,7 +589,7 @@ public final class AllPackageBuilder {
 
               // otherwise transfer the binary data 1:1
               if (!processedEntry) {
-                ZipEntry zipOutEntry = new ZipEntry(zipInEntry.getName());
+                ZipEntry zipOutEntry = newZipEntry(zipInEntry);
                 zipOut.putNextEntry(zipOutEntry);
                 IOUtils.copy(is, zipOut);
               }
@@ -613,6 +613,17 @@ public final class AllPackageBuilder {
       result.add(new TemporaryContentPackageFile(tempFile, pkg.getVariants()));
     }
     return result;
+  }
+
+  private static ZipEntry newZipEntry(ZipEntry in) {
+    ZipEntry out = new ZipEntry(in.getName());
+    if (in.getCreationTime() != null) {
+      out.setCreationTime(in.getCreationTime());
+    }
+    if (in.getLastModifiedTime() != null) {
+      out.setLastModifiedTime(in.getLastModifiedTime());
+    }
+    return out;
   }
 
   /**
