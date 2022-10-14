@@ -45,10 +45,10 @@ import java.util.Map;
 import java.util.Properties;
 import java.util.Set;
 import java.util.stream.Collectors;
-import java.util.zip.ZipEntry;
-import java.util.zip.ZipFile;
-import java.util.zip.ZipOutputStream;
 
+import org.apache.commons.compress.archivers.zip.ZipArchiveEntry;
+import org.apache.commons.compress.archivers.zip.ZipArchiveOutputStream;
+import org.apache.commons.compress.archivers.zip.ZipFile;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.FilenameUtils;
 import org.apache.commons.io.IOUtils;
@@ -530,10 +530,10 @@ public final class AllPackageBuilder {
 
       // iterate through entries and write them to the temp. zip file
       try (FileOutputStream fos = new FileOutputStream(tempFile);
-          ZipOutputStream zipOut = new ZipOutputStream(fos)) {
-        Enumeration<? extends ZipEntry> zipInEntries = zipFileIn.entries();
+          ZipArchiveOutputStream zipOut = new ZipArchiveOutputStream(fos)) {
+        Enumeration<? extends ZipArchiveEntry> zipInEntries = zipFileIn.getEntries();
         while (zipInEntries.hasMoreElements()) {
-          ZipEntry zipInEntry = zipInEntries.nextElement();
+          ZipArchiveEntry zipInEntry = zipInEntries.nextElement();
           if (!zipInEntry.isDirectory()) {
             try (InputStream is = zipFileIn.getInputStream(zipInEntry)) {
               boolean processedEntry = false;
@@ -557,9 +557,10 @@ public final class AllPackageBuilder {
                   props.put(NAME_PACKAGE_TYPE, packageType);
                 }
 
-                ZipEntry zipOutEntry = newZipEntry(zipInEntry);
-                zipOut.putNextEntry(zipOutEntry);
+                ZipArchiveEntry zipOutEntry = newZipEntry(zipInEntry);
+                zipOut.putArchiveEntry(zipOutEntry);
                 fileVaultProps.storeToXml(zipOut);
+                zipOut.closeArchiveEntry();
                 processedEntry = true;
               }
 
@@ -589,13 +590,13 @@ public final class AllPackageBuilder {
 
               // otherwise transfer the binary data 1:1
               if (!processedEntry) {
-                ZipEntry zipOutEntry = newZipEntry(zipInEntry);
-                zipOut.putNextEntry(zipOutEntry);
+                ZipArchiveEntry zipOutEntry = newZipEntry(zipInEntry);
+                zipOut.putArchiveEntry(zipOutEntry);
                 IOUtils.copy(is, zipOut);
+                zipOut.closeArchiveEntry();
               }
             }
 
-            zipOut.closeEntry();
           }
         }
       }
@@ -615,8 +616,8 @@ public final class AllPackageBuilder {
     return result;
   }
 
-  private static ZipEntry newZipEntry(ZipEntry in) {
-    ZipEntry out = new ZipEntry(in.getName());
+  private static ZipArchiveEntry newZipEntry(ZipArchiveEntry in) {
+    ZipArchiveEntry out = new ZipArchiveEntry(in.getName());
     if (in.getCreationTime() != null) {
       out.setCreationTime(in.getCreationTime());
     }
