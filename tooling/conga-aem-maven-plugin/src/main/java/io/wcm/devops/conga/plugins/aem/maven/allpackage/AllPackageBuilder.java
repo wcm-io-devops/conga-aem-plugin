@@ -65,6 +65,7 @@ import org.jetbrains.annotations.Nullable;
 import com.google.common.collect.ImmutableSet;
 
 import io.wcm.devops.conga.plugins.aem.maven.AutoDependenciesMode;
+import io.wcm.devops.conga.plugins.aem.maven.BuildOutputTimestamp;
 import io.wcm.devops.conga.plugins.aem.maven.PackageTypeValidation;
 import io.wcm.devops.conga.plugins.aem.maven.RunModeOptimization;
 import io.wcm.devops.conga.plugins.aem.maven.model.BundleFile;
@@ -105,6 +106,7 @@ public final class AllPackageBuilder {
   private RunModeOptimization runModeOptimization = RunModeOptimization.OFF;
   private PackageTypeValidation packageTypeValidation = PackageTypeValidation.STRICT;
   private Log log;
+  private BuildOutputTimestamp buildOutputTimestamp;
 
   private static final String RUNMODE_DEFAULT = "$default$";
   private static final Set<String> ALLOWED_PACKAGE_TYPES = ImmutableSet.of(
@@ -169,6 +171,15 @@ public final class AllPackageBuilder {
    */
   public AllPackageBuilder version(String value) {
     this.version = value;
+    return this;
+  }
+
+  /**
+   * @param value Build output timestamp
+   * @return this
+   */
+  public AllPackageBuilder buildOutputTimestamp(BuildOutputTimestamp value) {
+    this.buildOutputTimestamp = value;
     return this;
   }
 
@@ -615,13 +626,11 @@ public final class AllPackageBuilder {
     return result;
   }
 
-  private static ZipEntry newZipEntry(ZipEntry in) {
+  private ZipEntry newZipEntry(ZipEntry in) {
     ZipEntry out = new ZipEntry(in.getName());
-    if (in.getCreationTime() != null) {
-      out.setCreationTime(in.getCreationTime());
-    }
-    if (in.getLastModifiedTime() != null) {
-      out.setLastModifiedTime(in.getLastModifiedTime());
+    if (buildOutputTimestamp != null && buildOutputTimestamp.isValid()) {
+      out.setCreationTime(buildOutputTimestamp.toFileTime());
+      out.setLastModifiedTime(buildOutputTimestamp.toFileTime());
     }
     return out;
   }

@@ -59,6 +59,9 @@ public final class CloudManagerDispatcherConfigMojo extends AbstractCloudManager
   @Component(role = Archiver.class, hint = "zip")
   private ZipArchiver zipArchiver;
 
+  @Parameter(defaultValue = "${project.build.outputTimestamp}")
+  private String outputTimestamp;
+
   @Override
   public void execute() throws MojoExecutionException, MojoFailureException {
     if (skip) {
@@ -91,6 +94,11 @@ public final class CloudManagerDispatcherConfigMojo extends AbstractCloudManager
       String basePath = toZipDirectoryPath(nodeDir);
       addZipDirectory(basePath, nodeDir, Collections.singleton(ModelParser.MODEL_FILE));
       zipArchiver.setDestFile(targetFile);
+
+      BuildOutputTimestamp buildOutputTimestamp = new BuildOutputTimestamp(outputTimestamp);
+      if (buildOutputTimestamp.isValid()) {
+        zipArchiver.configureReproducible(buildOutputTimestamp.toDate());
+      }
 
       zipArchiver.createArchive();
     }

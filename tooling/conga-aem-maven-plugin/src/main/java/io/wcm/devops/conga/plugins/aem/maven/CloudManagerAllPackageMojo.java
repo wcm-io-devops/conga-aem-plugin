@@ -158,6 +158,9 @@ public final class CloudManagerAllPackageMojo extends AbstractCloudManagerMojo {
   @Parameter(property = "conga.cloudManager.allPackage.skip", defaultValue = "false")
   private boolean skip;
 
+  @Parameter(defaultValue = "${project.build.outputTimestamp}")
+  private String outputTimestamp;
+
   @Parameter(readonly = true, defaultValue = "${project}")
   private MavenProject project;
   @Component
@@ -264,7 +267,8 @@ public final class CloudManagerAllPackageMojo extends AbstractCloudManagerMojo {
         .autoDependenciesMode(this.autoDependenciesMode)
         .runModeOptimization(this.runModeOptimization)
         .packageTypeValidation(this.packageTypeValidation)
-        .logger(getLog());
+        .logger(getLog())
+        .buildOutputTimestamp(new BuildOutputTimestamp(outputTimestamp));
   }
 
   private void buildAllPackage(AllPackageBuilder builder) throws MojoExecutionException {
