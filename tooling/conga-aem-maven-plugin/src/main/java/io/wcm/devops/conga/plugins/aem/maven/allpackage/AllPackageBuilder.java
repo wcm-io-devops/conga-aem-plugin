@@ -540,8 +540,8 @@ public final class AllPackageBuilder {
 
               // if entry is properties.xml, update dependency information
               if (StringUtils.equals(zipInEntry.getName(), "META-INF/vault/properties.xml")) {
-                Properties props = new Properties();
-                props.loadFromXML(is);
+                FileVaultProperties fileVaultProps = new FileVaultProperties(is);
+                Properties props = fileVaultProps.getProperties();
                 addSuffixToPackageName(props, pkg, environmentRunMode);
 
                 // update package dependencies
@@ -559,7 +559,7 @@ public final class AllPackageBuilder {
 
                 ZipEntry zipOutEntry = newZipEntry(zipInEntry);
                 zipOut.putNextEntry(zipOutEntry);
-                props.storeToXML(zipOut, null);
+                fileVaultProps.storeToXml(zipOut);
                 processedEntry = true;
               }
 
