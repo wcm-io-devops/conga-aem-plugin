@@ -45,10 +45,10 @@ import java.util.Map;
 import java.util.Properties;
 import java.util.Set;
 import java.util.stream.Collectors;
-import java.util.zip.ZipEntry;
-import java.util.zip.ZipFile;
-import java.util.zip.ZipOutputStream;
 
+import org.apache.commons.compress.archivers.zip.ZipArchiveEntry;
+import org.apache.commons.compress.archivers.zip.ZipArchiveOutputStream;
+import org.apache.commons.compress.archivers.zip.ZipFile;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.FilenameUtils;
 import org.apache.commons.io.IOUtils;
@@ -65,6 +65,7 @@ import org.jetbrains.annotations.Nullable;
 import com.google.common.collect.ImmutableSet;
 
 import io.wcm.devops.conga.plugins.aem.maven.AutoDependenciesMode;
+import io.wcm.devops.conga.plugins.aem.maven.BuildOutputTimestamp;
 import io.wcm.devops.conga.plugins.aem.maven.PackageTypeValidation;
 import io.wcm.devops.conga.plugins.aem.maven.RunModeOptimization;
 import io.wcm.devops.conga.plugins.aem.maven.model.BundleFile;
@@ -105,6 +106,7 @@ public final class AllPackageBuilder {
   private RunModeOptimization runModeOptimization = RunModeOptimization.OFF;
   private PackageTypeValidation packageTypeValidation = PackageTypeValidation.STRICT;
   private Log log;
+  private BuildOutputTimestamp buildOutputTimestamp;
 
   private static final String RUNMODE_DEFAULT = "$default$";
   private static final Set<String> ALLOWED_PACKAGE_TYPES = ImmutableSet.of(
@@ -169,6 +171,15 @@ public final class AllPackageBuilder {
    */
   public AllPackageBuilder version(String value) {
     this.version = value;
+    return this;
+  }
+
+  /**
+   * @param value Build output timestamp
+   * @return this
+   */
+  public AllPackageBuilder buildOutputTimestamp(BuildOutputTimestamp value) {
+    this.buildOutputTimestamp = value;
     return this;
   }
 
@@ -530,18 +541,18 @@ public final class AllPackageBuilder {
 
       // iterate through entries and write them to the temp. zip file
       try (FileOutputStream fos = new FileOutputStream(tempFile);
-          ZipOutputStream zipOut = new ZipOutputStream(fos)) {
-        Enumeration<? extends ZipEntry> zipInEntries = zipFileIn.entries();
+          ZipArchiveOutputStream zipOut = new ZipArchiveOutputStream(fos)) {
+        Enumeration<? extends ZipArchiveEntry> zipInEntries = zipFileIn.getEntries();
         while (zipInEntries.hasMoreElements()) {
-          ZipEntry zipInEntry = zipInEntries.nextElement();
+          ZipArchiveEntry zipInEntry = zipInEntries.nextElement();
           if (!zipInEntry.isDirectory()) {
             try (InputStream is = zipFileIn.getInputStream(zipInEntry)) {
               boolean processedEntry = false;
 
               // if entry is properties.xml, update dependency information
               if (StringUtils.equals(zipInEntry.getName(), "META-INF/vault/properties.xml")) {
-                Properties props = new Properties();
-                props.loadFromXML(is);
+                FileVaultProperties fileVaultProps = new FileVaultProperties(is);
+                Properties props = fileVaultProps.getProperties();
                 addSuffixToPackageName(props, pkg, environmentRunMode);
 
                 // update package dependencies
@@ -557,9 +568,10 @@ public final class AllPackageBuilder {
                   props.put(NAME_PACKAGE_TYPE, packageType);
                 }
 
-                ZipEntry zipOutEntry = newZipEntry(zipInEntry);
-                zipOut.putNextEntry(zipOutEntry);
-                props.storeToXML(zipOut, null);
+                ZipArchiveEntry zipOutEntry = newZipEntry(zipInEntry);
+                zipOut.putArchiveEntry(zipOutEntry);
+                fileVaultProps.storeToXml(zipOut);
+                zipOut.closeArchiveEntry();
                 processedEntry = true;
               }
 
@@ -589,13 +601,13 @@ public final class AllPackageBuilder {
 
               // otherwise transfer the binary data 1:1
               if (!processedEntry) {
-                ZipEntry zipOutEntry = newZipEntry(zipInEntry);
-                zipOut.putNextEntry(zipOutEntry);
+                ZipArchiveEntry zipOutEntry = newZipEntry(zipInEntry);
+                zipOut.putArchiveEntry(zipOutEntry);
                 IOUtils.copy(is, zipOut);
+                zipOut.closeArchiveEntry();
               }
             }
 
-            zipOut.closeEntry();
           }
         }
       }
@@ -615,12 +627,12 @@ public final class AllPackageBuilder {
     return result;
   }
 
-  private static ZipEntry newZipEntry(ZipEntry in) {
-    ZipEntry out = new ZipEntry(in.getName());
-    if (in.getCreationTime() != null) {
-      out.setCreationTime(in.getCreationTime());
+  private ZipArchiveEntry newZipEntry(ZipArchiveEntry in) {
+    ZipArchiveEntry out = new ZipArchiveEntry(in.getName());
+    if (buildOutputTimestamp != null && buildOutputTimestamp.isValid()) {
+      out.setLastModifiedTime(buildOutputTimestamp.toFileTime());
     }
-    if (in.getLastModifiedTime() != null) {
+    else if (in.getLastModifiedTime() != null) {
       out.setLastModifiedTime(in.getLastModifiedTime());
     }
     return out;
