@@ -57,6 +57,20 @@
       <scope>compile</scope>
     </dependency>
 
+    <!-- ACS AEM Commons -->
+    <dependency>
+      <groupId>com.adobe.acs</groupId>
+      <artifactId>acs-aem-commons-ui.apps</artifactId>
+      <type>zip</type>
+      <scope>compile</scope>
+    </dependency>
+    <dependency>
+      <groupId>com.adobe.acs</groupId>
+      <artifactId>acs-aem-commons-ui.content</artifactId>
+      <type>zip</type>
+      <scope>compile</scope>
+    </dependency>
+
   </dependencies>
 
   <build>

@@ -7,7 +7,7 @@
         jcr:primaryType="cq:PageContent"
         sling:resourceType="wcmio-archetype-aem65/core/components/global/page"
         jcr:mixinTypes="[cq:ReplicationStatus]"
-        cq:lastReplicated="{Date}2022-05-05T00:00:00.000+02:00"
+        cq:lastReplicated="{Date}2022-10-18T00:00:00.000+02:00"
         cq:lastReplicationAction="Activate">
         <root
             jcr:primaryType="nt:unstructured"
