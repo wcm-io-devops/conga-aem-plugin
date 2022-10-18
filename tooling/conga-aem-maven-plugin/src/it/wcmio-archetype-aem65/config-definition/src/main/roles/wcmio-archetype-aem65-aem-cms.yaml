@@ -17,6 +17,16 @@ files:
 - url: mvn:com.adobe.cq/core.wcm.components.all//zip
   dir: packages
 
+# ACS AEM Commons
+- url: mvn:com.adobe.acs/acs-aem-commons-ui.apps//zip
+  dir: packages
+  postProcessorOptions:
+    contentPackage.packageType: application
+- url: mvn:com.adobe.acs/acs-aem-commons-ui.content//zip
+  dir: packages
+  postProcessorOptions:
+    contentPackage.packageType: content
+
 # AEM OSGi System Configuration
 - file: wcmio-archetype-aem65-aem-cms-config.provisioning
   dir: packages

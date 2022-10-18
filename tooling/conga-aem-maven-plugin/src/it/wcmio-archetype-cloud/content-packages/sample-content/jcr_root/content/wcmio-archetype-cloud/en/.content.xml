@@ -9,7 +9,10 @@
         jcr:title="en"
         sling:resourceType="wcmio-archetype-cloud/core/components/global/page"
         navTitle="HOME"
-        pageTitle="wcmio-archetype-cloud Sample Site">
+        pageTitle="wcmio-archetype-cloud Sample Site"
+        jcr:mixinTypes="[cq:ReplicationStatus]"
+        cq:lastReplicated="{Date}2022-10-18T00:00:00.000+02:00"
+        cq:lastReplicationAction="Activate">
         <root
             jcr:primaryType="nt:unstructured"
             sling:resourceType="wcmio-archetype-cloud/core/components/container/container">

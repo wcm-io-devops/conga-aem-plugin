@@ -1,7 +1,7 @@
 mvn org.apache.maven.plugins:maven-archetype-plugin:3.1.0:generate -DinteractiveMode=false \
   -DarchetypeGroupId=io.wcm.maven.archetypes \
   -DarchetypeArtifactId=io.wcm.maven.archetypes.aem \
-  -DarchetypeVersion=3.6.0-SNAPSHOT \
+  -DarchetypeVersion=3.6.7-SNAPSHOT \
   -DprojectName=wcmio-archetype-aem65 \
   -DgroupId=io.wcm.devops.conga.plugins.aem.it \
   -DartifactId=io.wcm.devops.conga.plugins.aem.it.aem65 \

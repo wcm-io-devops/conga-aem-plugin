@@ -14,11 +14,13 @@ files:
 
 
 # ACS AEM Commons
-- url: mvn:com.adobe.acs/acs-aem-commons-ui.apps//zip/min
+- url: mvn:com.adobe.acs/acs-aem-commons-bundle
+  dir: bundles
+- url: mvn:com.adobe.acs/acs-aem-commons-ui.apps//zip
   dir: packages
   postProcessorOptions:
     contentPackage.packageType: application
-- url: mvn:com.adobe.acs/acs-aem-commons-ui.content//zip/min
+- url: mvn:com.adobe.acs/acs-aem-commons-ui.content//zip
   dir: packages
   postProcessorOptions:
     contentPackage.packageType: content
@@ -128,6 +130,10 @@ config:
   contentPackage:
     group: it
     version: ${version}
+
+  aem:
+    # Disable user tracking in author environment
+    disableAuthorUsageStatisticsCollection: false
 
   app:
     confContent: true

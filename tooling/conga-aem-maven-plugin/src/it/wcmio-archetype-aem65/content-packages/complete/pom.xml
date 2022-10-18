@@ -78,6 +78,13 @@
       <scope>provided</scope>
     </dependency>
 
+    <!-- ACS AEM Commons -->
+    <dependency>
+      <groupId>com.adobe.acs</groupId>
+      <artifactId>acs-aem-commons-bundle</artifactId>
+      <scope>compile</scope>
+    </dependency>
+
   </dependencies>
 
   <build>
@@ -132,6 +139,16 @@
                 org.apache.sling.caconfig.spi,
                 org.apache.sling.caconfig.impl,
                 org.apache.sling.models.caconfig,
+              </artifactId>
+              <type>jar</type>
+            </embedded>
+            <!-- ACS AEM Commons -->
+            <embedded>
+              <groupId>
+                com.adobe.acs
+              </groupId>
+              <artifactId>
+                acs-aem-commons-bundle
               </artifactId>
               <type>jar</type>
             </embedded>
