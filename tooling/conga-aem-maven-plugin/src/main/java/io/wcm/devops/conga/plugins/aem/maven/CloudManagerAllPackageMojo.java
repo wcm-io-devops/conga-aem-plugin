@@ -131,6 +131,16 @@ public final class CloudManagerAllPackageMojo extends AbstractCloudManagerMojo {
   private PackageTypeValidation packageTypeValidation;
 
   /**
+   * How to handle versions of packages and sub-packages inside "all" package.
+   * <p>
+   * Possible options see
+   * <a href="apidocs/io/wcm/devops/conga/plugins/aem/maven/PackageVersionMode.html">PackageVersionMode</a>.
+   * </p>
+   */
+  @Parameter(property = "conga.cloudManager.allPackage.packageVersionMode", defaultValue = "DEFAULT")
+  private PackageVersionMode packageVersionMode;
+
+  /**
    * Automatically generate dependencies between content packages based on file order in CONGA configuration.
    * @deprecated Please use autoDependenciesMode instead.
    */
@@ -267,6 +277,7 @@ public final class CloudManagerAllPackageMojo extends AbstractCloudManagerMojo {
         .autoDependenciesMode(this.autoDependenciesMode)
         .runModeOptimization(this.runModeOptimization)
         .packageTypeValidation(this.packageTypeValidation)
+        .packageVersionMode(this.packageVersionMode)
         .logger(getLog())
         .buildOutputTimestamp(new BuildOutputTimestamp(outputTimestamp));
   }
