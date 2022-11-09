@@ -499,7 +499,9 @@ public final class AllPackageBuilder {
     if (this.packageVersionMode == PackageVersionMode.RELEASE_SUFFIX_VERSION
         && !ArtifactUtils.isSnapshot(pkg.getVersion())
         && this.version != null) {
-      versionSuffix.append(VERSION_SUFFIX_SEPARATOR).append(this.version);
+      versionSuffix.append(VERSION_SUFFIX_SEPARATOR)
+          // replace dots with underlines in version suffix to avoid confusion with main version number
+          .append(StringUtils.replace(this.version, ".", "_"));
     }
 
     return versionSuffix.toString();
@@ -525,7 +527,7 @@ public final class AllPackageBuilder {
     String packageVersion = pkg.getVersion();
     String packageVersionWithoutSuffix = packageVersion;
     if (this.packageVersionMode == PackageVersionMode.RELEASE_SUFFIX_VERSION && this.version != null) {
-      packageVersionWithoutSuffix = StringUtils.substringBefore(packageVersion, VERSION_SUFFIX_SEPARATOR + this.version);
+      packageVersionWithoutSuffix = StringUtils.substringBefore(packageVersion, buildVersionSuffix(pkg));
     }
     if (packageVersion != null && pkg.getFile().getName().contains(packageVersionWithoutSuffix)) {
       versionSuffix = "-" + packageVersion;

@@ -31,13 +31,14 @@ public enum PackageVersionMode {
 
   /**
    * Suffix the version number of all packages with a release version with the version of the POM the Mojo runs in.
+   * Within the version suffix, dots are replaced with underlines to avoid convision with the main version number.
    * This is useful when deploying to AMS with Cloud Manager.
    * <p>
    * Example:
    * </p>
    * <ul>
    * <li>Original package version: 2.5.0</li>
-   * <li>POM version: 2022_1103_152749_0000000571</li>
+   * <li>POM version: 2022.1103.152749.0000000571</li>
    * <li>Resulting package version: 2.5.0-2022_1103_152749_0000000571</li>
    * </ul>
    */
