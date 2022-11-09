@@ -491,13 +491,14 @@ public final class AllPackageBuilder {
   /**
    * Generate suffix for versions of content packages.
    * @param pkg Content package
+   * @param ignoreSnapshot Do not build version suffix for SNAPSHOT versions
    * @return Suffix string
    */
-  private String buildVersionSuffix(ContentPackageFile pkg) {
+  private String buildVersionSuffix(ContentPackageFile pkg, boolean ignoreSnapshot) {
     StringBuilder versionSuffix = new StringBuilder();
 
     if (this.packageVersionMode == PackageVersionMode.RELEASE_SUFFIX_VERSION
-        && !ArtifactUtils.isSnapshot(pkg.getVersion())
+        && (!ArtifactUtils.isSnapshot(pkg.getVersion()) || !ignoreSnapshot)
         && this.version != null) {
       versionSuffix.append(VERSION_SUFFIX_SEPARATOR)
           // replace dots with underlines in version suffix to avoid confusion with main version number
@@ -527,7 +528,7 @@ public final class AllPackageBuilder {
     String packageVersion = pkg.getVersion();
     String packageVersionWithoutSuffix = packageVersion;
     if (this.packageVersionMode == PackageVersionMode.RELEASE_SUFFIX_VERSION && this.version != null) {
-      packageVersionWithoutSuffix = StringUtils.removeEnd(packageVersion, buildVersionSuffix(pkg));
+      packageVersionWithoutSuffix = StringUtils.removeEnd(packageVersion, buildVersionSuffix(pkg, false));
     }
     if (packageVersion != null && pkg.getFile().getName().contains(packageVersionWithoutSuffix)) {
       versionSuffix = "-" + packageVersion;
@@ -696,7 +697,7 @@ public final class AllPackageBuilder {
     Dependency[] deps;
     if (dependencyFile != null) {
       String runModeSuffix = buildRunModeSuffix(dependencyFile, environmentRunMode);
-      String dependencyVersion = dependencyFile.getVersion() + buildVersionSuffix(dependencyFile);
+      String dependencyVersion = dependencyFile.getVersion() + buildVersionSuffix(dependencyFile, true);
       Dependency newDependency = new Dependency(dependencyFile.getGroup(),
           dependencyFile.getName() + runModeSuffix,
           VersionRange.fromString(dependencyVersion));
@@ -732,7 +733,7 @@ public final class AllPackageBuilder {
     if (StringUtils.isEmpty(pkg.getVersion())) {
       return;
     }
-    String suffixedVersion = pkg.getVersion() + buildVersionSuffix(pkg);
+    String suffixedVersion = pkg.getVersion() + buildVersionSuffix(pkg, true);
     props.put(NAME_VERSION, suffixedVersion);
   }
 
