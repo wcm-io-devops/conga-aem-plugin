@@ -352,7 +352,7 @@ class AllPackageBuilderTest {
     }
   }
 
-  private String[] toInstallFolderNames(String baseName, List<String> runmodeSuffixes) {
+  static String[] toInstallFolderNames(String baseName, List<String> runmodeSuffixes) {
     return runmodeSuffixes.stream()
         .map(suffix -> baseName + suffix)
         .toArray(size -> new String[size]);

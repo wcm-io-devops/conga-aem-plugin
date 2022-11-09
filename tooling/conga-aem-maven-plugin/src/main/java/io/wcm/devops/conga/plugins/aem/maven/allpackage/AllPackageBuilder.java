@@ -527,7 +527,7 @@ public final class AllPackageBuilder {
     String packageVersion = pkg.getVersion();
     String packageVersionWithoutSuffix = packageVersion;
     if (this.packageVersionMode == PackageVersionMode.RELEASE_SUFFIX_VERSION && this.version != null) {
-      packageVersionWithoutSuffix = StringUtils.substringBefore(packageVersion, buildVersionSuffix(pkg));
+      packageVersionWithoutSuffix = StringUtils.removeEnd(packageVersion, buildVersionSuffix(pkg));
     }
     if (packageVersion != null && pkg.getFile().getName().contains(packageVersionWithoutSuffix)) {
       versionSuffix = "-" + packageVersion;
@@ -682,7 +682,7 @@ public final class AllPackageBuilder {
    * @param dependencyFile Dependency package
    * @param allPackagesFromFileSets Set with all packages from all file sets as dependency instances
    */
-  private static void updateDependencies(Properties props, ContentPackageFile dependencyFile, String environmentRunMode,
+  private void updateDependencies(Properties props, ContentPackageFile dependencyFile, String environmentRunMode,
       Set<Dependency> allPackagesFromFileSets) {
     String[] existingDepsStrings = StringUtils.split(props.getProperty(NAME_DEPENDENCIES), ",");
     Dependency[] existingDeps = null;
@@ -696,9 +696,10 @@ public final class AllPackageBuilder {
     Dependency[] deps;
     if (dependencyFile != null) {
       String runModeSuffix = buildRunModeSuffix(dependencyFile, environmentRunMode);
+      String dependencyVersion = dependencyFile.getVersion() + buildVersionSuffix(dependencyFile);
       Dependency newDependency = new Dependency(dependencyFile.getGroup(),
           dependencyFile.getName() + runModeSuffix,
-          VersionRange.fromString(dependencyFile.getVersion()));
+          VersionRange.fromString(dependencyVersion));
       deps = addDependency(existingDeps, newDependency);
     }
     else {
