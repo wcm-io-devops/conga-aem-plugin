@@ -23,6 +23,14 @@
     xsi:schemaLocation="http://maven.apache.org/changes/1.0.0 https://maven.apache.org/plugins/maven-changes-plugin/xsd/changes-1.0.0.xsd">
   <body>
 
+    <release version="2.19.0" date="2022-11-10">
+      <action type="add" dev="sseifert">
+        conga-aem-maven-plugin: Introduce new parameter "packageVersionMode" to "cloudmanager-all-package" goal, which allows to enable a special "RELEASE_SUFFIX_VERSION" mode.
+        If this is activated, all the versions of all content packages with a release version contained in the "all" package get a suffix consisting of the version of the POM the mojo is executed in.
+        This is useful when deploying to AMS with Cloud Manager.
+      </action>
+    </release>
+
     <release version="2.18.6" date="2022-10-17">
       <action type="update" dev="sseifert">
         conga-aem-maven-plugin: Make use of ${project.build.outputTimestamp} for reproducible builds for dispatcher configuration and processed packages in "all" package.
