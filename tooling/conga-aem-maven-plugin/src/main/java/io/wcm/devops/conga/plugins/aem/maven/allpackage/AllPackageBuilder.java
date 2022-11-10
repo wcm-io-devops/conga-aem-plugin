@@ -29,6 +29,7 @@ import static io.wcm.devops.conga.plugins.aem.maven.allpackage.RunModeUtil.isOnl
 import static org.apache.jackrabbit.vault.packaging.PackageProperties.NAME_DEPENDENCIES;
 import static org.apache.jackrabbit.vault.packaging.PackageProperties.NAME_NAME;
 import static org.apache.jackrabbit.vault.packaging.PackageProperties.NAME_PACKAGE_TYPE;
+import static org.apache.jackrabbit.vault.packaging.PackageProperties.NAME_VERSION;
 
 import java.io.File;
 import java.io.FileOutputStream;
@@ -57,6 +58,7 @@ import org.apache.jackrabbit.vault.packaging.Dependency;
 import org.apache.jackrabbit.vault.packaging.DependencyUtil;
 import org.apache.jackrabbit.vault.packaging.PackageType;
 import org.apache.jackrabbit.vault.packaging.VersionRange;
+import org.apache.maven.artifact.ArtifactUtils;
 import org.apache.maven.plugin.logging.Log;
 import org.apache.maven.plugin.logging.SystemStreamLog;
 import org.jetbrains.annotations.NotNull;
@@ -67,6 +69,7 @@ import com.google.common.collect.ImmutableSet;
 import io.wcm.devops.conga.plugins.aem.maven.AutoDependenciesMode;
 import io.wcm.devops.conga.plugins.aem.maven.BuildOutputTimestamp;
 import io.wcm.devops.conga.plugins.aem.maven.PackageTypeValidation;
+import io.wcm.devops.conga.plugins.aem.maven.PackageVersionMode;
 import io.wcm.devops.conga.plugins.aem.maven.RunModeOptimization;
 import io.wcm.devops.conga.plugins.aem.maven.model.BundleFile;
 import io.wcm.devops.conga.plugins.aem.maven.model.ContentPackageFile;
@@ -105,6 +108,7 @@ public final class AllPackageBuilder {
   private AutoDependenciesMode autoDependenciesMode = AutoDependenciesMode.OFF;
   private RunModeOptimization runModeOptimization = RunModeOptimization.OFF;
   private PackageTypeValidation packageTypeValidation = PackageTypeValidation.STRICT;
+  private PackageVersionMode packageVersionMode = PackageVersionMode.DEFAULT;
   private Log log;
   private BuildOutputTimestamp buildOutputTimestamp;
 
@@ -113,6 +117,7 @@ public final class AllPackageBuilder {
       PackageType.APPLICATION.name().toLowerCase(),
       PackageType.CONTAINER.name().toLowerCase(),
       PackageType.CONTENT.name().toLowerCase());
+  private static final String VERSION_SUFFIX_SEPARATOR = "-";
 
   private final List<ContentPackageFileSet> contentPackageFileSets = new ArrayList<>();
   private final List<BundleFileSet> bundleFileSets = new ArrayList<>();
@@ -153,6 +158,15 @@ public final class AllPackageBuilder {
    */
   public AllPackageBuilder packageTypeValidation(PackageTypeValidation value) {
     this.packageTypeValidation = value;
+    return this;
+  }
+
+  /**
+   * @param value How to handle versions of packages and sub-packages inside "all" package.
+   * @return this
+   */
+  public AllPackageBuilder packageVersionMode(PackageVersionMode value) {
+    this.packageVersionMode = value;
     return this;
   }
 
@@ -457,8 +471,8 @@ public final class AllPackageBuilder {
 
   /**
    * Generate suffix for instance and environment run modes.
-   * @param file Content package
-   * @return Package path
+   * @param file File
+   * @return Suffix string
    */
   private static String buildRunModeSuffix(InstallableFile file, String environmentRunMode) {
     StringBuilder runModeSuffix = new StringBuilder();
@@ -472,6 +486,26 @@ public final class AllPackageBuilder {
       runModeSuffix.append(".").append(environmentRunMode);
     }
     return runModeSuffix.toString();
+  }
+
+  /**
+   * Generate suffix for versions of content packages.
+   * @param pkg Content package
+   * @param ignoreSnapshot Do not build version suffix for SNAPSHOT versions
+   * @return Suffix string
+   */
+  private String buildVersionSuffix(ContentPackageFile pkg, boolean ignoreSnapshot) {
+    StringBuilder versionSuffix = new StringBuilder();
+
+    if (this.packageVersionMode == PackageVersionMode.RELEASE_SUFFIX_VERSION
+        && (!ArtifactUtils.isSnapshot(pkg.getVersion()) || !ignoreSnapshot)
+        && this.version != null) {
+      versionSuffix.append(VERSION_SUFFIX_SEPARATOR)
+          // replace dots with underlines in version suffix to avoid confusion with main version number
+          .append(StringUtils.replace(this.version, ".", "_"));
+    }
+
+    return versionSuffix.toString();
   }
 
   /**
@@ -492,7 +526,11 @@ public final class AllPackageBuilder {
 
     String versionSuffix = "";
     String packageVersion = pkg.getVersion();
-    if (packageVersion != null && pkg.getFile().getName().contains(packageVersion)) {
+    String packageVersionWithoutSuffix = packageVersion;
+    if (this.packageVersionMode == PackageVersionMode.RELEASE_SUFFIX_VERSION && this.version != null) {
+      packageVersionWithoutSuffix = StringUtils.removeEnd(packageVersion, buildVersionSuffix(pkg, false));
+    }
+    if (packageVersion != null && pkg.getFile().getName().contains(packageVersionWithoutSuffix)) {
       versionSuffix = "-" + packageVersion;
     }
     String fileName = pkg.getName() + versionSuffix
@@ -554,6 +592,7 @@ public final class AllPackageBuilder {
                 FileVaultProperties fileVaultProps = new FileVaultProperties(is);
                 Properties props = fileVaultProps.getProperties();
                 addSuffixToPackageName(props, pkg, environmentRunMode);
+                addSuffixToVersion(props, pkg);
 
                 // update package dependencies
                 ContentPackageFile dependencyFile = previousPkg;
@@ -562,7 +601,7 @@ public final class AllPackageBuilder {
                 }
                 updateDependencies(props, dependencyFile, environmentRunMode, allPackagesFromFileSets);
 
-                // if package type is missing package properties, put in the type defined in model
+                // if package type is missing in package properties, put in the type defined in model
                 String packageType = pkg.getPackageType();
                 if (props.get(NAME_PACKAGE_TYPE) == null && packageType != null) {
                   props.put(NAME_PACKAGE_TYPE, packageType);
@@ -583,7 +622,7 @@ public final class AllPackageBuilder {
                 }
 
                 // check if contained ZIP file is really a content package
-                // then process it as well, remove if from the content package is was contained it
+                // then process it as well, remove if from the content package is was contained in
                 // and add it as "1st level package" to the all package
                 TemporaryContentPackageFile tempSubPackage = new TemporaryContentPackageFile(tempSubPackageFile, pkg.getVariants());
                 if (packageTypeValidation == PackageTypeValidation.STRICT && !isValidPackageType(tempSubPackage)) {
@@ -644,7 +683,7 @@ public final class AllPackageBuilder {
    * @param dependencyFile Dependency package
    * @param allPackagesFromFileSets Set with all packages from all file sets as dependency instances
    */
-  private static void updateDependencies(Properties props, ContentPackageFile dependencyFile, String environmentRunMode,
+  private void updateDependencies(Properties props, ContentPackageFile dependencyFile, String environmentRunMode,
       Set<Dependency> allPackagesFromFileSets) {
     String[] existingDepsStrings = StringUtils.split(props.getProperty(NAME_DEPENDENCIES), ",");
     Dependency[] existingDeps = null;
@@ -658,9 +697,10 @@ public final class AllPackageBuilder {
     Dependency[] deps;
     if (dependencyFile != null) {
       String runModeSuffix = buildRunModeSuffix(dependencyFile, environmentRunMode);
+      String dependencyVersion = dependencyFile.getVersion() + buildVersionSuffix(dependencyFile, true);
       Dependency newDependency = new Dependency(dependencyFile.getGroup(),
           dependencyFile.getName() + runModeSuffix,
-          VersionRange.fromString(dependencyFile.getVersion()));
+          VersionRange.fromString(dependencyVersion));
       deps = addDependency(existingDeps, newDependency);
     }
     else {
@@ -686,6 +726,15 @@ public final class AllPackageBuilder {
     String runModeSuffix = buildRunModeSuffix(pkg, environmentRunMode);
     String packageName = props.getProperty(NAME_NAME) + runModeSuffix;
     props.put(NAME_NAME, packageName);
+  }
+
+  private void addSuffixToVersion(Properties props, ContentPackageFile pkg) {
+    // package version
+    if (StringUtils.isEmpty(pkg.getVersion())) {
+      return;
+    }
+    String suffixedVersion = pkg.getVersion() + buildVersionSuffix(pkg, true);
+    props.put(NAME_VERSION, suffixedVersion);
   }
 
   /**

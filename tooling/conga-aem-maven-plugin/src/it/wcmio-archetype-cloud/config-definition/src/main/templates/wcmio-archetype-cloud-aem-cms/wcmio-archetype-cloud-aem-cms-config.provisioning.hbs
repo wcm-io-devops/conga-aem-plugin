@@ -43,7 +43,8 @@
       "io.wcm.devops.conga.plugins.aem.it.aemcloud.config.impl.MediaFormatProviderImpl", \
       "io.wcm.devops.conga.plugins.aem.it.aemcloud.config.impl.MediaHandlerConfigImpl", \
       "io.wcm.caconfig.extensions.contextpath.impl.RootTemplateContextPathStrategy", \
-      "io.wcm.caconfig.extensions.persistence.impl.PagePersistenceStrategy"]
+      "io.wcm.caconfig.extensions.persistence.impl.PagePersistenceStrategy",
+      "io.wcm.handler.mediasource.dam.impl.dynamicmedia.DynamicMediaSupportServiceImpl"]
 
 [configurations runModes=author]
 
@@ -51,6 +52,12 @@
   com.day.cq.commons.servlets.RootMappingServlet
     rootmapping.target="/sites.html"
 
+{{#if aem.disableAuthorUsageStatisticsCollection ~}}
+  # Disable usage tracking by default for admins (esp. for local usage)
+  com.adobe.cq.experiencelog.impl.ExperienceLogConfigServlet
+    enabled=B"false"
+
+{{/if ~}}
   # Instance type
   io.wcm.wcm.commons.instancetype.impl.InstanceTypeServiceImpl
     instance.type="author"

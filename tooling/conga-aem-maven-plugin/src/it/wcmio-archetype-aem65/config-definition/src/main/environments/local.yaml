@@ -21,6 +21,7 @@ nodes:
 
 config:
   contentPackage.group: it
+
   app:
     # Default log level for application code
     logLevel: info

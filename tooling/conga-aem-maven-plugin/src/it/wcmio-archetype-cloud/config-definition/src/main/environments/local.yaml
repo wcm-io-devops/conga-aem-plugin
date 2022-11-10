@@ -21,6 +21,11 @@ nodes:
 
 config:
   contentPackage.group: it
+
+  aem:
+    # Disable user tracking in author environment
+    disableAuthorUsageStatisticsCollection: true
+
   app:
     # Default log level for application code
     logLevel: info

@@ -86,16 +86,9 @@ public final class CloudManagerAllPackageMojo extends AbstractCloudManagerMojo {
   /**
    * Automatically generate dependencies between content packages based on file order in CONGA configuration.
    * <p>
-   * Possible values:
+   * Possible options see
+   * <a href="apidocs/io/wcm/devops/conga/plugins/aem/maven/AutoDependenciesMode.html">AutoDependenciesMode</a>.
    * </p>
-   * <ul>
-   * <li><code>IMMUTABLE_MUTABLE_COMBINED</code>: Generate a single dependency chain spanning both immutable and mutable
-   * content packages.</li>
-   * <li><code>IMMUTABLE_MUTABLE_SEPARATE</code>: Generate separate dependency chains for immutable and mutable content
-   * packages.</li>
-   * <li><code>IMMUTABLE_ONLY</code>: Generate a dependency chain only for immutable content packages.</li>
-   * <li><code>OFF</code>: Do not generate dependencies between content packages.</li>
-   * </ul>
    */
   @Parameter(property = "conga.cloudManager.allPackage.autoDependenciesMode")
   private AutoDependenciesMode autoDependenciesMode;
@@ -103,14 +96,9 @@ public final class CloudManagerAllPackageMojo extends AbstractCloudManagerMojo {
   /**
    * How to optimize author/publish run modes in resulting "all" package.
    * <p>
-   * Possible values:
+   * Possible options see
+   * <a href="apidocs/io/wcm/devops/conga/plugins/aem/maven/RunModeOptimization.html">RunModeOptimization</a>.
    * </p>
-   * <ul>
-   * <li><code>OFF</code>: No optimization takes place. Content packages and bundles are duplicated for author/publish
-   * run modes to ensure strict following of dependency chain defined in CONGA.</li>
-   * <li><code>ELIMINATE_DUPLICATES</code>: Eliminates duplicates to ensure that content packages and bundles that are
-   * installed on both author and publish instances are contained only once in the "all" package.</li>
-   * </ul>
    */
   @Parameter(property = "conga.cloudManager.allPackage.runModeOptimization", defaultValue = "OFF")
   private RunModeOptimization runModeOptimization;
@@ -118,17 +106,22 @@ public final class CloudManagerAllPackageMojo extends AbstractCloudManagerMojo {
   /**
    * How to validate package types to be included in "all" package.
    * <p>
-   * Possible values:
+   * Possible options see
+   * <a href="apidocs/io/wcm/devops/conga/plugins/aem/maven/PackageTypeValidation.html">PackageTypeValidation</a>.
    * </p>
-   * <ul>
-   * <li><code>STRICT</code>: Strict mode: Ignores packages without content type (with warning), fails build if "mixed"
-   * package types are used. For AEMaaCS it is mandatory to use this mode.</li>
-   * <li><code>WARN</code>: Includes all packages, but generated warnings about packages without content type or "mixed"
-   * package types.</li>
-   * </ul>
    */
   @Parameter(property = "conga.cloudManager.allPackage.packageTypeValidation", defaultValue = "STRICT")
   private PackageTypeValidation packageTypeValidation;
+
+  /**
+   * How to handle versions of packages and sub-packages inside "all" package.
+   * <p>
+   * Possible options see
+   * <a href="apidocs/io/wcm/devops/conga/plugins/aem/maven/PackageVersionMode.html">PackageVersionMode</a>.
+   * </p>
+   */
+  @Parameter(property = "conga.cloudManager.allPackage.packageVersionMode", defaultValue = "DEFAULT")
+  private PackageVersionMode packageVersionMode;
 
   /**
    * Automatically generate dependencies between content packages based on file order in CONGA configuration.
@@ -267,6 +260,7 @@ public final class CloudManagerAllPackageMojo extends AbstractCloudManagerMojo {
         .autoDependenciesMode(this.autoDependenciesMode)
         .runModeOptimization(this.runModeOptimization)
         .packageTypeValidation(this.packageTypeValidation)
+        .packageVersionMode(this.packageVersionMode)
         .logger(getLog())
         .buildOutputTimestamp(new BuildOutputTimestamp(outputTimestamp));
   }
