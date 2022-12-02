@@ -499,6 +499,7 @@ public final class AllPackageBuilder {
 
     if (this.packageVersionMode == PackageVersionMode.RELEASE_SUFFIX_VERSION
         && (!ArtifactUtils.isSnapshot(pkg.getVersion()) || !ignoreSnapshot)
+        && !StringUtils.equals(pkg.getVersion(), this.version)
         && this.version != null) {
       versionSuffix.append(VERSION_SUFFIX_SEPARATOR)
           // replace dots with underlines in version suffix to avoid confusion with main version number
