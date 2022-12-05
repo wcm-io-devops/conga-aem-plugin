@@ -42,7 +42,7 @@
     <site.url.module.prefix>tooling/conga-aem-maven-plugin</site.url.module.prefix>
 
     <!-- Versions -->
-    <maven-plugin-plugin.version>3.6.4</maven-plugin-plugin.version>
+    <maven-plugin-plugin.version>3.7.0</maven-plugin-plugin.version>
 
     <!-- Enable recording of coverage during execution of maven-invoker-plugin -->
     <jacoco.propertyName>invoker.mavenOpts</jacoco.propertyName>
@@ -113,7 +113,7 @@
     <dependency>
       <groupId>org.apache.maven</groupId>
       <artifactId>maven-archiver</artifactId>
-      <version>3.5.2</version>
+      <version>3.6.0</version>
       <scope>compile</scope>
     </dependency>
     <dependency>
@@ -125,7 +125,7 @@
     <dependency>
       <groupId>org.slf4j</groupId>
       <artifactId>jcl-over-slf4j</artifactId>
-      <version>1.7.32</version>
+      <version>1.7.36</version>
       <scope>compile</scope>
     </dependency>
 
