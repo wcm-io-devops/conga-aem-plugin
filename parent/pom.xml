@@ -151,7 +151,7 @@
       <dependency>
         <groupId>org.apache.jackrabbit</groupId>
         <artifactId>oak-commons</artifactId>
-        <version>1.44.0</version>
+        <version>1.46.0</version>
       </dependency>
 
       <!-- Node type validation -->
