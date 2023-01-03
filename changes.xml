@@ -24,6 +24,9 @@
   <body>
 
     <release version="2.19.2" date="not released">
+      <action type="update" dev="sseifert">
+        Switch to Java 11 as minimum version.
+      </action>
       <action type="fix" dev="sseifert">
         conga-aem-maven-plugin: Avoid duplicating version when adding release version suffix with packageVersionMode=RELEASE_SUFFIX_VERSION mode.
       </action>
