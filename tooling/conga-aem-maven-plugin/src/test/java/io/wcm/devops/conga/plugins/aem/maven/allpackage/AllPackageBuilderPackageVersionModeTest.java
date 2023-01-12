@@ -67,7 +67,7 @@ class AllPackageBuilderPackageVersionModeTest {
 
     AllPackageBuilder builder = new AllPackageBuilder(targetFile, "test-group", "test-pkg")
         .autoDependenciesMode(AutoDependenciesMode.IMMUTABLE_MUTABLE_SEPARATE)
-        .version("99.99");
+        .version("4.10.0");
     builder.add(files, Collections.emptySet());
     assertTrue(builder.build(null));
 
@@ -142,7 +142,7 @@ class AllPackageBuilderPackageVersionModeTest {
     AllPackageBuilder builder = new AllPackageBuilder(targetFile, "test-group", "test-pkg")
         .autoDependenciesMode(AutoDependenciesMode.IMMUTABLE_MUTABLE_SEPARATE)
         .packageVersionMode(PackageVersionMode.RELEASE_SUFFIX_VERSION)
-        .version("99.99");
+        .version("4.10.0");
     builder.add(files, Collections.emptySet());
     assertTrue(builder.build(null));
 
@@ -157,21 +157,21 @@ class AllPackageBuilderPackageVersionModeTest {
     for (String runmodeSuffix : runmodeSuffixes) {
       File applicationInstallDir = new File(applicationDir, "install" + runmodeSuffix);
       assertFiles(applicationInstallDir, runmodeSuffix,
-          contentPackage("accesscontroltool-apps-package{runmode}", "3.0.0-99_99",
-              dep("adobe/consulting:acs-aem-commons-ui.apps{runmode}:4.10.0-99_99")),
-          contentPackage("accesscontroltool-oakindex-package{runmode}", "3.0.0-99_99",
-              dep("Netcentric:accesscontroltool-package{runmode}:3.0.0-99_99")),
-          contentPackage("core.wcm.components.content{runmode}", "2.17.0-99_99",
+          contentPackage("accesscontroltool-apps-package{runmode}", "3.0.0-4_10_0",
+              dep("adobe/consulting:acs-aem-commons-ui.apps{runmode}:4.10.0")),
+          contentPackage("accesscontroltool-oakindex-package{runmode}", "3.0.0-4_10_0",
+              dep("Netcentric:accesscontroltool-package{runmode}:3.0.0-4_10_0")),
+          contentPackage("core.wcm.components.content{runmode}", "2.17.0-4_10_0",
               dep("day/cq60/product:cq-platform-content:1.3.248"),
-              dep("Netcentric:accesscontroltool-oakindex-package{runmode}:3.0.0-99_99")),
-          contentPackage("core.wcm.components.extensions.amp.content{runmode}", "2.17.0-99_99",
-              dep("Netcentric:accesscontroltool-oakindex-package{runmode}:3.0.0-99_99")),
-          contentPackage("acs-aem-commons-ui.apps{runmode}", "4.10.0-99_99",
+              dep("Netcentric:accesscontroltool-oakindex-package{runmode}:3.0.0-4_10_0")),
+          contentPackage("core.wcm.components.extensions.amp.content{runmode}", "2.17.0-4_10_0",
+              dep("Netcentric:accesscontroltool-oakindex-package{runmode}:3.0.0-4_10_0")),
+          contentPackage("acs-aem-commons-ui.apps{runmode}", "4.10.0",
               dep("day/cq60/product:cq-content:6.3.64")),
           contentPackage("aem-cms-system-config{runmode}",
               dep("day/cq60/product:cq-ui-wcm-editor-content:1.1.224"),
               dep("adobe/cq/product:cq-remotedam-client-ui-components:1.1.6"),
-              dep("adobe/cq60:core.wcm.components.all{runmode}:2.17.0-99_99")),
+              dep("adobe/cq60:core.wcm.components.all{runmode}:2.17.0-4_10_0")),
           file("io.wcm.caconfig.editor-1.11.0.jar"),
           file("io.wcm.wcm.ui.granite-1.9.2.jar"));
     }
@@ -182,9 +182,9 @@ class AllPackageBuilderPackageVersionModeTest {
     for (String runmodeSuffix : runmodeSuffixes) {
       File contentInstallDir = new File(contentDir, "install" + runmodeSuffix);
       assertFiles(contentInstallDir, runmodeSuffix,
-          contentPackage("acs-aem-commons-ui.content{runmode}", "4.10.0-99_99"),
+          contentPackage("acs-aem-commons-ui.content{runmode}", "4.10.0"),
           contentPackage("aem-cms-author-replicationagents{runmode}",
-              dep("adobe/consulting:acs-aem-commons-ui.content{runmode}:4.10.0-99_99")),
+              dep("adobe/consulting:acs-aem-commons-ui.content{runmode}:4.10.0")),
           contentPackage("wcm-io-samples-sample-content{runmode}", "1.3.1-SNAPSHOT",
               dep("wcm-io-samples:aem-cms-author-replicationagents{runmode}:1.3.1-SNAPSHOT")));
     }
@@ -195,12 +195,12 @@ class AllPackageBuilderPackageVersionModeTest {
     for (String runmodeSuffix : runmodeSuffixes) {
       File containerInstallDir = new File(containerDir, "install" + runmodeSuffix);
       assertFiles(containerInstallDir, runmodeSuffix,
-          contentPackage("accesscontroltool-package{runmode}", "3.0.0-99_99",
-              dep("adobe/consulting:acs-aem-commons-ui.apps{runmode}:4.10.0-99_99")),
-          contentPackage("core.wcm.components.all{runmode}", "2.17.0-99_99",
-              dep("Netcentric:accesscontroltool-oakindex-package{runmode}:3.0.0-99_99")),
-          contentPackage("core.wcm.components.config{runmode}", "2.17.0-99_99",
-              dep("Netcentric:accesscontroltool-oakindex-package{runmode}:3.0.0-99_99")),
+          contentPackage("accesscontroltool-package{runmode}", "3.0.0-4_10_0",
+              dep("adobe/consulting:acs-aem-commons-ui.apps{runmode}:4.10.0")),
+          contentPackage("core.wcm.components.all{runmode}", "2.17.0-4_10_0",
+              dep("Netcentric:accesscontroltool-oakindex-package{runmode}:3.0.0-4_10_0")),
+          contentPackage("core.wcm.components.config{runmode}", "2.17.0-4_10_0",
+              dep("Netcentric:accesscontroltool-oakindex-package{runmode}:3.0.0-4_10_0")),
           contentPackage("wcm-io-samples-aem-cms-config{runmode}",
               dep("wcm-io-samples:aem-cms-system-config{runmode}:1.3.1-SNAPSHOT")),
           contentPackage("wcm-io-samples-complete{runmode}", "1.3.1-SNAPSHOT",
@@ -217,7 +217,7 @@ class AllPackageBuilderPackageVersionModeTest {
     AllPackageBuilder builder = new AllPackageBuilder(targetFile, "test-group", "test-pkg")
         .autoDependenciesMode(AutoDependenciesMode.IMMUTABLE_MUTABLE_SEPARATE)
         .packageVersionMode(PackageVersionMode.RELEASE_SUFFIX_VERSION)
-        .version("99.99-SNAPSHOT");
+        .version("4.10.0-SNAPSHOT");
     builder.add(files, Collections.emptySet());
     assertTrue(builder.build(null));
 
@@ -232,21 +232,21 @@ class AllPackageBuilderPackageVersionModeTest {
     for (String runmodeSuffix : runmodeSuffixes) {
       File applicationInstallDir = new File(applicationDir, "install" + runmodeSuffix);
       assertFiles(applicationInstallDir, runmodeSuffix,
-          contentPackage("accesscontroltool-apps-package{runmode}", "3.0.0-99_99-SNAPSHOT",
-              dep("adobe/consulting:acs-aem-commons-ui.apps{runmode}:4.10.0-99_99-SNAPSHOT")),
-          contentPackage("accesscontroltool-oakindex-package{runmode}", "3.0.0-99_99-SNAPSHOT",
-              dep("Netcentric:accesscontroltool-package{runmode}:3.0.0-99_99-SNAPSHOT")),
-          contentPackage("core.wcm.components.content{runmode}", "2.17.0-99_99-SNAPSHOT",
+          contentPackage("accesscontroltool-apps-package{runmode}", "3.0.0-4_10_0-SNAPSHOT",
+              dep("adobe/consulting:acs-aem-commons-ui.apps{runmode}:4.10.0-4_10_0-SNAPSHOT")),
+          contentPackage("accesscontroltool-oakindex-package{runmode}", "3.0.0-4_10_0-SNAPSHOT",
+              dep("Netcentric:accesscontroltool-package{runmode}:3.0.0-4_10_0-SNAPSHOT")),
+          contentPackage("core.wcm.components.content{runmode}", "2.17.0-4_10_0-SNAPSHOT",
               dep("day/cq60/product:cq-platform-content:1.3.248"),
-              dep("Netcentric:accesscontroltool-oakindex-package{runmode}:3.0.0-99_99-SNAPSHOT")),
-          contentPackage("core.wcm.components.extensions.amp.content{runmode}", "2.17.0-99_99-SNAPSHOT",
-              dep("Netcentric:accesscontroltool-oakindex-package{runmode}:3.0.0-99_99-SNAPSHOT")),
-          contentPackage("acs-aem-commons-ui.apps{runmode}", "4.10.0-99_99-SNAPSHOT",
+              dep("Netcentric:accesscontroltool-oakindex-package{runmode}:3.0.0-4_10_0-SNAPSHOT")),
+          contentPackage("core.wcm.components.extensions.amp.content{runmode}", "2.17.0-4_10_0-SNAPSHOT",
+              dep("Netcentric:accesscontroltool-oakindex-package{runmode}:3.0.0-4_10_0-SNAPSHOT")),
+          contentPackage("acs-aem-commons-ui.apps{runmode}", "4.10.0-4_10_0-SNAPSHOT",
               dep("day/cq60/product:cq-content:6.3.64")),
           contentPackage("aem-cms-system-config{runmode}",
               dep("day/cq60/product:cq-ui-wcm-editor-content:1.1.224"),
               dep("adobe/cq/product:cq-remotedam-client-ui-components:1.1.6"),
-              dep("adobe/cq60:core.wcm.components.all{runmode}:2.17.0-99_99-SNAPSHOT")),
+              dep("adobe/cq60:core.wcm.components.all{runmode}:2.17.0-4_10_0-SNAPSHOT")),
           file("io.wcm.caconfig.editor-1.11.0.jar"),
           file("io.wcm.wcm.ui.granite-1.9.2.jar"));
     }
@@ -257,9 +257,9 @@ class AllPackageBuilderPackageVersionModeTest {
     for (String runmodeSuffix : runmodeSuffixes) {
       File contentInstallDir = new File(contentDir, "install" + runmodeSuffix);
       assertFiles(contentInstallDir, runmodeSuffix,
-          contentPackage("acs-aem-commons-ui.content{runmode}", "4.10.0-99_99-SNAPSHOT"),
+          contentPackage("acs-aem-commons-ui.content{runmode}", "4.10.0-4_10_0-SNAPSHOT"),
           contentPackage("aem-cms-author-replicationagents{runmode}",
-              dep("adobe/consulting:acs-aem-commons-ui.content{runmode}:4.10.0-99_99-SNAPSHOT")),
+              dep("adobe/consulting:acs-aem-commons-ui.content{runmode}:4.10.0-4_10_0-SNAPSHOT")),
           contentPackage("wcm-io-samples-sample-content{runmode}", "1.3.1-SNAPSHOT",
               dep("wcm-io-samples:aem-cms-author-replicationagents{runmode}:1.3.1-SNAPSHOT")));
     }
@@ -270,12 +270,12 @@ class AllPackageBuilderPackageVersionModeTest {
     for (String runmodeSuffix : runmodeSuffixes) {
       File containerInstallDir = new File(containerDir, "install" + runmodeSuffix);
       assertFiles(containerInstallDir, runmodeSuffix,
-          contentPackage("accesscontroltool-package{runmode}", "3.0.0-99_99-SNAPSHOT",
-              dep("adobe/consulting:acs-aem-commons-ui.apps{runmode}:4.10.0-99_99-SNAPSHOT")),
-          contentPackage("core.wcm.components.all{runmode}", "2.17.0-99_99-SNAPSHOT",
-              dep("Netcentric:accesscontroltool-oakindex-package{runmode}:3.0.0-99_99-SNAPSHOT")),
-          contentPackage("core.wcm.components.config{runmode}", "2.17.0-99_99-SNAPSHOT",
-              dep("Netcentric:accesscontroltool-oakindex-package{runmode}:3.0.0-99_99-SNAPSHOT")),
+          contentPackage("accesscontroltool-package{runmode}", "3.0.0-4_10_0-SNAPSHOT",
+              dep("adobe/consulting:acs-aem-commons-ui.apps{runmode}:4.10.0-4_10_0-SNAPSHOT")),
+          contentPackage("core.wcm.components.all{runmode}", "2.17.0-4_10_0-SNAPSHOT",
+              dep("Netcentric:accesscontroltool-oakindex-package{runmode}:3.0.0-4_10_0-SNAPSHOT")),
+          contentPackage("core.wcm.components.config{runmode}", "2.17.0-4_10_0-SNAPSHOT",
+              dep("Netcentric:accesscontroltool-oakindex-package{runmode}:3.0.0-4_10_0-SNAPSHOT")),
           contentPackage("wcm-io-samples-aem-cms-config{runmode}",
               dep("wcm-io-samples:aem-cms-system-config{runmode}:1.3.1-SNAPSHOT")),
           contentPackage("wcm-io-samples-complete{runmode}", "1.3.1-SNAPSHOT",
