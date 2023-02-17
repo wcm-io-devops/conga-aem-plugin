@@ -41,6 +41,11 @@
     <url>https://github.com/wcm-io-devops/conga-aem-plugin/actions</url>
   </ciManagement>
   
+  <issueManagement>
+    <system>GitHub</system>
+    <url>https://github.com/wcm-io/conga-aem-plugin/issues/</url>
+  </issueManagement>
+
   <dependencyManagement>
     <dependencies>
     
