@@ -38,7 +38,6 @@
   <description>wcm.io DevOps CONGA - CONfiguration GenerAtor Maven Plugin for AEM</description>
 
   <properties>
-    <maven.version>3.3.9</maven.version>
     <site.url.module.prefix>tooling/conga-aem-maven-plugin</site.url.module.prefix>
 
     <!-- Versions -->

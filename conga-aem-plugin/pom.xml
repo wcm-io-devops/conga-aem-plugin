@@ -79,14 +79,6 @@
       <scope>compile</scope>
       <exclusions>
         <exclusion>
-          <groupId>org.apache.maven</groupId>
-          <artifactId>*</artifactId>
-        </exclusion>
-        <exclusion>
-          <groupId>org.apache.maven.plugin-tools</groupId>
-          <artifactId>*</artifactId>
-        </exclusion>
-        <exclusion>
           <groupId>org.sonatype.plexus</groupId>
           <artifactId>*</artifactId>
         </exclusion>
@@ -160,6 +152,18 @@
     <dependency>
       <groupId>org.apache.jackrabbit</groupId>
       <artifactId>oak-commons</artifactId>
+      <scope>compile</scope>
+    </dependency>
+    <dependency>
+      <groupId>org.apache.maven</groupId>
+      <artifactId>maven-core</artifactId>
+      <version>${maven.version}</version>
+      <scope>compile</scope>
+    </dependency>
+    <dependency>
+      <groupId>org.apache.maven</groupId>
+      <artifactId>maven-plugin-api</artifactId>
+      <version>${maven.version}</version>
       <scope>compile</scope>
     </dependency>
 

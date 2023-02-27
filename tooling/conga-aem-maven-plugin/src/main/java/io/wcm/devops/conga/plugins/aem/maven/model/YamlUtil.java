@@ -21,6 +21,7 @@ package io.wcm.devops.conga.plugins.aem.maven.model;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.yaml.snakeyaml.LoaderOptions;
 import org.yaml.snakeyaml.Yaml;
 import org.yaml.snakeyaml.constructor.Constructor;
 
@@ -46,7 +47,7 @@ final class YamlUtil {
         .logger(log);
 
     // apply YAML plugins for modifying YAML constructor
-    Constructor constructor = new Constructor();
+    Constructor constructor = new Constructor(new LoaderOptions());
     YamlConstructorContext context = new YamlConstructorContext()
         .pluginContextOptions(options)
         .yamlConstructor(constructor);
