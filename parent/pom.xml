@@ -48,6 +48,7 @@
 
   <properties>
     <maven.version>3.3.9</maven.version>
+    <oak.version>1.50.0</oak.version>
   </properties>
 
   <dependencyManagement>
@@ -155,12 +156,12 @@
       <dependency>
         <groupId>org.apache.jackrabbit</groupId>
         <artifactId>oak-security-spi</artifactId>
-        <version>1.50.0</version>
+        <version>${oak.version}</version>
       </dependency>
       <dependency>
         <groupId>org.apache.jackrabbit</groupId>
         <artifactId>oak-commons</artifactId>
-        <version>1.50.0</version>
+        <version>${oak.version}</version>
       </dependency>
 
       <!-- Node type validation -->
