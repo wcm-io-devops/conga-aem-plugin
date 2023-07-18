@@ -20,7 +20,8 @@
 package io.wcm.devops.conga.plugins.aem.maven;
 
 import java.nio.file.attribute.FileTime;
-import java.util.Date;
+import java.time.Instant;
+import java.util.Optional;
 
 import org.apache.maven.archiver.MavenArchiver;
 import org.jetbrains.annotations.Nullable;
@@ -30,29 +31,20 @@ import org.jetbrains.annotations.Nullable;
  */
 public class BuildOutputTimestamp {
 
-  private final Date date;
+  private final Optional<Instant> instant;
 
   /**
    * @param outputTimestamp Configured output timestamp
    */
   public BuildOutputTimestamp(@Nullable String outputTimestamp) {
-    MavenArchiver mavenArchiver = new MavenArchiver();
-    this.date = mavenArchiver.parseOutputTimestamp(outputTimestamp);
+    this.instant = MavenArchiver.parseBuildOutputTimestamp(outputTimestamp);
   }
 
   /**
    * @return true if a valid timestamp is configured
    */
   public boolean isValid() {
-    return date != null;
-  }
-
-  /**
-   * @return Date or null if not a valid date
-   */
-  @Nullable
-  public Date toDate() {
-    return date;
+    return instant.isPresent();
   }
 
   /**
@@ -60,10 +52,10 @@ public class BuildOutputTimestamp {
    */
   @Nullable
   public FileTime toFileTime() {
-    if (date != null) {
-      return FileTime.fromMillis(date.toInstant().getEpochSecond());
-    }
-    return null;
+    return instant
+        .map(Instant::toEpochMilli)
+        .map(FileTime::fromMillis)
+        .orElse(null);
   }
 
 }
