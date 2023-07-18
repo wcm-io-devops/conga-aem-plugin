@@ -32,8 +32,6 @@ import org.apache.maven.plugin.AbstractMojo;
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugins.annotations.Parameter;
 
-import com.google.common.collect.ImmutableSet;
-
 /**
  * Common functionality for mojos that generate configuration ZIP files for Adobe Cloud Manager.
  */
@@ -128,10 +126,10 @@ abstract class AbstractCloudManagerMojo extends AbstractMojo {
 
   private static Set<String> toSet(String[] values) {
     if (values != null) {
-      return ImmutableSet.copyOf(values);
+      return Set.of(values);
     }
     else {
-      return ImmutableSet.of();
+      return Set.of();
     }
   }
 

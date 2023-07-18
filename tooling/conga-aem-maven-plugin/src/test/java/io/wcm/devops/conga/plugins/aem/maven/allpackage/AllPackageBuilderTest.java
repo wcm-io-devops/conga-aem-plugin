@@ -29,6 +29,7 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 import java.io.File;
 import java.io.IOException;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 import java.util.stream.Stream;
 
@@ -39,10 +40,6 @@ import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.MethodSource;
 import org.zeroturnaround.zip.ZipUtil;
-
-import com.google.common.collect.ImmutableList;
-import com.google.common.collect.ImmutableMap;
-import com.google.common.collect.ImmutableSet;
 
 import io.wcm.devops.conga.plugins.aem.maven.AutoDependenciesMode;
 import io.wcm.devops.conga.plugins.aem.maven.model.InstallableFile;
@@ -69,9 +66,9 @@ class AllPackageBuilderTest {
   private static Stream<Arguments> cloudManagerTargetVariants() {
     return Stream.of(
         // test with no environment (=all environments)
-        Arguments.of(ImmutableSet.of(), ImmutableList.of(".author")),
+        Arguments.of(Set.of(), List.of(".author")),
         // test with two environments
-        Arguments.of(ImmutableSet.of("stage", "prod"), ImmutableList.of(".author.stage", ".author.prod")));
+        Arguments.of(Set.of("stage", "prod"), List.of(".author.stage", ".author.prod")));
   }
 
   @ParameterizedTest
@@ -82,7 +79,7 @@ class AllPackageBuilderTest {
 
     AllPackageBuilder builder = new AllPackageBuilder(targetFile, "test-group", "test-pkg");
     builder.add(files, cloudManagerTarget);
-    assertTrue(builder.build(ImmutableMap.of("prop1", "value1")));
+    assertTrue(builder.build(Map.of("prop1", "value1")));
 
     ZipUtil.unpack(targetFile, targetUnpackDir);
 

@@ -64,8 +64,6 @@ import org.apache.maven.plugin.logging.SystemStreamLog;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import com.google.common.collect.ImmutableSet;
-
 import io.wcm.devops.conga.plugins.aem.maven.AutoDependenciesMode;
 import io.wcm.devops.conga.plugins.aem.maven.BuildOutputTimestamp;
 import io.wcm.devops.conga.plugins.aem.maven.PackageTypeValidation;
@@ -113,7 +111,7 @@ public final class AllPackageBuilder {
   private BuildOutputTimestamp buildOutputTimestamp;
 
   private static final String RUNMODE_DEFAULT = "$default$";
-  private static final Set<String> ALLOWED_PACKAGE_TYPES = ImmutableSet.of(
+  private static final Set<String> ALLOWED_PACKAGE_TYPES = Set.of(
       PackageType.APPLICATION.name().toLowerCase(),
       PackageType.CONTAINER.name().toLowerCase(),
       PackageType.CONTENT.name().toLowerCase());
