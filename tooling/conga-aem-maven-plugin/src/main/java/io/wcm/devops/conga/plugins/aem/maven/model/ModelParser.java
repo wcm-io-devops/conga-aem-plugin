@@ -143,7 +143,6 @@ public final class ModelParser {
     return parseYaml(modelFile);
   }
 
-  @SuppressWarnings("unchecked")
   private Map<String, Object> parseYaml(File modelFile) {
     try {
       try (InputStream is = new FileInputStream(modelFile);
