@@ -97,7 +97,7 @@ public final class CloudManagerDispatcherConfigMojo extends AbstractCloudManager
 
       BuildOutputTimestamp buildOutputTimestamp = new BuildOutputTimestamp(outputTimestamp);
       if (buildOutputTimestamp.isValid()) {
-        zipArchiver.configureReproducible(buildOutputTimestamp.toDate());
+        zipArchiver.configureReproducibleBuild(buildOutputTimestamp.toFileTime());
       }
 
       zipArchiver.createArchive();
