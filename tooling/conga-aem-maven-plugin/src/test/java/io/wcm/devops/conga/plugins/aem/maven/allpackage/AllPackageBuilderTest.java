@@ -96,7 +96,8 @@ class AllPackageBuilderTest {
           contentPackage("accesscontroltool-oakindex-package{runmode}", "3.0.0"),
           contentPackage("core.wcm.components.content{runmode}", "2.17.0",
               dep("day/cq60/product:cq-platform-content:1.3.248")),
-          contentPackage("core.wcm.components.extensions.amp.content{runmode}", "2.17.0"),
+          contentPackage("core.wcm.components.extensions.amp.content{runmode}", "2.17.0",
+              dep("adobe/cq60:core.wcm.components.content{runmode}:2.17.0")),
           contentPackage("acs-aem-commons-ui.apps{runmode}", "4.10.0",
               dep("day/cq60/product:cq-content:6.3.64")),
           contentPackage("aem-cms-system-config{runmode}",
@@ -112,7 +113,8 @@ class AllPackageBuilderTest {
     for (String runmodeSuffix : runmodeSuffixes) {
       File contentInstallDir = new File(contentDir, "install" + runmodeSuffix);
       assertFiles(contentInstallDir, runmodeSuffix,
-          contentPackage("acs-aem-commons-ui.content{runmode}", "4.10.0"),
+          contentPackage("acs-aem-commons-ui.content{runmode}", "4.10.0",
+              dep("adobe/consulting:acs-aem-commons-ui.apps{runmode}:4.10.0")),
           contentPackage("aem-cms-author-replicationagents{runmode}"),
           contentPackage("wcm-io-samples-sample-content{runmode}", "1.3.1-SNAPSHOT"));
     }
