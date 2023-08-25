@@ -30,8 +30,8 @@
       <action type="update" dev="sseifert">
         Eliminate usage of Guava.
       </action>
-      <action type="fix" dev="cnagel">
-        conga-aem-maven-plugin: Fix content package dependency rewriting when auto-dependencies-mode is OFF.
+      <action type="fix" dev="cnagel" issue="59">
+        conga-aem-maven-plugin: Fix content package dependency rewriting when autoDependenciesMode=OFF.
       </action>
     </release>
 
