@@ -43,6 +43,7 @@ import java.util.Enumeration;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 import java.util.Properties;
 import java.util.Set;
 import java.util.stream.Collectors;
@@ -63,8 +64,6 @@ import org.apache.maven.plugin.logging.Log;
 import org.apache.maven.plugin.logging.SystemStreamLog;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-
-import com.google.common.collect.ImmutableSet;
 
 import io.wcm.devops.conga.plugins.aem.maven.AutoDependenciesMode;
 import io.wcm.devops.conga.plugins.aem.maven.BuildOutputTimestamp;
@@ -113,7 +112,7 @@ public final class AllPackageBuilder {
   private BuildOutputTimestamp buildOutputTimestamp;
 
   private static final String RUNMODE_DEFAULT = "$default$";
-  private static final Set<String> ALLOWED_PACKAGE_TYPES = ImmutableSet.of(
+  private static final Set<String> ALLOWED_PACKAGE_TYPES = Set.of(
       PackageType.APPLICATION.name().toLowerCase(),
       PackageType.CONTAINER.name().toLowerCase(),
       PackageType.CONTENT.name().toLowerCase());
@@ -600,7 +599,7 @@ public final class AllPackageBuilder {
                 if (autoDependenciesMode == AutoDependenciesMode.OFF) {
                   dependencyFile = null;
                 }
-                updateDependencies(props, dependencyFile, environmentRunMode, allPackagesFromFileSets);
+                updateDependencies(pkg, props, dependencyFile, environmentRunMode, allPackagesFromFileSets);
 
                 // if package type is missing in package properties, put in the type defined in model
                 String packageType = pkg.getPackageType();
@@ -680,28 +679,27 @@ public final class AllPackageBuilder {
 
   /**
    * Add dependency information to dependencies string in properties (if it does not exist already).
+   * @param pkg Current content package
    * @param props Properties
    * @param dependencyFile Dependency package
    * @param allPackagesFromFileSets Set with all packages from all file sets as dependency instances
    */
-  private void updateDependencies(Properties props, ContentPackageFile dependencyFile, String environmentRunMode,
-      Set<Dependency> allPackagesFromFileSets) {
+  private void updateDependencies(ContentPackageFile pkg, Properties props, ContentPackageFile dependencyFile,
+      String environmentRunMode, Set<Dependency> allPackagesFromFileSets) {
     String[] existingDepsStrings = StringUtils.split(props.getProperty(NAME_DEPENDENCIES), ",");
     Dependency[] existingDeps = null;
     if (existingDepsStrings != null && existingDepsStrings.length > 0) {
       existingDeps = Dependency.fromString(existingDepsStrings);
     }
     if (existingDeps != null) {
-      existingDeps = removeReferencesToManagedPackages(existingDeps, allPackagesFromFileSets);
+      existingDeps = autoDependenciesMode == AutoDependenciesMode.OFF
+          ? rewriteReferencesToManagedPackages(pkg, environmentRunMode, allPackagesFromFileSets, existingDeps)
+          : removeReferencesToManagedPackages(existingDeps, allPackagesFromFileSets);
     }
 
     Dependency[] deps;
     if (dependencyFile != null) {
-      String runModeSuffix = buildRunModeSuffix(dependencyFile, environmentRunMode);
-      String dependencyVersion = dependencyFile.getVersion() + buildVersionSuffix(dependencyFile, true);
-      Dependency newDependency = new Dependency(dependencyFile.getGroup(),
-          dependencyFile.getName() + runModeSuffix,
-          VersionRange.fromString(dependencyVersion));
+      Dependency newDependency = createDependencyFromContentPackageFile(dependencyFile, environmentRunMode);
       deps = addDependency(existingDeps, newDependency);
     }
     else {
@@ -712,6 +710,15 @@ public final class AllPackageBuilder {
       String dependenciesString = Dependency.toString(deps);
       props.put(NAME_DEPENDENCIES, dependenciesString);
     }
+  }
+
+  private @NotNull Dependency createDependencyFromContentPackageFile(@NotNull ContentPackageFile dependencyFile,
+      @NotNull String environmentRunMode) {
+    String runModeSuffix = buildRunModeSuffix(dependencyFile, environmentRunMode);
+    String dependencyVersion = dependencyFile.getVersion() + buildVersionSuffix(dependencyFile, true);
+    return new Dependency(dependencyFile.getGroup(),
+        dependencyFile.getName() + runModeSuffix,
+        VersionRange.fromString(dependencyVersion));
   }
 
   private static Dependency[] addDependency(Dependency[] existingDeps, Dependency newDependency) {
@@ -736,6 +743,55 @@ public final class AllPackageBuilder {
     }
     String suffixedVersion = pkg.getVersion() + buildVersionSuffix(pkg, true);
     props.put(NAME_VERSION, suffixedVersion);
+  }
+
+  private @NotNull Dependency[] rewriteReferencesToManagedPackages(@NotNull ContentPackageFile pkg,
+      @NotNull String environmentRunMode, @NotNull Set<Dependency> allPackagesFromFileSets, @NotNull Dependency[] deps) {
+    return Arrays.stream(deps)
+        .map(dep -> rewriteReferenceIfDependencyIsManagedPackage(pkg, environmentRunMode, allPackagesFromFileSets, dep))
+        .toArray(Dependency[]::new);
+  }
+
+  private @NotNull Dependency rewriteReferenceIfDependencyIsManagedPackage(@NotNull ContentPackageFile pkg,
+      @NotNull String environmentRunMode, @NotNull Set<Dependency> allPackagesFromFileSets, @NotNull Dependency dep) {
+    // not a managed package, return as is
+    if (!allPackagesFromFileSets.contains(dep)) {
+      return dep;
+    }
+    return findContentPackageFileForDependency(pkg, dep)
+        // found a content package file for the dependency, rewrite the dependency
+        .map(contentPackageFile -> createDependencyFromContentPackageFile(contentPackageFile, environmentRunMode))
+        // found no content package file for the dependency, use current run mode suffix
+        .orElseGet(() -> createDependencyWithCurrentPackageRunModeSuffix(pkg, environmentRunMode, dep));
+  }
+
+  private @NotNull Optional<ContentPackageFile> findContentPackageFileForDependency(@NotNull ContentPackageFile pkg,
+      @NotNull Dependency dep) {
+    // look for content package in all file sets
+    return contentPackageFileSets.stream()
+            // prefer file set which contains the current package to use current run mode
+            .sorted((fileSet1, fileSet2) -> sortFileSetsContainingPackageFirst(pkg, fileSet1, fileSet2))
+            .flatMap(fileSet -> fileSet.getFiles().stream())
+            .filter(contentPackageFile -> isContentPackageForDependency(contentPackageFile, dep))
+            .findFirst();
+  }
+
+  private int sortFileSetsContainingPackageFirst(@NotNull ContentPackageFile pkg,
+      @NotNull ContentPackageFileSet fileSet1, @NotNull ContentPackageFileSet fileSet2) {
+    int fileSet1ContainsPackage = fileSet1.getFiles().contains(pkg) ? 1 : 0;
+    int fileSet2ContainsPackage = fileSet2.getFiles().contains(pkg) ? 1 : 0;
+    return fileSet2ContainsPackage - fileSet1ContainsPackage;
+  }
+
+  private boolean isContentPackageForDependency(@NotNull ContentPackageFile contentPackageFile, @NotNull Dependency dep) {
+    return contentPackageFile.getGroup().equals(dep.getGroup())
+            && contentPackageFile.getName().equals(dep.getName());
+  }
+
+  private @NotNull Dependency createDependencyWithCurrentPackageRunModeSuffix(@NotNull ContentPackageFile pkg,
+      @NotNull String environmentRunMode, @NotNull Dependency dep) {
+    String runModeSuffix = buildRunModeSuffix(pkg, environmentRunMode);
+    return new Dependency(dep.getGroup(), dep.getName() + runModeSuffix, dep.getRange());
   }
 
   /**

@@ -85,7 +85,8 @@ class AllPackageBuilderAuthorPublishTest {
         contentPackage("accesscontroltool-oakindex-package{runmode}", "3.0.0"),
         contentPackage("core.wcm.components.content{runmode}", "2.17.0",
             dep("day/cq60/product:cq-platform-content:1.3.248")),
-        contentPackage("core.wcm.components.extensions.amp.content{runmode}", "2.17.0"),
+        contentPackage("core.wcm.components.extensions.amp.content{runmode}", "2.17.0",
+            dep("adobe/cq60:core.wcm.components.content{runmode}:2.17.0")),
         contentPackage("acs-aem-commons-ui.apps{runmode}", "4.10.0",
             dep("day/cq60/product:cq-content:6.3.64")),
         contentPackage("aem-cms-system-config{runmode}",
@@ -97,7 +98,8 @@ class AllPackageBuilderAuthorPublishTest {
     assertFiles(applicationInstallDirPublish, ".publish",
         contentPackage("core.wcm.components.content{runmode}", "2.17.0",
             dep("day/cq60/product:cq-platform-content:1.3.248")),
-        contentPackage("core.wcm.components.extensions.amp.content{runmode}", "2.17.0"),
+        contentPackage("core.wcm.components.extensions.amp.content{runmode}", "2.17.0",
+            dep("adobe/cq60:core.wcm.components.content{runmode}:2.17.0")),
         contentPackage("acs-aem-commons-ui.apps{runmode}", "4.10.0",
             dep("day/cq60/product:cq-content:6.3.64")),
         contentPackage("aem-cms-system-config{runmode}",
@@ -110,12 +112,14 @@ class AllPackageBuilderAuthorPublishTest {
 
     File contentInstallDirAuthor = new File(contentDir, "install.author");
     assertFiles(contentInstallDirAuthor, ".author",
-        contentPackage("acs-aem-commons-ui.content{runmode}", "4.10.0"),
+        contentPackage("acs-aem-commons-ui.content{runmode}", "4.10.0",
+            dep("adobe/consulting:acs-aem-commons-ui.apps{runmode}:4.10.0")),
         contentPackage("aem-cms-author-replicationagents{runmode}"),
         contentPackage("wcm-io-samples-sample-content{runmode}", "1.3.1-SNAPSHOT"));
     File contentInstallDirPublish = new File(contentDir, "install.publish");
     assertFiles(contentInstallDirPublish, ".publish",
-        contentPackage("acs-aem-commons-ui.content{runmode}", "4.10.0"),
+        contentPackage("acs-aem-commons-ui.content{runmode}", "4.10.0",
+            dep("adobe/consulting:acs-aem-commons-ui.apps{runmode}:4.10.0")),
         contentPackage("wcm-io-samples-sample-content{runmode}", "1.3.1-SNAPSHOT"),
         contentPackage("aem-cms-publish-sling-mapping{runmode}"));
 
@@ -161,7 +165,8 @@ class AllPackageBuilderAuthorPublishTest {
     assertFiles(applicationInstallDir, "",
         contentPackage("core.wcm.components.content", "2.17.0",
             dep("day/cq60/product:cq-platform-content:1.3.248")),
-        contentPackage("core.wcm.components.extensions.amp.content", "2.17.0"),
+        contentPackage("core.wcm.components.extensions.amp.content", "2.17.0",
+            dep("adobe/cq60:core.wcm.components.content:2.17.0")),
         contentPackage("acs-aem-commons-ui.apps", "4.10.0",
             dep("day/cq60/product:cq-content:6.3.64")),
         contentPackage("aem-cms-system-config",
@@ -179,7 +184,8 @@ class AllPackageBuilderAuthorPublishTest {
 
     File contentInstallDir = new File(contentDir, "install");
     assertFiles(contentInstallDir, "",
-        contentPackage("acs-aem-commons-ui.content", "4.10.0"),
+        contentPackage("acs-aem-commons-ui.content", "4.10.0",
+            dep("adobe/consulting:acs-aem-commons-ui.apps:4.10.0")),
         contentPackage("wcm-io-samples-sample-content", "1.3.1-SNAPSHOT"));
     File contentInstallDirAuthor = new File(contentDir, "install.author");
     assertFiles(contentInstallDirAuthor, ".author",

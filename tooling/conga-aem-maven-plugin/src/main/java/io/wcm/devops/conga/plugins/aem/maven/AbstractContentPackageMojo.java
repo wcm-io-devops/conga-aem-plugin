@@ -22,6 +22,8 @@ package io.wcm.devops.conga.plugins.aem.maven;
 import static io.wcm.tooling.commons.packmgr.install.VendorInstallerFactory.COMPOSUM_URL;
 import static io.wcm.tooling.commons.packmgr.install.VendorInstallerFactory.CRX_URL;
 
+import java.util.List;
+
 import org.apache.commons.lang3.StringUtils;
 import org.apache.maven.execution.MavenSession;
 import org.apache.maven.plugin.AbstractMojo;
@@ -29,8 +31,6 @@ import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugins.annotations.Component;
 import org.apache.maven.plugins.annotations.Parameter;
 import org.apache.maven.settings.crypto.SettingsDecrypter;
-
-import com.google.common.collect.ImmutableList;
 
 import io.wcm.tooling.commons.packmgr.PackageManagerProperties;
 import io.wcm.tooling.commons.packmgr.install.VendorInstallerFactory;
@@ -237,8 +237,8 @@ abstract class AbstractContentPackageMojo extends AbstractMojo {
     props.setRetryDelaySec(this.retryDelay);
     props.setBundleStatusUrl(buildBundleStatusUrl());
     props.setBundleStatusWaitLimitSec(this.bundleStatusWaitLimit);
-    props.setBundleStatusBlacklistBundleNames(ImmutableList.copyOf(this.bundleStatusBlacklistBundleNames));
-    props.setBundleStatusWhitelistBundleNames(ImmutableList.copyOf(this.bundleStatusWhitelistBundleNames));
+    props.setBundleStatusBlacklistBundleNames(List.of(this.bundleStatusBlacklistBundleNames));
+    props.setBundleStatusWhitelistBundleNames(List.of(this.bundleStatusWhitelistBundleNames));
     props.setPackageManagerInstallStatusURL(buildPackageManagerInstallStatusUrl());
     props.setPackageManagerInstallStatusWaitLimitSec(this.packageManagerInstallStatusWaitLimit);
     props.setRelaxedSSLCheck(this.relaxedSSLCheck);

@@ -23,6 +23,18 @@
     xsi:schemaLocation="http://maven.apache.org/changes/1.0.0 https://maven.apache.org/plugins/maven-changes-plugin/xsd/changes-1.0.0.xsd">
   <body>
 
+    <release version="2.19.6" date="2023-08-31">
+      <action type="update" dev="sseifert">
+        Switch to latest Maven APIs to handle build output timestamp.
+      </action>
+      <action type="update" dev="sseifert">
+        Eliminate usage of Guava.
+      </action>
+      <action type="fix" dev="cnagel" issue="59">
+        conga-aem-maven-plugin: Fix content package dependency rewriting when autoDependenciesMode=OFF.
+      </action>
+    </release>
+
     <release version="2.19.4" date="2023-03-27">
       <action type="update" dev="sseifert">
         Update to SnakeYAML 2.0.

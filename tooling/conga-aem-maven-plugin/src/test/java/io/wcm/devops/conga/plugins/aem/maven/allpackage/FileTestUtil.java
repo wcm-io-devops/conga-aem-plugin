@@ -36,9 +36,6 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.w3c.dom.Document;
 
-import com.google.common.collect.ImmutableSet;
-import com.google.common.collect.ImmutableSortedSet;
-
 public final class FileTestUtil {
 
   private FileTestUtil() {
@@ -78,7 +75,7 @@ public final class FileTestUtil {
         .map(file -> file.getFileName(runmodeSuffix))
         .collect(Collectors.toCollection(TreeSet::new));
     String[] fileNames = dir.list();
-    Set<String> actualFileNames = fileNames != null ? ImmutableSortedSet.copyOf(fileNames) : ImmutableSet.of();
+    Set<String> actualFileNames = fileNames != null ? new TreeSet<>(Set.of(fileNames)) : Set.of();
     assertEquals(expectedFileNames, actualFileNames, "files in " + dir.getPath());
 
     // extra check for content packages
@@ -118,7 +115,7 @@ public final class FileTestUtil {
   public static void assertDirectories(File dir, String... fileNames) {
     assertTrue(dir.exists(), "directory exists: " + dir.getPath());
     assertTrue(dir.isDirectory(), "is directory: " + dir.getPath());
-    Set<String> expectedDirectoryNames = ImmutableSet.copyOf(fileNames);
+    Set<String> expectedDirectoryNames = Set.of(fileNames);
     Set<String> actualDirectoryNames = Collections.emptySet();
     File[] files = dir.listFiles();
     if (files != null) {
