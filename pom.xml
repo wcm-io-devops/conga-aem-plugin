@@ -23,13 +23,13 @@
   <parent>
     <groupId>io.wcm.devops.conga.plugins</groupId>
     <artifactId>io.wcm.devops.conga.plugins.aem.parent</artifactId>
-    <version>2.19.6</version>
+    <version>2.19.7-SNAPSHOT</version>
     <relativePath>parent/pom.xml</relativePath>
   </parent>
 
   <groupId>io.wcm.devops.conga.plugins</groupId>
   <artifactId>io.wcm.devops.conga.plugins.aem.root</artifactId>
-  <version>2.19.6</version>
+  <version>2.19.7-SNAPSHOT</version>
   <packaging>pom</packaging>
 
   <name>CONGA AEM Plugin</name>
