@@ -57,12 +57,12 @@
       <dependency>
         <groupId>io.wcm.devops.conga</groupId>
         <artifactId>io.wcm.devops.conga.generator</artifactId>
-        <version>1.15.0</version>
+        <version>1.16.2</version>
       </dependency>
       <dependency>
         <groupId>io.wcm.devops.conga</groupId>
         <artifactId>conga-maven-plugin</artifactId>
-        <version>1.15.0</version>
+        <version>1.16.2</version>
       </dependency>
   
       <dependency>
