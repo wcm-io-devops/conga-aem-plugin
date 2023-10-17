@@ -43,7 +43,7 @@
   
   <issueManagement>
     <system>GitHub</system>
-    <url>https://github.com/wcm-io/conga-aem-plugin/issues/</url>
+    <url>https://github.com/wcm-io-devops/conga-aem-plugin/issues/</url>
   </issueManagement>
 
   <properties>
