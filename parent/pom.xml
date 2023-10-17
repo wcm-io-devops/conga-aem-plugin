@@ -162,7 +162,7 @@
       <dependency>
         <groupId>biz.netcentric.aem</groupId>
         <artifactId>aem-nodetypes</artifactId>
-        <version>2022.10.0</version>
+        <version>2023.10.0</version>
       </dependency>
       <dependency>
         <groupId>io.wcm.tooling.nodetypes</groupId>
