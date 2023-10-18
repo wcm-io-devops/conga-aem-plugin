@@ -23,6 +23,12 @@
     xsi:schemaLocation="http://maven.apache.org/changes/1.0.0 https://maven.apache.org/plugins/maven-changes-plugin/xsd/changes-1.0.0.xsd">
   <body>
 
+    <release version="2.19.8" date="not released">
+      <action type="fix" dev="trichter">
+        Increase SnakeYAML codepoint limit to 64MB (from default 3MB).
+      </action>
+    </release>
+
     <release version="2.19.6" date="2023-08-31">
       <action type="update" dev="sseifert">
         Switch to latest Maven APIs to handle build output timestamp.

@@ -47,7 +47,7 @@ final class YamlUtil {
         .logger(log);
 
     // apply YAML plugins for modifying YAML constructor
-    Constructor constructor = new Constructor(new LoaderOptions());
+    Constructor constructor = new Constructor(io.wcm.devops.conga.model.util.YamlUtil.createLoaderOptions());
     YamlConstructorContext context = new YamlConstructorContext()
         .pluginContextOptions(options)
         .yamlConstructor(constructor);
