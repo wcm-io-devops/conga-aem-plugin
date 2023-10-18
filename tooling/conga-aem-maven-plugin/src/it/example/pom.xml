@@ -26,7 +26,7 @@
   <parent>
     <groupId>io.wcm.maven</groupId>
     <artifactId>io.wcm.maven.global-parent</artifactId>
-    <version>44</version>
+    <version>54</version>
     <relativePath/>
   </parent>
 
@@ -46,6 +46,7 @@
       <artifactId>io.wcm.caconfig.editor.package</artifactId>
       <version>1.12.0</version>
       <type>zip</type>
+      <scope>compile</scope>
     </dependency>
     
     <!-- ACS AEM Commons -->
@@ -73,7 +74,7 @@
       <plugin>
         <groupId>io.wcm.devops.conga</groupId>
         <artifactId>conga-maven-plugin</artifactId>
-        <version>1.16.2</version>
+        <version>1.16.4</version>
         <extensions>true</extensions>
         <dependencies>
 
