@@ -80,13 +80,6 @@
     </dependency>
     <dependency>
       <groupId>io.wcm</groupId>
-      <artifactId>io.wcm.caconfig.editor</artifactId>
-      <classifier>content</classifier>
-      <type>zip</type>
-      <scope>compile</scope>
-    </dependency>
-    <dependency>
-      <groupId>io.wcm</groupId>
       <artifactId>io.wcm.sling.commons</artifactId>
       <scope>compile</scope>
     </dependency>
@@ -102,21 +95,7 @@
     </dependency>
     <dependency>
       <groupId>io.wcm</groupId>
-      <artifactId>io.wcm.wcm.commons</artifactId>
-      <classifier>content</classifier>
-      <type>zip</type>
-      <scope>compile</scope>
-    </dependency>
-    <dependency>
-      <groupId>io.wcm</groupId>
       <artifactId>io.wcm.wcm.parsys</artifactId>
-      <scope>compile</scope>
-    </dependency>
-    <dependency>
-      <groupId>io.wcm</groupId>
-      <artifactId>io.wcm.wcm.parsys</artifactId>
-      <classifier>content</classifier>
-      <type>zip</type>
       <scope>compile</scope>
     </dependency>
     <dependency>
@@ -126,21 +105,7 @@
     </dependency>
     <dependency>
       <groupId>io.wcm</groupId>
-      <artifactId>io.wcm.wcm.ui.granite</artifactId>
-      <classifier>content</classifier>
-      <type>zip</type>
-      <scope>compile</scope>
-    </dependency>
-    <dependency>
-      <groupId>io.wcm</groupId>
       <artifactId>io.wcm.wcm.ui.clientlibs</artifactId>
-      <scope>compile</scope>
-    </dependency>
-    <dependency>
-      <groupId>io.wcm</groupId>
-      <artifactId>io.wcm.wcm.ui.clientlibs</artifactId>
-      <classifier>content</classifier>
-      <type>zip</type>
       <scope>compile</scope>
     </dependency>
     <dependency>
@@ -155,21 +120,7 @@
     </dependency>
     <dependency>
       <groupId>io.wcm</groupId>
-      <artifactId>io.wcm.handler.url</artifactId>
-      <classifier>content</classifier>
-      <type>zip</type>
-      <scope>compile</scope>
-    </dependency>
-    <dependency>
-      <groupId>io.wcm</groupId>
       <artifactId>io.wcm.handler.media</artifactId>
-      <scope>compile</scope>
-    </dependency>
-    <dependency>
-      <groupId>io.wcm</groupId>
-      <artifactId>io.wcm.handler.media</artifactId>
-      <classifier>content</classifier>
-      <type>zip</type>
       <scope>compile</scope>
     </dependency>
     <dependency>
@@ -179,33 +130,12 @@
     </dependency>
     <dependency>
       <groupId>io.wcm</groupId>
-      <artifactId>io.wcm.handler.link</artifactId>
-      <classifier>content</classifier>
-      <type>zip</type>
-      <scope>compile</scope>
-    </dependency>
-    <dependency>
-      <groupId>io.wcm</groupId>
       <artifactId>io.wcm.handler.richtext</artifactId>
       <scope>compile</scope>
     </dependency>
     <dependency>
       <groupId>io.wcm</groupId>
-      <artifactId>io.wcm.handler.richtext</artifactId>
-      <classifier>content</classifier>
-      <type>zip</type>
-      <scope>compile</scope>
-    </dependency>
-    <dependency>
-      <groupId>io.wcm</groupId>
       <artifactId>io.wcm.wcm.core.components</artifactId>
-      <scope>compile</scope>
-    </dependency>
-    <dependency>
-      <groupId>io.wcm</groupId>
-      <artifactId>io.wcm.wcm.core.components</artifactId>
-      <classifier>content</classifier>
-      <type>zip</type>
       <scope>compile</scope>
     </dependency>
 

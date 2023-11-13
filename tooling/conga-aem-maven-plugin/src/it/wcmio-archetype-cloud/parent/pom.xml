@@ -5,7 +5,7 @@
   <parent>
     <groupId>io.wcm.maven</groupId>
     <artifactId>io.wcm.maven.aem-global-parent</artifactId>
-    <version>2.0.16</version>
+    <version>2.1.10</version>
     <relativePath/>
   </parent>
 
@@ -29,7 +29,7 @@
     <eclipse.settings.nullanalysis>enabled</eclipse.settings.nullanalysis>
 
     <!-- Versions -->
-    <acs.aem.commons.version>5.3.2</acs.aem.commons.version>
+    <acs.aem.commons.version>6.3.0</acs.aem.commons.version>
 
     <!-- Enable reproducible builds -->
     <project.build.outputTimestamp>2021-01-01T00:00:00Z</project.build.outputTimestamp>
@@ -83,24 +83,17 @@
       <dependency>
         <groupId>io.wcm</groupId>
         <artifactId>io.wcm.caconfig.extensions</artifactId>
-        <version>1.9.0</version>
+        <version>1.9.4</version>
       </dependency>
       <dependency>
         <groupId>io.wcm</groupId>
         <artifactId>io.wcm.caconfig.editor</artifactId>
-        <version>1.13.0</version>
-      </dependency>
-      <dependency>
-        <groupId>io.wcm</groupId>
-        <artifactId>io.wcm.caconfig.editor</artifactId>
-        <version>1.13.0</version>
-        <classifier>content</classifier>
-        <type>zip</type>
+        <version>1.15.6</version>
       </dependency>
       <dependency>
         <groupId>io.wcm</groupId>
         <artifactId>io.wcm.sling.commons</artifactId>
-        <version>1.5.0</version>
+        <version>1.6.4</version>
       </dependency>
       <dependency>
         <groupId>io.wcm</groupId>
@@ -110,127 +103,64 @@
       <dependency>
         <groupId>io.wcm</groupId>
         <artifactId>io.wcm.wcm.commons</artifactId>
-        <version>1.9.0</version>
-      </dependency>
-      <dependency>
-        <groupId>io.wcm</groupId>
-        <artifactId>io.wcm.wcm.commons</artifactId>
-        <version>1.9.0</version>
-        <classifier>content</classifier>
-        <type>zip</type>
+        <version>1.10.0</version>
       </dependency>
       <dependency>
         <groupId>io.wcm</groupId>
         <artifactId>io.wcm.wcm.parsys</artifactId>
-        <version>1.6.8</version>
-      </dependency>
-      <dependency>
-        <groupId>io.wcm</groupId>
-        <artifactId>io.wcm.wcm.parsys</artifactId>
-        <version>1.6.8</version>
-        <classifier>content</classifier>
-        <type>zip</type>
+        <version>1.7.0</version>
       </dependency>
       <dependency>
         <groupId>io.wcm</groupId>
         <artifactId>io.wcm.wcm.ui.granite</artifactId>
-        <version>1.9.8</version>
-      </dependency>
-      <dependency>
-        <groupId>io.wcm</groupId>
-        <artifactId>io.wcm.wcm.ui.granite</artifactId>
-        <version>1.9.8</version>
-        <classifier>content</classifier>
-        <type>zip</type>
+        <version>1.9.14</version>
       </dependency>
       <dependency>
         <groupId>io.wcm</groupId>
         <artifactId>io.wcm.wcm.ui.clientlibs</artifactId>
         <version>1.2.2</version>
-      </dependency>
-      <dependency>
-        <groupId>io.wcm</groupId>
-        <artifactId>io.wcm.wcm.ui.clientlibs</artifactId>
-        <version>1.2.2</version>
-        <classifier>content</classifier>
-        <type>zip</type>
       </dependency>
       <dependency>
         <groupId>io.wcm</groupId>
         <artifactId>io.wcm.handler.commons</artifactId>
-        <version>1.4.4</version>
+        <version>1.5.0</version>
       </dependency>
       <dependency>
         <groupId>io.wcm</groupId>
         <artifactId>io.wcm.handler.url</artifactId>
-        <version>1.9.0</version>
-      </dependency>
-      <dependency>
-        <groupId>io.wcm</groupId>
-        <artifactId>io.wcm.handler.url</artifactId>
-        <version>1.9.0</version>
-        <classifier>content</classifier>
-        <type>zip</type>
+        <version>1.10.2</version>
       </dependency>
       <dependency>
         <groupId>io.wcm</groupId>
         <artifactId>io.wcm.handler.media</artifactId>
-        <version>1.14.12</version>
-      </dependency>
-      <dependency>
-        <groupId>io.wcm</groupId>
-        <artifactId>io.wcm.handler.media</artifactId>
-        <version>1.14.12</version>
-        <classifier>content</classifier>
-        <type>zip</type>
+        <version>1.15.8</version>
       </dependency>
       <dependency>
         <groupId>io.wcm</groupId>
         <artifactId>io.wcm.handler.link</artifactId>
-        <version>1.9.2</version>
-      </dependency>
-      <dependency>
-        <groupId>io.wcm</groupId>
-        <artifactId>io.wcm.handler.link</artifactId>
-        <version>1.9.2</version>
-        <classifier>content</classifier>
-        <type>zip</type>
+        <version>1.10.2</version>
       </dependency>
       <dependency>
         <groupId>io.wcm</groupId>
         <artifactId>io.wcm.handler.richtext</artifactId>
-        <version>1.6.0</version>
-      </dependency>
-      <dependency>
-        <groupId>io.wcm</groupId>
-        <artifactId>io.wcm.handler.richtext</artifactId>
-        <version>1.6.0</version>
-        <classifier>content</classifier>
-        <type>zip</type>
+        <version>1.6.4</version>
       </dependency>
       <dependency>
         <groupId>io.wcm</groupId>
         <artifactId>io.wcm.wcm.core.components</artifactId>
-        <version>1.12.0-2.20.0</version>
-      </dependency>
-      <dependency>
-        <groupId>io.wcm</groupId>
-        <artifactId>io.wcm.wcm.core.components</artifactId>
-        <version>1.12.0-2.20.0</version>
-        <classifier>content</classifier>
-        <type>zip</type>
+        <version>1.14.0-2.23.2</version>
       </dependency>
       <dependency>
         <groupId>io.wcm.devops.conga.definitions</groupId>
         <artifactId>io.wcm.devops.conga.definitions.aem</artifactId>
-        <version>1.13.0</version>
+        <version>2.0.2</version>
       </dependency>
 
       <!-- wcm.io Testing -->
       <dependency>
         <groupId>io.wcm</groupId>
         <artifactId>io.wcm.testing.aem-mock.junit5</artifactId>
-        <version>5.1.0</version>
+        <version>5.4.0</version>
       </dependency>
       <dependency>
         <groupId>org.apache.sling</groupId>
@@ -240,7 +170,7 @@
       <dependency>
         <groupId>org.apache.sling</groupId>
         <artifactId>org.apache.sling.testing.caconfig-mock-plugin</artifactId>
-        <version>1.4.0</version>
+        <version>1.5.2</version>
       </dependency>
       <dependency>
         <groupId>io.wcm</groupId>
@@ -250,7 +180,7 @@
       <dependency>
         <groupId>io.wcm</groupId>
         <artifactId>io.wcm.testing.wcm-io-mock.sling</artifactId>
-        <version>1.1.0</version>
+        <version>1.2.0</version>
       </dependency>
       <dependency>
         <groupId>io.wcm</groupId>
@@ -267,7 +197,7 @@
       <dependency>
         <groupId>io.wcm.maven</groupId>
         <artifactId>io.wcm.maven.aem-cloud-dependencies</artifactId>
-        <version>2022.10.9145.20221006T013555Z-220800.0000</version>
+        <version>2023.11.14227.20231108T162349Z-231000.0000</version>
         <type>pom</type>
         <scope>import</scope>
       </dependency>
@@ -295,19 +225,19 @@
       <dependency>
         <groupId>org.junit</groupId>
         <artifactId>junit-bom</artifactId>
-        <version>5.9.1</version>
+        <version>5.10.1</version>
         <type>pom</type>
         <scope>import</scope>
       </dependency>
       <dependency>
         <groupId>org.mockito</groupId>
         <artifactId>mockito-core</artifactId>
-        <version>4.8.0</version>
+        <version>5.7.0</version>
       </dependency>
       <dependency>
         <groupId>org.mockito</groupId>
         <artifactId>mockito-junit-jupiter</artifactId>
-        <version>4.8.0</version>
+        <version>5.7.0</version>
       </dependency>
 
     </dependencies>
