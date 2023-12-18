@@ -93,6 +93,20 @@
     instance.type="publish"
 
 
+# Example configurations with combination of run modes and environments
+[configurations runModes=publish,stage]
+  io.wcm.caconfig.editor.impl.EditorConfig
+    enabled=B"false"
+
+[configurations runModes=publish,prod]
+  io.wcm.caconfig.editor.impl.EditorConfig
+    enabled=B"false"
+
+[configurations runModes=publish,dev]
+  io.wcm.caconfig.editor.impl.EditorConfig
+    enabled=B"false"
+
+
 [:repoinit]
 # Create root folder below /apps for application
 create path /apps/wcmio-archetype-cloud(sling:Folder)
