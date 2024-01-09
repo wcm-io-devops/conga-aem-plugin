@@ -34,14 +34,14 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.io.ByteArrayInputStream;
 import java.io.File;
-import java.io.IOException;
 import java.io.InputStream;
+import java.io.InputStreamReader;
 import java.nio.charset.StandardCharsets;
 import java.util.Dictionary;
 import java.util.Map;
 
 import org.apache.commons.io.FileUtils;
-import org.apache.felix.cm.file.ConfigurationHandler;
+import org.apache.felix.cm.json.io.Configurations;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.slf4j.LoggerFactory;
@@ -103,24 +103,9 @@ class ContentPackageOsgiConfigPostProcessorTest {
     File zipFile = new File(target, "test.zip");
     assertTrue(zipFile.exists());
 
-    try (InputStream is = new ByteArrayInputStream(getDataFromZip(zipFile, "jcr_root/apps/test/config/my.pid.config"))) {
-
-      // check for initial comment line
-      is.mark(256);
-      final int firstChar = is.read();
-      if (firstChar == '#') {
-        int b;
-        while ((b = is.read()) != '\n') {
-          if (b == -1) {
-            throw new IOException("Unable to read configuration.");
-          }
-        }
-      }
-      else {
-        is.reset();
-      }
-
-      Dictionary<?, ?> config = ConfigurationHandler.read(is);
+    try (InputStream is = new ByteArrayInputStream(getDataFromZip(zipFile, "jcr_root/apps/test/config/my.pid.cfg.json"));
+        InputStreamReader reader = new InputStreamReader(is, StandardCharsets.UTF_8)) {
+      Dictionary<?, ?> config = Configurations.buildReader().build(reader).readConfiguration();
       assertEquals("value1", config.get("stringProperty"));
       assertArrayEquals(new String[] {
           "v1", "v2", "v3"
@@ -129,9 +114,9 @@ class ContentPackageOsgiConfigPostProcessorTest {
       assertEquals(999999999999L, config.get("longProperty"));
     }
 
-    assertTrue(ZipUtil.containsEntry(zipFile, "jcr_root/apps/test/config/my.factory-my.pid.config"));
-    assertTrue(ZipUtil.containsEntry(zipFile, "jcr_root/apps/test/config.mode1/my.factory-my.pid2.config"));
-    assertTrue(ZipUtil.containsEntry(zipFile, "jcr_root/apps/test/config.mode2/my.pid2.config"));
+    assertTrue(ZipUtil.containsEntry(zipFile, "jcr_root/apps/test/config/my.factory-my.pid.cfg.json"));
+    assertTrue(ZipUtil.containsEntry(zipFile, "jcr_root/apps/test/config.mode1/my.factory-my.pid2.cfg.json"));
+    assertTrue(ZipUtil.containsEntry(zipFile, "jcr_root/apps/test/config.mode2/my.pid2.cfg.json"));
 
     Document filterXml = getXmlFromZip(zipFile, "META-INF/vault/filter.xml");
     assertXpathEvaluatesTo("/apps/test/config", "/workspaceFilter/filter[1]/@root", filterXml);
