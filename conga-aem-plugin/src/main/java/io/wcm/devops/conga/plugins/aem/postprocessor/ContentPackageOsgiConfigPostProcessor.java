@@ -151,7 +151,7 @@ public class ContentPackageOsgiConfigPostProcessor extends AbstractPostProcessor
         context.getLogger().info("  Include " + contentPath);
 
         // write configuration to temporary file
-        File tempFile = File.createTempFile(NAME, ".config");
+        File tempFile = File.createTempFile(NAME, ".cfg.json");
         try (OutputStream os = new FileOutputStream(tempFile)) {
           OsgiConfigUtil.write(os, properties);
         }
