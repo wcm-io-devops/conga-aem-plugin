@@ -24,7 +24,7 @@
   <body>
 
     <release version="2.20.0" date="not released">
-      <action type="update" dev="sseifert">
+      <action type="update" dev="sseifert" issue="85">
         ContentPackageOsgiConfigPostProcessor: Write OSGi configurations as .cfg.json files instead of .config files.
       </action>
     </release>
