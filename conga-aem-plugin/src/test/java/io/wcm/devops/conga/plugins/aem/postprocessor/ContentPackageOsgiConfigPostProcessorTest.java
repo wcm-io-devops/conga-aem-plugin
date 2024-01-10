@@ -48,8 +48,6 @@ import org.slf4j.LoggerFactory;
 import org.w3c.dom.Document;
 import org.zeroturnaround.zip.ZipUtil;
 
-import com.google.common.collect.ImmutableMap;
-
 import io.wcm.devops.conga.generator.spi.PostProcessorPlugin;
 import io.wcm.devops.conga.generator.spi.context.FileContext;
 import io.wcm.devops.conga.generator.spi.context.PluginContextOptions;
@@ -61,7 +59,7 @@ class ContentPackageOsgiConfigPostProcessorTest {
 
   private PostProcessorPlugin underTest;
 
-  private static final Map<String, Object> PACKAGE_OPTIONS = ImmutableMap.<String, Object>of(
+  private static final Map<String, Object> PACKAGE_OPTIONS = Map.of(
       PROPERTY_PACKAGE_GROUP, "myGroup",
       PROPERTY_PACKAGE_NAME, "myName",
       PROPERTY_PACKAGE_DESCRIPTION, "myDesc",
@@ -74,15 +72,33 @@ class ContentPackageOsgiConfigPostProcessorTest {
   }
 
   @Test
-  void testPostProcess() throws Exception {
+  void testPostProcess_Provisioning() throws Exception {
     // prepare provisioning file
-    File target = new File("target/" + ContentPackageOsgiConfigPostProcessor.NAME + "-test");
+    File target = new File("target/" + ContentPackageOsgiConfigPostProcessor.NAME + "-provisioning");
     if (target.exists()) {
       FileUtils.deleteDirectory(target);
     }
     File contentPackageFile = new File(target, "test.txt");
     FileUtils.copyFile(new File(getClass().getResource("/provisioning/provisioning.txt").toURI()), contentPackageFile);
 
+    postProcess_assertResult(target, contentPackageFile, "myDesc\n---\nSample comment in provisioning.txt");
+  }
+
+  @Test
+  void testPostProcess_JSON() throws Exception {
+    // prepare provisioning file
+    File target = new File("target/" + ContentPackageOsgiConfigPostProcessor.NAME + "-json");
+    if (target.exists()) {
+      FileUtils.deleteDirectory(target);
+    }
+    File contentPackageFile = new File(target, "test.osgiconfig.json");
+    FileUtils.copyFile(new File(getClass().getResource("/osgi-config-json/sample.osgiconfig.json").toURI()), contentPackageFile);
+
+    postProcess_assertResult(target, contentPackageFile, "myDesc");
+  }
+
+  private void postProcess_assertResult(File target, File contentPackageFile,
+      String expectedPackageDescriptionProperty) throws Exception {
     // post-process
     FileContext fileContext = new FileContext()
         .file(contentPackageFile)
@@ -124,7 +140,7 @@ class ContentPackageOsgiConfigPostProcessorTest {
     Document propsXml = getXmlFromZip(zipFile, "META-INF/vault/properties.xml");
     assertXpathEvaluatesTo("myGroup", "/properties/entry[@key='group']", propsXml);
     assertXpathEvaluatesTo("myName", "/properties/entry[@key='name']", propsXml);
-    assertXpathEvaluatesTo("myDesc\n---\nSample comment in provisioning.txt", "/properties/entry[@key='description']", propsXml);
+    assertXpathEvaluatesTo(expectedPackageDescriptionProperty, "/properties/entry[@key='description']", propsXml);
     assertXpathEvaluatesTo("1.5", "/properties/entry[@key='version']", propsXml);
     assertXpathEvaluatesTo("container", "/properties/entry[@key='packageType']", propsXml);
 
@@ -134,13 +150,30 @@ class ContentPackageOsgiConfigPostProcessorTest {
   @Test
   void testPostProcess_EmptyProvisioning() throws Exception {
     // prepare provisioning file
-    File target = new File("target/" + ContentPackageOsgiConfigPostProcessor.NAME + "-test-empty");
+    File target = new File("target/" + ContentPackageOsgiConfigPostProcessor.NAME + "-empty-provisioning");
     if (target.exists()) {
       FileUtils.deleteDirectory(target);
     }
     File contentPackageFile = new File(target, "test.txt");
     FileUtils.copyFile(new File(getClass().getResource("/provisioning/provisioning_empty.txt").toURI()), contentPackageFile);
 
+    postProcess_Empty_assertResult(target, contentPackageFile);
+  }
+
+  @Test
+  void testPostProcess_EmptyJSON() throws Exception {
+    // prepare provisioning file
+    File target = new File("target/" + ContentPackageOsgiConfigPostProcessor.NAME + "-empty-json");
+    if (target.exists()) {
+      FileUtils.deleteDirectory(target);
+    }
+    File contentPackageFile = new File(target, "test.osgiconfig.json");
+    FileUtils.copyFile(new File(getClass().getResource("/osgi-config-json/sample_empty.osgiconfig.json").toURI()), contentPackageFile);
+
+    postProcess_Empty_assertResult(target, contentPackageFile);
+  }
+
+  private void postProcess_Empty_assertResult(File target, File contentPackageFile) throws Exception {
     // post-process
     FileContext fileContext = new FileContext()
         .file(contentPackageFile)
