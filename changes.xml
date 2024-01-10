@@ -27,6 +27,10 @@
       <action type="update" dev="sseifert" issue="85">
         ContentPackageOsgiConfigPostProcessor: Write OSGi configurations as .cfg.json files instead of .config files.
       </action>
+      <action type="update" dev="sseifert" issue="86"><![CDATA[
+        ContentPackageOsgiConfigPostProcessor: Accept both <a href="https://devops.wcm.io/conga/plugins/sling//osgi-config-combined-json.html">Combined JSON files</a>
+        and Sling Provisioning File Format as input for generating OSGi configurations.
+      ]]></action>
     </release>
 
     <release version="2.19.10" date="2023-12-18">

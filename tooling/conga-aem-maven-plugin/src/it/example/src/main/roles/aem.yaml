@@ -23,6 +23,23 @@ files:
       filters:
       - filter: /apps/sample
 
+# Define a AEM content package containing OSGi configurations from a JSON file
+- file: config-sample.osgiconfig.json
+  dir: packages
+  template: config-sample.osgiconfig.json.hbs
+  # Transform OSGi configs from provisoning file to AEM content package
+  postProcessors:
+  - aem-contentpackage-osgiconfig
+  postProcessorOptions:
+    contentPackage:
+      name: config-sample-from-json
+      packageType: container
+      description: The description of the sample package.
+      version: "${version}"
+      rootPath: /apps/sample/config
+      filters:
+      - filter: /apps/sample
+
 # Define a AEM content package with some JCR content (Sling Mapping Example)
 - file: sling-mapping.json
   dir: packages
