@@ -4,8 +4,13 @@
 
   my.pid
     heapspaceMax="{{jvm.heapspace.max}}"
+    booleanProp=B"true"
+    numberProp=I"123"
+    arrayProp=["v1","v2","v3"]
+    numberArrayProp=I["1","2"]
 
 [configurations runModes=mode1]
 
   my.pid2
     stringProperty="{{var1}}"
+    stringProperty2="{{var2}}"
