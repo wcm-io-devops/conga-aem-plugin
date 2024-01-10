@@ -29,8 +29,6 @@ import java.util.Map;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 
-import com.google.common.collect.ImmutableList;
-
 import io.wcm.devops.conga.generator.GeneratorException;
 import io.wcm.devops.conga.generator.plugins.postprocessor.AbstractPostProcessor;
 import io.wcm.devops.conga.generator.spi.ImplicitApplyOptions;
@@ -103,7 +101,7 @@ public class ContentPackagePropertiesPostProcessor extends AbstractPostProcessor
       throw new GeneratorException("Unable to extract properties from AEM package " + fileContext.getCanonicalPath(), ex);
     }
 
-    return ImmutableList.of();
+    return List.of();
   }
 
 }

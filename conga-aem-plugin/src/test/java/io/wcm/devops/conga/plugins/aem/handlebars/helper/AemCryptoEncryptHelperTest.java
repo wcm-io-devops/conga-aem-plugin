@@ -30,11 +30,10 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.io.IOException;
+import java.util.Map;
 
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-
-import com.google.common.collect.ImmutableMap;
 
 import io.wcm.devops.conga.generator.UrlFileManager;
 import io.wcm.devops.conga.generator.spi.context.PluginContextOptions;
@@ -82,7 +81,7 @@ class AemCryptoEncryptHelperTest {
   @Test
   void testWithoutKey_Skip() throws Exception {
     pluginContext.getGenericPluginConfig().put(PLUGIN_NAME,
-        ImmutableMap.of(PARAMETER_CRYPTO_SKIP, true));
+        Map.of(PARAMETER_CRYPTO_SKIP, true));
 
     assertHelper(INPUT, helper, INPUT, new MockOptions(), pluginContext);
   }
@@ -90,7 +89,7 @@ class AemCryptoEncryptHelperTest {
   @Test
   void testEncrypt() throws Exception {
     pluginContext.getGenericPluginConfig().put(PLUGIN_NAME,
-        ImmutableMap.of(PARAMETER_CRYPTO_AES_KEY_URL, "classpath:/crypto/master"));
+        Map.of(PARAMETER_CRYPTO_AES_KEY_URL, "classpath:/crypto/master"));
 
     String encrypted = (String)executeHelper(helper, INPUT, new MockOptions(), pluginContext);
     assertTrue(CryptoString.isCryptoString(encrypted));
@@ -99,7 +98,7 @@ class AemCryptoEncryptHelperTest {
   @Test
   void testEncrypt_Skip() throws Exception {
     pluginContext.getGenericPluginConfig().put(PLUGIN_NAME,
-        ImmutableMap.of(PARAMETER_CRYPTO_AES_KEY_URL, "classpath:/crypto/master",
+        Map.of(PARAMETER_CRYPTO_AES_KEY_URL, "classpath:/crypto/master",
             PARAMETER_CRYPTO_SKIP, "true"));
 
     assertHelper(INPUT, helper, INPUT, new MockOptions(), pluginContext);

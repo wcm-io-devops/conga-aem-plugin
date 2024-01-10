@@ -29,7 +29,6 @@ import org.apache.commons.lang3.StringUtils;
 import com.github.jknack.handlebars.Context;
 import com.github.jknack.handlebars.Options;
 import com.github.jknack.handlebars.Options.Buffer;
-import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableMap;
 
 import io.wcm.devops.conga.generator.spi.handlebars.HelperPlugin;
@@ -45,7 +44,7 @@ abstract class AbstractCloudManagerConditionalHelper implements HelperPlugin<Obj
 
   static final String HTTPD_KEY = "httpd";
   static final String CLOUD_MANAGER_CONDITIONAL_KEY = "cloudManagerConditional";
-  static final List<String> ENVIRONMENTS = ImmutableList.of("dev", "stage", "prod");
+  static final List<String> ENVIRONMENTS = List.of("dev", "stage", "prod");
 
   @Override
   @SuppressWarnings("unchecked")
@@ -96,7 +95,7 @@ abstract class AbstractCloudManagerConditionalHelper implements HelperPlugin<Obj
 
   private List<CloudManagerConditional> getCloudManagerConditional(Map<String, Object> cloudManagerConditional) {
     return ENVIRONMENTS.stream()
-        .map(env -> new CloudManagerConditional(env, cloudManagerConditional.getOrDefault(env, ImmutableMap.of())))
+        .map(env -> new CloudManagerConditional(env, cloudManagerConditional.getOrDefault(env, Map.of())))
         .collect(Collectors.toList());
   }
 
@@ -115,7 +114,7 @@ abstract class AbstractCloudManagerConditionalHelper implements HelperPlugin<Obj
         this.config = (Map<String, Object>)value;
       }
       else {
-        this.config = ImmutableMap.of();
+        this.config = Map.of();
       }
     }
 

@@ -51,8 +51,6 @@ import java.util.stream.Collectors;
 import org.apache.commons.lang3.BooleanUtils;
 import org.apache.commons.lang3.StringUtils;
 
-import com.google.common.collect.ImmutableMap;
-
 import io.wcm.devops.conga.generator.GeneratorException;
 import io.wcm.devops.conga.generator.UrlFileManager;
 import io.wcm.devops.conga.generator.spi.context.FileHeaderContext;
@@ -230,7 +228,7 @@ public final class ContentPackageUtil {
   private static Map<String,Object> getAdditionalyProperties(Map<String, Object> options) {
     Map<String, Object> props = getOptionalPropMap(options, PROPERTY_PACKAGE_PROPERTIES);
     if (props == null) {
-      props = ImmutableMap.of();
+      props = Map.of();
     }
     return props;
   }
