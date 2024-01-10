@@ -43,6 +43,7 @@ import java.util.Enumeration;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 import java.util.Optional;
 import java.util.Properties;
 import java.util.Set;
@@ -522,7 +523,7 @@ public final class AllPackageBuilder {
     String runModeSuffix = buildRunModeSuffix(pkg, environmentRunMode);
 
     // add run mode suffix to both install folder path and package file name
-    String path = rootPath + "/" + StringUtils.defaultString(pkg.getPackageType(), "misc") + "/install" + runModeSuffix;
+    String path = rootPath + "/" + Objects.toString(pkg.getPackageType(), "misc") + "/install" + runModeSuffix;
 
     String versionSuffix = "";
     String packageVersion = pkg.getVersion();

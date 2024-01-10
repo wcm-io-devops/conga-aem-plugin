@@ -22,6 +22,7 @@ package io.wcm.devops.conga.plugins.aem.tooling.crypto.cli;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
+import java.nio.file.Files;
 import java.util.function.Function;
 
 import org.apache.commons.io.FileUtils;
@@ -96,7 +97,7 @@ public final class AnsibleVault {
     }
     byte[] input = FileUtils.readFileToByteArray(file);
     byte[] output = vaultHandler.apply(input);
-    file.delete();
+    Files.delete(file.toPath());
     FileUtils.writeByteArrayToFile(file, output);
   }
 
