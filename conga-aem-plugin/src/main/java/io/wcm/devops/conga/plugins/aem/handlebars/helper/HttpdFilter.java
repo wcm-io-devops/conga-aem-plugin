@@ -25,7 +25,7 @@ import java.util.Map;
 /**
  * Java bean that describes a simple HTTPd filter rule.
  */
-class HttpdFilter extends AbstractFilter {
+final class HttpdFilter extends AbstractFilter {
 
   private final HttpdFilterType type;
 

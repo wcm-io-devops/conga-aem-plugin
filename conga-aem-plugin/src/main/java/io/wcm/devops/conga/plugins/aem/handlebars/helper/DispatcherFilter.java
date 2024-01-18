@@ -26,7 +26,7 @@ import java.util.Map;
  * Java bean that describes a AEM dispatcher filter rule as defined in
  * https://docs.adobe.com/docs/en/dispatcher/disp-config.html#par_134_32_0009
  */
-class DispatcherFilter extends AbstractFilter {
+final class DispatcherFilter extends AbstractFilter {
 
   /*
    * The /type indicates whether to allow or deny access for the requests that match the pattern.
