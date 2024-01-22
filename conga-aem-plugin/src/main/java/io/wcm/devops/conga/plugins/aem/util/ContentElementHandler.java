@@ -35,7 +35,7 @@ import io.wcm.tooling.commons.contentpackagebuilder.element.ContentElementImpl;
 final class ContentElementHandler implements ContentHandler {
 
   private ContentElement root;
-  private static final Pattern PATH_PATTERN = Pattern.compile("^((/[^/]+)*+)(/([^/]+))$");
+  private static final Pattern PATH_PATTERN = Pattern.compile("^((/[^/]+)*)(/([^/]+))$");
 
   @Override
   public void resource(String path, Map<String, Object> properties) {
