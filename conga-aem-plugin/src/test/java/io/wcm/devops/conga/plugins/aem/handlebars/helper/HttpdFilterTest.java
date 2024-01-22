@@ -27,6 +27,7 @@ import java.util.Map;
 
 import org.junit.jupiter.api.Test;
 
+@SuppressWarnings("java:S5778")
 class HttpdFilterTest {
 
   @Test

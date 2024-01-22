@@ -34,12 +34,12 @@ import org.junit.jupiter.api.Test;
 
 import io.wcm.devops.conga.plugins.ansible.util.AnsibleVaultPassword;
 
-public class CryptoKeysTest {
+class CryptoKeysTest {
 
   private File targetFolder;
 
   @BeforeEach
-  public void setUp() throws Exception {
+  void setUp() throws Exception {
     // create temp directory path
     targetFolder = File.createTempFile(getClass().getName(), null);
     targetFolder.delete();
@@ -48,18 +48,18 @@ public class CryptoKeysTest {
   }
 
   @AfterEach
-  public void tearDown() throws Exception {
+  void tearDown() throws Exception {
     FileUtils.deleteDirectory(targetFolder);
   }
 
   @Test
-  public void testGenerate() throws Exception {
+  void testGenerate() throws Exception {
     Stream<File> files = CryptoKeys.generate(targetFolder, false);
     assertFiles(files);
   }
 
   @Test
-  public void testGenerateAnsibleVaultEncrypt() throws Exception {
+  void testGenerateAnsibleVaultEncrypt() throws Exception {
     Stream<File> files = CryptoKeys.generate(targetFolder, true);
     assertFiles(files);
   }

@@ -37,6 +37,7 @@ import io.wcm.devops.conga.plugins.aem.crypto.CryptoSupport;
 /**
  * AES crypto support implementation with the same algorithms as used by AEM 6.3 and up.
  */
+@SuppressWarnings("java:S5542") // cannot use a more secure cipher mode, we have to be compatible with AEM
 public class AesCryptoSupport extends CryptoSupport {
 
   private static final String AES_KEY_ALGORITHM = "AES";
@@ -54,7 +55,7 @@ public class AesCryptoSupport extends CryptoSupport {
       return SecureRandom.getInstance(SECURE_RANDOM_ALGORITHM);
     }
     catch (NoSuchAlgorithmException ex) {
-      throw new RuntimeException(ex);
+      throw new IllegalStateException(ex);
     }
   }
 

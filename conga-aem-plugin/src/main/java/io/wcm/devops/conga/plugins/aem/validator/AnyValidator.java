@@ -32,7 +32,6 @@ import org.xml.sax.SAXException;
 
 import com.day.any.BaseHandler;
 import com.day.any.Parser;
-import com.day.any.ResourceExpander;
 
 import io.wcm.devops.conga.generator.spi.ValidationException;
 import io.wcm.devops.conga.generator.spi.ValidatorPlugin;
@@ -70,12 +69,7 @@ public class AnyValidator implements ValidatorPlugin {
 
     // set resource expander and entity resolver that do not resolve anything
     // just make sure they are in place to allow any parser parsing files with include directives
-    parser.setResourceExpander(new ResourceExpander() {
-      @Override
-      public String[] expand(String arg0) {
-        return new String[0];
-      }
-    });
+    parser.setResourceExpander(arg -> new String[0]);
     parser.setEnitiyResolver(new EntityResolver() {
       @Override
       public InputSource resolveEntity(String publicId, String systemId) throws SAXException, IOException {

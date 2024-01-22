@@ -127,7 +127,7 @@ public final class CloudManagerAllPackageMojo extends AbstractCloudManagerMojo {
    * Automatically generate dependencies between content packages based on file order in CONGA configuration.
    * @deprecated Please use autoDependenciesMode instead.
    */
-  @Deprecated
+  @Deprecated(forRemoval = true)
   @Parameter(property = "conga.cloudManager.allPackage.autoDependencies", defaultValue = "true")
   private boolean autoDependencies;
 
@@ -135,7 +135,7 @@ public final class CloudManagerAllPackageMojo extends AbstractCloudManagerMojo {
    * Use separate dependency chains for mutable and immutable packages.
    * @deprecated Please use autoDependenciesMode instead.
    */
-  @Deprecated
+  @Deprecated(forRemoval = true)
   @Parameter(property = "conga.cloudManager.allPackage.autoDependenciesSeparateMutable", defaultValue = "false")
   private boolean autoDependenciesSeparateMutable;
 
@@ -162,6 +162,7 @@ public final class CloudManagerAllPackageMojo extends AbstractCloudManagerMojo {
   private static final String CLOUDMANAGER_TARGET_NONE = "none";
 
   @Override
+  @SuppressWarnings("java:S5738") // use deprecated for backward-compatibility
   public void execute() throws MojoExecutionException, MojoFailureException {
     if (skip) {
       return;
