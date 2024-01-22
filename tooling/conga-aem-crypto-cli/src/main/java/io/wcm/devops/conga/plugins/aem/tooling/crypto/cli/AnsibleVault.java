@@ -23,7 +23,7 @@ import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.nio.file.Files;
-import java.util.function.Function;
+import java.util.function.UnaryOperator;
 
 import org.apache.commons.io.FileUtils;
 
@@ -60,7 +60,7 @@ public final class AnsibleVault {
         return VaultHandler.encrypt(data, ansibleVaultPassword);
       }
       catch (IOException ex) {
-        throw new RuntimeException("Unable to encrypt file " + file.getPath(), ex);
+        throw new IllegalArgumentException("Unable to encrypt file " + file.getPath(), ex);
       }
     });
   }
@@ -86,12 +86,12 @@ public final class AnsibleVault {
         return VaultHandler.decrypt(data, ansibleVaultPassword);
       }
       catch (IOException ex) {
-        throw new RuntimeException("Unable to decrypt file " + file.getPath(), ex);
+        throw new IllegalArgumentException("Unable to decrypt file " + file.getPath(), ex);
       }
     });
   }
 
-  private static void handleFile(File file, Function<byte[], byte[]> vaultHandler) throws IOException {
+  private static void handleFile(File file, UnaryOperator<byte[]> vaultHandler) throws IOException {
     if (!file.exists()) {
       throw new FileNotFoundException(file.getPath());
     }

@@ -343,6 +343,7 @@ public final class AllPackageBuilder {
     return true;
   }
 
+  @SuppressWarnings("java:S3776") // ignore complexity
   private void buildAddContentPackages(ContentPackage contentPackage, String rootPath) throws IOException {
     // build set with dependencies instances for each package contained in all filesets
     Set<Dependency> allPackagesFromFileSets = new HashSet<>();
@@ -515,6 +516,7 @@ public final class AllPackageBuilder {
    * @param rootPath Root path
    * @return Package path
    */
+  @SuppressWarnings("java:S1075") // no filesystem path
   private String buildPackagePath(ContentPackageFile pkg, String rootPath, String environmentRunMode) {
     if (packageTypeValidation == PackageTypeValidation.STRICT && !isValidPackageType(pkg)) {
       throw new IllegalArgumentException("Package " + pkg.getPackageInfo() + " has invalid package type: '" + pkg.getPackageType() + "'.");
@@ -565,6 +567,7 @@ public final class AllPackageBuilder {
    * @return Returns a list of content package *temporary* files - have to be deleted when processing is completed.
    * @throws IOException I/O error
    */
+  @SuppressWarnings("java:S3776") // ignore complexity
   private List<TemporaryContentPackageFile> processContentPackage(ContentPackageFile pkg,
       ContentPackageFile previousPkg, String environmentRunMode,
       Set<Dependency> allPackagesFromFileSets) throws IOException {

@@ -153,6 +153,7 @@ public class ContentPackageOsgiConfigPostProcessor extends AbstractPostProcessor
     List<Void> result = ProvisioningUtil.visitOsgiConfigurations(model, new ConfigConsumer<Void>() {
       @Override
       @SuppressFBWarnings("RV_RETURN_VALUE_IGNORED_BAD_PRACTICE")
+      @SuppressWarnings("java:S3457") // log placeholders
       public Void accept(String path, Dictionary<String, Object> properties) throws IOException {
         String contentPath = rootPath + (StringUtils.contains(path, "/") ? "." : "/") + path;
         context.getLogger().info("  Include " + contentPath);

@@ -30,6 +30,7 @@ import org.apache.commons.lang3.StringUtils;
 /**
  * CONGA command line interface.
  */
+@SuppressWarnings("java:S106") // System.out used by intention
 public final class AemCryptoCli {
 
   static final String CRYPTO_KEYS_GENERATE = "cryptoKeysGenerate";
@@ -75,7 +76,7 @@ public final class AemCryptoCli {
 
     boolean generateCryptoKeys = commandLine.hasOption(CRYPTO_KEYS_GENERATE);
     boolean ansibleVaultEncrypt = commandLine.hasOption(CRYPTO_KEYS_ANSIBLE_VAULT_ENCRYPT);
-    File targetDir = new File(commandLine.getOptionValue(TARGET, "target"));
+    File targetDir = new File(commandLine.getOptionValue(TARGET, TARGET));
     String ansibleVaultEncryptPath = commandLine.getOptionValue(ANSIBLE_VAULT_ENCRYPT);
     String ansibleVaultDecryptPath = commandLine.getOptionValue(ANSIBLE_VAULT_DECRYPT);
     String aemCryptoEncrypt = commandLine.getOptionValue(AEM_CRYPTO_ENCRYPT);

@@ -63,6 +63,7 @@ public final class AemCryptoEncryptHelper implements HelperPlugin<Object> {
   }
 
   @Override
+  @SuppressWarnings({ "java:S3776", "java:S5411" }) // ignore complexity
   public Object apply(Object context, Options options, HelperContext pluginContext) throws IOException {
     if (context == null) {
       return null;

@@ -24,6 +24,7 @@ import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.OutputStream;
+import java.nio.file.Files;
 import java.security.GeneralSecurityException;
 import java.util.stream.Stream;
 
@@ -75,6 +76,7 @@ public final class CryptoKeys {
     return writeKeys(keys, targetDir);
   }
 
+  @SuppressWarnings("java:S112") // runtime exception
   private static Stream<KeyItem> encryptKeys(Stream<KeyItem> keys, String password) {
     return keys.map(key -> {
       try {
@@ -86,14 +88,22 @@ public final class CryptoKeys {
     });
   }
 
+  @SuppressWarnings("java:S112") // runtime exception
   private static Stream<File> writeKeys(Stream<KeyItem> keys, File targetDir) {
     if (!targetDir.exists()) {
-      targetDir.mkdirs();
+      if (!targetDir.mkdirs()) {
+        throw new RuntimeException("Unable to create directories: " + targetDir.getPath());
+      }
     }
     return keys.map(key -> {
       File outputFile = new File(targetDir, key.getName());
       if (outputFile.exists()) {
-        outputFile.delete();
+        try {
+          Files.delete(outputFile.toPath());
+        }
+        catch (IOException ex) {
+          throw new RuntimeException("Unable to delete file: " + outputFile.getPath(), ex);
+        }
       }
       try (OutputStream os = new BufferedOutputStream(new FileOutputStream(outputFile))) {
         os.write(key.getData());

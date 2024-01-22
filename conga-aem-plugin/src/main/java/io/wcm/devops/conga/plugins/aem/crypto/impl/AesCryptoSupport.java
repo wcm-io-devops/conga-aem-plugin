@@ -55,7 +55,7 @@ public class AesCryptoSupport extends CryptoSupport {
       return SecureRandom.getInstance(SECURE_RANDOM_ALGORITHM);
     }
     catch (NoSuchAlgorithmException ex) {
-      throw new RuntimeException(ex);
+      throw new IllegalStateException(ex);
     }
   }
 

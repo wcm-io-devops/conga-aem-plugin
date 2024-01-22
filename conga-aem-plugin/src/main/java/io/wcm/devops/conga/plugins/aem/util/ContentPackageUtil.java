@@ -185,6 +185,7 @@ public final class ContentPackageUtil {
    * @param options Options
    * @return Filters list
    */
+  @SuppressWarnings("java:S3776") // ignore complexity
   private static List<PackageFilter> getFilters(Map<String, Object> options) {
     List<PackageFilter> filters = new ArrayList<>();
 
@@ -385,6 +386,7 @@ public final class ContentPackageUtil {
     return files;
   }
 
+  @SuppressWarnings("java:S1075") // no filesystem path
   private static List<ContentPackageBinaryFile> getMatchingFiles(File targetDir, String fileMatch,
       String dir, String path, boolean delete) throws IOException {
     File fileTargetDir = targetDir;
