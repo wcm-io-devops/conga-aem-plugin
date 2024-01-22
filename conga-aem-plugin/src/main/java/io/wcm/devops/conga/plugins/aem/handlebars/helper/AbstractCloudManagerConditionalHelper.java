@@ -29,7 +29,6 @@ import org.apache.commons.lang3.StringUtils;
 import com.github.jknack.handlebars.Context;
 import com.github.jknack.handlebars.Options;
 import com.github.jknack.handlebars.Options.Buffer;
-import com.google.common.collect.ImmutableMap;
 
 import io.wcm.devops.conga.generator.spi.handlebars.HelperPlugin;
 import io.wcm.devops.conga.generator.spi.handlebars.context.HelperContext;
@@ -69,7 +68,7 @@ abstract class AbstractCloudManagerConditionalHelper implements HelperPlugin<Obj
       for (CloudManagerConditional item : items) {
 
         // config inside httpd.cloudManagerConditional is considered to be prefixed with "httpd.", so wrap it around here for merging
-        Map<String, Object> httpdWrapper = ImmutableMap.of(HTTPD_KEY, item.getConfig());
+        Map<String, Object> httpdWrapper = Map.of(HTTPD_KEY, item.getConfig());
         Map<String, Object> mergedModel = MapMerger.merge(httpdWrapper, (Map<String, Object>)currentContext.model());
 
         // remove cloudManagerConditional after merging the models

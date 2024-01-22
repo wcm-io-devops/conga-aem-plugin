@@ -31,8 +31,6 @@ import java.util.Map;
 import org.apache.commons.io.FilenameUtils;
 import org.slf4j.Logger;
 
-import com.google.common.collect.ImmutableList;
-
 import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 import io.wcm.devops.conga.generator.GeneratorException;
 import io.wcm.devops.conga.generator.plugins.postprocessor.AbstractPostProcessor;
@@ -115,7 +113,7 @@ public class ContentPackagePostProcessor extends AbstractPostProcessor {
       modelOptions.put("force", true);
       modelOptions.putAll(fileContext.getModelOptions());
 
-      return ImmutableList.of(new FileContext().file(zipFile).modelOptions(modelOptions));
+      return List.of(new FileContext().file(zipFile).modelOptions(modelOptions));
     }
     catch (IOException ex) {
       throw new GeneratorException("Unable to post-process JSON data file: " + FileUtil.getCanonicalPath(file), ex);
