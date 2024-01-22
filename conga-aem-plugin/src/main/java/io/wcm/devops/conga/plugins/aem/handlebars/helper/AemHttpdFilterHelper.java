@@ -73,7 +73,7 @@ public final class AemHttpdFilterHelper extends AbstractFilterHelper {
         allowFrom, allowFromHost);
   }
 
-  @SuppressWarnings("java:S3776") // ignore complexity
+  @SuppressWarnings({ "java:S3776", "java:S1192" }) // ignore complexity
   private String generateRule(String ruleType, String ruleExpression, HttpdFilterType filterType,
       String allowFrom, String allowFromHost) {
     StringBuilder sb = new StringBuilder();

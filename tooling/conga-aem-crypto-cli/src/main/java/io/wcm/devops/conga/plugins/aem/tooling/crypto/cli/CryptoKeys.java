@@ -91,7 +91,8 @@ public final class CryptoKeys {
   @SuppressWarnings("java:S112") // runtime exception
   private static Stream<File> writeKeys(Stream<KeyItem> keys, File targetDir) {
     if (!targetDir.exists()) {
-      if (!targetDir.mkdirs()) {
+      boolean created = targetDir.mkdirs();
+      if (!created) {
         throw new RuntimeException("Unable to create directories: " + targetDir.getPath());
       }
     }
