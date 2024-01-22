@@ -35,7 +35,7 @@ import io.wcm.tooling.commons.contentpackagebuilder.element.ContentElementImpl;
 final class ContentElementHandler implements ContentHandler {
 
   private ContentElement root;
-  private static final Pattern PATH_PATTERN = Pattern.compile("^((/[^/]+)*)(/([^/]+))$");
+  private static final Pattern PATH_PATTERN = Pattern.compile("^((/[^/]+)*+)(/([^/]+))$");
 
   @Override
   public void resource(String path, Map<String, Object> properties) {
@@ -44,11 +44,11 @@ final class ContentElementHandler implements ContentHandler {
     }
     else {
       if (root == null) {
-        throw new RuntimeException("Root resource not set.");
+        throw new IllegalArgumentException("Root resource not set.");
       }
       Matcher matcher = PATH_PATTERN.matcher(path);
       if (!matcher.matches()) {
-        throw new RuntimeException("Unexpected path:" + path);
+        throw new IllegalArgumentException("Unexpected path:" + path);
       }
       String relativeParentPath = StringUtils.stripStart(matcher.group(1), "/");
       String name = matcher.group(4);
@@ -60,7 +60,7 @@ final class ContentElementHandler implements ContentHandler {
         parent = root.getChild(relativeParentPath);
       }
       if (parent == null) {
-        throw new RuntimeException("Parent '" + relativeParentPath + "' does not exist.");
+        throw new IllegalArgumentException("Parent '" + relativeParentPath + "' does not exist.");
       }
       parent.getChildren().put(name, new ContentElementImpl(name, properties));
     }

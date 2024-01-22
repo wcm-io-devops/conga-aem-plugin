@@ -24,6 +24,7 @@ import static io.wcm.devops.conga.plugins.aem.postprocessor.ContentPackageOption
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
+import java.nio.file.Files;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -106,7 +107,7 @@ public class ContentPackagePostProcessor extends AbstractPostProcessor {
       }
 
       // delete provisioning file after transformation
-      file.delete();
+      Files.delete(file.toPath());
 
       // set force to true by default for CONGA-generated packages (but allow override from role definition)
       Map<String, Object> modelOptions = new HashMap<>();

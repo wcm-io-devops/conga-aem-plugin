@@ -47,6 +47,7 @@ import java.util.Objects;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 import org.apache.commons.lang3.BooleanUtils;
 import org.apache.commons.lang3.StringUtils;
@@ -395,24 +396,25 @@ public final class ContentPackageUtil {
     Pattern pattern = Pattern.compile(fileMatch);
 
     // collect all files below the target dir
-    return Files.walk(Paths.get(fileTargetDir.toURI()))
-        .filter(Files::isRegularFile)
-        // strip off the target dir paths, keep only the relative path/file name
-        .map(ContentPackageUtil::normalizedAbsolutePath)
-        .map(file -> StringUtils.removeStart(file, targetPathPrefix))
-        // check if file matches with the regex, apply matching input groups to path
-        .map(file -> {
-          Matcher matcher = pattern.matcher(file);
-          if (matcher.matches()) {
-            String adaptedPath = matcher.replaceAll(path);
-            return new ContentPackageBinaryFile(file, dir, null, adaptedPath, delete);
-          }
-          else {
-            return null;
-          }
-        })
-        .filter(Objects::nonNull)
-        .collect(Collectors.toList());
+    try (Stream<Path> paths = Files.walk(Paths.get(fileTargetDir.toURI()))) {
+      return paths.filter(Files::isRegularFile)
+          // strip off the target dir paths, keep only the relative path/file name
+          .map(ContentPackageUtil::normalizedAbsolutePath)
+          .map(file -> StringUtils.removeStart(file, targetPathPrefix))
+          // check if file matches with the regex, apply matching input groups to path
+          .map(file -> {
+            Matcher matcher = pattern.matcher(file);
+            if (matcher.matches()) {
+              String adaptedPath = matcher.replaceAll(path);
+              return new ContentPackageBinaryFile(file, dir, null, adaptedPath, delete);
+            }
+            else {
+              return null;
+            }
+          })
+          .filter(Objects::nonNull)
+          .collect(Collectors.toList());
+    }
   }
 
   private static String normalizedAbsolutePath(Path path) {
