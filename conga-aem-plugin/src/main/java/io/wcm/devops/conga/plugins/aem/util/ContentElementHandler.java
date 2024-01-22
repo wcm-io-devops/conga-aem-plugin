@@ -35,6 +35,8 @@ import io.wcm.tooling.commons.contentpackagebuilder.element.ContentElementImpl;
 final class ContentElementHandler implements ContentHandler {
 
   private ContentElement root;
+
+  @SuppressWarnings("java:S5998") // analyzed paths should be safe
   private static final Pattern PATH_PATTERN = Pattern.compile("^((/[^/]+)*)(/([^/]+))$");
 
   @Override
