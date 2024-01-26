@@ -23,6 +23,19 @@
     xsi:schemaLocation="http://maven.apache.org/changes/1.0.0 https://maven.apache.org/plugins/maven-changes-plugin/xsd/changes-1.0.0.xsd">
   <body>
 
+    <release version="2.20.0" date="not released">
+      <action type="add" dev="sseifert" issue="86"><![CDATA[
+        ContentPackageOsgiConfigPostProcessor: Accept both <a href="https://devops.wcm.io/conga/plugins/sling//osgi-config-combined-json.html">Combined JSON files</a>
+        and Sling Provisioning File Format as input for generating OSGi configurations.
+      ]]></action>
+      <action type="update" dev="sseifert" issue="85">
+        ContentPackageOsgiConfigPostProcessor: Write OSGi configurations as .cfg.json files instead of .config files.
+      </action>
+      <action type="update" dev="sseifert">
+        Update to AEM Content Package Builder 1.7.4 to ensure folder path ZIP file entries are created.
+      </action>
+    </release>
+
     <release version="2.19.10" date="2023-12-18">
       <action type="fix" dev="sseifert">
         Update to latest io.wcm.tooling.commons.content-package-builder to fix potential problem with element ordering content packages generated from JSON files.

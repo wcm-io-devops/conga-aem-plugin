@@ -27,8 +27,6 @@ import java.util.Map;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
-import com.google.common.collect.ImmutableMap;
-
 import io.wcm.devops.conga.generator.spi.handlebars.HelperPlugin;
 import io.wcm.devops.conga.generator.util.PluginManagerImpl;
 
@@ -45,7 +43,7 @@ class AemDispatcherFilterHelperTest {
   @Test
   void testUrl() throws Exception {
     assertHelper("{ /type \"allow\" /url '/abc(/.*)?' }",
-        helper, ImmutableMap.of("type", "allow", "url", "/abc(/.*)?"), new MockOptions());
+        helper, Map.of("type", "allow", "url", "/abc(/.*)?"), new MockOptions());
   }
 
   @Test

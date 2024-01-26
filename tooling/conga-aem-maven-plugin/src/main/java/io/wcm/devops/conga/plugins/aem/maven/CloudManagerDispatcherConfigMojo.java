@@ -115,6 +115,7 @@ public final class CloudManagerDispatcherConfigMojo extends AbstractCloudManager
    * @param excludeFiles Exclude filenames
    * @throws IOException I/O exception
    */
+  @SuppressWarnings("java:S3776") // ignore complexity
   private void addZipDirectory(String basePath, File directory, Set<String> excludeFiles) throws IOException {
     String directoryPath = toZipDirectoryPath(directory);
     if (StringUtils.startsWith(directoryPath, basePath)) {

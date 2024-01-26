@@ -29,6 +29,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.nio.charset.StandardCharsets;
+import java.nio.file.Files;
 import java.util.Dictionary;
 import java.util.HashMap;
 import java.util.List;
@@ -39,9 +40,6 @@ import org.apache.commons.lang3.StringUtils;
 import org.apache.sling.provisioning.model.Model;
 import org.slf4j.Logger;
 
-import com.google.common.collect.ImmutableList;
-import com.google.common.collect.ImmutableMap;
-
 import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 import io.wcm.devops.conga.generator.GeneratorException;
 import io.wcm.devops.conga.generator.plugins.postprocessor.AbstractPostProcessor;
@@ -49,15 +47,17 @@ import io.wcm.devops.conga.generator.spi.context.FileContext;
 import io.wcm.devops.conga.generator.spi.context.FileHeaderContext;
 import io.wcm.devops.conga.generator.spi.context.PostProcessorContext;
 import io.wcm.devops.conga.plugins.aem.util.ContentPackageUtil;
+import io.wcm.devops.conga.plugins.sling.postprocessor.JsonOsgiConfigPostProcessor;
 import io.wcm.devops.conga.plugins.sling.util.ConfigConsumer;
+import io.wcm.devops.conga.plugins.sling.util.JsonOsgiConfigUtil;
 import io.wcm.devops.conga.plugins.sling.util.OsgiConfigUtil;
 import io.wcm.devops.conga.plugins.sling.util.ProvisioningUtil;
 import io.wcm.tooling.commons.contentpackagebuilder.ContentPackage;
 import io.wcm.tooling.commons.contentpackagebuilder.ContentPackageBuilder;
 
 /**
- * Transforms a Sling Provisioning file into OSGi configurations (ignoring all other provisioning contents)
- * and then packages them up in an AEM content package to be deployed via CRX package manager.
+ * Transforms a Sling Provisioning file or Combined JSON file as used by CONGA Sling Plugin
+ * into OSGi configurations and then packages them up in an AEM content package to be deployed via CRX package manager.
  */
 public class ContentPackageOsgiConfigPostProcessor extends AbstractPostProcessor {
 
@@ -73,7 +73,8 @@ public class ContentPackageOsgiConfigPostProcessor extends AbstractPostProcessor
 
   @Override
   public boolean accepts(FileContext file, PostProcessorContext context) {
-    return ProvisioningUtil.isProvisioningFile(file);
+    return ProvisioningUtil.isProvisioningFile(file)
+        || StringUtils.endsWith(file.getFile().getName(), JsonOsgiConfigPostProcessor.FILE_EXTENSION);
   }
 
   @Override
@@ -88,14 +89,20 @@ public class ContentPackageOsgiConfigPostProcessor extends AbstractPostProcessor
       FileHeaderContext fileHeader = extractFileHeader(fileContext, context);
 
       // generate OSGi configurations
-      Model model = ProvisioningUtil.getModel(fileContext);
+      Model model;
+      if (ProvisioningUtil.isProvisioningFile(fileContext)) {
+        model = ProvisioningUtil.getModel(fileContext);
+      }
+      else {
+        model = JsonOsgiConfigUtil.readToProvisioningModel(file);
+      }
 
       // check if any osgi configuration is present
       boolean hasAnyConfig = !ProvisioningUtil.visitOsgiConfigurations(model,
           (ConfigConsumer<Boolean>)(path, properties) -> true).isEmpty();
 
       // create AEM content package with configurations
-      File zipFile = new File(file.getParentFile(), FilenameUtils.getBaseName(file.getName()) + ".zip");
+      File zipFile = new File(file.getParentFile(), getBaseFileName(file.getName()) + ".zip");
       logger.info("Generate {}", zipFile.getCanonicalPath());
 
       String rootPath = ContentPackageUtil.getMandatoryProp(options, PROPERTY_PACKAGE_ROOT_PATH);
@@ -113,19 +120,19 @@ public class ContentPackageOsgiConfigPostProcessor extends AbstractPostProcessor
         else {
           // create folder for root path if package is empty otherwise
           // (to make sure probably already existing config is overridden/cleaned)
-          contentPackage.addContent(rootPath, ImmutableMap.of("jcr:primaryType", "nt:folder"));
+          contentPackage.addContent(rootPath, Map.of("jcr:primaryType", "nt:folder"));
         }
       }
 
       // delete provisioning file after transformation
-      file.delete();
+      Files.delete(file.toPath());
 
       // set force to true by default for CONGA-generated packages (but allow override from role definition)
       Map<String, Object> modelOptions = new HashMap<>();
       modelOptions.put("force", true);
       modelOptions.putAll(fileContext.getModelOptions());
 
-      return ImmutableList.of(new FileContext().file(zipFile).modelOptions(modelOptions));
+      return List.of(new FileContext().file(zipFile).modelOptions(modelOptions));
     }
     catch (IOException ex) {
       throw new GeneratorException("Unable to post-process sling provisioning OSGi configurations.", ex);
@@ -146,12 +153,13 @@ public class ContentPackageOsgiConfigPostProcessor extends AbstractPostProcessor
     List<Void> result = ProvisioningUtil.visitOsgiConfigurations(model, new ConfigConsumer<Void>() {
       @Override
       @SuppressFBWarnings("RV_RETURN_VALUE_IGNORED_BAD_PRACTICE")
+      @SuppressWarnings("java:S3457") // log placeholders
       public Void accept(String path, Dictionary<String, Object> properties) throws IOException {
         String contentPath = rootPath + (StringUtils.contains(path, "/") ? "." : "/") + path;
         context.getLogger().info("  Include " + contentPath);
 
         // write configuration to temporary file
-        File tempFile = File.createTempFile(NAME, ".config");
+        File tempFile = File.createTempFile(NAME, ".cfg.json");
         try (OutputStream os = new FileOutputStream(tempFile)) {
           OsgiConfigUtil.write(os, properties);
         }
@@ -168,12 +176,21 @@ public class ContentPackageOsgiConfigPostProcessor extends AbstractPostProcessor
         }
         finally {
           // remove temporary file
-          tempFile.delete();
+          Files.delete(tempFile.toPath());
         }
         return null;
       }
     });
     return !result.isEmpty();
+  }
+
+  private String getBaseFileName(String fileName) {
+    if (StringUtils.endsWith(fileName, JsonOsgiConfigPostProcessor.FILE_EXTENSION)) {
+      return StringUtils.substringBeforeLast(fileName, JsonOsgiConfigPostProcessor.FILE_EXTENSION);
+    }
+    else {
+      return FilenameUtils.getBaseName(fileName);
+    }
   }
 
 }

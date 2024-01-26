@@ -24,6 +24,7 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.nio.file.Files;
 
 import org.apache.commons.lang3.StringUtils;
 
@@ -101,7 +102,7 @@ public final class ContentPackageBinaryFile {
       }
       File file = getFile(targetDir);
       if (file != null) {
-        file.delete();
+        Files.delete(file.toPath());
       }
     }
   }

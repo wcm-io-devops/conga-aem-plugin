@@ -30,8 +30,6 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.slf4j.LoggerFactory;
 
-import com.google.common.collect.ImmutableMap;
-
 import io.wcm.devops.conga.generator.spi.PostProcessorPlugin;
 import io.wcm.devops.conga.generator.spi.context.FileContext;
 import io.wcm.devops.conga.generator.spi.context.PluginContextOptions;
@@ -56,7 +54,7 @@ class ContentPackagePropertiesPostProcessorTest {
         .file(new File("src/test/resources/package/example.zip"));
 
     // post-process
-    applyPlugin(fileContext, ImmutableMap.of());
+    applyPlugin(fileContext, Map.of());
 
     // validate
     Map<String, Object> props = (Map<String, Object>)fileContext.getModelOptions().get(ContentPackagePropertiesPostProcessor.MODEL_OPTIONS_PROPERTY);
@@ -74,7 +72,7 @@ class ContentPackagePropertiesPostProcessorTest {
         .file(new File("src/test/resources/package/example.zip"));
 
     // post-process
-    applyPlugin(fileContext, ImmutableMap.of("contentPackage", ImmutableMap.of("packageType", "mytype")));
+    applyPlugin(fileContext, Map.of("contentPackage", Map.of("packageType", "mytype")));
 
     // validate
     Map<String, Object> props = (Map<String, Object>)fileContext.getModelOptions().get(ContentPackagePropertiesPostProcessor.MODEL_OPTIONS_PROPERTY);
@@ -88,7 +86,7 @@ class ContentPackagePropertiesPostProcessorTest {
         .file(new File("src/test/resources/package/no-content-package.zip"));
 
     // post-process
-    applyPlugin(fileContext, ImmutableMap.of());
+    applyPlugin(fileContext, Map.of());
 
     // validate
     assertNull(fileContext.getModelOptions().get(ContentPackagePropertiesPostProcessor.MODEL_OPTIONS_PROPERTY));

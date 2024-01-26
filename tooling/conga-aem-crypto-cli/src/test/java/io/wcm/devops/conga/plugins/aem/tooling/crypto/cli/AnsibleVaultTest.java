@@ -33,26 +33,26 @@ import org.junit.jupiter.api.Test;
 
 import io.wcm.devops.conga.plugins.ansible.util.AnsibleVaultPassword;
 
-public class AnsibleVaultTest {
+class AnsibleVaultTest {
 
   private static final String TEST_CONTENT = "Lorem ipsum dolor sit amet, consectetur adipiscing elit.";
 
   private File testFile;
 
   @BeforeEach
-  public void setUp() throws Exception {
+  void setUp() throws Exception {
     testFile = File.createTempFile(getClass().getName(), null);
 
     System.setProperty(AnsibleVaultPassword.SYSTEM_PROPERTY_PASSWORD, "test123");
   }
 
   @AfterEach
-  public void tearDown() {
+  void tearDown() {
     testFile.delete();
   }
 
   @Test
-  public void testEncryptDecrypt() throws Exception {
+  void testEncryptDecrypt() throws Exception {
     FileUtils.write(testFile, TEST_CONTENT, StandardCharsets.UTF_8);
 
     // encrypt file
@@ -67,7 +67,7 @@ public class AnsibleVaultTest {
   }
 
   @Test
-  public void testEncryptDecryptWithCarriageReturns() throws Exception {
+  void testEncryptDecryptWithCarriageReturns() throws Exception {
     FileUtils.write(testFile, TEST_CONTENT, StandardCharsets.UTF_8);
 
     // encrypt file

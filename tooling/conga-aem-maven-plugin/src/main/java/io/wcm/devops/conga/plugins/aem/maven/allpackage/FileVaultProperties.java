@@ -32,7 +32,7 @@ import org.apache.commons.lang3.StringUtils;
 /**
  * Read and write properties.xml for FileVault package.
  */
-class FileVaultProperties {
+final class FileVaultProperties {
 
   private final Properties props;
 

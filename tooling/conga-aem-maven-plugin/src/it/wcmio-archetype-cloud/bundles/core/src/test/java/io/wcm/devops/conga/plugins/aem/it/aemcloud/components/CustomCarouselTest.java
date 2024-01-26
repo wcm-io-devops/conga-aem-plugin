@@ -5,6 +5,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
+import java.util.List;
 import java.util.stream.Collectors;
 
 import org.apache.sling.api.resource.Resource;
@@ -13,7 +14,6 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 
 import com.day.cq.wcm.api.Page;
-import com.google.common.collect.ImmutableList;
 
 import io.wcm.handler.media.Media;
 import io.wcm.sling.commons.adapter.AdaptTo;
@@ -55,7 +55,7 @@ class CustomCarouselTest {
         .resource("item2", PN_MEDIA_REF_STANDARD, "/content/dam/slides/slide2.png");
 
     CustomCarousel underTest = AdaptTo.notNull(context.request(), CustomCarousel.class);
-    assertEquals(ImmutableList.of(
+    assertEquals(List.of(
         "/content/dam/slides/slide1.png/_jcr_content/renditions/original./slide1.png",
         "/content/dam/slides/slide2.png/_jcr_content/renditions/original./slide2.png"),
         underTest.getSlideImages().stream()

@@ -35,8 +35,6 @@ import org.apache.jackrabbit.filevault.maven.packaging.mojo.ValidatePackageMojo;
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugin.MojoFailureException;
 
-import com.google.common.collect.ImmutableMap;
-
 import io.wcm.devops.conga.generator.spi.ImplicitApplyOptions;
 import io.wcm.devops.conga.generator.spi.ValidationException;
 import io.wcm.devops.conga.generator.spi.ValidatorPlugin;
@@ -63,8 +61,8 @@ public class ContentPackageValidator implements ValidatorPlugin {
   private static final String OPTION_VALIDATORS_SETTINGS = "contentPackage.validatorsSettings";
 
   // apply default validation for AEM and wcm.io node types
-  private static final Map<String, Object> DEFAULT_VALIDATORS_SETTINGS = ImmutableMap.of("jackrabbit-nodetypes",
-      ImmutableMap.of("options", ImmutableMap.of("cnds", "tccl:aem.cnd,tccl:wcmio.cnd")));
+  private static final Map<String, Object> DEFAULT_VALIDATORS_SETTINGS = Map.of("jackrabbit-nodetypes",
+      Map.of("options", Map.of("cnds", "tccl:aem.cnd,tccl:wcmio.cnd")));
 
   @Override
   public String getName() {
@@ -135,7 +133,7 @@ public class ContentPackageValidator implements ValidatorPlugin {
     setProperty(object, object.getClass(), propertyName, value);
   }
 
-  @SuppressWarnings("PMD.AvoidAccessibilityAlteration")
+  @SuppressWarnings({ "PMD.AvoidAccessibilityAlteration", "java:S3011" })
   private void setProperty(Object object, Class<?> clazz, String propertyName, Object value)
       throws IllegalArgumentException, IllegalAccessException {
     try {

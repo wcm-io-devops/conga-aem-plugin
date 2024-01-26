@@ -38,6 +38,7 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 import java.io.File;
 import java.nio.charset.StandardCharsets;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import org.apache.commons.io.FileUtils;
@@ -45,9 +46,6 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.slf4j.LoggerFactory;
 import org.w3c.dom.Document;
-
-import com.google.common.collect.ImmutableList;
-import com.google.common.collect.ImmutableMap;
 
 import io.wcm.devops.conga.generator.UrlFileManager;
 import io.wcm.devops.conga.generator.spi.PostProcessorPlugin;
@@ -70,26 +68,25 @@ class ContentPackagePostProcessorTest {
 
   @Test
   void testPostProcess() throws Exception {
-    Map<String, Object> options = new HashMap<String, Object>();
+    Map<String, Object> options = new HashMap<>();
     options.put(PROPERTY_PACKAGE_GROUP, "myGroup");
     options.put(PROPERTY_PACKAGE_NAME, "myName");
     options.put(PROPERTY_PACKAGE_ROOT_PATH, "/content/test");
     options.put(PROPERTY_PACKAGE_AC_HANDLING, "ignore");
     options.put(PROPERTY_PACKAGE_PACKAGE_TYPE, "content");
     options.put(PROPERTY_PACKAGE_THUMBNAIL_IMAGE, "classpath:/package/thumbnail.png");
-    options.put(PROPERTY_PACKAGE_FILTERS, ImmutableList.of(
-            ImmutableMap.<String, Object>of("filter", "/content/test/1"),
-            ImmutableMap.<String, Object>of("filter", "/content/test/2",
-                "rules", ImmutableList.of(ImmutableMap.<String, Object>of("rule", "include", "pattern", "pattern1"),
-                    ImmutableMap.<String, Object>of("rule", "exclude", "pattern", "pattern2")))
-            ));
-    options.put(PROPERTY_PACKAGE_PROPERTIES, ImmutableMap.<String,Object>of(
+    options.put(PROPERTY_PACKAGE_FILTERS, List.of(
+        Map.of("filter", "/content/test/1"),
+        Map.of("filter", "/content/test/2",
+            "rules", List.of(Map.of("rule", "include", "pattern", "pattern1"),
+                Map.of("rule", "exclude", "pattern", "pattern2")))));
+    options.put(PROPERTY_PACKAGE_PROPERTIES, Map.of(
         "prop1", "value1",
         "my.custom.prop2", 123));
-    options.put(PROPERTY_PACKAGE_FILES, ImmutableList.of(
-        ImmutableMap.<String, Object>of("url", "classpath:/package/thumbnail.png", "path", "/content/image.png"),
-        ImmutableMap.<String, Object>of("file", "README.txt", "dir", "readme", "path", "/content/README.txt", "delete", true),
-        ImmutableMap.<String, Object>of("fileMatch", "file_(.*).txt", "dir", "files", "path", "/content/files/$1.txt", "delete", true)));
+    options.put(PROPERTY_PACKAGE_FILES, List.of(
+        Map.of("url", "classpath:/package/thumbnail.png", "path", "/content/image.png"),
+        Map.of("file", "README.txt", "dir", "readme", "path", "/content/README.txt", "delete", true),
+        Map.of("fileMatch", "file_(.*).txt", "dir", "files", "path", "/content/files/$1.txt", "delete", true)));
 
     // prepare JSON file
     File target = new File("target/" + ContentPackagePostProcessor.NAME + "-test");

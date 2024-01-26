@@ -28,55 +28,54 @@ import java.util.Map;
 
 import org.junit.jupiter.api.Test;
 
-import com.google.common.collect.ImmutableMap;
-
+@SuppressWarnings("java:S5778")
 class DispatcherFilterTest {
 
   @Test
   void testEmpty() {
     assertThrows(IllegalArgumentException.class, () -> {
-      new DispatcherFilter(ImmutableMap.of());
+      new DispatcherFilter(Map.of());
     });
   }
 
   @Test
   void testOnlyType() {
     assertThrows(IllegalArgumentException.class, () -> {
-      new DispatcherFilter(ImmutableMap.of("type", "allow"));
+      new DispatcherFilter(Map.of("type", "allow"));
     });
   }
 
   @Test
   void testTypeMissing() {
     assertThrows(IllegalArgumentException.class, () -> {
-      new DispatcherFilter(ImmutableMap.of("glob", "abc"));
+      new DispatcherFilter(Map.of("glob", "abc"));
     });
   }
 
   @Test
   void testIllegalType() {
     assertThrows(IllegalArgumentException.class, () -> {
-      new DispatcherFilter(ImmutableMap.of("glob", "abc", "type", "this_is_not_a_valid_value"));
+      new DispatcherFilter(Map.of("glob", "abc", "type", "this_is_not_a_valid_value"));
     });
   }
 
   @Test
   void testIllegalRegexp() {
     assertThrows(IllegalArgumentException.class, () -> {
-      new DispatcherFilter(ImmutableMap.of("glob", "(abc", "type", "allow"));
+      new DispatcherFilter(Map.of("glob", "(abc", "type", "allow"));
     });
   }
 
   @Test
   void testInvalidParam() {
     assertThrows(IllegalArgumentException.class, () -> {
-      new DispatcherFilter(ImmutableMap.of("glob", "abc", "type", "allow", "invalidParam", "value"));
+      new DispatcherFilter(Map.of("glob", "abc", "type", "allow", "invalidParam", "value"));
     });
   }
 
   @Test
   void testUrl() {
-    DispatcherFilter underTest = new DispatcherFilter(ImmutableMap.of("url", "/abc", "type", "allow"));
+    DispatcherFilter underTest = new DispatcherFilter(Map.of("url", "/abc", "type", "allow"));
     assertEquals(DispatcherFilterType.ALLOW, underTest.getType());
     assertNull(underTest.getMethod());
     assertEquals("/abc", underTest.getUrl());

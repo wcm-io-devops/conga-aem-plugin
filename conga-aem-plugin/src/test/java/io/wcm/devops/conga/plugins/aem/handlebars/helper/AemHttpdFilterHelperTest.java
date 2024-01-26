@@ -21,10 +21,10 @@ package io.wcm.devops.conga.plugins.aem.handlebars.helper;
 
 import static io.wcm.devops.conga.plugins.aem.handlebars.helper.TestUtils.assertHelper;
 
+import java.util.Map;
+
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-
-import com.google.common.collect.ImmutableMap;
 
 import io.wcm.devops.conga.generator.spi.handlebars.HelperPlugin;
 import io.wcm.devops.conga.generator.util.PluginManagerImpl;
@@ -49,7 +49,7 @@ class AemHttpdFilterHelperTest {
         "    Require all granted\n" +
         "  </IfVersion>\n" +
         "</Location>",
-        helper, ImmutableMap.of("type", "allow", "location", "/abc"), new MockOptions());
+        helper, Map.of("type", "allow", "location", "/abc"), new MockOptions());
   }
 
   @Test
@@ -63,7 +63,7 @@ class AemHttpdFilterHelperTest {
         "    Require all denied\n" +
         "  </IfVersion>\n" +
         "</LocationMatch>",
-        helper, ImmutableMap.of("type", "deny", "locationMatch", "/abc(/.*)?"), new MockOptions());
+        helper, Map.of("type", "deny", "locationMatch", "/abc(/.*)?"), new MockOptions());
   }
 
   @Test
@@ -77,7 +77,7 @@ class AemHttpdFilterHelperTest {
         "    Require all denied\n" +
         "  </IfVersion>\n" +
         "</Location>",
-        helper, ImmutableMap.of("type", "deny_allow_admin", "location", "/abc"), new MockOptions());
+        helper, Map.of("type", "deny_allow_admin", "location", "/abc"), new MockOptions());
   }
 
   @Test
@@ -95,7 +95,7 @@ class AemHttpdFilterHelperTest {
         "    Require host myhost\n" +
         "  </IfVersion>\n" +
         "</Location>",
-        helper, ImmutableMap.of("type", "deny_allow_admin", "location", "/abc"), new MockOptions()
+        helper, Map.of("type", "deny_allow_admin", "location", "/abc"), new MockOptions()
             .withHash(AemHttpdFilterHelper.HASH_ALLOW_FROM_KEY, "allowFrom")
             .withHash(AemHttpdFilterHelper.HASH_ALLOW_FROM_HOST_KEY, "allowFromHost")
             .withProperty("allowFrom", "1.2.3.4")

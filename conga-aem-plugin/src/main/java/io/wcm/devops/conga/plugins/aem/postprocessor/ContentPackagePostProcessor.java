@@ -24,14 +24,13 @@ import static io.wcm.devops.conga.plugins.aem.postprocessor.ContentPackageOption
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
+import java.nio.file.Files;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
 import org.apache.commons.io.FilenameUtils;
 import org.slf4j.Logger;
-
-import com.google.common.collect.ImmutableList;
 
 import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 import io.wcm.devops.conga.generator.GeneratorException;
@@ -108,14 +107,14 @@ public class ContentPackagePostProcessor extends AbstractPostProcessor {
       }
 
       // delete provisioning file after transformation
-      file.delete();
+      Files.delete(file.toPath());
 
       // set force to true by default for CONGA-generated packages (but allow override from role definition)
       Map<String, Object> modelOptions = new HashMap<>();
       modelOptions.put("force", true);
       modelOptions.putAll(fileContext.getModelOptions());
 
-      return ImmutableList.of(new FileContext().file(zipFile).modelOptions(modelOptions));
+      return List.of(new FileContext().file(zipFile).modelOptions(modelOptions));
     }
     catch (IOException ex) {
       throw new GeneratorException("Unable to post-process JSON data file: " + FileUtil.getCanonicalPath(file), ex);

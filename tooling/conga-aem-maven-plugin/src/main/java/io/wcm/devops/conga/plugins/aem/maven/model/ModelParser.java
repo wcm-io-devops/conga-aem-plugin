@@ -135,6 +135,7 @@ public final class ModelParser {
     return targets;
   }
 
+  @SuppressWarnings("java:S112") // runtime exception
   private Map<String, Object> getModelData() {
     File modelFile = new File(nodeDir, MODEL_FILE);
     if (!modelFile.exists() || !modelFile.isFile()) {
@@ -143,6 +144,7 @@ public final class ModelParser {
     return parseYaml(modelFile);
   }
 
+  @SuppressWarnings("java:S112") // runtime exception
   private Map<String, Object> parseYaml(File modelFile) {
     try {
       try (InputStream is = new FileInputStream(modelFile);

@@ -47,11 +47,10 @@ import java.util.Objects;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 import org.apache.commons.lang3.BooleanUtils;
 import org.apache.commons.lang3.StringUtils;
-
-import com.google.common.collect.ImmutableMap;
 
 import io.wcm.devops.conga.generator.GeneratorException;
 import io.wcm.devops.conga.generator.UrlFileManager;
@@ -186,6 +185,7 @@ public final class ContentPackageUtil {
    * @param options Options
    * @return Filters list
    */
+  @SuppressWarnings("java:S3776") // ignore complexity
   private static List<PackageFilter> getFilters(Map<String, Object> options) {
     List<PackageFilter> filters = new ArrayList<>();
 
@@ -230,7 +230,7 @@ public final class ContentPackageUtil {
   private static Map<String,Object> getAdditionalyProperties(Map<String, Object> options) {
     Map<String, Object> props = getOptionalPropMap(options, PROPERTY_PACKAGE_PROPERTIES);
     if (props == null) {
-      props = ImmutableMap.of();
+      props = Map.of();
     }
     return props;
   }
@@ -386,6 +386,7 @@ public final class ContentPackageUtil {
     return files;
   }
 
+  @SuppressWarnings("java:S1075") // no filesystem path
   private static List<ContentPackageBinaryFile> getMatchingFiles(File targetDir, String fileMatch,
       String dir, String path, boolean delete) throws IOException {
     File fileTargetDir = targetDir;
@@ -397,24 +398,25 @@ public final class ContentPackageUtil {
     Pattern pattern = Pattern.compile(fileMatch);
 
     // collect all files below the target dir
-    return Files.walk(Paths.get(fileTargetDir.toURI()))
-        .filter(Files::isRegularFile)
-        // strip off the target dir paths, keep only the relative path/file name
-        .map(ContentPackageUtil::normalizedAbsolutePath)
-        .map(file -> StringUtils.removeStart(file, targetPathPrefix))
-        // check if file matches with the regex, apply matching input groups to path
-        .map(file -> {
-          Matcher matcher = pattern.matcher(file);
-          if (matcher.matches()) {
-            String adaptedPath = matcher.replaceAll(path);
-            return new ContentPackageBinaryFile(file, dir, null, adaptedPath, delete);
-          }
-          else {
-            return null;
-          }
-        })
-        .filter(Objects::nonNull)
-        .collect(Collectors.toList());
+    try (Stream<Path> paths = Files.walk(Paths.get(fileTargetDir.toURI()))) {
+      return paths.filter(Files::isRegularFile)
+          // strip off the target dir paths, keep only the relative path/file name
+          .map(ContentPackageUtil::normalizedAbsolutePath)
+          .map(file -> StringUtils.removeStart(file, targetPathPrefix))
+          // check if file matches with the regex, apply matching input groups to path
+          .map(file -> {
+            Matcher matcher = pattern.matcher(file);
+            if (matcher.matches()) {
+              String adaptedPath = matcher.replaceAll(path);
+              return new ContentPackageBinaryFile(file, dir, null, adaptedPath, delete);
+            }
+            else {
+              return null;
+            }
+          })
+          .filter(Objects::nonNull)
+          .collect(Collectors.toList());
+    }
   }
 
   private static String normalizedAbsolutePath(Path path) {

@@ -30,13 +30,13 @@ import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
-public class AemCryptoTest {
+class AemCryptoTest {
 
   private File targetFolder;
   private String cryptoAesKey;
 
   @BeforeEach
-  public void setUp() throws Exception {
+  void setUp() throws Exception {
     // create temp directory path
     targetFolder = File.createTempFile(getClass().getName(), null);
     targetFolder.delete();
@@ -47,12 +47,12 @@ public class AemCryptoTest {
   }
 
   @AfterEach
-  public void tearDown() throws Exception {
+  void tearDown() throws Exception {
     FileUtils.deleteDirectory(targetFolder);
   }
 
   @Test
-  public void testEncryptDecryptString() throws Exception {
+  void testEncryptDecryptString() throws Exception {
     String value = "myTestValue-äöüß€";
 
     String encryptedValue = AemCrypto.encryptString(value, cryptoAesKey);

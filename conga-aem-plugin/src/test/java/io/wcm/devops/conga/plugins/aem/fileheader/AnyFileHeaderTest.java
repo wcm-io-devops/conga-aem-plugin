@@ -30,8 +30,6 @@ import org.apache.commons.lang3.StringUtils;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
-import com.google.common.collect.ImmutableList;
-
 import io.wcm.devops.conga.generator.spi.FileHeaderPlugin;
 import io.wcm.devops.conga.generator.spi.context.FileContext;
 import io.wcm.devops.conga.generator.spi.context.FileHeaderContext;
@@ -51,7 +49,7 @@ class AnyFileHeaderTest {
     File file = new File("target/generation-test/fileHeader.any");
     FileUtils.write(file, "myany { }", StandardCharsets.UTF_8);
 
-    List<String> lines = ImmutableList.of("Der Jodelkaiser", "aus dem Oetztal", "ist wieder daheim.");
+    List<String> lines = List.of("Der Jodelkaiser", "aus dem Oetztal", "ist wieder daheim.");
     FileHeaderContext context = new FileHeaderContext().commentLines(lines);
     FileContext fileContext = new FileContext().file(file);
 

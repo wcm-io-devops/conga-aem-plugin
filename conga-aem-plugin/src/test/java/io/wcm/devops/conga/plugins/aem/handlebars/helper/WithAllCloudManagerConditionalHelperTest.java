@@ -28,8 +28,6 @@ import java.util.Map;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
-import com.google.common.collect.ImmutableMap;
-
 import io.wcm.devops.conga.generator.spi.handlebars.HelperPlugin;
 import io.wcm.devops.conga.generator.util.PluginManagerImpl;
 
@@ -45,7 +43,7 @@ class WithAllCloudManagerConditionalHelperTest {
 
   @Test
   void testApply() throws IOException {
-    Map<String, Object> model = ImmutableMap.of("httpd", ImmutableMap.of("serverName", "host1"));
+    Map<String, Object> model = Map.of("httpd", Map.of("serverName", "host1"));
     MockOptions options = new MockOptions(model);
 
     assertHelper(FN_RETURN + "(" + model + ")", helper, null, options);
@@ -53,7 +51,7 @@ class WithAllCloudManagerConditionalHelperTest {
 
   @Test
   void testApplySeparateModel() throws IOException {
-    Map<String, Object> model = ImmutableMap.of("httpd", ImmutableMap.of("serverName", "host1"));
+    Map<String, Object> model = Map.of("httpd", Map.of("serverName", "host1"));
     MockOptions options = new MockOptions();
 
     assertHelper(FN_RETURN + "(" + model + ")", helper, model, options);
@@ -61,17 +59,17 @@ class WithAllCloudManagerConditionalHelperTest {
 
   @Test
   void testApplyWithCloudManagerConditional() throws IOException {
-    Map<String, Object> model = ImmutableMap.of("httpd",
-        ImmutableMap.of("serverName", "host0",
-            "cloudManagerConditional", ImmutableMap.of(
-                "dev", ImmutableMap.of("serverName", "host1"),
-                "stage", ImmutableMap.of("serverName", "host2"),
-                "prod", ImmutableMap.of())));
+    Map<String, Object> model = Map.of("httpd",
+        Map.of("serverName", "host0",
+            "cloudManagerConditional", Map.of(
+                "dev", Map.of("serverName", "host1"),
+                "stage", Map.of("serverName", "host2"),
+                "prod", Map.of())));
     MockOptions options = new MockOptions(model);
 
-    Map<String, Object> model_dev = ImmutableMap.of("httpd", ImmutableMap.of("serverName", "host1"));
-    Map<String, Object> model_stage = ImmutableMap.of("httpd", ImmutableMap.of("serverName", "host2"));
-    Map<String, Object> model_prod = ImmutableMap.of("httpd", ImmutableMap.of("serverName", "host0"));
+    Map<String, Object> model_dev = Map.of("httpd", Map.of("serverName", "host1"));
+    Map<String, Object> model_stage = Map.of("httpd", Map.of("serverName", "host2"));
+    Map<String, Object> model_prod = Map.of("httpd", Map.of("serverName", "host0"));
     assertHelper(FN_RETURN + "(" + model_dev + ")"
         + FN_RETURN + "(" + model_stage + ")"
         + FN_RETURN + "(" + model_prod + ")",
@@ -80,16 +78,16 @@ class WithAllCloudManagerConditionalHelperTest {
 
   @Test
   void testApplyWithCloudManagerConditionalSeparateModel() throws IOException {
-    Map<String, Object> model = ImmutableMap.of("httpd",
-        ImmutableMap.of("serverName", "host0",
-            "cloudManagerConditional", ImmutableMap.of(
-                "dev", ImmutableMap.of("serverName", "host1"),
-                "stage", ImmutableMap.of("serverName", "host2"))));
+    Map<String, Object> model = Map.of("httpd",
+        Map.of("serverName", "host0",
+            "cloudManagerConditional", Map.of(
+                "dev", Map.of("serverName", "host1"),
+                "stage", Map.of("serverName", "host2"))));
     MockOptions options = new MockOptions();
 
-    Map<String, Object> model_dev = ImmutableMap.of("httpd", ImmutableMap.of("serverName", "host1"));
-    Map<String, Object> model_stage = ImmutableMap.of("httpd", ImmutableMap.of("serverName", "host2"));
-    Map<String, Object> model_prod = ImmutableMap.of("httpd", ImmutableMap.of("serverName", "host0"));
+    Map<String, Object> model_dev = Map.of("httpd", Map.of("serverName", "host1"));
+    Map<String, Object> model_stage = Map.of("httpd", Map.of("serverName", "host2"));
+    Map<String, Object> model_prod = Map.of("httpd", Map.of("serverName", "host0"));
     assertHelper(FN_RETURN + "(" + model_dev + ")"
         + FN_RETURN + "(" + model_stage + ")"
         + FN_RETURN + "(" + model_prod + ")",
