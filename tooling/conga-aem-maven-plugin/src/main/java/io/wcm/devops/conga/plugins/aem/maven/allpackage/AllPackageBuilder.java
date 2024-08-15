@@ -579,7 +579,7 @@ public final class AllPackageBuilder {
     File tempFile = File.createTempFile(FilenameUtils.getBaseName(pkg.getFile().getName()), ".zip");
 
     // open original content package
-    try (ZipFile zipFileIn = new ZipFile(pkg.getFile())) {
+    try (ZipFile zipFileIn = new ZipFile.Builder().setFile(pkg.getFile()).get()) {
 
       // iterate through entries and write them to the temp. zip file
       try (FileOutputStream fos = new FileOutputStream(tempFile);

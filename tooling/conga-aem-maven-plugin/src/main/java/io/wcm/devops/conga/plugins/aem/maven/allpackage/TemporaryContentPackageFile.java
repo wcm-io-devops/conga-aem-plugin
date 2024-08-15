@@ -83,9 +83,7 @@ final class TemporaryContentPackageFile extends AbstractInstallableFile implemen
     StringBuilder sb = new StringBuilder();
     sb.append(getPackageInfo());
     if (this.dependencies != null) {
-      sb.append(" (dependencies: ");
-      sb.append(this.dependencies);
-      sb.append(")");
+      sb.append(" (dependencies: ").append(this.dependencies).append(")");
     }
     return sb.toString();
   }
