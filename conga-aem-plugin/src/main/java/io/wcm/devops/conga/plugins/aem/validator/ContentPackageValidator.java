@@ -106,7 +106,7 @@ public class ContentPackageValidator implements ValidatorPlugin {
 
     // instantiate Mojo to execute the validation (a bit hacky as we have to manually
     // pass through the maven context objects here via reflection)
-    ValidatePackageMojo mojo = new ValidatePackageMojo();
+    ValidatePackageMojo mojo = new ValidatePackageMojo(mavenContext.getRepoSystem(), mavenContext.getBuildContext());
     mojo.setLog(new InfoPrefixLog(mavenContext.getLog(), "    "));
 
     setProperty(mojo, "packageFile", packageFile);
@@ -116,9 +116,7 @@ public class ContentPackageValidator implements ValidatorPlugin {
     setProperty(mojo, "session", mavenContext.getSession());
     setProperty(mojo, "failOnValidationWarnings", false);
     setProperty(mojo, "mapPackageDependencyToMavenGa", Collections.emptyList());
-    setProperty(mojo, "repositorySystem", mavenContext.getRepositorySystem());
     setProperty(mojo, "resolutionErrorHandler", mavenContext.getResolutionErrorHandler());
-    setProperty(mojo, "buildContext", mavenContext.getBuildContext());
     setProperty(mojo, "attachedArtifacts", Collections.emptyList());
 
     Object validatorsSettings = MapExpander.getDeep(context.getOptions(), OPTION_VALIDATORS_SETTINGS);
