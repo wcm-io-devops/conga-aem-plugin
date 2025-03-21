@@ -53,7 +53,7 @@
       <groupId>com.adobe.acs</groupId>
       <artifactId>acs-aem-commons-ui.content</artifactId>
       <classifier>min</classifier>
-      <version>5.0.10</version>
+      <version>6.11.0</version>
       <type>zip</type>
       <scope>compile</scope>
     </dependency>
