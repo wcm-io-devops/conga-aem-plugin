@@ -5,5 +5,20 @@
     "github>wcm-io/renovate-config:automerge-parent",
     "github>wcm-io/renovate-config:automerge-testing",
     "github>wcm-io-devops/renovate-config:automerge-parent"
+  ],
+  "packageRules": [
+    {
+      "matchFileNames": ["tooling/conga-aem-maven-plugin/src/it/**"],
+      "matchPackageNames": [
+        "io.wcm.maven:io.wcm.maven.aem-dependencies",
+        "io.wcm.maven:io.wcm.maven.aem-cloud-dependencies"
+      ],
+      "enabled": false
+    },
+    {
+      "matchFileNames": ["tooling/conga-aem-maven-plugin/src/it/**"],
+      "matchUpdateTypes": ["minor", "patch"],
+      "automerge": true
+    }
   ]
 }
