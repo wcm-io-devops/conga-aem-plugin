@@ -16,9 +16,9 @@ files:
       rootPath: /content/sample
 
 # ACS AEM Commons
-- url: mvn:com.adobe.acs/acs-aem-commons-ui.apps//zip/min
+- url: mvn:com.adobe.acs/acs-aem-commons-ui.apps//zip
   dir: packages
-- url: mvn:com.adobe.acs/acs-aem-commons-ui.content//zip/min
+- url: mvn:com.adobe.acs/acs-aem-commons-ui.content//zip
   dir: packages
 
 
