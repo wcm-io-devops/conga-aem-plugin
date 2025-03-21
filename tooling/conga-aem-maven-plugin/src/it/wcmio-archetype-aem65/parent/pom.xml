@@ -30,7 +30,7 @@
 
     <!-- Versions -->
     <core.wcm.components.version>2.28.0</core.wcm.components.version>
-    <acs.aem.commons.version>6.3.0</acs.aem.commons.version>
+    <acs.aem.commons.version>6.11.0</acs.aem.commons.version>
 
     <!-- Enable reproducible builds -->
     <project.build.outputTimestamp>2021-01-01T00:00:00Z</project.build.outputTimestamp>
