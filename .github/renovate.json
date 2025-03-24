@@ -20,5 +20,17 @@
       "matchUpdateTypes": ["minor", "patch"],
       "automerge": true
     }
+  ],
+  "ignoreDeps": [
+    "io.wcm.devops.conga.plugins.aem.it:io.wcm.devops.conga.plugins.aem.it.aem65.parent",
+    "io.wcm.devops.conga.plugins.aem.it:io.wcm.devops.conga.plugins.aem.it.aem65.complete",
+    "io.wcm.devops.conga.plugins.aem.it:io.wcm.devops.conga.plugins.aem.it.aem65.conf-content",
+    "io.wcm.devops.conga.plugins.aem.it:io.wcm.devops.conga.plugins.aem.it.aem65.sample-content",
+    "io.wcm.devops.conga.plugins.aem.it:io.wcm.devops.conga.plugins.aem.it.aem65.core",
+    "io.wcm.devops.conga.plugins.aem.it:io.wcm.devops.conga.plugins.aem.it.aem65.clientlibs",
+    "io.wcm.devops.conga.plugins.aem.it:io.wcm.devops.conga.plugins.aem.it.aemcloud.parent",
+    "io.wcm.devops.conga.plugins.aem.it:io.wcm.devops.conga.plugins.aem.it.aemcloud.core",
+    "io.wcm.devops.conga.plugins.aem.it:io.wcm.devops.conga.plugins.aem.it.aemcloud.conf-content",
+    "io.wcm.devops.conga.plugins.aem.it:io.wcm.devops.conga.plugins.aem.it.aemcloud.sample-content"
   ]
 }
