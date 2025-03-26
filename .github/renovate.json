@@ -18,7 +18,8 @@
     {
       "matchFileNames": ["tooling/conga-aem-maven-plugin/src/it/**"],
       "matchUpdateTypes": ["minor", "patch"],
-      "automerge": true
+      "automerge": true,
+      "addLabels": ["automerge"]
     }
   ],
   "ignoreDeps": [
