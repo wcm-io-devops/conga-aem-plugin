@@ -1,0 +1,37 @@
+{
+  "$schema": "https://docs.renovatebot.com/renovate-schema.json",
+  "extends": [
+    "github>wcm-io/renovate-config:maven",
+    "github>wcm-io/renovate-config:automerge-parent",
+    "github>wcm-io/renovate-config:automerge-testing",
+    "github>wcm-io-devops/renovate-config:automerge-parent"
+  ],
+  "packageRules": [
+    {
+      "matchFileNames": ["tooling/conga-aem-maven-plugin/src/it/**"],
+      "matchPackageNames": [
+        "io.wcm.maven:io.wcm.maven.aem-dependencies",
+        "io.wcm.maven:io.wcm.maven.aem-cloud-dependencies"
+      ],
+      "enabled": false
+    },
+    {
+      "matchFileNames": ["tooling/conga-aem-maven-plugin/src/it/**"],
+      "matchUpdateTypes": ["minor", "patch"],
+      "automerge": true,
+      "addLabels": ["automerge"]
+    }
+  ],
+  "ignoreDeps": [
+    "io.wcm.devops.conga.plugins.aem.it:io.wcm.devops.conga.plugins.aem.it.aem65.parent",
+    "io.wcm.devops.conga.plugins.aem.it:io.wcm.devops.conga.plugins.aem.it.aem65.complete",
+    "io.wcm.devops.conga.plugins.aem.it:io.wcm.devops.conga.plugins.aem.it.aem65.conf-content",
+    "io.wcm.devops.conga.plugins.aem.it:io.wcm.devops.conga.plugins.aem.it.aem65.sample-content",
+    "io.wcm.devops.conga.plugins.aem.it:io.wcm.devops.conga.plugins.aem.it.aem65.core",
+    "io.wcm.devops.conga.plugins.aem.it:io.wcm.devops.conga.plugins.aem.it.aem65.clientlibs",
+    "io.wcm.devops.conga.plugins.aem.it:io.wcm.devops.conga.plugins.aem.it.aemcloud.parent",
+    "io.wcm.devops.conga.plugins.aem.it:io.wcm.devops.conga.plugins.aem.it.aemcloud.core",
+    "io.wcm.devops.conga.plugins.aem.it:io.wcm.devops.conga.plugins.aem.it.aemcloud.conf-content",
+    "io.wcm.devops.conga.plugins.aem.it:io.wcm.devops.conga.plugins.aem.it.aemcloud.sample-content"
+  ]
+}

@@ -26,7 +26,7 @@
   <parent>
     <groupId>io.wcm.maven</groupId>
     <artifactId>io.wcm.maven.global-parent</artifactId>
-    <version>56</version>
+    <version>62</version>
     <relativePath/>
   </parent>
 
@@ -44,16 +44,14 @@
     <dependency>
       <groupId>com.adobe.acs</groupId>
       <artifactId>acs-aem-commons-ui.apps</artifactId>
-      <classifier>min</classifier>
-      <version>5.0.10</version>
+      <version>6.11.0</version>
       <type>zip</type>
       <scope>compile</scope>
     </dependency>
     <dependency>
       <groupId>com.adobe.acs</groupId>
       <artifactId>acs-aem-commons-ui.content</artifactId>
-      <classifier>min</classifier>
-      <version>5.0.10</version>
+      <version>6.11.0</version>
       <type>zip</type>
       <scope>compile</scope>
     </dependency>
@@ -67,7 +65,7 @@
       <plugin>
         <groupId>io.wcm.devops.conga</groupId>
         <artifactId>conga-maven-plugin</artifactId>
-        <version>1.17.0</version>
+        <version>1.17.2</version>
         <extensions>true</extensions>
         <dependencies>
 

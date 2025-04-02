@@ -208,6 +208,8 @@
               SLING-INF/app-root;overwrite:=true;ignoreImportProviders:=xml;path:=/apps/wcmio-archetype-aem65/core, \
               SLING-INF/app-i18n;overwrite:=true;ignoreImportProviders:=json;path:=/apps/wcmio-archetype-aem65/core/i18n
 
+            Sling-Namespaces: wcmio=http://wcm.io/ns
+
             <!-- All wcm.io Handler SPI implementation only get active for the resource paths of this application -->
             Wcmio-CAService-ContextPathRegex: ^(/content|/content/dam|/content/experience-fragments|/conf)/wcmio-archetype-aem65(/.*)?$
 

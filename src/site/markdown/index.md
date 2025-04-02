@@ -43,7 +43,7 @@ Additionally the CONGA AEM Maven plugin is provided which allows to deploy a bun
 [extensions]: extensions.html
 [apidocs]: conga-aem-plugin/apidocs/
 [plugindocs]: tooling/conga-aem-maven-plugin/plugin-info.html
-[changelog]: changes-report.html
+[changelog]: changes.html
 [aem]: http://www.adobe.com/solutions/web-experience-management.html
 [conga]: https://devops.wcm.io/conga/
 [conga-sling]: https://devops.wcm.io/conga/plugins/sling/
