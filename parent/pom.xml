@@ -48,7 +48,7 @@
 
   <properties>
     <maven.version>3.3.9</maven.version>
-    <oak.version>1.76.0</oak.version>
+    <oak.version>1.78.0</oak.version>
   </properties>
 
   <dependencyManagement>
