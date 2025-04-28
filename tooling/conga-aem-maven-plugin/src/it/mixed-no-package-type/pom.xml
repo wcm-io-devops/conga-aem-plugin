@@ -44,7 +44,7 @@
     <dependency>
       <groupId>com.adobe.acs</groupId>
       <artifactId>acs-aem-commons-ui.apps</artifactId>
-      <version>6.11.0</version>
+      <version>6.12.0</version>
       <type>zip</type>
       <scope>compile</scope>
     </dependency>
