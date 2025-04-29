@@ -38,6 +38,10 @@
   <name>CONGA AEM Plugin Example</name>
   <description>Example definitions and templates.</description>
 
+  <properties>
+    <acs.aem.commons.version>6.12.0</acs.aem.commons.version>
+  </properties>
+
   <dependencies>
 
     <!-- Example content package to download and extract metadata -->
@@ -53,14 +57,14 @@
     <dependency>
       <groupId>com.adobe.acs</groupId>
       <artifactId>acs-aem-commons-ui.apps</artifactId>
-      <version>6.12.0</version>
+      <version>${acs.aem.commons.version}</version>
       <type>zip</type>
       <scope>compile</scope>
     </dependency>
     <dependency>
       <groupId>com.adobe.acs</groupId>
       <artifactId>acs-aem-commons-ui.content</artifactId>
-      <version>6.12.0</version>
+      <version>${acs.aem.commons.version}</version>
       <type>zip</type>
       <scope>compile</scope>
     </dependency>

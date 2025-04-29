@@ -38,20 +38,24 @@
   <name>Mixed/No Package Type</name>
   <description>Test case with packages with "mixed" package types, and packages without package type and "all" package.</description>
 
+  <properties>
+    <acs.aem.commons.version>6.12.0</acs.aem.commons.version>
+  </properties>
+
   <dependencies>
 
     <!-- ACS AEM Commons -->
     <dependency>
       <groupId>com.adobe.acs</groupId>
       <artifactId>acs-aem-commons-ui.apps</artifactId>
-      <version>6.12.0</version>
+      <version>${acs.aem.commons.version}</version>
       <type>zip</type>
       <scope>compile</scope>
     </dependency>
     <dependency>
       <groupId>com.adobe.acs</groupId>
       <artifactId>acs-aem-commons-ui.content</artifactId>
-      <version>6.12.0</version>
+      <version>${acs.aem.commons.version}</version>
       <type>zip</type>
       <scope>compile</scope>
     </dependency>
