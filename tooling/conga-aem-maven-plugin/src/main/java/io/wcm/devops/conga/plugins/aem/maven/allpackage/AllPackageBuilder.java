@@ -80,9 +80,11 @@ import io.wcm.tooling.commons.contentpackagebuilder.PackageFilter;
 
 /**
  * Builds "all" package based on given set of content packages.
+ *
  * <p>
  * General concept:
  * </p>
+ *
  * <ul>
  * <li>Iterates through all content packages that are generated or collected by CONGA and contained in the
  * model.json</li>

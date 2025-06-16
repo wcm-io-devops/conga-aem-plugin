@@ -44,9 +44,8 @@ abstract class AbstractContentPackageMojo extends AbstractMojo {
   private static final String CONSOLE_URL = "/system/console";
 
   /**
-   * <p>
    * The URL of the HTTP service API of the CRX package manager.
-   * </p>
+   *
    * <p>
    * See <a href=
    * "http://dev.day.com/docs/en/crx/current/how_to/package_manager.html#Managing%20Packages%20on%20the%20Command%20Line"
@@ -116,17 +115,18 @@ abstract class AbstractContentPackageMojo extends AbstractMojo {
   private int retryDelay;
 
   /**
-   * <p>
    * Bundle status JSON URL. If an URL is configured the activation status of all bundles in the system is checked
    * before it is tried to upload and install a new package and after each upload.
-   * </p>
+   *
    * <p>
    * If not all bundles are activated the upload is delayed up to {@link #bundleStatusWaitLimit} seconds,
    * every 5 seconds the activation status is checked anew.
    * </p>
+   *
    * <p>
    * Expected is an URL like: http://localhost:4502/system/console/bundles/.json
    * </p>
+   *
    * <p>
    * If the URL is not set it is derived from serviceURL. If set to "-" the status check is disabled.
    * </p>
@@ -142,17 +142,18 @@ abstract class AbstractContentPackageMojo extends AbstractMojo {
   private int bundleStatusWaitLimit;
 
   /**
-   * <p>
    * Package Manager install status JSON URL. If an URL is configured the installation status of packages and
    * embedded packages is checked before it is tried to upload and install a new package and after each upload.
-   * </p>
+   *
    * <p>
    * If not all packages are installed the upload is delayed up to {@link #packageManagerInstallStatusWaitLimit}
    * seconds, every 5 seconds the installation status is checked anew.
    * </p>
+   *
    * <p>
    * Expected is an URL like: http://localhost:4502/crx/packmgr/installstatus.jsp
    * </p>
+   *
    * <p>
    * If the URL is not set it is derived from serviceURL. If set to "-" the status check is disabled.
    * </p>
