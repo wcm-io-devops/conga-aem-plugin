@@ -29,9 +29,10 @@ import java.util.Set;
 import java.util.SortedMap;
 import java.util.TreeMap;
 
+import javax.inject.Inject;
+
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugin.MojoFailureException;
-import org.apache.maven.plugins.annotations.Component;
 import org.apache.maven.plugins.annotations.Mojo;
 import org.apache.maven.plugins.annotations.Parameter;
 import org.apache.maven.project.MavenProject;
@@ -162,7 +163,7 @@ public final class CloudManagerAllPackageMojo extends AbstractCloudManagerMojo {
 
   @Parameter(readonly = true, defaultValue = "${project}")
   private MavenProject project;
-  @Component
+  @Inject
   private MavenProjectHelper projectHelper;
 
   private static final String CLOUDMANAGER_TARGET_NONE = "none";
