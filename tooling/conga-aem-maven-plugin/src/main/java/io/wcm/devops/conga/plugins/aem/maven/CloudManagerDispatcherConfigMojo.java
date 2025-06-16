@@ -27,15 +27,17 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Set;
 
+import javax.inject.Inject;
+
 import org.apache.commons.lang3.StringUtils;
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugin.MojoFailureException;
-import org.apache.maven.plugins.annotations.Component;
 import org.apache.maven.plugins.annotations.Mojo;
 import org.apache.maven.plugins.annotations.Parameter;
-import org.codehaus.plexus.archiver.Archiver;
 import org.codehaus.plexus.archiver.ArchiverException;
 import org.codehaus.plexus.archiver.zip.ZipArchiver;
+
+import com.google.inject.name.Named;
 
 import io.wcm.devops.conga.generator.util.FileUtil;
 import io.wcm.devops.conga.plugins.aem.maven.model.ModelParser;
@@ -56,7 +58,8 @@ public final class CloudManagerDispatcherConfigMojo extends AbstractCloudManager
   @Parameter(property = "conga.cloudManager.dispatcherConfig.skip", defaultValue = "false")
   private boolean skip;
 
-  @Component(role = Archiver.class, hint = "zip")
+  @Inject
+  @Named("zip")
   private ZipArchiver zipArchiver;
 
   @Parameter(defaultValue = "${project.build.outputTimestamp}")

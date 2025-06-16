@@ -24,6 +24,8 @@ import static io.wcm.devops.conga.generator.util.FileUtil.getCanonicalPath;
 import java.io.File;
 import java.util.List;
 
+import javax.inject.Inject;
+
 import org.apache.maven.execution.MavenSession;
 import org.apache.maven.model.Plugin;
 import org.apache.maven.plugin.BuildPluginManager;
@@ -33,7 +35,6 @@ import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugin.MojoFailureException;
 import org.apache.maven.plugin.descriptor.MojoDescriptor;
 import org.apache.maven.plugin.descriptor.PluginDescriptor;
-import org.apache.maven.plugins.annotations.Component;
 import org.apache.maven.plugins.annotations.Mojo;
 import org.apache.maven.plugins.annotations.Parameter;
 import org.apache.maven.project.MavenProject;
@@ -106,9 +107,9 @@ public final class InstallPackagesMojo extends AbstractContentPackageMojo {
   private MavenProject project;
   @Parameter(defaultValue = "${session}", readonly = true)
   private MavenSession session;
-  @Component(role = MavenPluginManager.class)
+  @Inject
   private MavenPluginManager pluginManager;
-  @Component(role = BuildPluginManager.class)
+  @Inject
   private BuildPluginManager buildPluginManager;
 
   @Override
