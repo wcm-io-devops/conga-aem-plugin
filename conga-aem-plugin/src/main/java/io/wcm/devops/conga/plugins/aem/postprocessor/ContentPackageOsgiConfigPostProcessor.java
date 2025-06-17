@@ -40,7 +40,6 @@ import org.apache.commons.lang3.StringUtils;
 import org.apache.sling.provisioning.model.Model;
 import org.slf4j.Logger;
 
-import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 import io.wcm.devops.conga.generator.GeneratorException;
 import io.wcm.devops.conga.generator.plugins.postprocessor.AbstractPostProcessor;
 import io.wcm.devops.conga.generator.spi.context.FileContext;
@@ -78,7 +77,6 @@ public class ContentPackageOsgiConfigPostProcessor extends AbstractPostProcessor
   }
 
   @Override
-  @SuppressFBWarnings("RV_RETURN_VALUE_IGNORED_BAD_PRACTICE")
   public List<FileContext> apply(FileContext fileContext, PostProcessorContext context) {
     File file = fileContext.getFile();
     Logger logger = context.getLogger();
@@ -152,7 +150,6 @@ public class ContentPackageOsgiConfigPostProcessor extends AbstractPostProcessor
       String rootPath, FileHeaderContext fileHeader, PostProcessorContext context) throws IOException {
     List<Void> result = ProvisioningUtil.visitOsgiConfigurations(model, new ConfigConsumer<Void>() {
       @Override
-      @SuppressFBWarnings("RV_RETURN_VALUE_IGNORED_BAD_PRACTICE")
       @SuppressWarnings("java:S3457") // log placeholders
       public Void accept(String path, Dictionary<String, Object> properties) throws IOException {
         String contentPath = rootPath + (StringUtils.contains(path, "/") ? "." : "/") + path;

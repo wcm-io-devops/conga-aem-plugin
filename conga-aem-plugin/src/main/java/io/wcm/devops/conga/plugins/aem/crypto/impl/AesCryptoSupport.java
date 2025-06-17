@@ -31,7 +31,6 @@ import javax.crypto.KeyGenerator;
 import javax.crypto.spec.IvParameterSpec;
 import javax.crypto.spec.SecretKeySpec;
 
-import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 import io.wcm.devops.conga.plugins.aem.crypto.CryptoSupport;
 
 /**
@@ -96,7 +95,6 @@ public class AesCryptoSupport extends CryptoSupport {
     return cipher;
   }
 
-  @SuppressFBWarnings("DMI_RANDOM_USED_ONLY_ONCE")
   private byte[] generateIV() {
     byte[] iv = new byte[IV_SIZE];
     RANDOM.nextBytes(iv);

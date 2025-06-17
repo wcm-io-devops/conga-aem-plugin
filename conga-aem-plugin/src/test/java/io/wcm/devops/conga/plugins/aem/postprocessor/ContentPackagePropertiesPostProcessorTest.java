@@ -48,7 +48,7 @@ class ContentPackagePropertiesPostProcessorTest {
 
   @SuppressWarnings("unchecked")
   @Test
-  void testContentPackage() throws Exception {
+  void testContentPackage() {
 
     FileContext fileContext = new FileContext()
         .file(new File("src/test/resources/package/example.zip"));
@@ -80,7 +80,7 @@ class ContentPackagePropertiesPostProcessorTest {
   }
 
   @Test
-  void testNonContentPackage() throws Exception {
+  void testNonContentPackage() {
 
     FileContext fileContext = new FileContext()
         .file(new File("src/test/resources/package/no-content-package.zip"));
