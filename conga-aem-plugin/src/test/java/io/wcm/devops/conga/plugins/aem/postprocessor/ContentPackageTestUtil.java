@@ -67,7 +67,7 @@ public final class ContentPackageTestUtil {
     assertEquals(expected, XPATH_ENGINE.evaluate(xpath, node));
   }
 
-  public static void assertXpathEvaluatesTo(String expected, String xpath, Document doc) throws Exception {
+  public static void assertXpathEvaluatesTo(String expected, String xpath, Document doc) {
     assertXpathEvaluatesTo(expected, xpath, doc.getDocumentElement());
   }
 

@@ -66,7 +66,7 @@ class ContentPackagePropertiesPostProcessorTest {
 
   @SuppressWarnings("unchecked")
   @Test
-  void testContentPackageOverridePackageType() throws Exception {
+  void testContentPackageOverridePackageType() {
 
     FileContext fileContext = new FileContext()
         .file(new File("src/test/resources/package/example.zip"));
