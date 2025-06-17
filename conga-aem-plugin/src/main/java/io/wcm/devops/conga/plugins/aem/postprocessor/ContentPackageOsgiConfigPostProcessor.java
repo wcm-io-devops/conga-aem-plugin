@@ -28,7 +28,6 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
-import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.util.Dictionary;
 import java.util.HashMap;
@@ -43,7 +42,6 @@ import org.slf4j.Logger;
 import io.wcm.devops.conga.generator.GeneratorException;
 import io.wcm.devops.conga.generator.plugins.postprocessor.AbstractPostProcessor;
 import io.wcm.devops.conga.generator.spi.context.FileContext;
-import io.wcm.devops.conga.generator.spi.context.FileHeaderContext;
 import io.wcm.devops.conga.generator.spi.context.PostProcessorContext;
 import io.wcm.devops.conga.plugins.aem.util.ContentPackageUtil;
 import io.wcm.devops.conga.plugins.sling.postprocessor.JsonOsgiConfigPostProcessor;
@@ -83,9 +81,6 @@ public class ContentPackageOsgiConfigPostProcessor extends AbstractPostProcessor
     Map<String, Object> options = context.getOptions();
 
     try {
-      // extract file header
-      FileHeaderContext fileHeader = extractFileHeader(fileContext, context);
-
       // generate OSGi configurations
       Model model;
       if (ProvisioningUtil.isProvisioningFile(fileContext)) {
@@ -105,7 +100,7 @@ public class ContentPackageOsgiConfigPostProcessor extends AbstractPostProcessor
 
       String rootPath = ContentPackageUtil.getMandatoryProp(options, PROPERTY_PACKAGE_ROOT_PATH);
 
-      ContentPackageBuilder builder = ContentPackageUtil.getContentPackageBuilder(options, context.getUrlFileManager(), fileHeader);
+      ContentPackageBuilder builder = ContentPackageUtil.getContentPackageBuilder(options, context.getUrlFileManager());
 
       // set package type depending on if config is present or not
       builder.packageType(hasAnyConfig ? "container" : "application");
@@ -113,7 +108,7 @@ public class ContentPackageOsgiConfigPostProcessor extends AbstractPostProcessor
       try (ContentPackage contentPackage = builder.build(zipFile)) {
         if (hasAnyConfig) {
           // generate OSGI config files
-          generateOsgiConfigurations(model, contentPackage, rootPath, fileHeader, context);
+          generateOsgiConfigurations(model, contentPackage, rootPath, context);
         }
         else {
           // create folder for root path if package is empty otherwise
@@ -142,12 +137,11 @@ public class ContentPackageOsgiConfigPostProcessor extends AbstractPostProcessor
    * @param model Provisioning Model
    * @param contentPackage Content package
    * @param rootPath Root path
-   * @param fileHeader File header
    * @param context Post processor context
    * @return true if any config file was added
    */
   private boolean generateOsgiConfigurations(Model model, ContentPackage contentPackage,
-      String rootPath, FileHeaderContext fileHeader, PostProcessorContext context) throws IOException {
+      String rootPath, PostProcessorContext context) throws IOException {
     List<Void> result = ProvisioningUtil.visitOsgiConfigurations(model, new ConfigConsumer<Void>() {
       @Override
       @SuppressWarnings("java:S3457") // log placeholders
@@ -161,11 +155,6 @@ public class ContentPackageOsgiConfigPostProcessor extends AbstractPostProcessor
           OsgiConfigUtil.write(os, properties);
         }
         try {
-          FileContext tempFileContext = new FileContext().file(tempFile).charset(StandardCharsets.UTF_8);
-
-          // apply file header
-          applyFileHeader(tempFileContext, fileHeader, context);
-
           // write configuration to content package
           try (InputStream is = new BufferedInputStream(new FileInputStream(tempFile))) {
             contentPackage.addFile(contentPath, is);

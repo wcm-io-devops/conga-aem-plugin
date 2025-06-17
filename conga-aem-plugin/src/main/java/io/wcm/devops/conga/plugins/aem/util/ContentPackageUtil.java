@@ -41,6 +41,7 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
@@ -54,7 +55,6 @@ import org.apache.commons.lang3.StringUtils;
 
 import io.wcm.devops.conga.generator.GeneratorException;
 import io.wcm.devops.conga.generator.UrlFileManager;
-import io.wcm.devops.conga.generator.spi.context.FileHeaderContext;
 import io.wcm.devops.conga.model.util.MapExpander;
 import io.wcm.devops.conga.plugins.aem.postprocessor.ContentPackageOsgiConfigPostProcessor;
 import io.wcm.devops.conga.plugins.aem.postprocessor.ContentPackagePostProcessor;
@@ -70,6 +70,11 @@ public final class ContentPackageUtil {
 
   private static final String THUMBNAIL_IMAGE_DEFAULT = "/default-package-thumbnail.png";
 
+  /*
+   * Use a single date for all content packages build in a single run.
+   */
+  private static final Date CURRENT_DATE = new Date();
+
   private ContentPackageUtil() {
     // constants only
   }
@@ -81,19 +86,8 @@ public final class ContentPackageUtil {
    * @return Content package builder
    */
   public static ContentPackageBuilder getContentPackageBuilder(Map<String, Object> options, UrlFileManager urlFileManager) {
-    return getContentPackageBuilder(options, urlFileManager, null);
-  }
-
-  /**
-   * Builds content package builder populated with options from options map.
-   * @param options Options
-   * @param urlFileManager URL file manager
-   * @param fileHeader File header
-   * @return Content package builder
-   */
-  public static ContentPackageBuilder getContentPackageBuilder(Map<String, Object> options, UrlFileManager urlFileManager,
-      FileHeaderContext fileHeader) {
     ContentPackageBuilder builder = new ContentPackageBuilder()
+        .created(CURRENT_DATE)
         .group(getMandatoryProp(options, PROPERTY_PACKAGE_GROUP))
         .name(getMandatoryProp(options, PROPERTY_PACKAGE_NAME))
         .version(getOptionalProp(options, PROPERTY_PACKAGE_VERSION))
@@ -103,12 +97,7 @@ public final class ContentPackageUtil {
         .allowIndexDefinitions(getOptionalPropBoolean(options, PROPERTY_PACKAGE_ALLOW_INDEX_DEFINITIONS));
 
     // description
-    if (fileHeader != null) {
-      builder.description(mergeDescriptionFileHeader(getOptionalProp(options, PROPERTY_PACKAGE_DESCRIPTION), fileHeader));
-    }
-    else {
-      builder.description(getOptionalProp(options, PROPERTY_PACKAGE_DESCRIPTION));
-    }
+    builder.description(getOptionalProp(options, PROPERTY_PACKAGE_DESCRIPTION));
 
     // AC handling
     AcHandling acHandling = getAcHandling(options);
@@ -142,42 +131,6 @@ public final class ContentPackageUtil {
     putFlattenedProperties(builder, getAdditionalyProperties(options), "");
 
     return builder;
-  }
-
-  /**
-   * Merges description and file header to a single string.
-   * @param description Description from configuration - may be null
-   * @param fileHeader File header from file - may be null
-   * @return Merged description or null if all input is null
-   */
-  private static String mergeDescriptionFileHeader(String description, FileHeaderContext fileHeader) {
-    boolean hasDescription = StringUtils.isNotBlank(description);
-    boolean hasFileHeader = fileHeader != null && !fileHeader.getCommentLines().isEmpty();
-
-    if (!hasDescription && !hasFileHeader) {
-      return null;
-    }
-
-    StringBuilder result = new StringBuilder();
-
-    if (hasDescription) {
-      result.append(description);
-    }
-
-    if (hasDescription && hasFileHeader) {
-      result.append("\n---\n");
-    }
-
-    if (hasFileHeader) {
-      @SuppressWarnings("null")
-      String fileHeaderString = StringUtils.trim(fileHeader.getCommentLines().stream()
-          .filter(line -> !StringUtils.contains(line, "*****"))
-          .map(StringUtils::trim)
-          .collect(Collectors.joining("\n")));
-      result.append(fileHeaderString);
-    }
-
-    return result.toString();
   }
 
   /**
