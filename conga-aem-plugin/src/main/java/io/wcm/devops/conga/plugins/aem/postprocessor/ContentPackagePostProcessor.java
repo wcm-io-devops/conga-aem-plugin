@@ -35,7 +35,6 @@ import org.slf4j.Logger;
 import io.wcm.devops.conga.generator.GeneratorException;
 import io.wcm.devops.conga.generator.plugins.postprocessor.AbstractPostProcessor;
 import io.wcm.devops.conga.generator.spi.context.FileContext;
-import io.wcm.devops.conga.generator.spi.context.FileHeaderContext;
 import io.wcm.devops.conga.generator.spi.context.PostProcessorContext;
 import io.wcm.devops.conga.generator.util.FileUtil;
 import io.wcm.devops.conga.plugins.aem.util.ContentPackageBinaryFile;
@@ -77,16 +76,13 @@ public class ContentPackagePostProcessor extends AbstractPostProcessor {
     Map<String, Object> options = context.getOptions();
 
     try {
-      // extract file header
-      FileHeaderContext fileHeader = extractFileHeader(fileContext, context);
-
       // create AEM content package with configurations
       File zipFile = new File(file.getParentFile(), FilenameUtils.getBaseName(file.getName()) + ".zip");
       logger.info("Generate {}", zipFile.getCanonicalPath());
 
       String rootPath = ContentPackageUtil.getMandatoryProp(options, PROPERTY_PACKAGE_ROOT_PATH);
 
-      ContentPackageBuilder builder = ContentPackageUtil.getContentPackageBuilder(options, context.getUrlFileManager(), fileHeader);
+      ContentPackageBuilder builder = ContentPackageUtil.getContentPackageBuilder(options, context.getUrlFileManager());
       try (ContentPackage contentPackage = builder.build(zipFile)) {
 
         // add content from JSON file

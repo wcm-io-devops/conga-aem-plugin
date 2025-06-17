@@ -81,7 +81,7 @@ class ContentPackageOsgiConfigPostProcessorTest {
     File contentPackageFile = new File(target, "test.txt");
     FileUtils.copyFile(new File(getClass().getResource("/provisioning/provisioning.txt").toURI()), contentPackageFile);
 
-    postProcess_assertResult(target, contentPackageFile, "myDesc\n---\nSample comment in provisioning.txt");
+    postProcess_assertResult(target, contentPackageFile, "myDesc");
   }
 
   @Test

@@ -147,7 +147,7 @@ class ContentPackagePostProcessorTest {
     Document propertiesXml = getXmlFromZip(zipFile, "META-INF/vault/properties.xml");
     assertXpathEvaluatesTo("ignore", "/properties/entry[@key='acHandling']", propertiesXml);
     assertXpathEvaluatesTo("content", "/properties/entry[@key='packageType']", propertiesXml);
-    assertXpathEvaluatesTo("Sample comment in content.json", "/properties/entry[@key='description']", propertiesXml);
+    assertXpathEvaluatesTo("", "/properties/entry[@key='description']", propertiesXml);
     assertXpathEvaluatesTo("value1", "/properties/entry[@key='prop1']", propertiesXml);
     assertXpathEvaluatesTo("123", "/properties/entry[@key='my.custom.prop2']", propertiesXml);
 
