@@ -25,7 +25,10 @@
   <body>
 
     <release version="2.20.4" date="not released">
-      <action type="update" dev="sseifert">
+      <action type="update" dev="sseifert" issue="178">
+        Omit CONGA file header in generated content packages and use single creation date.
+      </action>
+      <action type="update" dev="sseifert" issue="177">
         CONGA AEM Maven Plugin: Switch to JSR-330 annotations.
       </action>
     </release>
