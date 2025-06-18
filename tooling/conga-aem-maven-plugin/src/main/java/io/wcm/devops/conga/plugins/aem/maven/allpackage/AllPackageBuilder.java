@@ -604,7 +604,7 @@ public final class AllPackageBuilder {
 
                 // update package dependencies
                 ContentPackageFile dependencyFile = previousPkg;
-                if (autoDependenciesMode == AutoDependenciesMode.OFF) {
+                if (autoDependenciesMode == AutoDependenciesMode.OFF || pkg.isDependencyChainIgnore()) {
                   dependencyFile = null;
                 }
                 updateDependencies(pkg, props, dependencyFile, environmentRunMode, allPackagesFromFileSets);

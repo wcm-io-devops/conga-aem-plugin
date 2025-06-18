@@ -343,8 +343,7 @@ class AllPackageBuilderAuthorPublishTest {
             dep("adobe/consulting:acs-aem-commons-ui.content:4.10.0")));
     File contentInstallDirPublish = new File(contentDir, "install.publish");
     assertFiles(contentInstallDirPublish, ".publish",
-        contentPackage("aem-cms-publish-sling-mapping-dependencyChainIgnore{runmode}",
-            dep("wcm-io-samples:wcm-io-samples-sample-content:1.3.1-SNAPSHOT")),
+        contentPackage("aem-cms-publish-sling-mapping-dependencyChainIgnore{runmode}"),
         contentPackage("aem-cms-publish-sling-mapping{runmode}",
             dep("wcm-io-samples:wcm-io-samples-sample-content:1.3.1-SNAPSHOT")));
 
