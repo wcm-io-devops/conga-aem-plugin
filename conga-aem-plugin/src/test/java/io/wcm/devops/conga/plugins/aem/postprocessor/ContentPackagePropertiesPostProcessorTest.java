@@ -62,6 +62,8 @@ class ContentPackagePropertiesPostProcessorTest {
     assertEquals(false, props.get("requiresRoot"));
     assertEquals(2, props.get("packageFormatVersion"));
     assertNull(props.get("packageType"));
+
+    assertNull(fileContext.getModelOptions().get(ContentPackagePropertiesPostProcessor.DEPENDENCY_CHAIN_IGNORE_PROPERTY));
   }
 
   @Test
