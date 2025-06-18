@@ -264,7 +264,7 @@ public final class ContentPackageUtil {
    * @param key Key
    * @return Option value or false
    */
-  private static boolean getOptionalPropBoolean(Map<String, Object> options, String key) {
+  public static boolean getOptionalPropBoolean(Map<String, Object> options, String key) {
     Object value = getOptionalProp(options, key);
     if (value instanceof Boolean) {
       return (Boolean)value;

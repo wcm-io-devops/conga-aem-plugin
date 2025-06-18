@@ -64,6 +64,19 @@ class ContentPackagePropertiesPostProcessorTest {
     assertNull(props.get("packageType"));
   }
 
+  @Test
+  void testContentPackageIgnoreDependencyChain() {
+
+    FileContext fileContext = new FileContext()
+        .file(new File("src/test/resources/package/example.zip"));
+
+    // post-process
+    applyPlugin(fileContext, Map.of(ContentPackageOptions.PROPERTY_DEPENCY_CHAIN_IGNORE, true));
+
+    // validate
+    assertEquals(true, fileContext.getModelOptions().get(ContentPackagePropertiesPostProcessor.DEPENDENCY_CHAIN_IGNORE_PROPERTY));
+  }
+
   @SuppressWarnings("unchecked")
   @Test
   void testContentPackageOverridePackageType() {

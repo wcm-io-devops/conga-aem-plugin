@@ -19,6 +19,8 @@
  */
 package io.wcm.devops.conga.plugins.aem.maven.model;
 
+import static io.wcm.devops.conga.plugins.aem.postprocessor.ContentPackagePropertiesPostProcessor.DEPENDENCY_CHAIN_IGNORE_PROPERTY;
+import static io.wcm.devops.conga.plugins.aem.postprocessor.ContentPackagePropertiesPostProcessor.MODEL_OPTIONS_PROPERTY;
 import static org.apache.jackrabbit.vault.packaging.PackageProperties.NAME_GROUP;
 import static org.apache.jackrabbit.vault.packaging.PackageProperties.NAME_NAME;
 import static org.apache.jackrabbit.vault.packaging.PackageProperties.NAME_PACKAGE_TYPE;
@@ -30,9 +32,6 @@ import java.util.Map;
 import java.util.Objects;
 
 import org.jetbrains.annotations.Nullable;
-
-import io.wcm.devops.conga.plugins.aem.postprocessor.ContentPackageOptions;
-import io.wcm.devops.conga.plugins.aem.postprocessor.ContentPackagePropertiesPostProcessor;
 
 /**
  * Represents a content package file generated or referenced by CONGA.
@@ -65,12 +64,11 @@ public final class ModelContentPackageFile extends AbstractInstallableFile imple
     this.recursive = (Boolean)fileData.get("recursive");
     this.delayAfterInstallSec = (Integer)fileData.get("delayAfterInstallSec");
     this.httpSocketTimeoutSec = (Integer)fileData.get("httpSocketTimeoutSec");
-    this.dependencyChainIgnore = (Boolean)fileData.get(ContentPackageOptions.PROPERTY_DEPENCY_CHAIN_IGNORE);
+    this.dependencyChainIgnore = (Boolean)fileData.get(DEPENDENCY_CHAIN_IGNORE_PROPERTY);
 
-    Map<String, Object> contentPackageProperties = (Map<String, Object>)fileData.get(
-        ContentPackagePropertiesPostProcessor.MODEL_OPTIONS_PROPERTY);
+    Map<String, Object> contentPackageProperties = (Map<String, Object>)fileData.get(MODEL_OPTIONS_PROPERTY);
     if (contentPackageProperties == null) {
-      throw new IllegalArgumentException(ContentPackagePropertiesPostProcessor.MODEL_OPTIONS_PROPERTY + " missing.");
+      throw new IllegalArgumentException(MODEL_OPTIONS_PROPERTY + " missing.");
     }
     this.name = Objects.toString(contentPackageProperties.get(NAME_NAME), null);
     this.group = Objects.toString(contentPackageProperties.get(NAME_GROUP), null);
