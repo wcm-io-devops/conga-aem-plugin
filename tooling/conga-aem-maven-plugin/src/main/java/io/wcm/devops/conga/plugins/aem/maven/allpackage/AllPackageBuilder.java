@@ -416,6 +416,8 @@ public final class AllPackageBuilder {
         .filter(item -> isAuthorAndPublish(item)
             || (isOnlyAuthor(item) && isOnlyAuthor(currentPackage))
             || (isOnlyPublish(item) && isOnlyPublish(currentPackage)))
+        // ignore packages that are marked as dependency chain ignore
+        .filter(item -> !item.isDependencyChainIgnore())
         // get last in list
         .reduce((first, second) -> second).orElse(null);
   }

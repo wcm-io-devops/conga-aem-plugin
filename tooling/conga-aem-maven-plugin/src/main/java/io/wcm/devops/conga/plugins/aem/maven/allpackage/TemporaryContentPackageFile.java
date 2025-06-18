@@ -88,4 +88,9 @@ final class TemporaryContentPackageFile extends AbstractInstallableFile implemen
     return sb.toString();
   }
 
+  @Override
+  public boolean isDependencyChainIgnore() {
+    return false;
+  }
+
 }

@@ -25,8 +25,8 @@
   <body>
 
     <release version="2.21.0" date="not released">
-      <action type="add" dev="sseifert">
-        Add Option "dependencyChainIgnore" for Content Package post processors. If set to true, this package is ignored in the content package dependency chain, i.e. it does not play a role for this package in which order it is deployed compared to other packages.
+      <action type="add" dev="sseifert" issue="179">
+        Content Package Post Processors: Add option "dependencyChainIgnore" to ignore a content package in the dependency chain, i.e. it does not play a role for this package in which order it is deployed compared to other packages.
       </action>
       <action type="update" dev="sseifert" issue="178">
         Omit CONGA file header in generated content packages and use single creation date.

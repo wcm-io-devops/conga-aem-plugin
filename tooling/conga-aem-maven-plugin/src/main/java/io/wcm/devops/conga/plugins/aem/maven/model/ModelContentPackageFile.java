@@ -31,6 +31,7 @@ import java.util.Objects;
 
 import org.jetbrains.annotations.Nullable;
 
+import io.wcm.devops.conga.plugins.aem.postprocessor.ContentPackageOptions;
 import io.wcm.devops.conga.plugins.aem.postprocessor.ContentPackagePropertiesPostProcessor;
 
 /**
@@ -43,6 +44,7 @@ public final class ModelContentPackageFile extends AbstractInstallableFile imple
   private final Boolean recursive;
   private final Integer delayAfterInstallSec;
   private final Integer httpSocketTimeoutSec;
+  private final Boolean dependencyChainIgnore;
 
   private final String name;
   private final String group;
@@ -63,6 +65,7 @@ public final class ModelContentPackageFile extends AbstractInstallableFile imple
     this.recursive = (Boolean)fileData.get("recursive");
     this.delayAfterInstallSec = (Integer)fileData.get("delayAfterInstallSec");
     this.httpSocketTimeoutSec = (Integer)fileData.get("httpSocketTimeoutSec");
+    this.dependencyChainIgnore = (Boolean)fileData.get(ContentPackageOptions.PROPERTY_DEPENCY_CHAIN_IGNORE);
 
     Map<String, Object> contentPackageProperties = (Map<String, Object>)fileData.get(
         ContentPackagePropertiesPostProcessor.MODEL_OPTIONS_PROPERTY);
@@ -117,6 +120,11 @@ public final class ModelContentPackageFile extends AbstractInstallableFile imple
   @Override
   public String getPackageType() {
     return this.packageType;
+  }
+
+  @Override
+  public boolean isDependencyChainIgnore() {
+    return dependencyChainIgnore != null ? dependencyChainIgnore : false;
   }
 
 }
