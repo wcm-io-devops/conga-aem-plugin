@@ -19,6 +19,7 @@
  */
 package io.wcm.devops.conga.plugins.aem.postprocessor;
 
+import static io.wcm.devops.conga.plugins.aem.postprocessor.ContentPackageOptions.PROPERTY_DEPENCY_CHAIN_IGNORE;
 import static io.wcm.devops.conga.plugins.aem.postprocessor.ContentPackageOptions.PROPERTY_PACKAGE_PACKAGE_TYPE;
 import static org.apache.jackrabbit.vault.packaging.PackageProperties.NAME_PACKAGE_TYPE;
 
@@ -53,6 +54,11 @@ public class ContentPackagePropertiesPostProcessor extends AbstractPostProcessor
    * Holds map containing the content package properties.
    */
   public static final String MODEL_OPTIONS_PROPERTY = "aemContentPackageProperties";
+
+  /**
+   * Marks content package to be ignored in dependency chain.
+   */
+  public static final String DEPENDENCY_CHAIN_IGNORE_PROPERTY = "aemContentPackageDepenencyChainIgnore";
 
   private static final String FILE_EXTENSION = "zip";
   private static final String ALTERNATE_FILE_EXTENSION = "jar";
@@ -94,6 +100,12 @@ public class ContentPackagePropertiesPostProcessor extends AbstractPostProcessor
         }
 
         fileContext.getModelOptions().put(MODEL_OPTIONS_PROPERTY, properties);
+
+        boolean dependencyChainIgnore = ContentPackageUtil.getOptionalPropBoolean(context.getOptions(), PROPERTY_DEPENCY_CHAIN_IGNORE);
+        if (dependencyChainIgnore) {
+          fileContext.getModelOptions().put(DEPENDENCY_CHAIN_IGNORE_PROPERTY, true);
+        }
+
         logger.info("Extracted properties from AEM content package.");
       }
     }

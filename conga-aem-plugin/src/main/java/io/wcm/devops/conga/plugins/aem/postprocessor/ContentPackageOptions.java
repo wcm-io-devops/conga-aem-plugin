@@ -103,4 +103,10 @@ public final class ContentPackageOptions {
    */
   public static final String PROPERTY_PACKAGE_ALLOW_INDEX_DEFINITIONS = "contentPackage.allowIndexDefinitions";
 
+  /**
+   * Ignore this package in dependency chain, i.e. it does not play a role for this package in which order
+   * it is deployed compared to other packages.
+   */
+  public static final String PROPERTY_DEPENCY_CHAIN_IGNORE = "dependencyChainIgnore";
+
 }

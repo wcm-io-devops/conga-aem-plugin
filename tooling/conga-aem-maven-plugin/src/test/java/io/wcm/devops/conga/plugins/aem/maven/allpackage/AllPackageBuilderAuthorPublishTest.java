@@ -121,6 +121,7 @@ class AllPackageBuilderAuthorPublishTest {
         contentPackage("acs-aem-commons-ui.content{runmode}", "4.10.0",
             dep("adobe/consulting:acs-aem-commons-ui.apps{runmode}:4.10.0")),
         contentPackage("wcm-io-samples-sample-content{runmode}", "1.3.1-SNAPSHOT"),
+        contentPackage("aem-cms-publish-sling-mapping-dependencyChainIgnore{runmode}"),
         contentPackage("aem-cms-publish-sling-mapping{runmode}"));
 
     File containerDir = new File(appsDir, "container");
@@ -192,6 +193,7 @@ class AllPackageBuilderAuthorPublishTest {
         contentPackage("aem-cms-author-replicationagents{runmode}"));
     File contentInstallDirPublish = new File(contentDir, "install.publish");
     assertFiles(contentInstallDirPublish, ".publish",
+        contentPackage("aem-cms-publish-sling-mapping-dependencyChainIgnore{runmode}"),
         contentPackage("aem-cms-publish-sling-mapping{runmode}"));
 
     File containerDir = new File(appsDir, "container");
@@ -341,6 +343,7 @@ class AllPackageBuilderAuthorPublishTest {
             dep("adobe/consulting:acs-aem-commons-ui.content:4.10.0")));
     File contentInstallDirPublish = new File(contentDir, "install.publish");
     assertFiles(contentInstallDirPublish, ".publish",
+        contentPackage("aem-cms-publish-sling-mapping-dependencyChainIgnore{runmode}"),
         contentPackage("aem-cms-publish-sling-mapping{runmode}",
             dep("wcm-io-samples:wcm-io-samples-sample-content:1.3.1-SNAPSHOT")));
 
@@ -418,6 +421,7 @@ class AllPackageBuilderAuthorPublishTest {
         contentPackage("aem-cms-author-replicationagents{runmode}"));
     File contentInstallDirPublish = new File(contentDir, "install.publish");
     assertFiles(contentInstallDirPublish, ".publish",
+        contentPackage("aem-cms-publish-sling-mapping-dependencyChainIgnore{runmode}"),
         contentPackage("aem-cms-publish-sling-mapping{runmode}"));
 
     File containerDir = new File(appsDir, "container");

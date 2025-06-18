@@ -416,6 +416,8 @@ public final class AllPackageBuilder {
         .filter(item -> isAuthorAndPublish(item)
             || (isOnlyAuthor(item) && isOnlyAuthor(currentPackage))
             || (isOnlyPublish(item) && isOnlyPublish(currentPackage)))
+        // ignore packages that are marked as dependency chain ignore
+        .filter(item -> !item.isDependencyChainIgnore())
         // get last in list
         .reduce((first, second) -> second).orElse(null);
   }
@@ -602,7 +604,7 @@ public final class AllPackageBuilder {
 
                 // update package dependencies
                 ContentPackageFile dependencyFile = previousPkg;
-                if (autoDependenciesMode == AutoDependenciesMode.OFF) {
+                if (autoDependenciesMode == AutoDependenciesMode.OFF || pkg.isDependencyChainIgnore()) {
                   dependencyFile = null;
                 }
                 updateDependencies(pkg, props, dependencyFile, environmentRunMode, allPackagesFromFileSets);

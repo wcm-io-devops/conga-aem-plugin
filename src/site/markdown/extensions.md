@@ -45,6 +45,7 @@ Both post processor plugins support a set of options that allow further configur
 | `contentPackage.requiresRoot`   | Package requires root.
 | `contentPackage.requiresRestart`| Package requires restart.
 | `contentPackage.allowIndexDefinitions` | Package allows index definitions.
+| `dependencyChainIgnore`         | Ignore this package in dependency chain, i.e. it does not play a role for this package in which order it is deployed compared to other packages.
 
 
 Example for defining package properties with a set of filters:
