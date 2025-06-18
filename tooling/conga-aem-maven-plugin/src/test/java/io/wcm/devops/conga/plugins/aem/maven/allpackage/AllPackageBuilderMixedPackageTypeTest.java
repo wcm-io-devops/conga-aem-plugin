@@ -56,7 +56,7 @@ class AllPackageBuilderMixedPackageTypeTest {
   }
 
   @Test
-  void testBuild_Strict() throws Exception {
+  void testBuild_Strict() {
     List<InstallableFile> files = new ModelParser(nodeDir).getInstallableFilesForNode();
     File targetFile = new File(targetDir, "all.zip");
 

@@ -52,6 +52,11 @@ public interface ContentPackageFile extends InstallableFile {
   @Nullable
   String getPackageType();
 
+  /**
+   * @return Ignore in dependency chain
+   */
+  boolean isDependencyChainIgnore();
+
   default String getPackageInfo() {
     return StringUtils.defaultString(getGroup())
         + ":" + StringUtils.defaultString(getName())

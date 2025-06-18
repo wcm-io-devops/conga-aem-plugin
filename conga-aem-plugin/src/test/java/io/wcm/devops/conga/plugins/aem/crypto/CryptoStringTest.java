@@ -53,28 +53,28 @@ class CryptoStringTest {
 
 
   @Test
-  void testToByteArrayNull() throws Exception {
+  void testToByteArrayNull() {
     assertThrows(IllegalArgumentException.class, () -> {
       CryptoString.toByteArray(null);
     });
   }
 
   @Test
-  void testToByteArrayIllegalString() throws Exception {
+  void testToByteArrayIllegalString() {
     assertThrows(IllegalArgumentException.class, () -> {
       CryptoString.toByteArray("abc");
     });
   }
 
   @Test
-  void testToStringNull() throws Exception {
+  void testToStringNull() {
     assertThrows(IllegalArgumentException.class, () -> {
       CryptoString.toString(null);
     });
   }
 
   @Test
-  void testToStringEmptyArray() throws Exception {
+  void testToStringEmptyArray() {
     assertThrows(IllegalArgumentException.class, () -> {
       CryptoString.toString(new byte[0]);
     });

@@ -33,7 +33,7 @@ import io.wcm.devops.conga.generator.spi.handlebars.context.HelperContext;
 abstract class AbstractFilterHelper implements HelperPlugin<Object> {
 
   @Override
-  @SuppressWarnings("PMD.PreserveStackTrace")
+  @SuppressWarnings({ "PMD.PreserveStackTrace", "PMD.AvoidThrowingNewInstanceOfSameException" })
   public final Object apply(Object context, Options options, HelperContext pluginContext) throws IOException {
     if (!(context instanceof Map)) {
       throw new IllegalArgumentException("Excpected map object for filter rule.");

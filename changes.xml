@@ -24,6 +24,18 @@
     xsi:schemaLocation="http://maven.apache.org/changes/2.0.0 https://maven.apache.org/xsd/changes-2.0.0.xsd">
   <body>
 
+    <release version="2.21.0" date="2025-06-18">
+      <action type="add" dev="sseifert" issue="179">
+        Content Package Post Processors: Add option "dependencyChainIgnore" to ignore a content package in the dependency chain, i.e. it does not play a role for this package in which order it is deployed compared to other packages.
+      </action>
+      <action type="update" dev="sseifert" issue="178">
+        Omit CONGA file header in generated content packages and use single creation date.
+      </action>
+      <action type="update" dev="sseifert" issue="177">
+        CONGA AEM Maven Plugin: Switch to JSR-330 annotations.
+      </action>
+    </release>
+
     <release version="2.20.2" date="2025-04-02">
       <action type="update" dev="sseifert" issue="99">
         Switch to Johnzon 2.x and jakarta.json.

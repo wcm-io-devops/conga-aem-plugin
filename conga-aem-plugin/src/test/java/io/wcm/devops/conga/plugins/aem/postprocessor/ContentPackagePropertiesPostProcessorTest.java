@@ -48,7 +48,7 @@ class ContentPackagePropertiesPostProcessorTest {
 
   @SuppressWarnings("unchecked")
   @Test
-  void testContentPackage() throws Exception {
+  void testContentPackage() {
 
     FileContext fileContext = new FileContext()
         .file(new File("src/test/resources/package/example.zip"));
@@ -62,11 +62,26 @@ class ContentPackagePropertiesPostProcessorTest {
     assertEquals(false, props.get("requiresRoot"));
     assertEquals(2, props.get("packageFormatVersion"));
     assertNull(props.get("packageType"));
+
+    assertNull(fileContext.getModelOptions().get(ContentPackagePropertiesPostProcessor.DEPENDENCY_CHAIN_IGNORE_PROPERTY));
+  }
+
+  @Test
+  void testContentPackageIgnoreDependencyChain() {
+
+    FileContext fileContext = new FileContext()
+        .file(new File("src/test/resources/package/example.zip"));
+
+    // post-process
+    applyPlugin(fileContext, Map.of(ContentPackageOptions.PROPERTY_DEPENCY_CHAIN_IGNORE, true));
+
+    // validate
+    assertEquals(true, fileContext.getModelOptions().get(ContentPackagePropertiesPostProcessor.DEPENDENCY_CHAIN_IGNORE_PROPERTY));
   }
 
   @SuppressWarnings("unchecked")
   @Test
-  void testContentPackageOverridePackageType() throws Exception {
+  void testContentPackageOverridePackageType() {
 
     FileContext fileContext = new FileContext()
         .file(new File("src/test/resources/package/example.zip"));
@@ -80,7 +95,7 @@ class ContentPackagePropertiesPostProcessorTest {
   }
 
   @Test
-  void testNonContentPackage() throws Exception {
+  void testNonContentPackage() {
 
     FileContext fileContext = new FileContext()
         .file(new File("src/test/resources/package/no-content-package.zip"));

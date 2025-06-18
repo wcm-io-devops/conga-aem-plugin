@@ -72,7 +72,7 @@ class AemCryptoEncryptHelperTest {
   }
 
   @Test
-  void testWithoutKey() throws Exception {
+  void testWithoutKey() {
     assertThrows(IOException.class, () -> {
       executeHelper(helper, INPUT, new MockOptions(), pluginContext);
     });

@@ -29,9 +29,10 @@ import java.util.Set;
 import java.util.SortedMap;
 import java.util.TreeMap;
 
+import javax.inject.Inject;
+
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugin.MojoFailureException;
-import org.apache.maven.plugins.annotations.Component;
 import org.apache.maven.plugins.annotations.Mojo;
 import org.apache.maven.plugins.annotations.Parameter;
 import org.apache.maven.project.MavenProject;
@@ -44,11 +45,13 @@ import io.wcm.devops.conga.plugins.aem.maven.model.ModelParser;
 /**
  * Builds an "all" content package dedicated for deployment via Adobe Cloud Manager
  * for the given environment and node(s).
+ *
  * <p>
  * By default, it builds one "all" package per environment and node without adding any Cloud Manager
  * environment-specific run mode suffixes to the folders. By defining a parameter <code>cloudManager.target</code>
  * (contains a list of string values) in the CONGA environment it is possible:
  * </p>
+ *
  * <ul>
  * <li>If it contains <code>none</code> no "all" package is build.</li>
  * <li>If set to one or multiple environment names (normally dev/stage/prod) one "all" package for each of
@@ -85,6 +88,7 @@ public final class CloudManagerAllPackageMojo extends AbstractCloudManagerMojo {
 
   /**
    * Automatically generate dependencies between content packages based on file order in CONGA configuration.
+   *
    * <p>
    * Possible options see
    * <a href="apidocs/io/wcm/devops/conga/plugins/aem/maven/AutoDependenciesMode.html">AutoDependenciesMode</a>.
@@ -95,6 +99,7 @@ public final class CloudManagerAllPackageMojo extends AbstractCloudManagerMojo {
 
   /**
    * How to optimize author/publish run modes in resulting "all" package.
+   *
    * <p>
    * Possible options see
    * <a href="apidocs/io/wcm/devops/conga/plugins/aem/maven/RunModeOptimization.html">RunModeOptimization</a>.
@@ -105,6 +110,7 @@ public final class CloudManagerAllPackageMojo extends AbstractCloudManagerMojo {
 
   /**
    * How to validate package types to be included in "all" package.
+   *
    * <p>
    * Possible options see
    * <a href="apidocs/io/wcm/devops/conga/plugins/aem/maven/PackageTypeValidation.html">PackageTypeValidation</a>.
@@ -115,6 +121,7 @@ public final class CloudManagerAllPackageMojo extends AbstractCloudManagerMojo {
 
   /**
    * How to handle versions of packages and sub-packages inside "all" package.
+   *
    * <p>
    * Possible options see
    * <a href="apidocs/io/wcm/devops/conga/plugins/aem/maven/PackageVersionMode.html">PackageVersionMode</a>.
@@ -156,7 +163,7 @@ public final class CloudManagerAllPackageMojo extends AbstractCloudManagerMojo {
 
   @Parameter(readonly = true, defaultValue = "${project}")
   private MavenProject project;
-  @Component
+  @Inject
   private MavenProjectHelper projectHelper;
 
   private static final String CLOUDMANAGER_TARGET_NONE = "none";

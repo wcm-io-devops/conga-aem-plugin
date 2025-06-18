@@ -73,7 +73,7 @@ class WebConsolePasswordHashHelperTest {
   }
 
   @Test
-  void testInvalidHashAlgorithm() throws Exception {
+  void testInvalidHashAlgorithm() {
     assertThrows(IOException.class, () -> {
       Object passwordHash = executeHelper(helper, PASSWORD_PLAIN, new MockOptions().withHash(WebConsolePasswordHashHelper.HASH_OPTION_ALGORITHM, "invalid"));
       assertEquals(PASSWORD_HASH_SHA256, passwordHash);
@@ -81,7 +81,7 @@ class WebConsolePasswordHashHelperTest {
   }
 
   @Test
-  void testInvalidEncoding() throws Exception {
+  void testInvalidEncoding() {
     assertThrows(IOException.class, () -> {
       Object passwordHash = executeHelper(helper, PASSWORD_PLAIN, new MockOptions().withHash(WebConsolePasswordHashHelper.HASH_OPTION_ENCODING, "invalid"));
       assertEquals(PASSWORD_HASH_SHA256, passwordHash);
