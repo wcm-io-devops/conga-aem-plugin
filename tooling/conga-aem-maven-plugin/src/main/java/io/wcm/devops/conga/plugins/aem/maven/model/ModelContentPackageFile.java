@@ -122,7 +122,7 @@ public final class ModelContentPackageFile extends AbstractInstallableFile imple
 
   @Override
   public boolean isDependencyChainIgnore() {
-    return dependencyChainIgnore != null ? dependencyChainIgnore : false;
+    return dependencyChainIgnore != null && dependencyChainIgnore;
   }
 
 }
