@@ -29,7 +29,7 @@
     <eclipse.settings.nullanalysis>enabled</eclipse.settings.nullanalysis>
 
     <!-- Versions -->
-    <acs.aem.commons.version>6.12.0</acs.aem.commons.version>
+    <acs.aem.commons.version>6.14.0</acs.aem.commons.version>
 
     <!-- Enable reproducible builds -->
     <project.build.outputTimestamp>2021-01-01T00:00:00Z</project.build.outputTimestamp>
