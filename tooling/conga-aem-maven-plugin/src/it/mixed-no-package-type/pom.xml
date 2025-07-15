@@ -39,7 +39,7 @@
   <description>Test case with packages with "mixed" package types, and packages without package type and "all" package.</description>
 
   <properties>
-    <acs.aem.commons.version>6.12.0</acs.aem.commons.version>
+    <acs.aem.commons.version>6.14.0</acs.aem.commons.version>
   </properties>
 
   <dependencies>
