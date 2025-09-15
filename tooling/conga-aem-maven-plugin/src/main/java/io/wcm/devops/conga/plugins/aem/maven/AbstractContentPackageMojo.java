@@ -26,7 +26,7 @@ import java.util.List;
 
 import javax.inject.Inject;
 
-import org.apache.commons.lang3.StringUtils;
+import org.apache.commons.lang3.Strings;
 import org.apache.maven.execution.MavenSession;
 import org.apache.maven.plugin.AbstractMojo;
 import org.apache.maven.plugin.MojoExecutionException;
@@ -191,6 +191,28 @@ abstract class AbstractContentPackageMojo extends AbstractMojo {
   private String[] bundleStatusWhitelistBundleNames;
 
   /**
+   * System ready JSON URL. If an URL is configured the systemready status of the target instance is checked
+   * after installing finishing the upload. This works only for AEMaaCS SDK instances.
+   *
+   * <p>
+   * Expected is an URL like: http://localhost:4502/systemready
+   * </p>
+   *
+   * <p>
+   * If the URL is not set it is derived from serviceURL. If set to "-" the status check is disabled.
+   * </p>
+   */
+  @Parameter(property = "vault.systemReadyURL", required = false)
+  private String systemReadyURL;
+
+  /**
+   * Number of seconds to wait as maximum for a positive system ready check.
+   * If this limit is reached and the system ready is still not positive the install of the package proceeds anyway.
+   */
+  @Parameter(property = "vault.systemReadyWaitLimitSec", defaultValue = "30")
+  private int systemReadyWaitLimitSec;
+
+  /**
    * If set to true also self-signed certificates are accepted.
    */
   @Parameter(property = "vault.relaxedSSLCheck", defaultValue = "false")
@@ -241,6 +263,8 @@ abstract class AbstractContentPackageMojo extends AbstractMojo {
     props.setBundleStatusWaitLimitSec(this.bundleStatusWaitLimit);
     props.setBundleStatusBlacklistBundleNames(List.of(this.bundleStatusBlacklistBundleNames));
     props.setBundleStatusWhitelistBundleNames(List.of(this.bundleStatusWhitelistBundleNames));
+    props.setSystemReadyUrl(buildSystemReadyUrl());
+    props.setSystemReadyWaitLimitSec(this.systemReadyWaitLimitSec);
     props.setPackageManagerInstallStatusURL(buildPackageManagerInstallStatusUrl());
     props.setPackageManagerInstallStatusWaitLimitSec(this.packageManagerInstallStatusWaitLimit);
     props.setRelaxedSSLCheck(this.relaxedSSLCheck);
@@ -268,7 +292,7 @@ abstract class AbstractContentPackageMojo extends AbstractMojo {
   }
 
   private String buildBundleStatusUrl() throws MojoExecutionException {
-    if (StringUtils.equals(this.bundleStatusURL, "-")) {
+    if (Strings.CS.equals(this.bundleStatusURL, "-")) {
       return null;
     }
     if (this.bundleStatusURL != null) {
@@ -279,8 +303,20 @@ abstract class AbstractContentPackageMojo extends AbstractMojo {
     return baseUrl + "/system/console/bundles/.json";
   }
 
+  private String buildSystemReadyUrl() throws MojoExecutionException {
+    if (Strings.CS.equals(this.systemReadyURL, "-")) {
+      return null;
+    }
+    if (this.systemReadyURL != null) {
+      return this.systemReadyURL;
+    }
+    // if not set use hostname from serviceURL and add default path to bundle status
+    String baseUrl = VendorInstallerFactory.getBaseUrl(buildPackageManagerUrl());
+    return baseUrl + "/systemready";
+  }
+
   private String buildPackageManagerInstallStatusUrl() throws MojoExecutionException {
-    if (StringUtils.equals(this.packageManagerInstallStatusURL, "-")
+    if (Strings.CS.equals(this.packageManagerInstallStatusURL, "-")
         || VendorInstallerFactory.identify(this.serviceURL) != Service.CRX) {
       return null;
     }

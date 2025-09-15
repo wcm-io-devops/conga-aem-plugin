@@ -268,7 +268,7 @@
         <plugin>
           <groupId>io.wcm.devops.conga</groupId>
           <artifactId>conga-maven-plugin</artifactId>
-          <version>1.17.4</version>
+          <version>1.17.5-SNAPSHOT</version>
           <dependencies>
             <dependency>
               <groupId>io.wcm.devops.conga.plugins</groupId>

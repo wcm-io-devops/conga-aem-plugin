@@ -24,6 +24,13 @@
     xsi:schemaLocation="http://maven.apache.org/changes/2.0.0 https://maven.apache.org/xsd/changes-2.0.0.xsd">
   <body>
 
+    <release version="2.22.0" date="not released">
+      <action type="add" dev="sseifert">
+        CRX Package Manager Upload: Add system ready check after deployment (enabled by default, can be disabled).
+        It only has an effect when deploying to AEMaaCS instances. Default responses from AEM 6.5 and 6.6 instances are accepted as valid.
+      </action>
+    </release>
+
     <release version="2.21.0" date="2025-06-18">
       <action type="add" dev="sseifert" issue="179">
         Content Package Post Processors: Add option "dependencyChainIgnore" to ignore a content package in the dependency chain, i.e. it does not play a role for this package in which order it is deployed compared to other packages.
