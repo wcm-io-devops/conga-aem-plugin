@@ -29,6 +29,7 @@ import java.util.List;
 import java.util.Set;
 
 import org.apache.commons.lang3.StringUtils;
+import org.apache.commons.lang3.Strings;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
@@ -98,7 +99,7 @@ class ModelParserTest {
   }
 
   private String getPath(File file) {
-    return StringUtils.replace(getCanonicalPath(file), "\\", "/");
+    return Strings.CS.replace(getCanonicalPath(file), "\\", "/");
   }
 
   @Test

@@ -52,6 +52,7 @@ import java.util.stream.Stream;
 
 import org.apache.commons.lang3.BooleanUtils;
 import org.apache.commons.lang3.StringUtils;
+import org.apache.commons.lang3.Strings;
 
 import io.wcm.devops.conga.generator.GeneratorException;
 import io.wcm.devops.conga.generator.UrlFileManager;
@@ -156,10 +157,10 @@ public final class ContentPackageUtil {
           for (Map<String, Object> ruleDefinition : ruleDefinitions) {
             String rule = getMandatoryProp(ruleDefinition, "rule");
             String pattern = getMandatoryProp(ruleDefinition, "pattern");
-            if (StringUtils.equals(rule, "include")) {
+            if (Strings.CS.equals(rule, "include")) {
               filter.addIncludeRule(pattern);
             }
-            else if (StringUtils.equals(rule, "exclude")) {
+            else if (Strings.CS.equals(rule, "exclude")) {
               filter.addExcludeRule(pattern);
             }
             else {
@@ -216,7 +217,7 @@ public final class ContentPackageUtil {
       return null;
     }
     for (AcHandling acHandling : AcHandling.values()) {
-      if (StringUtils.equals(acHandling.getMode(), acHandlingString)) {
+      if (Strings.CS.equals(acHandling.getMode(), acHandlingString)) {
         return acHandling;
       }
     }
@@ -355,7 +356,7 @@ public final class ContentPackageUtil {
       return paths.filter(Files::isRegularFile)
           // strip off the target dir paths, keep only the relative path/file name
           .map(ContentPackageUtil::normalizedAbsolutePath)
-          .map(file -> StringUtils.removeStart(file, targetPathPrefix))
+          .map(file -> Strings.CS.removeStart(file, targetPathPrefix))
           // check if file matches with the regex, apply matching input groups to path
           .map(file -> {
             Matcher matcher = pattern.matcher(file);
@@ -373,7 +374,7 @@ public final class ContentPackageUtil {
   }
 
   private static String normalizedAbsolutePath(Path path) {
-    return StringUtils.replace(path.toAbsolutePath().toString(), "\\", "/");
+    return Strings.CS.replace(path.toAbsolutePath().toString(), "\\", "/");
   }
 
 }

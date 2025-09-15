@@ -56,6 +56,7 @@ import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.FilenameUtils;
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang3.StringUtils;
+import org.apache.commons.lang3.Strings;
 import org.apache.jackrabbit.vault.packaging.Dependency;
 import org.apache.jackrabbit.vault.packaging.DependencyUtil;
 import org.apache.jackrabbit.vault.packaging.PackageType;
@@ -454,7 +455,7 @@ public final class AllPackageBuilder {
   }
 
   private static boolean isMutable(ContentPackageFile pkg) {
-    return StringUtils.equals("content", pkg.getPackageType());
+    return Strings.CS.equals("content", pkg.getPackageType());
   }
 
   private static boolean mutableMatches(ContentPackageFile pkg1, ContentPackageFile pkg2) {
@@ -487,7 +488,7 @@ public final class AllPackageBuilder {
     else if (isOnlyPublish(file)) {
       runModeSuffix.append(".").append(RUNMODE_PUBLISH);
     }
-    if (!StringUtils.equals(environmentRunMode, RUNMODE_DEFAULT)) {
+    if (!Strings.CS.equals(environmentRunMode, RUNMODE_DEFAULT)) {
       runModeSuffix.append(".").append(environmentRunMode);
     }
     return runModeSuffix.toString();
@@ -504,11 +505,11 @@ public final class AllPackageBuilder {
 
     if (this.packageVersionMode == PackageVersionMode.RELEASE_SUFFIX_VERSION
         && (!ArtifactUtils.isSnapshot(pkg.getVersion()) || !ignoreSnapshot)
-        && !StringUtils.equals(pkg.getVersion(), this.version)
+        && !Strings.CS.equals(pkg.getVersion(), this.version)
         && this.version != null) {
       versionSuffix.append(VERSION_SUFFIX_SEPARATOR)
           // replace dots with underlines in version suffix to avoid confusion with main version number
-          .append(StringUtils.replace(this.version, ".", "_"));
+          .append(Strings.CS.replace(this.version, ".", "_"));
     }
 
     return versionSuffix.toString();
@@ -535,7 +536,7 @@ public final class AllPackageBuilder {
     String packageVersion = pkg.getVersion();
     String packageVersionWithoutSuffix = packageVersion;
     if (this.packageVersionMode == PackageVersionMode.RELEASE_SUFFIX_VERSION && this.version != null) {
-      packageVersionWithoutSuffix = StringUtils.removeEnd(packageVersion, buildVersionSuffix(pkg, false));
+      packageVersionWithoutSuffix = Strings.CS.removeEnd(packageVersion, buildVersionSuffix(pkg, false));
     }
     if (packageVersion != null && pkg.getFile().getName().contains(packageVersionWithoutSuffix)) {
       versionSuffix = "-" + packageVersion;
@@ -596,7 +597,7 @@ public final class AllPackageBuilder {
               boolean processedEntry = false;
 
               // if entry is properties.xml, update dependency information
-              if (StringUtils.equals(zipInEntry.getName(), "META-INF/vault/properties.xml")) {
+              if (Strings.CS.equals(zipInEntry.getName(), "META-INF/vault/properties.xml")) {
                 FileVaultProperties fileVaultProps = new FileVaultProperties(is);
                 Properties props = fileVaultProps.getProperties();
                 addSuffixToPackageName(props, pkg, environmentRunMode);
@@ -623,7 +624,7 @@ public final class AllPackageBuilder {
               }
 
               // process sub-packages as well: add runmode suffix and update dependencies
-              else if (StringUtils.equals(FilenameUtils.getExtension(zipInEntry.getName()), "zip")) {
+              else if (Strings.CS.equals(FilenameUtils.getExtension(zipInEntry.getName()), "zip")) {
                 File tempSubPackageFile = File.createTempFile(FilenameUtils.getBaseName(zipInEntry.getName()), ".zip");
                 try (FileOutputStream subPackageFos = new FileOutputStream(tempSubPackageFile)) {
                   IOUtils.copy(is, subPackageFos);

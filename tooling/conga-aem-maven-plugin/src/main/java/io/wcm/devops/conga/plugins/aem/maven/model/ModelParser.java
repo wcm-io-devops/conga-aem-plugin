@@ -41,7 +41,7 @@ import java.util.jar.JarFile;
 import java.util.jar.Manifest;
 
 import org.apache.commons.io.FilenameUtils;
-import org.apache.commons.lang3.StringUtils;
+import org.apache.commons.lang3.Strings;
 import org.osgi.framework.Constants;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -109,7 +109,7 @@ public final class ModelParser {
    */
   public boolean hasRole(String roleName) {
     for (Map<String, Object> role : children(modelData, PROP_ROLES)) {
-      if (StringUtils.equals(Objects.toString(role.get(PROP_ROLE), null), roleName)) {
+      if (Strings.CS.equals(Objects.toString(role.get(PROP_ROLE), null), roleName)) {
         return true;
       }
     }
@@ -162,7 +162,7 @@ public final class ModelParser {
   }
 
   private boolean isOsgiBundle(File file) {
-    if (!StringUtils.equals(FilenameUtils.getExtension((file.getName())), "jar")) {
+    if (!Strings.CS.equals(FilenameUtils.getExtension((file.getName())), "jar")) {
       return false;
     }
     try (JarFile jarFile = new JarFile(file)) {

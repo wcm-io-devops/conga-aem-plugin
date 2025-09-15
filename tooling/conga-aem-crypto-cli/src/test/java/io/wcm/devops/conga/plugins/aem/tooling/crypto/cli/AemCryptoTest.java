@@ -25,7 +25,7 @@ import static org.junit.jupiter.api.Assertions.assertFalse;
 import java.io.File;
 
 import org.apache.commons.io.FileUtils;
-import org.apache.commons.lang3.StringUtils;
+import org.apache.commons.lang3.Strings;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -56,7 +56,7 @@ class AemCryptoTest {
     String value = "myTestValue-äöüß€";
 
     String encryptedValue = AemCrypto.encryptString(value, cryptoAesKey);
-    assertFalse(StringUtils.equals(value, encryptedValue));
+    assertFalse(Strings.CS.equals(value, encryptedValue));
 
     String decryptedValue = AemCrypto.decryptString(encryptedValue, cryptoAesKey);
     assertEquals(value, decryptedValue);

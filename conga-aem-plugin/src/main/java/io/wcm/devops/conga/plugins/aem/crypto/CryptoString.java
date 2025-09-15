@@ -19,7 +19,7 @@
  */
 package io.wcm.devops.conga.plugins.aem.crypto;
 
-import org.apache.commons.lang3.StringUtils;
+import org.apache.commons.lang3.Strings;
 
 /**
  * Converts byte array to crypto string and back in the same fashion as it is done by the Adobe Granite Crypto
@@ -39,7 +39,7 @@ public final class CryptoString {
   public static boolean isCryptoString(final String text) {
     // very simplified check - just check for start and end of curly braces.
     return text != null && text.length() > 2
-        && StringUtils.startsWith(text, "{") && StringUtils.endsWith(text, "}");
+        && Strings.CS.startsWith(text, "{") && Strings.CS.endsWith(text, "}");
   }
 
   /**

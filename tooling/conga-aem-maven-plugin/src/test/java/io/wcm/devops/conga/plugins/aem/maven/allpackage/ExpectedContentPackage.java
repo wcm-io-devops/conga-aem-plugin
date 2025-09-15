@@ -21,7 +21,7 @@ package io.wcm.devops.conga.plugins.aem.maven.allpackage;
 
 import java.util.Collection;
 
-import org.apache.commons.lang3.StringUtils;
+import org.apache.commons.lang3.Strings;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -49,7 +49,7 @@ class ExpectedContentPackage extends ExpectedFile {
   }
 
   public @NotNull String getPackageName(@NotNull String runModeSuffix) {
-    return StringUtils.replace(this.packageName, RUNMODE_SUFFIX_PLACEHOLDER, runModeSuffix);
+    return Strings.CS.replace(this.packageName, RUNMODE_SUFFIX_PLACEHOLDER, runModeSuffix);
   }
 
   public @Nullable String getVersion() {
