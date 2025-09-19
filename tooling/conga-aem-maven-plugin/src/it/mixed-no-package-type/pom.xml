@@ -26,7 +26,7 @@
   <parent>
     <groupId>io.wcm.maven</groupId>
     <artifactId>io.wcm.maven.global-parent</artifactId>
-    <version>65</version>
+    <version>66</version>
     <relativePath/>
   </parent>
 
@@ -39,7 +39,7 @@
   <description>Test case with packages with "mixed" package types, and packages without package type and "all" package.</description>
 
   <properties>
-    <acs.aem.commons.version>6.12.0</acs.aem.commons.version>
+    <acs.aem.commons.version>6.14.0</acs.aem.commons.version>
   </properties>
 
   <dependencies>
@@ -69,7 +69,7 @@
       <plugin>
         <groupId>io.wcm.devops.conga</groupId>
         <artifactId>conga-maven-plugin</artifactId>
-        <version>1.17.4</version>
+        <version>1.17.6</version>
         <extensions>true</extensions>
         <dependencies>
 

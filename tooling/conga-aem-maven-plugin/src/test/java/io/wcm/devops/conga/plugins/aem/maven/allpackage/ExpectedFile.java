@@ -19,7 +19,7 @@
  */
 package io.wcm.devops.conga.plugins.aem.maven.allpackage;
 
-import org.apache.commons.lang3.StringUtils;
+import org.apache.commons.lang3.Strings;
 import org.jetbrains.annotations.NotNull;
 
 class ExpectedFile {
@@ -33,7 +33,7 @@ class ExpectedFile {
   }
 
   public @NotNull String getFileName(@NotNull String runModeSuffix) {
-    return StringUtils.replace(this.fileName, RUNMODE_SUFFIX_PLACEHOLDER, runModeSuffix);
+    return Strings.CS.replace(this.fileName, RUNMODE_SUFFIX_PLACEHOLDER, runModeSuffix);
   }
 
   @Override

@@ -36,6 +36,7 @@ import java.util.Map;
 
 import org.apache.commons.io.FilenameUtils;
 import org.apache.commons.lang3.StringUtils;
+import org.apache.commons.lang3.Strings;
 import org.apache.sling.provisioning.model.Model;
 import org.slf4j.Logger;
 
@@ -71,7 +72,7 @@ public class ContentPackageOsgiConfigPostProcessor extends AbstractPostProcessor
   @Override
   public boolean accepts(FileContext file, PostProcessorContext context) {
     return ProvisioningUtil.isProvisioningFile(file)
-        || StringUtils.endsWith(file.getFile().getName(), JsonOsgiConfigPostProcessor.FILE_EXTENSION);
+        || Strings.CS.endsWith(file.getFile().getName(), JsonOsgiConfigPostProcessor.FILE_EXTENSION);
   }
 
   @Override
@@ -146,7 +147,7 @@ public class ContentPackageOsgiConfigPostProcessor extends AbstractPostProcessor
       @Override
       @SuppressWarnings("java:S3457") // log placeholders
       public Void accept(String path, Dictionary<String, Object> properties) throws IOException {
-        String contentPath = rootPath + (StringUtils.contains(path, "/") ? "." : "/") + path;
+        String contentPath = rootPath + (Strings.CS.contains(path, "/") ? "." : "/") + path;
         context.getLogger().info("  Include " + contentPath);
 
         // write configuration to temporary file
@@ -171,7 +172,7 @@ public class ContentPackageOsgiConfigPostProcessor extends AbstractPostProcessor
   }
 
   private String getBaseFileName(String fileName) {
-    if (StringUtils.endsWith(fileName, JsonOsgiConfigPostProcessor.FILE_EXTENSION)) {
+    if (Strings.CS.endsWith(fileName, JsonOsgiConfigPostProcessor.FILE_EXTENSION)) {
       return StringUtils.substringBeforeLast(fileName, JsonOsgiConfigPostProcessor.FILE_EXTENSION);
     }
     else {

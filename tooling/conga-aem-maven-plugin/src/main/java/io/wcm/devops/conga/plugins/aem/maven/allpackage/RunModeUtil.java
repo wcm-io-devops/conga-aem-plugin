@@ -28,7 +28,7 @@ import java.util.Set;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 
-import org.apache.commons.lang3.StringUtils;
+import org.apache.commons.lang3.Strings;
 
 import io.wcm.devops.conga.plugins.aem.maven.model.InstallableFile;
 
@@ -128,7 +128,7 @@ final class RunModeUtil {
   }
 
   private static boolean isSameFileNameHash(InstallableFile file1, InstallableFile file2) {
-    if (!StringUtils.equals(file1.getFile().getName(), file2.getFile().getName())) {
+    if (!Strings.CS.equals(file1.getFile().getName(), file2.getFile().getName())) {
       return false;
     }
     return file1.getHashCode().equals(file2.getHashCode());

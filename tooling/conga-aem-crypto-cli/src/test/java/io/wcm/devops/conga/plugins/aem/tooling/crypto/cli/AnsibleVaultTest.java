@@ -26,7 +26,7 @@ import java.io.File;
 import java.nio.charset.StandardCharsets;
 
 import org.apache.commons.io.FileUtils;
-import org.apache.commons.lang3.StringUtils;
+import org.apache.commons.lang3.Strings;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -76,7 +76,7 @@ class AnsibleVaultTest {
     assertNotEquals(TEST_CONTENT, content);
 
     // replace \n with \r\n to simulate new lines on windows file systems
-    content = StringUtils.replace(content, "\n", "\r\n");
+    content = Strings.CS.replace(content, "\n", "\r\n");
     FileUtils.write(testFile, content, StandardCharsets.UTF_8);
 
     // decrypt file

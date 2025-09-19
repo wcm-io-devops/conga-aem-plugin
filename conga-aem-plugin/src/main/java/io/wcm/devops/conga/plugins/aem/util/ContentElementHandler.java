@@ -24,6 +24,7 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import org.apache.commons.lang3.StringUtils;
+import org.apache.commons.lang3.Strings;
 import org.apache.sling.contentparser.api.ContentHandler;
 
 import io.wcm.tooling.commons.contentpackagebuilder.element.ContentElement;
@@ -41,7 +42,7 @@ final class ContentElementHandler implements ContentHandler {
 
   @Override
   public void resource(String path, Map<String, Object> properties) {
-    if (StringUtils.equals(path, "/")) {
+    if (Strings.CS.equals(path, "/")) {
       root = new ContentElementImpl(null, properties);
     }
     else {

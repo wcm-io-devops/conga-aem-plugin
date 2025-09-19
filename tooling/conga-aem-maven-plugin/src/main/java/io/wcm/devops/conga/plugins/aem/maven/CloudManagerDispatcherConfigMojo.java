@@ -30,6 +30,7 @@ import java.util.Set;
 import javax.inject.Inject;
 
 import org.apache.commons.lang3.StringUtils;
+import org.apache.commons.lang3.Strings;
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugin.MojoFailureException;
 import org.apache.maven.plugins.annotations.Mojo;
@@ -121,7 +122,7 @@ public final class CloudManagerDispatcherConfigMojo extends AbstractCloudManager
   @SuppressWarnings("java:S3776") // ignore complexity
   private void addZipDirectory(String basePath, File directory, Set<String> excludeFiles) throws IOException {
     String directoryPath = toZipDirectoryPath(directory);
-    if (StringUtils.startsWith(directoryPath, basePath)) {
+    if (Strings.CS.startsWith(directoryPath, basePath)) {
       String relativeDirectoryPath = StringUtils.substring(directoryPath, basePath.length());
       File[] files = directory.listFiles();
       if (files != null) {
@@ -152,7 +153,7 @@ public final class CloudManagerDispatcherConfigMojo extends AbstractCloudManager
   }
 
   private String sanitizePathSeparators(String path) {
-    return StringUtils.replace(path, "\\", "/");
+    return Strings.CS.replace(path, "\\", "/");
   }
 
 }
