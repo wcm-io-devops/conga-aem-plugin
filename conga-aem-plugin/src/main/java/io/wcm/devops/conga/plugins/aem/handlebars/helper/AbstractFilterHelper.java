@@ -51,7 +51,7 @@ abstract class AbstractFilterHelper implements HelperPlugin<Object> {
   private String toYaml(Map<String, Object> filterMap) {
     StringBuilder sb = new StringBuilder();
     filterMap.entrySet().forEach(entry -> {
-      if (sb.length() == 0) {
+      if (sb.isEmpty()) {
         sb.append("- ");
       }
       else {

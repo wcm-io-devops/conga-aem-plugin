@@ -34,6 +34,7 @@ public class BuildOutputTimestamp {
   private final Optional<Instant> instant;
 
   /**
+   * Configured output timestamp
    * @param outputTimestamp Configured output timestamp
    */
   public BuildOutputTimestamp(@Nullable String outputTimestamp) {
@@ -41,6 +42,7 @@ public class BuildOutputTimestamp {
   }
 
   /**
+   * Check if a valid timestamp is configured,
    * @return true if a valid timestamp is configured
    */
   public boolean isValid() {
@@ -48,6 +50,7 @@ public class BuildOutputTimestamp {
   }
 
   /**
+   * File time
    * @return FileTime or null if not a valid date
    */
   @Nullable

@@ -37,8 +37,8 @@ abstract class AbstractFilter {
   protected final String getValue(Map<String, Object> map, String key) {
     // get and remove value from map
     Object value = map.remove(key);
-    if (value instanceof String) {
-      return (String)value;
+    if (value instanceof String stringValue) {
+      return stringValue;
     }
     else {
       return null;

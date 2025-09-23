@@ -32,19 +32,22 @@ import com.google.common.hash.HashCode;
 public interface InstallableFile {
 
   /**
-   * @return File.
+   * File
+   * @return File
    */
   @NotNull
   File getFile();
 
   /**
-   * @return Variants/Run modes for file.
+   * Variants/Run modes for file
+   * @return Variants/Run modes for file
    */
   @NotNull
   Set<String> getVariants();
 
   /**
-   * @return Hash code for file.
+   * Hash code for file
+   * @return Hash code for file
    */
   @NotNull
   HashCode getHashCode();

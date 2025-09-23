@@ -41,60 +41,64 @@ class AemHttpdFilterHelperTest {
 
   @Test
   void testLocation() throws Exception {
-    assertHelper("<Location \"/abc\">\n" +
-        "  <IfVersion < 2.4>\n" +
-        "    Allow from all\n" +
-        "  </IfVersion>\n" +
-        "  <IfVersion >= 2.4>\n" +
-        "    Require all granted\n" +
-        "  </IfVersion>\n" +
-        "</Location>",
+    assertHelper("""
+        <Location "/abc">
+          <IfVersion < 2.4>
+            Allow from all
+          </IfVersion>
+          <IfVersion >= 2.4>
+            Require all granted
+          </IfVersion>
+        </Location>""",
         helper, Map.of("type", "allow", "location", "/abc"), new MockOptions());
   }
 
   @Test
   void testLocationMatch() throws Exception {
-    assertHelper("<LocationMatch \"/abc(/.*)?\">\n" +
-        "  <IfVersion < 2.4>\n" +
-        "    Order Deny,Allow\n" +
-        "    Deny from all\n" +
-        "  </IfVersion>\n" +
-        "  <IfVersion >= 2.4>\n" +
-        "    Require all denied\n" +
-        "  </IfVersion>\n" +
-        "</LocationMatch>",
+    assertHelper("""
+        <LocationMatch "/abc(/.*)?">
+          <IfVersion < 2.4>
+            Order Deny,Allow
+            Deny from all
+          </IfVersion>
+          <IfVersion >= 2.4>
+            Require all denied
+          </IfVersion>
+        </LocationMatch>""",
         helper, Map.of("type", "deny", "locationMatch", "/abc(/.*)?"), new MockOptions());
   }
 
   @Test
   void testLocationDenyAllowAdmin_NoHash() throws Exception {
-    assertHelper("<Location \"/abc\">\n" +
-        "  <IfVersion < 2.4>\n" +
-        "    Order Deny,Allow\n" +
-        "    Deny from all\n" +
-        "  </IfVersion>\n" +
-        "  <IfVersion >= 2.4>\n" +
-        "    Require all denied\n" +
-        "  </IfVersion>\n" +
-        "</Location>",
+    assertHelper("""
+        <Location "/abc">
+          <IfVersion < 2.4>
+            Order Deny,Allow
+            Deny from all
+          </IfVersion>
+          <IfVersion >= 2.4>
+            Require all denied
+          </IfVersion>
+        </Location>""",
         helper, Map.of("type", "deny_allow_admin", "location", "/abc"), new MockOptions());
   }
 
   @Test
   void testLocationDenyAllowAdmin() throws Exception {
-    assertHelper("<Location \"/abc\">\n" +
-        "  <IfVersion < 2.4>\n" +
-        "    Order Deny,Allow\n" +
-        "    Deny from all\n" +
-        "    Allow from 1.2.3.4\n" +
-        "    Allow from myhost\n" +
-        "  </IfVersion>\n" +
-        "  <IfVersion >= 2.4>\n" +
-        "    Require all denied\n" +
-        "    Require ip 1.2.3.4\n" +
-        "    Require host myhost\n" +
-        "  </IfVersion>\n" +
-        "</Location>",
+    assertHelper("""
+        <Location "/abc">
+          <IfVersion < 2.4>
+            Order Deny,Allow
+            Deny from all
+            Allow from 1.2.3.4
+            Allow from myhost
+          </IfVersion>
+          <IfVersion >= 2.4>
+            Require all denied
+            Require ip 1.2.3.4
+            Require host myhost
+          </IfVersion>
+        </Location>""",
         helper, Map.of("type", "deny_allow_admin", "location", "/abc"), new MockOptions()
             .withHash(AemHttpdFilterHelper.HASH_ALLOW_FROM_KEY, "allowFrom")
             .withHash(AemHttpdFilterHelper.HASH_ALLOW_FROM_HOST_KEY, "allowFromHost")

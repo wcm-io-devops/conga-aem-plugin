@@ -24,7 +24,6 @@ import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
-import java.util.stream.Collectors;
 
 import org.apache.commons.lang3.StringUtils;
 
@@ -53,8 +52,8 @@ final class ParserUtil {
   @SuppressWarnings("unchecked")
   static Set<String> toStringSet(Object value) {
     Set<String> result = new LinkedHashSet<>();
-    if (value instanceof String) {
-      String target = (String)value;
+    if (value instanceof String stringValue) {
+      String target = stringValue;
       if (StringUtils.isNotBlank(target)) {
         result.add(target);
       }
@@ -62,7 +61,7 @@ final class ParserUtil {
     else if (value instanceof List) {
       result.addAll(((List<String>)value).stream()
           .filter(StringUtils::isNotBlank)
-          .collect(Collectors.toList()));
+          .toList());
     }
     else {
       throw new IllegalArgumentException("Value is neither string nor string list: " + value);

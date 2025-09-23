@@ -22,7 +22,6 @@ package io.wcm.devops.conga.plugins.aem.handlebars.helper;
 import java.io.IOException;
 import java.util.List;
 import java.util.Map;
-import java.util.stream.Collectors;
 
 import org.apache.commons.lang3.StringUtils;
 
@@ -95,7 +94,7 @@ abstract class AbstractCloudManagerConditionalHelper implements HelperPlugin<Obj
   private List<CloudManagerConditional> getCloudManagerConditional(Map<String, Object> cloudManagerConditional) {
     return ENVIRONMENTS.stream()
         .map(env -> new CloudManagerConditional(env, cloudManagerConditional.getOrDefault(env, Map.of())))
-        .collect(Collectors.toList());
+        .toList();
   }
 
   /**

@@ -77,8 +77,8 @@ public final class AemCryptoEncryptHelper implements HelperPlugin<Object> {
       cryptoAesKeyUrl = Objects.toString(aemPluginConfig.get(PARAMETER_CRYPTO_AES_KEY_URL), null);
       Object cryptoSkipObject = aemPluginConfig.get(PARAMETER_CRYPTO_SKIP);
       if (cryptoSkipObject != null) {
-        if (cryptoSkipObject instanceof Boolean) {
-          cryptoSkip = (Boolean)cryptoSkipObject;
+        if (cryptoSkipObject instanceof Boolean booleanValue) {
+          cryptoSkip = booleanValue;
         }
         else {
           cryptoSkip = BooleanUtils.toBoolean(cryptoSkipObject.toString());
