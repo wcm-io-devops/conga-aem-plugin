@@ -90,8 +90,8 @@ public class ContentPackageValidator implements ValidatorPlugin {
       // validate package if a package type is defined
       // supported only within Maven
       String packageType = Objects.toString(ContentPackageProperties.get(file.getFile()).get(NAME_PACKAGE_TYPE), null);
-      if (packageType != null && context.getContainerContext() instanceof MavenContext) {
-        validateContentPackage(file.getFile(), context, (MavenContext)context.getContainerContext());
+      if (packageType != null && context.getContainerContext() instanceof MavenContext mavenContext) {
+        validateContentPackage(file.getFile(), context, mavenContext);
       }
     }
     catch (IOException | IllegalAccessException | MojoExecutionException | MojoFailureException
@@ -176,24 +176,24 @@ public class ContentPackageValidator implements ValidatorPlugin {
   @SuppressWarnings("unchecked")
   private Map<String, Object> toMap(Object value) {
     if (value instanceof Map) {
-      return (Map)value;
+      return (Map<String, Object>)value;
     }
     return Collections.emptyMap();
   }
 
   private boolean toBoolean(Object value) {
-    if (value instanceof Boolean) {
-      return (Boolean)value;
+    if (value instanceof Boolean booleanValue) {
+      return booleanValue;
     }
-    if (value instanceof String) {
-      return BooleanUtils.toBoolean((String)value);
+    if (value instanceof String stringValue) {
+      return BooleanUtils.toBoolean(stringValue);
     }
     return false;
   }
 
   private String toString(Object value) {
-    if (value instanceof String) {
-      return (String)value;
+    if (value instanceof String stringValue) {
+      return stringValue;
     }
     else if (value != null) {
       return value.toString();

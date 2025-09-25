@@ -126,6 +126,7 @@ public final class AllPackageBuilder {
   private final List<BundleFileSet> bundleFileSets = new ArrayList<>();
 
   /**
+   * Constructor.
    * @param targetFile Target file
    * @param groupName Group name
    * @param packageName Package name
@@ -137,8 +138,8 @@ public final class AllPackageBuilder {
   }
 
   /**
-   * @param value Automatically generate dependencies between content packages based on file order in CONGA
-   *          configuration.
+   * Automatically generate dependencies between content packages based on file order in CONGA configuration.
+   * @param value mode
    * @return this
    */
   public AllPackageBuilder autoDependenciesMode(AutoDependenciesMode value) {
@@ -147,7 +148,8 @@ public final class AllPackageBuilder {
   }
 
   /**
-   * @param value Configure run mode optimization.
+   * Configure run mode optimization.
+   * @param value mode
    * @return this
    */
   public AllPackageBuilder runModeOptimization(RunModeOptimization value) {
@@ -156,7 +158,8 @@ public final class AllPackageBuilder {
   }
 
   /**
-   * @param value How to validate package types to be included in "all" package.
+   * How to validate package types to be included in "all" package.
+   * @param value validation
    * @return this
    */
   public AllPackageBuilder packageTypeValidation(PackageTypeValidation value) {
@@ -165,7 +168,8 @@ public final class AllPackageBuilder {
   }
 
   /**
-   * @param value How to handle versions of packages and sub-packages inside "all" package.
+   * How to handle versions of packages and sub-packages inside "all" package.
+   * @param value mode
    * @return this
    */
   public AllPackageBuilder packageVersionMode(PackageVersionMode value) {
@@ -174,6 +178,7 @@ public final class AllPackageBuilder {
   }
 
   /**
+   * Maven logger
    * @param value Maven logger
    * @return this
    */
@@ -183,6 +188,7 @@ public final class AllPackageBuilder {
   }
 
   /**
+   * Package version
    * @param value Package version
    * @return this
    */
@@ -192,7 +198,8 @@ public final class AllPackageBuilder {
   }
 
   /**
-   * @param value Build output timestamp
+   * Build output timestamp
+   * @param value timestamp
    * @return this
    */
   public AllPackageBuilder buildOutputTimestamp(BuildOutputTimestamp value) {
@@ -304,7 +311,7 @@ public final class AllPackageBuilder {
     return files.stream()
         .filter(fileClass::isInstance)
         .map(fileClass::cast)
-        .collect(Collectors.toList());
+        .toList();
   }
 
   /**
@@ -820,14 +827,23 @@ public final class AllPackageBuilder {
     allPackagesFromFileSets.add(new Dependency(pkg.getGroup(), pkg.getName(), VersionRange.fromString(pkg.getVersion())));
   }
 
+  /**
+   * @return Group name
+   */
   public String getGroupName() {
     return this.groupName;
   }
 
+  /**
+   * @return Package name
+   */
   public String getPackageName() {
     return this.packageName;
   }
 
+  /**
+   * @return Target file
+   */
   public File getTargetFile() {
     return this.targetFile;
   }

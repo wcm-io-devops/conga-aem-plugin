@@ -26,7 +26,6 @@ import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 import java.util.Set;
-import java.util.stream.Collectors;
 
 import org.apache.maven.plugin.AbstractMojo;
 import org.apache.maven.plugin.MojoExecutionException;
@@ -86,7 +85,7 @@ abstract class AbstractCloudManagerMojo extends AbstractMojo {
         directories = Arrays.stream(files)
             .filter(File::isDirectory)
             .filter(dir -> (selectedEnvironments.isEmpty() || selectedEnvironments.contains(dir.getName())))
-            .collect(Collectors.toList());
+            .toList();
       }
     }
     if (directories == null || directories.isEmpty()) {
@@ -117,7 +116,7 @@ abstract class AbstractCloudManagerMojo extends AbstractMojo {
       return Arrays.stream(files)
           .filter(File::isDirectory)
           .filter(dir -> selectedNodes.isEmpty() || selectedNodes.contains(dir.getName()))
-          .collect(Collectors.toList());
+          .toList();
     }
     else {
       return Collections.emptyList();

@@ -24,7 +24,6 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.io.File;
 import java.util.List;
-import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 import org.apache.commons.io.FileUtils;
@@ -65,7 +64,7 @@ class CryptoKeysTest {
   }
 
   private void assertFiles(Stream<File> filesStream) {
-    List<File> files = filesStream.collect(Collectors.toList());
+    List<File> files = filesStream.toList();
     assertEquals(2, files.size());
     assertTrue(files.get(0).exists());
     assertEquals("master", files.get(0).getName());

@@ -70,9 +70,11 @@ class HttpdCloudManagerConditionalHelperTest {
     Map<String, Object> model_dev = Map.of("httpd", Map.of("serverName", "host1"));
     Map<String, Object> model_stage = Map.of("httpd", Map.of("serverName", "host2"));
     Map<String, Object> model_prod = Map.of("httpd", Map.of("serverName", "host0"));
-    assertHelper("<IfDefine ENVIRONMENT_DEV>" + FN_RETURN + "(" + model_dev + ")</IfDefine>\n"
-        + "<IfDefine ENVIRONMENT_STAGE>" + FN_RETURN + "(" + model_stage + ")</IfDefine>\n"
-        + "<IfDefine ENVIRONMENT_PROD>" + FN_RETURN + "(" + model_prod + ")</IfDefine>\n",
+    assertHelper("""
+        <IfDefine ENVIRONMENT_DEV>%s(%s)</IfDefine>
+        <IfDefine ENVIRONMENT_STAGE>%s(%s)</IfDefine>
+        <IfDefine ENVIRONMENT_PROD>%s(%s)</IfDefine>
+        """.formatted(FN_RETURN, model_dev, FN_RETURN, model_stage, FN_RETURN, model_prod),
         helper, null, options);
   }
 

@@ -47,7 +47,6 @@ import java.util.Map;
 import java.util.Objects;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
-import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 import org.apache.commons.lang3.BooleanUtils;
@@ -233,8 +232,8 @@ public final class ContentPackageUtil {
    */
   public static String getMandatoryProp(Map<String, Object> options, String key) {
     Object value = MapExpander.getDeep(options, key);
-    if (value instanceof String) {
-      return (String)value;
+    if (value instanceof String stringValue) {
+      return stringValue;
     }
     else if (value != null) {
       return value.toString();
@@ -250,8 +249,8 @@ public final class ContentPackageUtil {
    */
   public static String getOptionalProp(Map<String, Object> options, String key) {
     Object value = MapExpander.getDeep(options, key);
-    if (value instanceof String) {
-      return (String)value;
+    if (value instanceof String stringValue) {
+      return stringValue;
     }
     else if (value != null) {
       return value.toString();
@@ -267,8 +266,8 @@ public final class ContentPackageUtil {
    */
   public static boolean getOptionalPropBoolean(Map<String, Object> options, String key) {
     Object value = getOptionalProp(options, key);
-    if (value instanceof Boolean) {
-      return (Boolean)value;
+    if (value instanceof Boolean booleanValue) {
+      return booleanValue;
     }
     else if (value != null) {
       return BooleanUtils.toBoolean(value.toString());
@@ -369,7 +368,7 @@ public final class ContentPackageUtil {
             }
           })
           .filter(Objects::nonNull)
-          .collect(Collectors.toList());
+          .toList();
     }
   }
 
