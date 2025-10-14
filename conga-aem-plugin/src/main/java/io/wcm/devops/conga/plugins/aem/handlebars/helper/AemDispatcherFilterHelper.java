@@ -46,41 +46,51 @@ public final class AemDispatcherFilterHelper extends AbstractFilterHelper {
     DispatcherFilter filter = new DispatcherFilter(filterMap);
 
     StringBuilder sb = new StringBuilder()
-        .append("{ ")
-        .append("/type \"").append(filter.getType()).append("\" ");
+        .append("{ ");
 
-    if (StringUtils.isNotEmpty(filter.getMethod())) {
-      sb.append("/method '").append(filter.getMethod()).append("' ");
-    }
-    if (StringUtils.isNotEmpty(filter.getUrl())) {
-      sb.append("/url '").append(filter.getUrl()).append("' ");
-    }
-    if (StringUtils.isNotEmpty(filter.getQuery())) {
-      sb.append("/query '").append(filter.getQuery()).append("' ");
-    }
-    if (StringUtils.isNotEmpty(filter.getProtocol())) {
-      sb.append("/protocol '").append(filter.getProtocol()).append("' ");
-    }
+    applySimpleValue(sb, "type", filter.getType().toString());
 
-    if (StringUtils.isNotEmpty(filter.getPath())) {
-      sb.append("/path '").append(filter.getPath()).append("' ");
-    }
-    if (StringUtils.isNotEmpty(filter.getSelectors())) {
-      sb.append("/selectors '").append(filter.getSelectors()).append("' ");
-    }
-    if (StringUtils.isNotEmpty(filter.getExtension())) {
-      sb.append("/extension '").append(filter.getExtension()).append("' ");
-    }
-    if (StringUtils.isNotEmpty(filter.getSuffix())) {
-      sb.append("/suffix '").append(filter.getSuffix()).append("' ");
-    }
+    applyRegexValue(sb, "method", filter.getMethod());
+    applyRegexValue(sb, "url", filter.getUrl());
+    applyRegexValue(sb, "query", filter.getQuery());
+    applyRegexValue(sb, "protocol", filter.getProtocol());
 
-    if (StringUtils.isNotEmpty(filter.getGlob())) {
-      sb.append("/glob '").append(filter.getGlob()).append("' ");
-    }
+    applyRegexValue(sb, "path", filter.getPath());
+    applyRegexValueEmptyStringAllowed(sb, "selectors", filter.getSelectors());
+    applyRegexValueEmptyStringAllowed(sb, "extension", filter.getExtension());
+    applyRegexValueEmptyStringAllowed(sb, "suffix", filter.getSuffix());
+
+    applyRegexValue(sb, "glob", filter.getGlob());
 
     sb.append("}");
     return sb.toString();
+  }
+
+  /**
+   * Append filter parameter as simple fixed string (enclosed in "").
+   */
+  private void applySimpleValue(StringBuilder sb, String key, String value) {
+    if (StringUtils.isNotEmpty(value)) {
+      sb.append("/").append(key).append(" \"").append(value).append("\" ");
+    }
+  }
+
+  /**
+   * Append filter parameter as string that may be a regex (enclosed in ''). Empty string are ignored.
+   */
+  private void applyRegexValue(StringBuilder sb, String key, String value) {
+    if (StringUtils.isNotEmpty(value)) {
+      sb.append("/").append(key).append(" '").append(value).append("' ");
+    }
+  }
+
+  /**
+   * Append filter parameter as string that may be a regex (enclosed in ''). Empty strings are left as-is.
+   */
+  private void applyRegexValueEmptyStringAllowed(StringBuilder sb, String key, String value) {
+    if (value != null) {
+      sb.append("/").append(key).append(" '").append(value).append("' ");
+    }
   }
 
 }

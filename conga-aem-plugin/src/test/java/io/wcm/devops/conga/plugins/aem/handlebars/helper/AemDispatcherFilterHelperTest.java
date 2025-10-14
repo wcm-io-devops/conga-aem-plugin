@@ -65,4 +65,40 @@ class AemDispatcherFilterHelperTest {
         helper, map, new MockOptions());
   }
 
+  @Test
+  void testSelectorExtensionSuffix() throws Exception {
+    Map<String, Object> map = new HashMap<>();
+    map.put("type", "deny");
+    map.put("path", "path1");
+    map.put("selectors", "selector1");
+    map.put("extension", "extension1");
+    map.put("suffix", "suffix1");
+    assertHelper("{ /type \"deny\" /path 'path1' /selectors 'selector1' /extension 'extension1' /suffix 'suffix1' }",
+        helper, map, new MockOptions());
+  }
+
+  @Test
+  void testSelectorExtensionSuffix_EmptyString() throws Exception {
+    Map<String, Object> map = new HashMap<>();
+    map.put("type", "deny");
+    map.put("path", "path1");
+    map.put("selectors", "");
+    map.put("extension", "");
+    map.put("suffix", "");
+    assertHelper("{ /type \"deny\" /path 'path1' /selectors '' /extension '' /suffix '' }",
+        helper, map, new MockOptions());
+  }
+
+  @Test
+  void testSelectorExtensionSuffix_Null() throws Exception {
+    Map<String, Object> map = new HashMap<>();
+    map.put("type", "deny");
+    map.put("path", "path1");
+    map.put("selectors", null);
+    map.put("extension", null);
+    map.put("suffix", null);
+    assertHelper("{ /type \"deny\" /path 'path1' }",
+        helper, map, new MockOptions());
+  }
+
 }

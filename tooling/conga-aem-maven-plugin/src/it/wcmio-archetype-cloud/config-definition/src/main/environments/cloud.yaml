@@ -25,6 +25,10 @@ nodes:
         extension: json
         selectors: model
         type: allow
+      - url: /test(/.*)?
+        extension: json
+        suffix: ""
+        type: allow
 
 
 config:
