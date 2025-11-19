@@ -39,7 +39,7 @@
   <description>Example definitions and templates.</description>
 
   <properties>
-    <acs.aem.commons.version>6.15.0</acs.aem.commons.version>
+    <acs.aem.commons.version>6.15.4</acs.aem.commons.version>
   </properties>
 
   <dependencies>
