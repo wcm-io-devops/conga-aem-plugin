@@ -24,7 +24,7 @@
     xsi:schemaLocation="http://maven.apache.org/changes/2.0.0 https://maven.apache.org/xsd/changes-2.0.0.xsd">
   <body>
 
-    <release version="2.23.4" date="not released">
+    <release version="2.23.4" date="2025-12-05">
       <action type="update" dev="sseifert" issue="266">
         CRX Package Manager Upload: Switch default URL for system ready check to /systemready.json
       </action>
