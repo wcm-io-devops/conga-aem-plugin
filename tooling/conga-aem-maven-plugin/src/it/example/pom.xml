@@ -26,7 +26,7 @@
   <parent>
     <groupId>io.wcm.maven</groupId>
     <artifactId>io.wcm.maven.global-parent</artifactId>
-    <version>71</version>
+    <version>74</version>
     <relativePath/>
   </parent>
 
@@ -39,7 +39,7 @@
   <description>Example definitions and templates.</description>
 
   <properties>
-    <acs.aem.commons.version>6.14.0</acs.aem.commons.version>
+    <acs.aem.commons.version>6.15.4</acs.aem.commons.version>
   </properties>
 
   <dependencies>
@@ -78,7 +78,7 @@
       <plugin>
         <groupId>io.wcm.devops.conga</groupId>
         <artifactId>conga-maven-plugin</artifactId>
-        <version>1.18.0</version>
+        <version>1.19.0</version>
         <extensions>true</extensions>
         <dependencies>
 
