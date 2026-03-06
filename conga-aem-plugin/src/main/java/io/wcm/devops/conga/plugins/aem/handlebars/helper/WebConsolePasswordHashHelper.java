@@ -33,7 +33,8 @@ import io.wcm.devops.conga.generator.spi.handlebars.HelperPlugin;
 import io.wcm.devops.conga.generator.spi.handlebars.context.HelperContext;
 
 /**
- * Handlebars helper that builds a password hash for a given password string for the Apache Felix Webconsole (felix.webconsole.password).
+ * Handlebars helper that builds a password hash for a given password string for the Apache Felix Webconsole
+ * (felix.webconsole.password).
  */
 public class WebConsolePasswordHashHelper implements HelperPlugin<Object> {
 

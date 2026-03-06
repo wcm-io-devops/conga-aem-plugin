@@ -149,7 +149,7 @@ class AllPackageBuilderAuthorPublishTest {
     File targetFile = new File(targetDir, "all.zip");
 
     AllPackageBuilder builder = new AllPackageBuilder(targetFile, "test-group", "test-pkg")
-        .runModeOptimization(RunModeOptimization.ELIMINATE_DUPLICATES);
+      .runModeOptimization(RunModeOptimization.ELIMINATE_DUPLICATES);
     builder.add(filesAuthor, Collections.emptySet());
     builder.add(filesPublish, Collections.emptySet());
     assertTrue(builder.build(null));
@@ -217,8 +217,8 @@ class AllPackageBuilderAuthorPublishTest {
     File targetFile = new File(targetDir, "all.zip");
 
     AllPackageBuilder builder = new AllPackageBuilder(targetFile, "test-group", "test-pkg")
-        .autoDependenciesMode(AutoDependenciesMode.IMMUTABLE_MUTABLE_COMBINED)
-        .runModeOptimization(RunModeOptimization.ELIMINATE_DUPLICATES);
+      .autoDependenciesMode(AutoDependenciesMode.IMMUTABLE_MUTABLE_COMBINED)
+      .runModeOptimization(RunModeOptimization.ELIMINATE_DUPLICATES);
     builder.add(filesAuthor, Collections.emptySet());
     builder.add(filesPublish, Collections.emptySet());
     assertTrue(builder.build(null));
@@ -293,8 +293,8 @@ class AllPackageBuilderAuthorPublishTest {
     File targetFile = new File(targetDir, "all.zip");
 
     AllPackageBuilder builder = new AllPackageBuilder(targetFile, "test-group", "test-pkg")
-        .autoDependenciesMode(AutoDependenciesMode.IMMUTABLE_MUTABLE_SEPARATE)
-        .runModeOptimization(RunModeOptimization.ELIMINATE_DUPLICATES);
+      .autoDependenciesMode(AutoDependenciesMode.IMMUTABLE_MUTABLE_SEPARATE)
+      .runModeOptimization(RunModeOptimization.ELIMINATE_DUPLICATES);
     builder.add(filesAuthor, Collections.emptySet());
     builder.add(filesPublish, Collections.emptySet());
     assertTrue(builder.build(null));
@@ -373,8 +373,8 @@ class AllPackageBuilderAuthorPublishTest {
     File targetFile = new File(targetDir, "all.zip");
 
     AllPackageBuilder builder = new AllPackageBuilder(targetFile, "test-group", "test-pkg")
-        .autoDependenciesMode(AutoDependenciesMode.IMMUTABLE_ONLY)
-        .runModeOptimization(RunModeOptimization.ELIMINATE_DUPLICATES);
+      .autoDependenciesMode(AutoDependenciesMode.IMMUTABLE_ONLY)
+      .runModeOptimization(RunModeOptimization.ELIMINATE_DUPLICATES);
     builder.add(filesAuthor, Collections.emptySet());
     builder.add(filesPublish, Collections.emptySet());
     assertTrue(builder.build(null));

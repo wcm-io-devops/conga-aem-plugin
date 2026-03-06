@@ -51,7 +51,7 @@ class ContentPackagePropertiesPostProcessorTest {
   void testContentPackage() {
 
     FileContext fileContext = new FileContext()
-        .file(new File("src/test/resources/package/example.zip"));
+      .file(new File("src/test/resources/package/example.zip"));
 
     // post-process
     applyPlugin(fileContext, Map.of());
@@ -70,7 +70,7 @@ class ContentPackagePropertiesPostProcessorTest {
   void testContentPackageIgnoreDependencyChain() {
 
     FileContext fileContext = new FileContext()
-        .file(new File("src/test/resources/package/example.zip"));
+      .file(new File("src/test/resources/package/example.zip"));
 
     // post-process
     applyPlugin(fileContext, Map.of(ContentPackageOptions.PROPERTY_DEPENCY_CHAIN_IGNORE, true));
@@ -84,7 +84,7 @@ class ContentPackagePropertiesPostProcessorTest {
   void testContentPackageOverridePackageType() {
 
     FileContext fileContext = new FileContext()
-        .file(new File("src/test/resources/package/example.zip"));
+      .file(new File("src/test/resources/package/example.zip"));
 
     // post-process
     applyPlugin(fileContext, Map.of("contentPackage", Map.of("packageType", "mytype")));
@@ -98,7 +98,7 @@ class ContentPackagePropertiesPostProcessorTest {
   void testNonContentPackage() {
 
     FileContext fileContext = new FileContext()
-        .file(new File("src/test/resources/package/no-content-package.zip"));
+      .file(new File("src/test/resources/package/no-content-package.zip"));
 
     // post-process
     applyPlugin(fileContext, Map.of());
@@ -109,11 +109,11 @@ class ContentPackagePropertiesPostProcessorTest {
 
   private void applyPlugin(FileContext fileContext, Map<String, Object> options) {
     PluginContextOptions pluginContextOptions = new PluginContextOptions()
-        .pluginManager(new PluginManagerImpl())
-        .logger(LoggerFactory.getLogger(ProvisioningOsgiConfigPostProcessor.class));
+      .pluginManager(new PluginManagerImpl())
+      .logger(LoggerFactory.getLogger(ProvisioningOsgiConfigPostProcessor.class));
     PostProcessorContext context = new PostProcessorContext()
-        .pluginContextOptions(pluginContextOptions)
-        .options(options);
+      .pluginContextOptions(pluginContextOptions)
+      .options(options);
 
     assertTrue(underTest.accepts(fileContext, context));
     underTest.apply(fileContext, context);

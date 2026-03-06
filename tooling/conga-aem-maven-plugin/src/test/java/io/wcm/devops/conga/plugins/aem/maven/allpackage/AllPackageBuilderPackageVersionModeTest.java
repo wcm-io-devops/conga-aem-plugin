@@ -66,8 +66,8 @@ class AllPackageBuilderPackageVersionModeTest {
     File targetFile = new File(targetDir, "all.zip");
 
     AllPackageBuilder builder = new AllPackageBuilder(targetFile, "test-group", "test-pkg")
-        .autoDependenciesMode(AutoDependenciesMode.IMMUTABLE_MUTABLE_SEPARATE)
-        .version("4.10.0");
+      .autoDependenciesMode(AutoDependenciesMode.IMMUTABLE_MUTABLE_SEPARATE)
+      .version("4.10.0");
     builder.add(files, Collections.emptySet());
     assertTrue(builder.build(null));
 
@@ -140,9 +140,9 @@ class AllPackageBuilderPackageVersionModeTest {
     File targetFile = new File(targetDir, "all.zip");
 
     AllPackageBuilder builder = new AllPackageBuilder(targetFile, "test-group", "test-pkg")
-        .autoDependenciesMode(AutoDependenciesMode.IMMUTABLE_MUTABLE_SEPARATE)
-        .packageVersionMode(PackageVersionMode.RELEASE_SUFFIX_VERSION)
-        .version("4.10.0");
+      .autoDependenciesMode(AutoDependenciesMode.IMMUTABLE_MUTABLE_SEPARATE)
+      .packageVersionMode(PackageVersionMode.RELEASE_SUFFIX_VERSION)
+      .version("4.10.0");
     builder.add(files, Collections.emptySet());
     assertTrue(builder.build(null));
 
@@ -215,9 +215,9 @@ class AllPackageBuilderPackageVersionModeTest {
     File targetFile = new File(targetDir, "all.zip");
 
     AllPackageBuilder builder = new AllPackageBuilder(targetFile, "test-group", "test-pkg")
-        .autoDependenciesMode(AutoDependenciesMode.IMMUTABLE_MUTABLE_SEPARATE)
-        .packageVersionMode(PackageVersionMode.RELEASE_SUFFIX_VERSION)
-        .version("4.10.0-SNAPSHOT");
+      .autoDependenciesMode(AutoDependenciesMode.IMMUTABLE_MUTABLE_SEPARATE)
+      .packageVersionMode(PackageVersionMode.RELEASE_SUFFIX_VERSION)
+      .version("4.10.0-SNAPSHOT");
     builder.add(files, Collections.emptySet());
     assertTrue(builder.build(null));
 

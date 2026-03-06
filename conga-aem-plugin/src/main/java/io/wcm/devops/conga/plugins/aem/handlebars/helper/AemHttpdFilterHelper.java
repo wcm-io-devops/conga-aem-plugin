@@ -73,7 +73,9 @@ public final class AemHttpdFilterHelper extends AbstractFilterHelper {
         allowFrom, allowFromHost);
   }
 
-  @SuppressWarnings({ "java:S3776", "java:S1192" }) // ignore complexity
+  @SuppressWarnings({
+      "java:S3776", "java:S1192"
+  }) // ignore complexity
   private String generateRule(String ruleType, String ruleExpression, HttpdFilterType filterType,
       String allowFrom, String allowFromHost) {
     StringBuilder sb = new StringBuilder();
@@ -82,16 +84,16 @@ public final class AemHttpdFilterHelper extends AbstractFilterHelper {
 
     if (filterType == HttpdFilterType.ALLOW) {
       sb.append("  <IfVersion < 2.4>\n")
-          .append("    Allow from all\n")
-          .append("  </IfVersion>\n")
-          .append("  <IfVersion >= 2.4>\n")
-          .append("    Require all granted\n")
-          .append("  </IfVersion>\n");
+        .append("    Allow from all\n")
+        .append("  </IfVersion>\n")
+        .append("  <IfVersion >= 2.4>\n")
+        .append("    Require all granted\n")
+        .append("  </IfVersion>\n");
     }
     else {
       sb.append("  <IfVersion < 2.4>\n")
-          .append("    Order Deny,Allow\n")
-          .append("    Deny from all\n");
+        .append("    Order Deny,Allow\n")
+        .append("    Deny from all\n");
       if (filterType == HttpdFilterType.DENY_ALLOW_ADMIN) {
         if (StringUtils.isNotBlank(allowFrom)) {
           sb.append("    Allow from ").append(allowFrom).append("\n");
@@ -101,8 +103,8 @@ public final class AemHttpdFilterHelper extends AbstractFilterHelper {
         }
       }
       sb.append("  </IfVersion>\n")
-          .append("  <IfVersion >= 2.4>\n")
-          .append("    Require all denied\n");
+        .append("  <IfVersion >= 2.4>\n")
+        .append("    Require all denied\n");
       if (filterType == HttpdFilterType.DENY_ALLOW_ADMIN) {
         if (StringUtils.isNotBlank(allowFrom)) {
           sb.append("    Require ip ").append(allowFrom).append("\n");

@@ -264,25 +264,25 @@ public final class AllPackageBuilder {
   private List<ContentPackageFile> getValidContentPackagesStrictValidation(List<? extends ContentPackageFile> contentPackages) {
     // generate warning for each content packages without package type that is skipped
     contentPackages.stream()
-        .filter(pkg -> !hasPackageType(pkg))
-        .forEach(pkg -> getLog().warn("Skipping content package without package type: " + getCanonicalPath(pkg.getFile())));
+      .filter(pkg -> !hasPackageType(pkg))
+      .forEach(pkg -> getLog().warn("Skipping content package without package type: " + getCanonicalPath(pkg.getFile())));
 
     // fail build if content packages with non-allowed package types exist
     List<ContentPackageFile> invalidPackageTypeContentPackages = contentPackages.stream()
-        .filter(AllPackageBuilder::hasPackageType)
-        .filter(pkg -> !isValidPackageType(pkg))
-        .collect(Collectors.toList());
+      .filter(AllPackageBuilder::hasPackageType)
+      .filter(pkg -> !isValidPackageType(pkg))
+      .collect(Collectors.toList());
     if (!invalidPackageTypeContentPackages.isEmpty()) {
       throw new IllegalArgumentException("Content packages found with unsupported package types: " +
           invalidPackageTypeContentPackages.stream()
-              .map(pkg -> pkg.getName() + " -> " + pkg.getPackageType())
-              .collect(Collectors.joining(", ")));
+            .map(pkg -> pkg.getName() + " -> " + pkg.getPackageType())
+            .collect(Collectors.joining(", ")));
     }
 
     // collect AEM content packages with package type
     return contentPackages.stream()
-        .filter(AllPackageBuilder::hasPackageType)
-        .collect(Collectors.toList());
+      .filter(AllPackageBuilder::hasPackageType)
+      .collect(Collectors.toList());
   }
 
   /**
@@ -293,15 +293,15 @@ public final class AllPackageBuilder {
   private List<ContentPackageFile> getValidContentPackagesWarnValidation(List<? extends ContentPackageFile> contentPackages) {
     // generate warning for each content packages without package type
     contentPackages.stream()
-        .filter(pkg -> !hasPackageType(pkg))
-        .forEach(pkg -> getLog().warn("Found content package without package type: " + getCanonicalPath(pkg.getFile())));
+      .filter(pkg -> !hasPackageType(pkg))
+      .forEach(pkg -> getLog().warn("Found content package without package type: " + getCanonicalPath(pkg.getFile())));
 
     // generate warning for each content packages with invalid package type
     contentPackages.stream()
-        .filter(AllPackageBuilder::hasPackageType)
-        .filter(pkg -> !isValidPackageType(pkg))
-        .forEach(pkg -> getLog().warn("Found content package with invalid package type: "
-            + getCanonicalPath(pkg.getFile()) + " -> " + pkg.getPackageType()));
+      .filter(AllPackageBuilder::hasPackageType)
+      .filter(pkg -> !isValidPackageType(pkg))
+      .forEach(pkg -> getLog().warn("Found content package with invalid package type: "
+          + getCanonicalPath(pkg.getFile()) + " -> " + pkg.getPackageType()));
 
     // return all content packages
     return contentPackages.stream().collect(Collectors.toList());
@@ -309,9 +309,9 @@ public final class AllPackageBuilder {
 
   private static <T> List<T> filterFiles(List<? extends InstallableFile> files, Class<T> fileClass) {
     return files.stream()
-        .filter(fileClass::isInstance)
-        .map(fileClass::cast)
-        .toList();
+      .filter(fileClass::isInstance)
+      .map(fileClass::cast)
+      .toList();
   }
 
   /**
@@ -328,9 +328,9 @@ public final class AllPackageBuilder {
 
     // prepare content package metadata
     ContentPackageBuilder builder = new ContentPackageBuilder()
-        .group(groupName)
-        .name(packageName)
-        .packageType("container");
+      .group(groupName)
+      .name(packageName)
+      .packageType("container");
     if (version != null) {
       builder.version(version);
     }
@@ -367,7 +367,7 @@ public final class AllPackageBuilder {
     if (runModeOptimization == RunModeOptimization.ELIMINATE_DUPLICATES) {
       // eliminate duplicates which are same for author and publish
       processedFileSets = eliminateAuthorPublishDuplicates(contentPackageFileSets,
-        environmentRunMode -> new ContentPackageFileSet(new ArrayList<>(), Collections.singletonList(environmentRunMode)));
+          environmentRunMode -> new ContentPackageFileSet(new ArrayList<>(), Collections.singletonList(environmentRunMode)));
     }
     else {
       processedFileSets = contentPackageFileSets;
@@ -394,8 +394,8 @@ public final class AllPackageBuilder {
           }
           finally {
             processedFiles.stream()
-                .map(TemporaryContentPackageFile::getFile)
-                .forEach(FileUtils::deleteQuietly);
+              .map(TemporaryContentPackageFile::getFile)
+              .forEach(FileUtils::deleteQuietly);
           }
 
           previousPackages.add(pkg);
@@ -418,16 +418,16 @@ public final class AllPackageBuilder {
     }
     // get last previous package
     return previousPackages.stream()
-        // if not IMMUTABLE_MUTABLE_COMBINED active only that of the same mutability type
-        .filter(item -> (autoDependenciesMode == AutoDependenciesMode.IMMUTABLE_MUTABLE_COMBINED) || mutableMatches(item, currentPackage))
-        // make sure author-only or publish-only packages are only taken into account if the current package has same restriction
-        .filter(item -> isAuthorAndPublish(item)
-            || (isOnlyAuthor(item) && isOnlyAuthor(currentPackage))
-            || (isOnlyPublish(item) && isOnlyPublish(currentPackage)))
-        // ignore packages that are marked as dependency chain ignore
-        .filter(item -> !item.isDependencyChainIgnore())
-        // get last in list
-        .reduce((first, second) -> second).orElse(null);
+      // if not IMMUTABLE_MUTABLE_COMBINED active only that of the same mutability type
+      .filter(item -> (autoDependenciesMode == AutoDependenciesMode.IMMUTABLE_MUTABLE_COMBINED) || mutableMatches(item, currentPackage))
+      // make sure author-only or publish-only packages are only taken into account if the current package has same restriction
+      .filter(item -> isAuthorAndPublish(item)
+          || (isOnlyAuthor(item) && isOnlyAuthor(currentPackage))
+          || (isOnlyPublish(item) && isOnlyPublish(currentPackage)))
+      // ignore packages that are marked as dependency chain ignore
+      .filter(item -> !item.isDependencyChainIgnore())
+      // get last in list
+      .reduce((first, second) -> second).orElse(null);
   }
 
   private void buildAddBundles(ContentPackage contentPackage, String rootPath) throws IOException {
@@ -515,8 +515,8 @@ public final class AllPackageBuilder {
         && !Strings.CS.equals(pkg.getVersion(), this.version)
         && this.version != null) {
       versionSuffix.append(VERSION_SUFFIX_SEPARATOR)
-          // replace dots with underlines in version suffix to avoid confusion with main version number
-          .append(Strings.CS.replace(this.version, ".", "_"));
+        // replace dots with underlines in version suffix to avoid confusion with main version number
+        .append(Strings.CS.replace(this.version, ".", "_"));
     }
 
     return versionSuffix.toString();
@@ -742,7 +742,9 @@ public final class AllPackageBuilder {
       return DependencyUtil.add(existingDeps, newDependency);
     }
     else {
-      return new Dependency[] { newDependency };
+      return new Dependency[] {
+          newDependency
+      };
     }
   }
 
@@ -764,8 +766,8 @@ public final class AllPackageBuilder {
   private @NotNull Dependency[] rewriteReferencesToManagedPackages(@NotNull ContentPackageFile pkg,
       @NotNull String environmentRunMode, @NotNull Set<Dependency> allPackagesFromFileSets, @NotNull Dependency[] deps) {
     return Arrays.stream(deps)
-        .map(dep -> rewriteReferenceIfDependencyIsManagedPackage(pkg, environmentRunMode, allPackagesFromFileSets, dep))
-        .toArray(Dependency[]::new);
+      .map(dep -> rewriteReferenceIfDependencyIsManagedPackage(pkg, environmentRunMode, allPackagesFromFileSets, dep))
+      .toArray(Dependency[]::new);
   }
 
   private @NotNull Dependency rewriteReferenceIfDependencyIsManagedPackage(@NotNull ContentPackageFile pkg,
@@ -775,21 +777,21 @@ public final class AllPackageBuilder {
       return dep;
     }
     return findContentPackageFileForDependency(pkg, dep)
-        // found a content package file for the dependency, rewrite the dependency
-        .map(contentPackageFile -> createDependencyFromContentPackageFile(contentPackageFile, environmentRunMode))
-        // found no content package file for the dependency, use current run mode suffix
-        .orElseGet(() -> createDependencyWithCurrentPackageRunModeSuffix(pkg, environmentRunMode, dep));
+      // found a content package file for the dependency, rewrite the dependency
+      .map(contentPackageFile -> createDependencyFromContentPackageFile(contentPackageFile, environmentRunMode))
+      // found no content package file for the dependency, use current run mode suffix
+      .orElseGet(() -> createDependencyWithCurrentPackageRunModeSuffix(pkg, environmentRunMode, dep));
   }
 
   private @NotNull Optional<ContentPackageFile> findContentPackageFileForDependency(@NotNull ContentPackageFile pkg,
       @NotNull Dependency dep) {
     // look for content package in all file sets
     return contentPackageFileSets.stream()
-            // prefer file set which contains the current package to use current run mode
-            .sorted((fileSet1, fileSet2) -> sortFileSetsContainingPackageFirst(pkg, fileSet1, fileSet2))
-            .flatMap(fileSet -> fileSet.getFiles().stream())
-            .filter(contentPackageFile -> isContentPackageForDependency(contentPackageFile, dep))
-            .findFirst();
+      // prefer file set which contains the current package to use current run mode
+      .sorted((fileSet1, fileSet2) -> sortFileSetsContainingPackageFirst(pkg, fileSet1, fileSet2))
+      .flatMap(fileSet -> fileSet.getFiles().stream())
+      .filter(contentPackageFile -> isContentPackageForDependency(contentPackageFile, dep))
+      .findFirst();
   }
 
   private int sortFileSetsContainingPackageFirst(@NotNull ContentPackageFile pkg,
@@ -801,7 +803,7 @@ public final class AllPackageBuilder {
 
   private boolean isContentPackageForDependency(@NotNull ContentPackageFile contentPackageFile, @NotNull Dependency dep) {
     return contentPackageFile.getGroup().equals(dep.getGroup())
-            && contentPackageFile.getName().equals(dep.getName());
+        && contentPackageFile.getName().equals(dep.getName());
   }
 
   private @NotNull Dependency createDependencyWithCurrentPackageRunModeSuffix(@NotNull ContentPackageFile pkg,
@@ -819,8 +821,8 @@ public final class AllPackageBuilder {
    */
   private static Dependency[] removeReferencesToManagedPackages(Dependency[] deps, Set<Dependency> allPackagesFromFileSets) {
     return Arrays.stream(deps)
-        .filter(dep -> !allPackagesFromFileSets.contains(dep))
-        .toArray(size -> new Dependency[size]);
+      .filter(dep -> !allPackagesFromFileSets.contains(dep))
+      .toArray(size -> new Dependency[size]);
   }
 
   private static void addDependencyInformation(Set<Dependency> allPackagesFromFileSets, ContentPackageFile pkg) {

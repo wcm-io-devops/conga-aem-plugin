@@ -72,8 +72,8 @@ public final class FileTestUtil {
 
     // assert existing files match the expected files
     Set<String> expectedFileNames = Stream.of(expectedFiles)
-        .map(file -> file.getFileName(runmodeSuffix))
-        .collect(Collectors.toCollection(TreeSet::new));
+      .map(file -> file.getFileName(runmodeSuffix))
+      .collect(Collectors.toCollection(TreeSet::new));
     String[] fileNames = dir.list();
     Set<String> actualFileNames = fileNames != null ? new TreeSet<>(Set.of(fileNames)) : Set.of();
     assertEquals(expectedFileNames, actualFileNames, "files in " + dir.getPath());
@@ -99,8 +99,8 @@ public final class FileTestUtil {
 
         // assert package dependencies
         String expectedDependencies = cp.getDependencies().stream()
-            .map(dep -> dep.getPackageReference(runmodeSuffix))
-            .collect(Collectors.joining(","));
+          .map(dep -> dep.getPackageReference(runmodeSuffix))
+          .collect(Collectors.joining(","));
         assertXpathEvaluatesTo(expectedDependencies, "/properties/entry[@key='dependencies']", propsXml,
             "Package dependencies of " + file.getFileName(runmodeSuffix));
       }
@@ -120,9 +120,9 @@ public final class FileTestUtil {
     File[] files = dir.listFiles();
     if (files != null) {
       actualDirectoryNames = Stream.of(files)
-          .filter(File::isDirectory)
-          .map(File::getName)
-          .collect(Collectors.toSet());
+        .filter(File::isDirectory)
+        .map(File::getName)
+        .collect(Collectors.toSet());
     }
     assertEquals(expectedDirectoryNames, actualDirectoryNames, "files in " + dir.getPath());
   }

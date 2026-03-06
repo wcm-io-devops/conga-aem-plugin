@@ -22,6 +22,7 @@ package io.wcm.devops.conga.plugins.aem.handlebars.helper;
 import org.apache.commons.lang3.builder.ToStringStyle;
 
 final class NoClassNameOmitNullsStyle extends ToStringStyle {
+
   private static final long serialVersionUID = 1L;
 
   /**

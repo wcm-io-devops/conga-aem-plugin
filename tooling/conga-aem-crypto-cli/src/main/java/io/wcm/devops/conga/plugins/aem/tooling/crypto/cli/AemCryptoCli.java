@@ -69,7 +69,9 @@ public final class AemCryptoCli {
    * @throws Exception Exception
    */
   //CHECKSTYLE:OFF
-  @SuppressWarnings({ "PMD.SignatureDeclareThrowsException", "PMD.SystemPrintln" })
+  @SuppressWarnings({
+      "PMD.SignatureDeclareThrowsException", "PMD.SystemPrintln"
+  })
   public static void main(String[] args) throws Exception {
     //CHECKSTYLE:ON
     CommandLine commandLine = new DefaultParser().parse(CLI_OPTIONS, args, true);

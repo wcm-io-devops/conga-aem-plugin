@@ -43,10 +43,9 @@ public class AnyEscapingStrategy implements EscapingStrategyPlugin {
   /**
    * Defines translations for strings in ANY files.
    */
-  private static final CharSequenceTranslator ESCAPE_ANY =
-      new LookupTranslator(Map.of(
-          "\"", "\\\"",
-          "\\", "\\\\"));
+  private static final CharSequenceTranslator ESCAPE_ANY = new LookupTranslator(Map.of(
+      "\"", "\\\"",
+      "\\", "\\\\"));
 
   @Override
   public String getName() {

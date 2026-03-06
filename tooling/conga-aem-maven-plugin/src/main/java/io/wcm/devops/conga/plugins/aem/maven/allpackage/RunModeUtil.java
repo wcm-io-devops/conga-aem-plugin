@@ -74,8 +74,8 @@ final class RunModeUtil {
 
   private static Set<String> mapVariantsToRunModes(Collection<String> variants) {
     return variants.stream()
-        .map(RunModeUtil::mapVariantToRunMode)
-        .collect(Collectors.toSet());
+      .map(RunModeUtil::mapVariantToRunMode)
+      .collect(Collectors.toSet());
   }
 
   /**
@@ -107,19 +107,19 @@ final class RunModeUtil {
       List<S> fileSets, Function<String, S> fileSetFactory) {
     Map<String, S> result = new LinkedHashMap<>();
     fileSets.forEach(fileSet -> fileSet.getEnvironmentRunModes().forEach(environmentRunMode -> {
-        FileSet<T> resultFileSet = result.computeIfAbsent(environmentRunMode, fileSetFactory);
-        fileSet.getFiles().forEach(file -> {
-          Optional<T> existingFile = resultFileSet.getFiles().stream()
-              .filter(item -> isSameFileNameHash(item, file))
-              .findFirst();
-          if (existingFile.isPresent()) {
-            // if file was already added from other file set: eliminate duplicate, but add run modes
-            existingFile.get().getVariants().addAll(file.getVariants());
-          }
-          else {
-            resultFileSet.getFiles().add(file);
-          }
-        });
+      FileSet<T> resultFileSet = result.computeIfAbsent(environmentRunMode, fileSetFactory);
+      fileSet.getFiles().forEach(file -> {
+        Optional<T> existingFile = resultFileSet.getFiles().stream()
+          .filter(item -> isSameFileNameHash(item, file))
+          .findFirst();
+        if (existingFile.isPresent()) {
+          // if file was already added from other file set: eliminate duplicate, but add run modes
+          existingFile.get().getVariants().addAll(file.getVariants());
+        }
+        else {
+          resultFileSet.getFiles().add(file);
+        }
+      });
     }));
     // eliminate author+publish run modes if both are set on same file
     result.values().forEach(

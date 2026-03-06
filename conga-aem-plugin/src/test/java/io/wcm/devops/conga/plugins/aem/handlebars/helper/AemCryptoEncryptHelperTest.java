@@ -59,10 +59,10 @@ class AemCryptoEncryptHelperTest {
     helper = pluginManager.get(AemCryptoEncryptHelper.NAME, HelperPlugin.class);
 
     PluginContextOptions pluginContextOptions = new PluginContextOptions()
-        .pluginManager(pluginManager)
-        .urlFileManager(new UrlFileManager(pluginManager, new UrlFilePluginContext()));
+      .pluginManager(pluginManager)
+      .urlFileManager(new UrlFileManager(pluginManager, new UrlFilePluginContext()));
     pluginContext = new HelperContext()
-        .pluginContextOptions(pluginContextOptions);
+      .pluginContextOptions(pluginContextOptions);
   }
 
   @Test

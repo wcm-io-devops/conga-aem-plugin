@@ -42,7 +42,9 @@ class CryptoStringTest {
 
   @Test
   void testConversion() {
-    byte[] input = new byte[] { 0x01, 0x02, 0x03, 0x04, (byte)0x99, (byte)0xFF };
+    byte[] input = new byte[] {
+        0x01, 0x02, 0x03, 0x04, (byte)0x99, (byte)0xFF
+    };
 
     String encrypted = CryptoString.toString(input);
     assertTrue(CryptoString.isCryptoString(encrypted));

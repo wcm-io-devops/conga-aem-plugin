@@ -87,14 +87,14 @@ public final class ContentPackageUtil {
    */
   public static ContentPackageBuilder getContentPackageBuilder(Map<String, Object> options, UrlFileManager urlFileManager) {
     ContentPackageBuilder builder = new ContentPackageBuilder()
-        .created(CURRENT_DATE)
-        .group(getMandatoryProp(options, PROPERTY_PACKAGE_GROUP))
-        .name(getMandatoryProp(options, PROPERTY_PACKAGE_NAME))
-        .version(getOptionalProp(options, PROPERTY_PACKAGE_VERSION))
-        .packageType(getOptionalProp(options, PROPERTY_PACKAGE_PACKAGE_TYPE))
-        .requiresRoot(getOptionalPropBoolean(options, PROPERTY_PACKAGE_REQUIRES_ROOT))
-        .requiresRestart(getOptionalPropBoolean(options, PROPERTY_PACKAGE_REQUIRES_RESTART))
-        .allowIndexDefinitions(getOptionalPropBoolean(options, PROPERTY_PACKAGE_ALLOW_INDEX_DEFINITIONS));
+      .created(CURRENT_DATE)
+      .group(getMandatoryProp(options, PROPERTY_PACKAGE_GROUP))
+      .name(getMandatoryProp(options, PROPERTY_PACKAGE_NAME))
+      .version(getOptionalProp(options, PROPERTY_PACKAGE_VERSION))
+      .packageType(getOptionalProp(options, PROPERTY_PACKAGE_PACKAGE_TYPE))
+      .requiresRoot(getOptionalPropBoolean(options, PROPERTY_PACKAGE_REQUIRES_ROOT))
+      .requiresRestart(getOptionalPropBoolean(options, PROPERTY_PACKAGE_REQUIRES_RESTART))
+      .allowIndexDefinitions(getOptionalPropBoolean(options, PROPERTY_PACKAGE_ALLOW_INDEX_DEFINITIONS));
 
     // description
     builder.description(getOptionalProp(options, PROPERTY_PACKAGE_DESCRIPTION));
@@ -180,7 +180,7 @@ public final class ContentPackageUtil {
     return filters;
   }
 
-  private static Map<String,Object> getAdditionalyProperties(Map<String, Object> options) {
+  private static Map<String, Object> getAdditionalyProperties(Map<String, Object> options) {
     Map<String, Object> props = getOptionalPropMap(options, PROPERTY_PACKAGE_PROPERTIES);
     if (props == null) {
       props = Map.of();
@@ -353,22 +353,22 @@ public final class ContentPackageUtil {
     // collect all files below the target dir
     try (Stream<Path> paths = Files.walk(Paths.get(fileTargetDir.toURI()))) {
       return paths.filter(Files::isRegularFile)
-          // strip off the target dir paths, keep only the relative path/file name
-          .map(ContentPackageUtil::normalizedAbsolutePath)
-          .map(file -> Strings.CS.removeStart(file, targetPathPrefix))
-          // check if file matches with the regex, apply matching input groups to path
-          .map(file -> {
-            Matcher matcher = pattern.matcher(file);
-            if (matcher.matches()) {
-              String adaptedPath = matcher.replaceAll(path);
-              return new ContentPackageBinaryFile(file, dir, null, adaptedPath, delete);
-            }
-            else {
-              return null;
-            }
-          })
-          .filter(Objects::nonNull)
-          .toList();
+        // strip off the target dir paths, keep only the relative path/file name
+        .map(ContentPackageUtil::normalizedAbsolutePath)
+        .map(file -> Strings.CS.removeStart(file, targetPathPrefix))
+        // check if file matches with the regex, apply matching input groups to path
+        .map(file -> {
+          Matcher matcher = pattern.matcher(file);
+          if (matcher.matches()) {
+            String adaptedPath = matcher.replaceAll(path);
+            return new ContentPackageBinaryFile(file, dir, null, adaptedPath, delete);
+          }
+          else {
+            return null;
+          }
+        })
+        .filter(Objects::nonNull)
+        .toList();
     }
   }
 

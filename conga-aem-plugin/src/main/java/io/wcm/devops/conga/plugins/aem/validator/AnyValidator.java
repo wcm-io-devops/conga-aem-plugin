@@ -71,6 +71,7 @@ public class AnyValidator implements ValidatorPlugin {
     // just make sure they are in place to allow any parser parsing files with include directives
     parser.setResourceExpander(arg -> new String[0]);
     parser.setEnitiyResolver(new EntityResolver() {
+
       @Override
       public InputSource resolveEntity(String publicId, String systemId) throws SAXException, IOException {
         return null;

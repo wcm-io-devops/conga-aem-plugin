@@ -42,14 +42,14 @@ final class YamlUtil {
     // initialize CONGA plugin manager
     PluginManager pluginManager = new PluginManagerImpl();
     PluginContextOptions options = new PluginContextOptions()
-        .pluginManager(pluginManager)
-        .logger(log);
+      .pluginManager(pluginManager)
+      .logger(log);
 
     // apply YAML plugins for modifying YAML constructor
     Constructor constructor = new Constructor(io.wcm.devops.conga.model.util.YamlUtil.createLoaderOptions());
     YamlConstructorContext context = new YamlConstructorContext()
-        .pluginContextOptions(options)
-        .yamlConstructor(constructor);
+      .pluginContextOptions(options)
+      .yamlConstructor(constructor);
     for (YamlConstructorPlugin plugin : pluginManager.getAll(YamlConstructorPlugin.class)) {
       plugin.register(context);
     }

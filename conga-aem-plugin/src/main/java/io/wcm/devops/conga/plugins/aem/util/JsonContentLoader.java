@@ -55,10 +55,10 @@ public final class JsonContentLoader {
 
   private static final ContentParser JSON_PARSER = new JSONContentParser();
   private static final ParserOptions JSON_PARSER_OPTIONS = new JSONParserOptions()
-      .withFeatures(EnumSet.of(JSONParserFeature.COMMENTS, JSONParserFeature.QUOTE_TICK))
-      .detectCalendarValues(true)
-      .ignorePropertyNames(IGNORED_NAMES)
-      .ignoreResourceNames(IGNORED_NAMES);
+    .withFeatures(EnumSet.of(JSONParserFeature.COMMENTS, JSONParserFeature.QUOTE_TICK))
+    .detectCalendarValues(true)
+    .ignorePropertyNames(IGNORED_NAMES)
+    .ignoreResourceNames(IGNORED_NAMES);
 
   /**
    * Load a JSON file and transform the contained data structured in nested maps, as supported by the
