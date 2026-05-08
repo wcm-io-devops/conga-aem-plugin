@@ -279,17 +279,11 @@
 
   <reporting>
     <plugins>
-
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
-        <artifactId>maven-plugin-plugin</artifactId>
-        <configuration>
-          <requirements>
-            <maven>${maven.version}</maven>
-          </requirements>
-        </configuration>
+        <artifactId>maven-plugin-report-plugin</artifactId>
+        <version>${maven-plugin-plugin.version}</version>
       </plugin>
-
     </plugins>
   </reporting>
 
