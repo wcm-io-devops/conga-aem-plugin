@@ -26,6 +26,9 @@
 
     <release version="2.23.6" date="not released">
       <action type="update" dev="sseifert">
+        CONGA AEM Maven Plugin: Improve reliability and security of File/Zip handling.
+      </action>
+      <action type="update" dev="sseifert">
         Switch to Java 21.
       </action>
     </release>
