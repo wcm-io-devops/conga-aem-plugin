@@ -139,17 +139,17 @@ public final class InstallPackagesMojo extends AbstractContentPackageMojo {
     installer.setReplicate(this.replicate);
 
     for (InstallableFile item : items) {
-      if (item instanceof ModelContentPackageFile modelContentPackageFile) {
-        PackageFile packageFile = toPackageFile(modelContentPackageFile);
-        installer.installFile(packageFile);
-      }
-      else if (item instanceof BundleFile bundleFile) {
-        if (bundleFile.getInstall() == null || bundleFile.getInstall()) {
+      switch (item) {
+        case ModelContentPackageFile modelContentPackageFile -> {
+          PackageFile packageFile = toPackageFile(modelContentPackageFile);
+          installer.installFile(packageFile);
+        }
+        case BundleFile bundleFile when bundleFile.getInstall() == null || bundleFile.getInstall() -> {
           installBundleViaSlingPlugin(bundleFile.getFile());
         }
-      }
-      else {
-        getLog().warn("Unsupported file: " + getCanonicalPath(item.getFile()));
+        default -> {
+          getLog().warn("Unsupported file: " + getCanonicalPath(item.getFile()));
+        }
       }
     }
   }
