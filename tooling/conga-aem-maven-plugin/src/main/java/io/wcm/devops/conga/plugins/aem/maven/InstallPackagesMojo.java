@@ -197,6 +197,7 @@ public final class InstallPackagesMojo extends AbstractContentPackageMojo {
   /**
    * Executes the sling-maven-plugin directly from the current project to install OSGi bundles.
    */
+  @SuppressWarnings("PMD.AvoidCatchingGenericException")
   private void installBundleViaSlingPlugin(File file) throws MojoExecutionException {
     Plugin plugin = new Plugin();
     plugin.setGroupId("org.apache.sling");

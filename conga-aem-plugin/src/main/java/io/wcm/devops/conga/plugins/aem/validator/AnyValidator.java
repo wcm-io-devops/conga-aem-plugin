@@ -64,6 +64,7 @@ public class AnyValidator implements ValidatorPlugin {
   }
 
   @Override
+  @SuppressWarnings("PMD.AvoidCatchingGenericException")
   public Void apply(FileContext file, ValidatorContext context) throws ValidationException {
     Parser parser = new Parser(new BaseHandler());
 
@@ -86,7 +87,7 @@ public class AnyValidator implements ValidatorPlugin {
         parser.parse(new InputSource(reader));
       }
     }
-    /*CHECKSTYLE:OFF*/ catch (Exception ex) { /*CHECKSTYLE:ON*/
+    catch (Exception ex) {
       throw new ValidationException("ANY file is not valid: " + ex.getMessage(), ex);
     }
     return null;

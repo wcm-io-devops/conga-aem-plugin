@@ -579,7 +579,9 @@ public final class AllPackageBuilder {
    * @return Returns a list of content package *temporary* files - have to be deleted when processing is completed.
    * @throws IOException I/O error
    */
-  @SuppressWarnings("java:S3776") // ignore complexity
+  @SuppressWarnings({
+      "java:S3776", "java:S6541" // ignore complexity
+  })
   private List<TemporaryContentPackageFile> processContentPackage(ContentPackageFile pkg,
       ContentPackageFile previousPkg, String environmentRunMode,
       Set<Dependency> allPackagesFromFileSets) throws IOException {
