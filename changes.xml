@@ -24,7 +24,7 @@
     xsi:schemaLocation="http://maven.apache.org/changes/2.0.0 https://maven.apache.org/xsd/changes-2.0.0.xsd">
   <body>
 
-    <release version="2.23.6" date="not released">
+    <release version="2.24.0" date="2026-06-15">
       <action type="update" dev="sseifert">
         CONGA AEM Maven Plugin: Improve reliability and security of File/Zip handling.
       </action>
