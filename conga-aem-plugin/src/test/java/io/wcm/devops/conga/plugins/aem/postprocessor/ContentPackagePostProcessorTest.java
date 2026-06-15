@@ -113,17 +113,17 @@ class ContentPackagePostProcessorTest {
 
     // post-process
     FileContext fileContext = new FileContext()
-        .file(contentPackageFile)
-        .charset(StandardCharsets.UTF_8)
-        .targetDir(target);
+      .file(contentPackageFile)
+      .charset(StandardCharsets.UTF_8)
+      .targetDir(target);
     PluginManager pluginManager = new PluginManagerImpl();
     PluginContextOptions pluginContextOptions = new PluginContextOptions()
-        .pluginManager(pluginManager)
-        .urlFileManager(new UrlFileManager(pluginManager, new UrlFilePluginContext()))
-        .logger(LoggerFactory.getLogger(ProvisioningOsgiConfigPostProcessor.class));
+      .pluginManager(pluginManager)
+      .urlFileManager(new UrlFileManager(pluginManager, new UrlFilePluginContext()))
+      .logger(LoggerFactory.getLogger(ProvisioningOsgiConfigPostProcessor.class));
     PostProcessorContext context = new PostProcessorContext()
-        .pluginContextOptions(pluginContextOptions)
-        .options(options);
+      .pluginContextOptions(pluginContextOptions)
+      .options(options);
 
     assertTrue(underTest.accepts(fileContext, context));
     underTest.apply(fileContext, context);

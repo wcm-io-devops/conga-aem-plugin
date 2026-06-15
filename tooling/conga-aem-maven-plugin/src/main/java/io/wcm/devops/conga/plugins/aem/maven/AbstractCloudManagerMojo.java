@@ -83,9 +83,9 @@ abstract class AbstractCloudManagerMojo extends AbstractMojo {
       File[] files = configurationDir.listFiles();
       if (files != null) {
         directories = Arrays.stream(files)
-            .filter(File::isDirectory)
-            .filter(dir -> (selectedEnvironments.isEmpty() || selectedEnvironments.contains(dir.getName())))
-            .toList();
+          .filter(File::isDirectory)
+          .filter(dir -> (selectedEnvironments.isEmpty() || selectedEnvironments.contains(dir.getName())))
+          .toList();
       }
     }
     if (directories == null || directories.isEmpty()) {
@@ -114,9 +114,9 @@ abstract class AbstractCloudManagerMojo extends AbstractMojo {
     File[] files = environmentDir.listFiles();
     if (files != null) {
       return Arrays.stream(files)
-          .filter(File::isDirectory)
-          .filter(dir -> selectedNodes.isEmpty() || selectedNodes.contains(dir.getName()))
-          .toList();
+        .filter(File::isDirectory)
+        .filter(dir -> selectedNodes.isEmpty() || selectedNodes.contains(dir.getName()))
+        .toList();
     }
     else {
       return Collections.emptyList();

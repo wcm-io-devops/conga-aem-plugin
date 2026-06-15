@@ -24,6 +24,11 @@
     }
   ],
   "ignoreDeps": [
+    "org.apache.maven:maven-plugin-api",
+    "org.apache.maven:maven-model",
+    "org.apache.maven:maven-core",
+    "org.apache.maven:maven-artifact",
+    "org.apache.maven.plugins:maven-plugin-plugin",
     "io.wcm.devops.conga.plugins.aem.it:io.wcm.devops.conga.plugins.aem.it.aem65.parent",
     "io.wcm.devops.conga.plugins.aem.it:io.wcm.devops.conga.plugins.aem.it.aem65.complete",
     "io.wcm.devops.conga.plugins.aem.it:io.wcm.devops.conga.plugins.aem.it.aem65.conf-content",

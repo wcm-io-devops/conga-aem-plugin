@@ -61,7 +61,7 @@ class AllPackageBuilderMixedPackageTypeTest {
     File targetFile = new File(targetDir, "all.zip");
 
     AllPackageBuilder builder = new AllPackageBuilder(targetFile, "test-group", "test-pkg")
-        .packageTypeValidation(PackageTypeValidation.STRICT);
+      .packageTypeValidation(PackageTypeValidation.STRICT);
 
     // should fail due to "mixed" packageType
     assertThrows(IllegalArgumentException.class, () -> {
@@ -75,7 +75,7 @@ class AllPackageBuilderMixedPackageTypeTest {
     File targetFile = new File(targetDir, "all.zip");
 
     AllPackageBuilder builder = new AllPackageBuilder(targetFile, "test-group", "test-pkg")
-        .packageTypeValidation(PackageTypeValidation.WARN);
+      .packageTypeValidation(PackageTypeValidation.WARN);
 
     // should not fail due to "mixed" packageType
     builder.add(files, NO_RUNMODES);

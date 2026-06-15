@@ -100,10 +100,10 @@ class AemHttpdFilterHelperTest {
           </IfVersion>
         </Location>""",
         helper, Map.of("type", "deny_allow_admin", "location", "/abc"), new MockOptions()
-            .withHash(AemHttpdFilterHelper.HASH_ALLOW_FROM_KEY, "allowFrom")
-            .withHash(AemHttpdFilterHelper.HASH_ALLOW_FROM_HOST_KEY, "allowFromHost")
-            .withProperty("allowFrom", "1.2.3.4")
-            .withProperty("allowFromHost", "myhost"));
+          .withHash(AemHttpdFilterHelper.HASH_ALLOW_FROM_KEY, "allowFrom")
+          .withHash(AemHttpdFilterHelper.HASH_ALLOW_FROM_HOST_KEY, "allowFromHost")
+          .withProperty("allowFrom", "1.2.3.4")
+          .withProperty("allowFromHost", "myhost"));
   }
 
 }

@@ -93,8 +93,8 @@ abstract class AbstractCloudManagerConditionalHelper implements HelperPlugin<Obj
 
   private List<CloudManagerConditional> getCloudManagerConditional(Map<String, Object> cloudManagerConditional) {
     return ENVIRONMENTS.stream()
-        .map(env -> new CloudManagerConditional(env, cloudManagerConditional.getOrDefault(env, Map.of())))
-        .toList();
+      .map(env -> new CloudManagerConditional(env, cloudManagerConditional.getOrDefault(env, Map.of())))
+      .toList();
   }
 
   /**

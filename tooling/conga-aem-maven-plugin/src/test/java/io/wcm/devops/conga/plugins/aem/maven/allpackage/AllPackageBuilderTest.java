@@ -140,7 +140,7 @@ class AllPackageBuilderTest {
     File targetFile = new File(targetDir, "all.zip");
 
     AllPackageBuilder builder = new AllPackageBuilder(targetFile, "test-group", "test-pkg")
-        .autoDependenciesMode(AutoDependenciesMode.IMMUTABLE_MUTABLE_COMBINED);
+      .autoDependenciesMode(AutoDependenciesMode.IMMUTABLE_MUTABLE_COMBINED);
     builder.add(files, cloudManagerTarget);
     assertTrue(builder.build(null));
 
@@ -214,7 +214,7 @@ class AllPackageBuilderTest {
     File targetFile = new File(targetDir, "all.zip");
 
     AllPackageBuilder builder = new AllPackageBuilder(targetFile, "test-group", "test-pkg")
-        .autoDependenciesMode(AutoDependenciesMode.IMMUTABLE_MUTABLE_SEPARATE);
+      .autoDependenciesMode(AutoDependenciesMode.IMMUTABLE_MUTABLE_SEPARATE);
     builder.add(files, cloudManagerTarget);
     assertTrue(builder.build(null));
 
@@ -287,7 +287,7 @@ class AllPackageBuilderTest {
     File targetFile = new File(targetDir, "all.zip");
 
     AllPackageBuilder builder = new AllPackageBuilder(targetFile, "test-group", "test-pkg")
-        .autoDependenciesMode(AutoDependenciesMode.IMMUTABLE_ONLY);
+      .autoDependenciesMode(AutoDependenciesMode.IMMUTABLE_ONLY);
     builder.add(files, cloudManagerTarget);
     assertTrue(builder.build(null));
 
@@ -353,8 +353,8 @@ class AllPackageBuilderTest {
 
   static String[] toInstallFolderNames(String baseName, List<String> runmodeSuffixes) {
     return runmodeSuffixes.stream()
-        .map(suffix -> baseName + suffix)
-        .toArray(size -> new String[size]);
+      .map(suffix -> baseName + suffix)
+      .toArray(size -> new String[size]);
   }
 
 }

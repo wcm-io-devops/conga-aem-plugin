@@ -64,6 +64,7 @@ public class AnyValidator implements ValidatorPlugin {
   }
 
   @Override
+  @SuppressWarnings("PMD.AvoidCatchingGenericException")
   public Void apply(FileContext file, ValidatorContext context) throws ValidationException {
     Parser parser = new Parser(new BaseHandler());
 
@@ -71,6 +72,7 @@ public class AnyValidator implements ValidatorPlugin {
     // just make sure they are in place to allow any parser parsing files with include directives
     parser.setResourceExpander(arg -> new String[0]);
     parser.setEnitiyResolver(new EntityResolver() {
+
       @Override
       public InputSource resolveEntity(String publicId, String systemId) throws SAXException, IOException {
         return null;
@@ -85,7 +87,7 @@ public class AnyValidator implements ValidatorPlugin {
         parser.parse(new InputSource(reader));
       }
     }
-    /*CHECKSTYLE:OFF*/ catch (Exception ex) { /*CHECKSTYLE:ON*/
+    catch (Exception ex) {
       throw new ValidationException("ANY file is not valid: " + ex.getMessage(), ex);
     }
     return null;

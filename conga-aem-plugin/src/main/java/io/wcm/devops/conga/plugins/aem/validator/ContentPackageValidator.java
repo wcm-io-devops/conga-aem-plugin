@@ -120,7 +120,7 @@ public class ContentPackageValidator implements ValidatorPlugin {
     setProperty(mojo, "attachedArtifacts", Collections.emptyList());
 
     Object validatorsSettings = MapExpander.getDeep(context.getOptions(), OPTION_VALIDATORS_SETTINGS);
-    Map<String,Object> validatorSettingsMap = MapMerger.merge(toMap(validatorsSettings), DEFAULT_VALIDATORS_SETTINGS);
+    Map<String, Object> validatorSettingsMap = MapMerger.merge(toMap(validatorsSettings), DEFAULT_VALIDATORS_SETTINGS);
     setProperty(mojo, "validatorsSettings", toValidatorsSettings(validatorSettingsMap));
 
     mojo.execute();
@@ -131,7 +131,9 @@ public class ContentPackageValidator implements ValidatorPlugin {
     setProperty(object, object.getClass(), propertyName, value);
   }
 
-  @SuppressWarnings({ "PMD.AvoidAccessibilityAlteration", "java:S3011" })
+  @SuppressWarnings({
+      "PMD.AvoidAccessibilityAlteration", "java:S3011"
+  })
   private void setProperty(Object object, Class<?> clazz, String propertyName, Object value)
       throws IllegalArgumentException, IllegalAccessException {
     try {

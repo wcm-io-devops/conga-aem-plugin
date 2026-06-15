@@ -55,10 +55,10 @@ public final class JsonContentLoader {
 
   private static final ContentParser JSON_PARSER = new JSONContentParser();
   private static final ParserOptions JSON_PARSER_OPTIONS = new JSONParserOptions()
-      .withFeatures(EnumSet.of(JSONParserFeature.COMMENTS, JSONParserFeature.QUOTE_TICK))
-      .detectCalendarValues(true)
-      .ignorePropertyNames(IGNORED_NAMES)
-      .ignoreResourceNames(IGNORED_NAMES);
+    .withFeatures(EnumSet.of(JSONParserFeature.COMMENTS, JSONParserFeature.QUOTE_TICK))
+    .detectCalendarValues(true)
+    .ignorePropertyNames(IGNORED_NAMES)
+    .ignoreResourceNames(IGNORED_NAMES);
 
   /**
    * Load a JSON file and transform the contained data structured in nested maps, as supported by the
@@ -66,13 +66,14 @@ public final class JsonContentLoader {
    * @param jsonFile JSON file
    * @return Nested map with content data
    */
+  @SuppressWarnings("PMD.AvoidCatchingGenericException")
   public ContentElement load(File jsonFile) {
     try (InputStream is = new BufferedInputStream(new FileInputStream(jsonFile))) {
       ContentElementHandler contentHandler = new ContentElementHandler();
       JSON_PARSER.parse(contentHandler, is, JSON_PARSER_OPTIONS);
       return contentHandler.getRoot();
     }
-    /*CHECKSTYLE:OFF*/ catch (Exception ex) { /*CHECKSTYLE:ON*/
+    catch (Exception ex) {
       throw new GeneratorException("Unable to parse JSON file: " + FileUtil.getCanonicalPath(jsonFile), ex);
     }
   }
@@ -84,13 +85,14 @@ public final class JsonContentLoader {
    * @return Nested map with content data
    * @throws IOException I/O exception
    */
+  @SuppressWarnings("PMD.AvoidCatchingGenericException")
   public ContentElement load(InputStream inputStream) throws IOException {
     try {
       ContentElementHandler contentHandler = new ContentElementHandler();
       JSON_PARSER.parse(contentHandler, inputStream, JSON_PARSER_OPTIONS);
       return contentHandler.getRoot();
     }
-    /*CHECKSTYLE:OFF*/ catch (Exception ex) { /*CHECKSTYLE:ON*/
+    catch (Exception ex) {
       throw new GeneratorException("Unable to parse JSON stream.", ex);
     }
   }

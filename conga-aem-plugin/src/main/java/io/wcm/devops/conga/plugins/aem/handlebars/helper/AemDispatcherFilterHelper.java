@@ -46,7 +46,7 @@ public final class AemDispatcherFilterHelper extends AbstractFilterHelper {
     DispatcherFilter filter = new DispatcherFilter(filterMap);
 
     StringBuilder sb = new StringBuilder()
-        .append("{ ");
+      .append("{ ");
 
     applySimpleValue(sb, "type", filter.getType().toString());
 

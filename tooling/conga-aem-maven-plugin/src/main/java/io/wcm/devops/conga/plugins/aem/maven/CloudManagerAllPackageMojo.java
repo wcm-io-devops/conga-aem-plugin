@@ -264,13 +264,13 @@ public final class CloudManagerAllPackageMojo extends AbstractCloudManagerMojo {
     }
     File targetFile = new File(getTargetDir(), fileName);
     return new AllPackageBuilder(targetFile, this.group, packageName)
-        .version(project.getVersion())
-        .autoDependenciesMode(this.autoDependenciesMode)
-        .runModeOptimization(this.runModeOptimization)
-        .packageTypeValidation(this.packageTypeValidation)
-        .packageVersionMode(this.packageVersionMode)
-        .logger(getLog())
-        .buildOutputTimestamp(new BuildOutputTimestamp(outputTimestamp));
+      .version(project.getVersion())
+      .autoDependenciesMode(this.autoDependenciesMode)
+      .runModeOptimization(this.runModeOptimization)
+      .packageTypeValidation(this.packageTypeValidation)
+      .packageVersionMode(this.packageVersionMode)
+      .logger(getLog())
+      .buildOutputTimestamp(new BuildOutputTimestamp(outputTimestamp));
   }
 
   private void buildAllPackage(AllPackageBuilder builder) throws MojoExecutionException {
@@ -321,6 +321,7 @@ public final class CloudManagerAllPackageMojo extends AbstractCloudManagerMojo {
   }
 
   interface EnvironmentNodeVisitor {
+
     void visit(File environmentDir, File nodeDir, Set<String> cloudManagerTarget,
         List<InstallableFile> files) throws MojoExecutionException, MojoFailureException;
   }

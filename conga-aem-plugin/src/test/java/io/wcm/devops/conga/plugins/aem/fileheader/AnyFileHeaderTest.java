@@ -18,6 +18,7 @@
  * #L%
  */
 package io.wcm.devops.conga.plugins.aem.fileheader;
+
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 

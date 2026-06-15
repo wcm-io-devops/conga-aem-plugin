@@ -60,8 +60,8 @@ final class ParserUtil {
     }
     else if (value instanceof List) {
       result.addAll(((List<String>)value).stream()
-          .filter(StringUtils::isNotBlank)
-          .toList());
+        .filter(StringUtils::isNotBlank)
+        .toList());
     }
     else {
       throw new IllegalArgumentException("Value is neither string nor string list: " + value);

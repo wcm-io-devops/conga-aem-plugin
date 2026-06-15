@@ -63,7 +63,10 @@ public final class AemCryptoEncryptHelper implements HelperPlugin<Object> {
   }
 
   @Override
-  @SuppressWarnings({ "java:S3776", "java:S5411", "PMD.ExceptionAsFlowControl" }) // ignore complexity
+  @SuppressWarnings({
+      "java:S3776", "java:S5411", // ignore complexity
+      "PMD.ExceptionAsFlowControl", "PMD.AvoidCatchingGenericException"
+  })
   public Object apply(Object context, Options options, HelperContext pluginContext) throws IOException {
     if (context == null) {
       return null;
@@ -105,9 +108,7 @@ public final class AemCryptoEncryptHelper implements HelperPlugin<Object> {
         cryptoKeyData = IOUtils.toByteArray(is);
       }
     }
-    /*CHECKSTYLE:OFF*/
     catch (Exception ex) {
-      /*CHECKSTYLE:ON*/
       if ((Boolean)options.hash(HASH_IGNORE_MISSING_KEY, false)) {
         return input;
       }

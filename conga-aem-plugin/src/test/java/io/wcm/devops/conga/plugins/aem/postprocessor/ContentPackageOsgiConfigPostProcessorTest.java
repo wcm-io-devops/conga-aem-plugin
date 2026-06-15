@@ -101,14 +101,14 @@ class ContentPackageOsgiConfigPostProcessorTest {
       String expectedPackageDescriptionProperty) throws Exception {
     // post-process
     FileContext fileContext = new FileContext()
-        .file(contentPackageFile)
-        .charset(StandardCharsets.UTF_8);
+      .file(contentPackageFile)
+      .charset(StandardCharsets.UTF_8);
     PluginContextOptions pluginContextOptions = new PluginContextOptions()
-        .pluginManager(new PluginManagerImpl())
-        .logger(LoggerFactory.getLogger(ProvisioningOsgiConfigPostProcessor.class));
+      .pluginManager(new PluginManagerImpl())
+      .logger(LoggerFactory.getLogger(ProvisioningOsgiConfigPostProcessor.class));
     PostProcessorContext context = new PostProcessorContext()
-        .pluginContextOptions(pluginContextOptions)
-        .options(PACKAGE_OPTIONS);
+      .pluginContextOptions(pluginContextOptions)
+      .options(PACKAGE_OPTIONS);
 
     assertTrue(underTest.accepts(fileContext, context));
     underTest.apply(fileContext, context);
@@ -176,14 +176,14 @@ class ContentPackageOsgiConfigPostProcessorTest {
   private void postProcess_Empty_assertResult(File target, File contentPackageFile) throws Exception {
     // post-process
     FileContext fileContext = new FileContext()
-        .file(contentPackageFile)
-        .charset(StandardCharsets.UTF_8);
+      .file(contentPackageFile)
+      .charset(StandardCharsets.UTF_8);
     PluginContextOptions pluginContextOptions = new PluginContextOptions()
-        .pluginManager(new PluginManagerImpl())
-        .logger(LoggerFactory.getLogger(ProvisioningOsgiConfigPostProcessor.class));
+      .pluginManager(new PluginManagerImpl())
+      .logger(LoggerFactory.getLogger(ProvisioningOsgiConfigPostProcessor.class));
     PostProcessorContext context = new PostProcessorContext()
-        .pluginContextOptions(pluginContextOptions)
-        .options(PACKAGE_OPTIONS);
+      .pluginContextOptions(pluginContextOptions)
+      .options(PACKAGE_OPTIONS);
 
     assertTrue(underTest.accepts(fileContext, context));
     underTest.apply(fileContext, context);

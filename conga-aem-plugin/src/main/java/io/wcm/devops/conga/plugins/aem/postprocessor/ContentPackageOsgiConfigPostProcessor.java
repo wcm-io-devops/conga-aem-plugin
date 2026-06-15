@@ -93,7 +93,8 @@ public class ContentPackageOsgiConfigPostProcessor extends AbstractPostProcessor
 
       // check if any osgi configuration is present
       boolean hasAnyConfig = !ProvisioningUtil.visitOsgiConfigurations(model,
-          (ConfigConsumer<Boolean>)(path, properties) -> true).isEmpty();
+          (ConfigConsumer<Boolean>)(path, properties) -> true)
+        .isEmpty();
 
       // create AEM content package with configurations
       File zipFile = new File(file.getParentFile(), getBaseFileName(file.getName()) + ".zip");
@@ -144,6 +145,7 @@ public class ContentPackageOsgiConfigPostProcessor extends AbstractPostProcessor
   private boolean generateOsgiConfigurations(Model model, ContentPackage contentPackage,
       String rootPath, PostProcessorContext context) throws IOException {
     List<Void> result = ProvisioningUtil.visitOsgiConfigurations(model, new ConfigConsumer<Void>() {
+
       @Override
       @SuppressWarnings("java:S3457") // log placeholders
       public Void accept(String path, Dictionary<String, Object> properties) throws IOException {
