@@ -26,6 +26,7 @@ import java.util.List;
 
 import javax.inject.Inject;
 
+import org.apache.jackrabbit.vault.packaging.DependencyHandling;
 import org.apache.maven.execution.MavenSession;
 import org.apache.maven.model.Plugin;
 import org.apache.maven.plugin.BuildPluginManager;
@@ -84,6 +85,15 @@ public final class InstallPackagesMojo extends AbstractContentPackageMojo {
    */
   @Parameter(property = "vault.recursive", defaultValue = "true")
   private boolean recursive;
+
+  /**
+   * Defines how package dependencies are handled on package installation.
+   * Possible values: <code>IGNORE</code>, <code>BEST_EFFORT</code>, <code>REQUIRED</code>, <code>STRICT</code>.
+   * If not set, the package manager's default is used (<code>REQUIRED</code>).
+   * Only supported for CRX package manager.
+   */
+  @Parameter(property = "vault.dependencyHandling")
+  private DependencyHandling dependencyHandling;
 
   /**
    * Delay further steps after package installation by this amount of seconds
@@ -178,6 +188,13 @@ public final class InstallPackagesMojo extends AbstractContentPackageMojo {
     }
     else {
       output.setRecursive(this.recursive);
+    }
+    DependencyHandling dependencyHandlingParam = item.getDependencyHandling();
+    if (dependencyHandlingParam != null) {
+      output.setDependencyHandling(dependencyHandlingParam);
+    }
+    else {
+      output.setDependencyHandling(this.dependencyHandling);
     }
     Integer delayAfterInstallSecParam = item.getDelayAfterInstallSec();
     if (delayAfterInstallSecParam != null) {
