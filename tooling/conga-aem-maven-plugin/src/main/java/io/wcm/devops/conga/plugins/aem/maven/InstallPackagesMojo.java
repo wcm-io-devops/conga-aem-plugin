@@ -164,7 +164,7 @@ public final class InstallPackagesMojo extends AbstractContentPackageMojo {
     }
   }
 
-  private PackageFile toPackageFile(ModelContentPackageFile item) {
+  PackageFile toPackageFile(ModelContentPackageFile item) {
     PackageFile output = new PackageFile();
 
     output.setFile(item.getFile());
