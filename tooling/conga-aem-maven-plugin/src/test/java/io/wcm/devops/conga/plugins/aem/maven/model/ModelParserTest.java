@@ -30,6 +30,7 @@ import java.util.Set;
 
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.Strings;
+import org.apache.jackrabbit.vault.packaging.DependencyHandling;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
@@ -72,6 +73,7 @@ class ModelParserTest {
     assertEquals(Set.of("aem-author"), pkg6.getVariants());
     assertEquals(false, pkg6.getInstall());
     assertEquals(true, pkg6.getRecursive());
+    assertEquals(DependencyHandling.BEST_EFFORT, pkg6.getDependencyHandling());
     assertEquals(30, pkg6.getDelayAfterInstallSec());
     assertEquals(60, pkg6.getHttpSocketTimeoutSec());
     assertEquals("wcm-io-samples", pkg6.getGroup());

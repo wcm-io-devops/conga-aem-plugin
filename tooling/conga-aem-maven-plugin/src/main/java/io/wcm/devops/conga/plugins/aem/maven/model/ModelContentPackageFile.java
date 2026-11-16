@@ -28,9 +28,11 @@ import static org.apache.jackrabbit.vault.packaging.PackageProperties.NAME_VERSI
 
 import java.io.File;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
 import java.util.Objects;
 
+import org.apache.jackrabbit.vault.packaging.DependencyHandling;
 import org.jetbrains.annotations.Nullable;
 
 /**
@@ -41,6 +43,7 @@ public final class ModelContentPackageFile extends AbstractInstallableFile imple
   private final Boolean install;
   private final Boolean force;
   private final Boolean recursive;
+  private final DependencyHandling dependencyHandling;
   private final Integer delayAfterInstallSec;
   private final Integer httpSocketTimeoutSec;
   private final Boolean dependencyChainIgnore;
@@ -62,6 +65,7 @@ public final class ModelContentPackageFile extends AbstractInstallableFile imple
     this.install = (Boolean)fileData.get("install");
     this.force = (Boolean)fileData.get("force");
     this.recursive = (Boolean)fileData.get("recursive");
+    this.dependencyHandling = toDependencyHandling(fileData.get("dependencyHandling"));
     this.delayAfterInstallSec = (Integer)fileData.get("delayAfterInstallSec");
     this.httpSocketTimeoutSec = (Integer)fileData.get("httpSocketTimeoutSec");
     this.dependencyChainIgnore = (Boolean)fileData.get(DEPENDENCY_CHAIN_IGNORE_PROPERTY);
@@ -88,6 +92,23 @@ public final class ModelContentPackageFile extends AbstractInstallableFile imple
   @Nullable
   public Boolean getRecursive() {
     return this.recursive;
+  }
+
+  @Nullable
+  public DependencyHandling getDependencyHandling() {
+    return this.dependencyHandling;
+  }
+
+  private static @Nullable DependencyHandling toDependencyHandling(@Nullable Object value) {
+    if (value == null) {
+      return null;
+    }
+    try {
+      return DependencyHandling.valueOf(value.toString().toUpperCase(Locale.ROOT));
+    }
+    catch (IllegalArgumentException ex) {
+      throw new IllegalArgumentException("Invalid dependencyHandling value: " + value, ex);
+    }
   }
 
   @Nullable

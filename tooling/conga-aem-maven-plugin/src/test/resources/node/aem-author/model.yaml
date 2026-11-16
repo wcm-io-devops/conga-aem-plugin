@@ -64,6 +64,7 @@ roles:
     force: true
     install: false
     recursive: true
+    dependencyHandling: best_effort
     delayAfterInstallSec: 30
     httpSocketTimeoutSec: 60
   - {path: bin/start}
